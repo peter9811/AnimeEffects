@@ -14,7 +14,8 @@ class GeneralSettingDialog : public EasyDialog
     Q_OBJECT
 public:
     GeneralSettingDialog(GUIResources& aGUIResources, QWidget* aParent);
-
+    bool easingHasChanged();
+    bool rangeHasChanged();
     bool languageHasChanged();
     bool timeFormatHasChanged();
     bool themeHasChanged();
@@ -24,6 +25,12 @@ private:
 
     int mInitialLanguageIndex;
     QComboBox* mLanguageBox;
+
+    int mInitialEasingIndex;
+    QComboBox* mEasingBox;
+
+    int mInitialRangeIndex;
+    QComboBox* mRangeBox;
 
     int mInitialTimeFormatIndex;
     QComboBox* mTimeFormatBox;

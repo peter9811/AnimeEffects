@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QStringList>
+#include <QSettings>
 
 namespace util
 {
@@ -38,8 +39,8 @@ public:
     struct Param
     {
         Param()
-            : type(Type_Linear)
-            , range(Range_InOut)
+            : type(Easing::easingToEnum())
+            , range(Easing::rangeToEnum())
             , weight(1.0f)
         {}
         bool isValidParam() const;
@@ -95,6 +96,9 @@ public:
     static float bounceIn(float t, float b, float c, float d);
     static float bounceOut(float t, float b, float c, float d);
     static float bounceInOut(float t, float b, float c, float d);
+
+    static Easing::Type easingToEnum();
+    static Easing::Range rangeToEnum();
 
 private:
     Easing() {}

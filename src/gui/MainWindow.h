@@ -45,6 +45,7 @@ public:
 public:
     void onNewProjectTriggered();
     void onOpenProjectTriggered();
+    void onOpenRecentTriggered(QString aFileName);
     void onSaveProjectTriggered();
     void onSaveProjectAsTriggered();
     void onCloseProjectTriggered();
@@ -52,7 +53,6 @@ public:
     void onExportVideoTriggered(const ctrl::VideoFormat& aFormat);
     void onUndoTriggered();
     void onRedoTriggered();
-
 private:
     virtual void keyPressEvent(QKeyEvent* aEvent);
     virtual void keyReleaseEvent(QKeyEvent* aEvent);

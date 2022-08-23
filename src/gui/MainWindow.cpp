@@ -676,6 +676,41 @@ void MainWindow::onOpenProjectTriggered()
     }
 }
 
+void MainWindow::onOpenRecentTriggered(QString aFileName)
+{
+    // stop animation and main display rendering
+    EventSuspender suspender(*mMainDisplay, *mTarget);
+
+    QString fileName = aFileName;
+
+    // clear old project
+    resetProjectRefs(nullptr);
+
+    // try loading
+    ctrl::System::LoadResult result;
+    {
+        menu::ProgressReporter progress(false, this);
+        result = mSystem.openProject(fileName, new ProjectHook(), progress);
+    }
+
+    if (result)
+    {
+        resetProjectRefs(result.project);
+        mProjectTabBar->pushProject(*result.project);
+
+        mMainDisplay->resetCamera();
+    }
+    else
+    {
+        QMessageBox::warning(nullptr, tr("Loading Error"), result.messages());
+
+        if (mProjectTabBar->currentProject())
+        {
+            resetProjectRefs(mProjectTabBar->currentProject());
+        }
+    }
+}
+
 bool MainWindow::processProjectSaving(core::Project& aProject, bool aRename)
 {
     // stop animation and main display rendering

@@ -1,6 +1,5 @@
 #include "gui/ToolWidget.h"
 #include "gui/KeyCommandMap.h"
-#include "XC.h"
 
 namespace gui
 {

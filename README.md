@@ -14,7 +14,7 @@ Note: For the present, there may be incompatible changes without notice in advan
 
 ## Development Environment
 * Windows/Linux/Mac
-* Qt5.7 or later
+* Qt5.14 or later
 * MSVC2015/MinGW/GCC/Clang (32-bit or 64-bit)
 
 ## Runtime Requirements
@@ -53,4 +53,19 @@ make
 ```
 ./AnimeEffects  
 ```
+
+
+## Windows
+* it's recommended that you use QtCreator for compilation:
+```
+Make sure you have the bin folder of your compiler of choice added to your path (MSVC recommended)
+Clone the project and open "AnimeEffects.pro" using QtCreator
+Compile the project on the release profile 
+Open your console of preference
+Run "windeployqt.exe --release % Path to the compiled AnimeEffects folder %"
+```
+
+* When deployment is done, you may just run AnimeEffects.exe
+
+
 If you have any issues feel free to ask questions on our <a href='https://discord.gg/sKp8Srm'>Discord</a>!

@@ -3,6 +3,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QDomDocument>
+#include <qstandardpaths.h>
 #include "util/TextUtil.h"
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
@@ -65,10 +66,116 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
     {
         QAction* newProject     = new QAction(tr("New Project..."), this);
         QAction* openProject    = new QAction(tr("Open Project..."), this);
+        QMenu* openRecent     = new QMenu(tr("Open Recent..."), this);
+        {
+            // Get appdata folder
+            QString writableAppData = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+            writableAppData.replace("AnimeEffectsProject/AnimeEffects", "AnimeEffects"); // To remove redundancy
+            if (!QDir(writableAppData).exists()){
+                QDir().mkdir(writableAppData);
+            }
+            QString pathFilename = writableAppData + "/folderpaths.ann"; // Custom suffix to identify this type of file
+            QFile pathFile(pathFilename);
+
+            // Read file
+            QStringList recentfiles;
+            if (pathFile.open(QIODevice::ReadOnly) || pathFile.isOpen())
+            {
+                QTextStream in(&pathFile);
+                while (!in.atEnd()) {
+                    recentfiles += in.readLine().split("\n");
+                }
+            }
+            pathFile.close();
+            // Path placeholders
+            if (recentfiles.length() != 8){
+                while (recentfiles.length() != 8){
+                    recentfiles.append("Path placeholder");
+                }
+            }
+            QString firstPath = recentfiles[0];
+            QString secondPath = recentfiles[1];
+            QString thirdPath = recentfiles[2];
+            QString fourthPath = recentfiles[3];
+            QString fifthPath = recentfiles[4];
+            QString sixthPath = recentfiles[5];
+            QString seventhPath = recentfiles[6];
+            QString eigthPath = recentfiles[7];
+
+            // Path actions
+            QAction * placeholderAction = new QAction(tr("No other projects..."), this);
+            QAction* firstPathAction = new QAction(firstPath);
+            QAction* secondPathAction = new QAction(secondPath);
+            QAction* thirdPathAction = new QAction(thirdPath);
+            QAction* fourthPathAction = new QAction(fourthPath);
+            QAction* fifthPathAction = new QAction(fifthPath);
+            QAction* sixthPathAction = new QAction(sixthPath);
+            QAction* seventhPathAction = new QAction(seventhPath);
+            QAction* eigthPathAction = new QAction(eigthPath);
+            // Path addition
+            // There *has* to be a better way to do this, but I do not know of it :(
+            if (firstPath == QString("Path placeholder")){
+                openRecent->addAction(placeholderAction);
+            }
+            else{
+                openRecent->addAction(firstPathAction);
+            }
+            if (secondPath == QString("Path placeholder")){
+                openRecent->addAction(placeholderAction);
+            }
+            else{
+                openRecent->addAction(secondPathAction);
+            }
+            if (thirdPath == QString("Path placeholder")){
+                openRecent->addAction(placeholderAction);
+            }
+            else{
+                openRecent->addAction(thirdPathAction);
+            }
+            if (fourthPath == QString("Path placeholder")){
+                openRecent->addAction(placeholderAction);
+            }
+            else{
+                openRecent->addAction(fourthPathAction);
+            }
+            if (fifthPath == QString("Path placeholder")){
+                openRecent->addAction(placeholderAction);
+            }
+            else{
+                openRecent->addAction(fifthPathAction);
+            }
+            if (sixthPath == QString("Path placeholder")){
+                openRecent->addAction(placeholderAction);
+            }
+            else{
+                openRecent->addAction(sixthPathAction);
+            }
+            if (seventhPath == QString("Path placeholder")){
+                openRecent->addAction(placeholderAction);
+            }
+            else{
+                openRecent->addAction(seventhPathAction);
+            }
+            if (eigthPath == QString("Path placeholder")){
+                openRecent->addAction(placeholderAction);
+            }
+            else{
+                openRecent->addAction(eigthPathAction);
+            }
+
+            // Connections
+            connect(firstPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(firstPath); });
+            connect(secondPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(secondPath); });
+            connect(thirdPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(thirdPath); });
+            connect(fourthPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(fourthPath); });
+            connect(fifthPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(fifthPath); });
+            connect(sixthPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(sixthPath); });
+            connect(seventhPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(seventhPath); });
+            connect(eigthPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(eigthPath); });
+        }
         QAction* saveProject    = new QAction(tr("Save Project"), this);
         QAction* saveProjectAs  = new QAction(tr("Save Project As..."), this);
         QAction* closeProject   = new QAction(tr("Close Project"), this);
-
         QMenu* exportAs = new QMenu(tr("Export As"), this);
         {
             ctrl::VideoFormat gifFormat;
@@ -107,6 +214,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
         fileMenu->addAction(newProject);
         fileMenu->addAction(openProject);
+        fileMenu->addAction(openRecent->menuAction());
         fileMenu->addSeparator();
         fileMenu->addAction(saveProject);
         fileMenu->addAction(saveProjectAs);
@@ -210,12 +318,16 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         connect(aboutMe, &QAction::triggered, [=]()
         {
             QMessageBox msgBox;
-            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setWindowIcon(QIcon("../src/AnimeEffects.ico"));
             auto versionString = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." + QString::number(AE_MICRO_VERSION);
             auto formatVersionString = QString::number(AE_PROJECT_FORMAT_MAJOR_VERSION) + "." + QString::number(AE_PROJECT_FORMAT_MINOR_VERSION);
             auto platform = QSysInfo::productType();
-            msgBox.setText(QString("AnimeEffects for ") + platform + " version " + versionString);
-
+            auto qtVersion = QString::number(QT_VERSION_MAJOR) + "." + QString::number(QT_VERSION_MINOR) + "." + QString::number(QT_VERSION_PATCH);
+            auto toUp = platform[0].toUpper(); // First letter capitalization :D
+            platform[0] = toUp;
+            QString msgStr = "### AnimeEffects for " + platform + " version " + versionString + "<br />" + "Original code and artwork by [Hidefuku](https://github.com/hidefuku).<br />Current development handled by the [AnimeEffectsDevs](https://github.com/AnimeEffectsDevs).";
+            msgBox.setText(msgStr);
+            msgBox.setTextFormat(Qt::TextFormat::MarkdownText);
             QString detail;
             detail += "Version: " + versionString + "\n";
             detail += "Platform: " + platform + " " + QSysInfo::productVersion() + "\n";
@@ -223,11 +335,11 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             detail += "Build CPU: " + QSysInfo::buildCpuArchitecture() + "\n";
             detail += "Current CPU: " + QSysInfo::currentCpuArchitecture() + "\n";
             detail += "Current GPU: " + QString(this->mViaPoint.glDeviceInfo().renderer.c_str()) + "\n";
-            detail += "GPU Vender: " + QString(this->mViaPoint.glDeviceInfo().vender.c_str()) + "\n";
+            detail += "GPU Vendor: " + QString(this->mViaPoint.glDeviceInfo().vender.c_str()) + "\n";
             detail += "OpenGL Version: " + QString(this->mViaPoint.glDeviceInfo().version.c_str()) + "\n";
+            detail += "Qt Version: " + qtVersion + "\n";
             detail += "Format Version: " + formatVersionString + "\n";
             msgBox.setDetailedText(detail);
-
             msgBox.setStandardButtons(QMessageBox::Ok);
             msgBox.setDefaultButton(QMessageBox::Ok);
             msgBox.exec();

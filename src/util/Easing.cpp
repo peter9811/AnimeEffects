@@ -53,6 +53,35 @@ QString Easing::getTypeName(Type aType)
     }
 }
 
+Easing::Type Easing::easingToEnum(){
+    QSettings settings;
+    auto aEasing = settings.value("generalsettings/easing");
+    aEasing = aEasing.toString();
+    if (aEasing == "None") return Easing::Type_None;
+    else if (aEasing == "Linear") return Easing::Type_Linear;
+    else if (aEasing == "Sine") return Easing::Type_Sine;
+    else if (aEasing == "Quad") return Easing::Type_Quad;
+    else if (aEasing == "Cubic") return Easing::Type_Cubic;
+    else if (aEasing == "Quart") return Easing::Type_Quart;
+    else if (aEasing == "Quint") return Easing::Type_Quint;
+    else if (aEasing == "Expo") return Easing::Type_Expo;
+    else if (aEasing == "Circ") return Easing::Type_Circ;
+    else if (aEasing == "Back") return Easing::Type_Back;
+    else if (aEasing == "Elastic") return Easing::Type_Elastic;
+    else if (aEasing == "Bounce") return Easing::Type_Bounce;
+    else return Easing::Type_Linear; // Default easing is Linear
+}
+
+Easing::Range Easing::rangeToEnum(){
+    QSettings settings;
+    auto aRange = settings.value("generalsettings/range");
+    if (aRange == "In") return Easing::Range_In;
+    else if (aRange == "Out") return Easing::Range_Out;
+    else if (aRange == "All") return Easing::Range_InOut;
+    else return Easing::Range_InOut; // Default range is InOut, defined as "All" by Hidefuku
+}
+
+
 //-------------------------------------------------------------------------------------------------
 QStringList Easing::getTypeNameList()
 {

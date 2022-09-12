@@ -1,9 +1,11 @@
-name: Ubuntu 20.04
+name: Ubuntu 18.04
 on: push
 
 jobs:
   buildOnBionic:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
+    container:
+      image: ubuntu-18.04
     steps:
     - name: checkout sources
       uses: actions/checkout@v2

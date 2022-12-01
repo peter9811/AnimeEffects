@@ -15,7 +15,7 @@ jobs:
         apt update
         apt install -y software-properties-common g++ make wget rsync
         apt-get update
-        apt install -y build-essential 
+        apt install -y build-essential libglib2.0-0 qt5-default 
         
     - name: build AnimeEffects
       shell: bash

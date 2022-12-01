@@ -21,8 +21,7 @@ jobs:
       shell: bash
       run: |
         echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-        source /opt/qt*/bin/qt*-env.sh || true
-        /opt/qt515/bin/qmake src/AnimeEffects.pro -r CONFIG+=release PREFIX=/usr
+        qmake src/AnimeEffects.pro -r CONFIG+=release PREFIX=/usr
         make -j$(nproc)
         make INSTALL_ROOT=appdir install
         mkdir -p appdir/usr/bin

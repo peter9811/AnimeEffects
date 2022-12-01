@@ -2,10 +2,10 @@ name: Ubuntu LTS
 on: push
 
 jobs:
-  buildOnBionic:
+  buildOnFocal:
     runs-on: ubuntu-20.04
     container:
-      image: latest
+      image: ubuntu:latest
     steps:
     - name: checkout sources
       uses: actions/checkout@v2

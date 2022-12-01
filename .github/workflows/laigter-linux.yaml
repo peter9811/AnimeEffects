@@ -15,7 +15,7 @@ jobs:
         apt update
         apt install -y software-properties-common g++ make wget rsync
         apt-get update
-        apt install -y qt515base qt515x11extras qt515tools libgl1-mesa-dev qt515imageformats
+        apt install -y build-essential 
         
     - name: build AnimeEffects
       shell: bash

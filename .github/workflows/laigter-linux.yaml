@@ -2,10 +2,10 @@ name: Ubuntu LTS
 on: push
 
 jobs:
-  buildOnFocal:
+  buildOnLTS:
     runs-on: ubuntu-20.04
     container:
-      image: ubuntu:focal
+      image: ubuntu:jammy
     steps:
     - name: checkout sources
       uses: actions/checkout@v2
@@ -29,7 +29,7 @@ jobs:
         cp -R data appdir/usr/bin/data
         find appdir/
         export APPIMAGE_EXTRACT_AND_RUN=1
-        wget -c -nv "https://github.com/gcmcnutt/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+        wget -c -nv "https://github.com/p-yukusai/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
         if [[ "$RELEASE_VERSION" != "" ]]; then export VERSION=$RELEASE_VERSION;fi
         chmod a+x linuxdeployqt-continuous-x86_64.AppImage
         ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -extra-plugins=imageformats -appimage -verbose=2

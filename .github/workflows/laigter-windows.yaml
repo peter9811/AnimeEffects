@@ -8,10 +8,10 @@ jobs:
     steps:
     
     - name: checkout sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
         version: '5.15.2'
         modules: 'imageformats'

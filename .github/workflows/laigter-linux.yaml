@@ -8,7 +8,7 @@ jobs:
       image: ubuntu:jammy
     steps:
     - name: checkout sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: add build dependencies
       run: |
@@ -35,7 +35,7 @@ jobs:
         ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -extra-plugins=imageformats -appimage -verbose=2
 
     - name: Github Artifacts
-      uses: actions/checkout@v2
+      uses: actions/upload-artifact@v3
       with:
         name: AnimeEffects 
         path: |

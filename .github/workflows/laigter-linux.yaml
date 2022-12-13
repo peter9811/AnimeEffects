@@ -15,7 +15,7 @@ jobs:
         apt update
         apt install -y software-properties-common g++ make wget rsync
         apt-get update
-        apt install -y build-essential libglib2.0-0 qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgl1-mesa-dev 
+        apt install -y build-essential libglib2.0-0 qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgl1-mesa-dev file
         
     - name: build AnimeEffects
       shell: bash

@@ -14,21 +14,26 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         version: '5.15.2'
+        host: "windows"
+        target: "desktop"
+        cache: "false"
+        setup-python: "true"
         modules: 'imageformats'
         arch: 'win64_mingw81'
         aqtversion: '==1.1.6'
         extra: '--external 7z'
         
     - name: Build AnimeEffects
-      shell: cmd
+      shell: powershell
       run: |
         qmake src\AnimeEffects.pro
-        make
+        make -j8
         dir
         echo $QT_DIR
         mkdir .\AnimeEffects-Windows
         windeployqt --dir .\AnimeEffects-Windows .\release\AnimeEffects.exe
-        copy /Y .\release\AnimeEffects.exe .\AnimeEffects-Windows\AnimeEffects.exe
+        Copy-Item -Path ".\data" -Destination ".\AnimeEffects-Windows\" -recurse -Force
+        Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows\"
         tar.exe -a -c -f AnimeEffects-Windows.zip .\AnimeEffects-Windows
         
     - name: GitHub Releases

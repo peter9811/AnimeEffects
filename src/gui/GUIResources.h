@@ -11,7 +11,6 @@
 #include <QColor>
 #include <QDirIterator>
 #include <QStringList>
-
 #include "XC.h"
 #include "util/NonCopyable.h"
 #include "util/Signaler.h"

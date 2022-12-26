@@ -1,6 +1,7 @@
 # AnimeEffects
 
-A 2D animation tool which doesn't require a carefully thought-out plan, it simplifies animation by providing various functions based on the deformation of polygon meshes.
+A 2D animation tool which doesn't require a carefully thought-out plan, it simplifies animation by providing various functions based on the deformation of polygon meshes.<br>
+Originally developed by hidefuku, it is now being developed and maintained by its community.
 
 * Official Website:<br>
   * *Under construction* <br>

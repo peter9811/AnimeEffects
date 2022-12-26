@@ -13,7 +13,7 @@ Note: For the present there may be incompatible changes made, these will be made
 ***If you have any issues or wish to suggest new features, feel reach out to us on our socials!***
 
 ## Downloads
-* The latest AnimeEffects release is available [here](https://github.com/AnimeEffectsDevs/AnimeEffects/releases), to use it just extract its contents to a folder of your choosing, and then simply run the executable.<br><br>
+* The latest AnimeEffects release is available [here](https://github.com/AnimeEffectsDevs/AnimeEffects/releases), to use it just extract its contents to a folder of your choosing, and then simply run the executable.<br>
 
 ## Requirements
 * Windows/Linux/Mac

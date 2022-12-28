@@ -417,7 +417,7 @@ bool BoneKey::serializeBone(Serializer& aOut, const Bone2* aBone) const
     if (!aBone) return true;
 
     // child count
-    aOut.write(static_cast<int>(aBone->children().size()));
+    aOut.write((int)aBone->children().size());
 
     // serialize bone
     if (!aBone->serialize(aOut))
@@ -468,7 +468,7 @@ bool BoneKey::deserialize(Deserializer& aIn)
     // cache owner
     {
         auto solver = [=](void* aPtr) {
-            ObjectNode* node = static_cast<ObjectNode*>(aPtr);
+            ObjectNode* node = (ObjectNode*)aPtr;
             if (node) this->mCacheOwner = node->pointee();
         };
         if (!aIn.orderIDData(solver))
@@ -494,7 +494,7 @@ bool BoneKey::deserialize(Deserializer& aIn)
         // node
         {
             auto solver = [=](void* aPtr) {
-                ObjectNode* node = static_cast<ObjectNode*>(aPtr);
+                ObjectNode* node = (ObjectNode*)aPtr;
                 if (node) cache->setNode(*node);
             };
             if (!aIn.orderIDData(solver))
@@ -535,7 +535,7 @@ bool BoneKey::deserialize(Deserializer& aIn)
         // node
         {
             auto solver = [=](void* aPtr) {
-                ObjectNode* node = static_cast<ObjectNode*>(aPtr);
+                ObjectNode* node = (ObjectNode*)aPtr;
                 if (node) cache->node = node;
             };
             if (!aIn.orderIDData(solver))

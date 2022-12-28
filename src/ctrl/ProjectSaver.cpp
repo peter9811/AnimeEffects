@@ -16,7 +16,7 @@ bool ProjectSaver::save(const QString& aFilePath, const core::Project& aProject)
 
     if (file.fail())
     {
-        mLog = "Can not create the project file.";
+        mLog = "Unable to save the project.";
         return false;
     }
 

@@ -130,7 +130,6 @@ bool Exporter::FFMpeg::start(const QString& aArgments)
     QStringList arguments;
     arguments = aArgments.split(' ');
     arguments.replaceInStrings("%20", " ");
-    qInfo() << arguments;
     //qDebug() << arguments;
     mProcess->start(program, arguments, QIODevice::ReadWrite);
     //qDebug() << mProcess->readAll().data();

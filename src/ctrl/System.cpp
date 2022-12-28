@@ -171,6 +171,7 @@ System::LoadResult System::openProject(
                             textStream.removeFirst();
                             textStream.append(aFileName);
                             auto textString = textStream.join("\n");
+                            pathFile.resize(0);
                             pathFile.write(textString.toLatin1());
                             pathFile.close();
                     }
@@ -215,6 +216,12 @@ System::SaveResult System::saveProject(core::Project& aProject)
     {
         const QString outputPath = project->fileName();
         const QString cachePath = mCacheDir + "/lastproject.cache";
+        // ensure the string "%20" is not used
+        //qDebug() << outputPath;
+        if (outputPath.contains("%20")){
+            // qDebug() << outputPath;
+            return SaveResult(false, "Please do not use '%20' for naming anie files.");
+        }
 
         // create cache directory
         if (!makeSureCacheDirectory(mCacheDir))

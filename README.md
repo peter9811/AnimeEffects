@@ -18,9 +18,9 @@ Note: For the present there may be incompatible changes made, these will be made
 
 ## Requirements
 * Windows/Linux/Mac
-* OpenGl 4.0 or higher
+* OpenGl 3.3 or higher
   * On linux, you can check whether your graphics card supports OpenGL4.0 CoreProfile or not, run `glxinfo | grep "OpenGL core profile version"` on your terminal.
-* [FFmpeg](https://ffmpeg.org/download.html) (Necessary for video exporting, you can also place a ffmpeg executable in /tools.)
+* [FFmpeg](https://ffmpeg.org/download.html) (Necessary for video exporting, you can place it on your path or copy it to the "/tools" folder.)
 
 ## Development requirements
 * Qt5.14 or later

@@ -32,26 +32,26 @@ public:
 
     static float getRadianFromDegree(float aDegree)
     {
-        return static_cast<float>((static_cast<double>(aDegree) * M_PI) / 180.0);
+        return (float)((aDegree * M_PI) / 180.0);
     }
 
     static float getDegreeFromRadian(float aRadian)
     {
-        return static_cast<float>((static_cast<double>(aRadian) * 180.0) / M_PI);
+        return (float)((aRadian * 180.0) / M_PI);
     }
 
     static float normalizeAngleRad(float aAngle)
     {
         static const double kPi2 = 2.0 * M_PI;
-        const int round = static_cast<int>(static_cast<double>(aAngle) / kPi2);
+        const int round = (int)(aAngle / kPi2);
         return (aAngle >= 0.0f) ?
-                    static_cast<float>(static_cast<double>(aAngle) - kPi2 * round) :
-                    static_cast<float>(static_cast<double>(aAngle) - kPi2 * (round - 1));
+                    (float)(aAngle - kPi2 * round) :
+                    (float)(aAngle - kPi2 * (round - 1));
     }
 
     static float normalizeAngleDeg(float aAngle)
     {
-        const int round = static_cast<int>(aAngle / 360.0f);
+        const int round = (int)(aAngle / 360.0f);
         return (aAngle >= 0.0f) ?
                     aAngle - 360.0f * round :
                     aAngle - 360.0f * (round - 1);
@@ -67,15 +67,15 @@ public:
 
     static float normalizeSignedAngleRad(float aAngle)
     {
-        double angle = static_cast<double>(normalizeAngleRad(aAngle));
+        double angle = normalizeAngleRad(aAngle);
         if (angle > M_PI) angle -= 2.0 * M_PI;
-        return static_cast<float>(angle);
+        return (float)angle;
     }
 
     static float getAngleRad(const QVector2D& aVec)
     {
         if (aVec.isNull()) return 0.0f;
-        return static_cast<float>(qAtan2(static_cast<double>(aVec.y()), static_cast<double>(aVec.x())));
+        return qAtan2(aVec.y(), aVec.x());
     }
 
     static float getAngleDeg(const QVector2D& aVec)
@@ -85,10 +85,7 @@ public:
 
     static QVector2D getVectorFromPolarCoord(float aLength, float aAngleRad)
     {
-        return QVector2D(
-                    static_cast<float>(qCos(static_cast<double>(aAngleRad))),
-                    static_cast<float>(qSin(static_cast<double>(aAngleRad))) * aLength
-                    );
+        return QVector2D(qCos(aAngleRad), qSin(aAngleRad)) * aLength;
     }
 
     static float getAngleDifferenceRad(float aAngleFrom, float aAngleTo)

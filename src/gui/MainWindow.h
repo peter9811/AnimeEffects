@@ -51,7 +51,12 @@ public:
     void onCloseProjectTriggered();
     void onExportImageSeqTriggered(const QString& aSuffix);
     void onExportVideoTriggered(const ctrl::VideoFormat& aFormat);
+    void onPlayPauseTriggered();
+    void onDockToggle();
+    void onDisplacementTriggered(int frameDisplacement);
+    void onMovementTriggered(QString frameMovement);
     void onUndoTriggered();
+    void onLoopToggle();
     void onRedoTriggered();
 private:
     virtual void keyPressEvent(QKeyEvent* aEvent);

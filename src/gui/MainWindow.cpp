@@ -71,7 +71,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     // setup UI
     {
         this->setObjectName(QStringLiteral("MainWindow"));
-
+        this->setWindowIcon(QIcon("../src/AnimeEffects.ico"));
         this->setMouseTracking(true);
         this->setFocusPolicy(Qt::NoFocus);
         this->setAcceptDrops(false);
@@ -274,6 +274,34 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
         auto key = mKeyCommandMap->get("SaveProject");
         if (key) key->invoker = [=](){ this->onSaveProjectTriggered(); };
     }
+    {
+        auto key = mKeyCommandMap->get("PlayPause");
+        if (key) key->invoker = [=](){ this->onPlayPauseTriggered(); };
+    }
+    {
+        auto key = mKeyCommandMap->get("ToggleDocks");
+        if (key) key->invoker = [=](){ this->onDockToggle(); };
+    }
+    {
+        auto key = mKeyCommandMap->get("ToggleRepeat");
+        if (key) key->invoker = [=](){ this->onLoopToggle(); };
+    }
+    {
+        auto key = mKeyCommandMap->get("MoveRight");
+        if (key) key->invoker = [=](){ this->onDisplacementTriggered(1);};
+    }
+    {
+        auto key = mKeyCommandMap->get("MoveLeft");
+        if (key) key->invoker = [=](){ this->onDisplacementTriggered(-1);};
+    }
+    {
+        auto key = mKeyCommandMap->get("MoveToInit");
+        if (key) key->invoker = [=](){ this->onMovementTriggered("Init");};
+    }
+    {
+        auto key = mKeyCommandMap->get("MoveToLast");
+        if (key) key->invoker = [=](){ this->onMovementTriggered("Last");};
+    }
 #endif
 }
 
@@ -383,7 +411,6 @@ void MainWindow::onProjectTabChanged(core::Project& aProject)
 
 void MainWindow::onThemeUpdated(theme::Theme &aTheme)
 {
-
     QFile stylesheet(aTheme.path()+"/stylesheet/standard.ssa");
     if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -569,6 +596,50 @@ void MainWindow::onUndoTriggered()
             mViaPoint.pushUndoneLog(tr("Undone : ") + ret);
             mMainDisplay->updateRender();
         }
+    }
+}
+
+void MainWindow::onDisplacementTriggered(int frameDisplacement)
+{
+    mTarget->timeLineWidget().setFrame(mTarget->currentFrame().added(frameDisplacement));
+}
+
+void MainWindow::onPlayPauseTriggered()
+{
+    mTarget->playBackWidget().PlayPause(); // If it's not playing then it will begin playback
+}
+
+void MainWindow::onMovementTriggered(QString frameMovement)
+{
+    if (frameMovement == "Init"){
+    mTarget->timeLineWidget().setFrame(core::Frame(mCurrent->attribute().maxFrame()));
+    }
+    else{
+    mTarget->timeLineWidget().setFrame(core::Frame(0));
+    }
+}
+
+void MainWindow::onDockToggle() // For some reason it does not work without this travesty
+{
+    if (mDockPropertyWidget->isHidden()){mDockPropertyWidget->show();}
+    else if (!mDockPropertyWidget->isHidden()){mDockPropertyWidget->hide();}
+
+    if (mDockToolWidget->isHidden()) {mDockToolWidget->show();}
+    else if (!mDockToolWidget->isHidden()) {mDockToolWidget->hide();}
+
+    if (mTarget->isHidden()){mTarget->show();}
+    else if (!mTarget->isHidden()){mTarget->hide();}
+}
+
+void MainWindow::onLoopToggle()
+{
+    if (mTarget->playBackWidget().isLoopChecked()){
+        mTarget->timeLineWidget().setPlayBackLoop(false);
+        mTarget->playBackWidget().checkLoop(false);
+    }
+    else{
+        mTarget->timeLineWidget().setPlayBackLoop(true);
+        mTarget->playBackWidget().checkLoop(true);
     }
 }
 

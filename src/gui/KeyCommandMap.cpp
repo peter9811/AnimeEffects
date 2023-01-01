@@ -37,6 +37,7 @@ KeyCommandMap::KeyCommandMap(QWidget& aParent)
     , mParent(aParent)
 {
     auto general = tr("General");
+    auto timeline = tr("Timeline");
     auto view = tr("View");
     auto tools = tr("Tools");
 
@@ -48,6 +49,27 @@ KeyCommandMap::KeyCommandMap(QWidget& aParent)
 
     addNewKey("SaveProject", general, tr("Save project"),
               ctrl::KeyBinding(Qt::Key_S, Qt::ControlModifier));
+
+    addNewKey("ToggleDocks", general, tr("Hide/Show docks"),
+              ctrl::KeyBinding(Qt::Key_Q, Qt::ControlModifier));
+
+    addNewKey("MoveRight", timeline, tr("Move one frame to the right"),
+            ctrl::KeyBinding(Qt::Key_Right, Qt::ControlModifier));
+
+    addNewKey("MoveLeft", timeline, tr("Move one frame to the Left"),
+            ctrl::KeyBinding(Qt::Key_Left, Qt::ControlModifier));
+
+    addNewKey("MoveToInit", timeline, tr("Move to the initial frame"),
+              ctrl::KeyBinding(Qt::Key_Up, Qt::ControlModifier));
+
+    addNewKey("MoveToLast", timeline, tr("Move to the last frame"),
+              ctrl::KeyBinding(Qt::Key_Down, Qt::ControlModifier));
+
+    addNewKey("ToggleRepeat", timeline, tr("Enable/disable looping"),
+              ctrl::KeyBinding(Qt::Key_R, Qt::ControlModifier));
+
+    addNewKey("PlayPause", timeline, tr("Play or pause playback"),
+              ctrl::KeyBinding(Qt::Key_Space, Qt::ControlModifier));
 
     addNewKey("MoveCanvas", view, tr("Move canvas"),
               ctrl::KeyBinding(Qt::Key_Space, Qt::NoModifier));

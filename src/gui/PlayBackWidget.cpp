@@ -57,6 +57,36 @@ void PlayBackWidget::setPushDelegate(const PushDelegate &aDelegate)
     this->connect(mButtons.at(4), &QPushButton::pressed, [=](){ owner->mPushDelegate(PushType_Fast); });
 }
 
+bool PlayBackWidget::isLoopChecked(){
+     PlayBackWidget* owner = this;
+     bool isChecked = owner->mButtons.at(5)->isChecked();
+     return isChecked;
+}
+
+void PlayBackWidget::checkLoop(bool checkStatus){
+    PlayBackWidget* owner = this;
+    owner->mButtons.at(5)->setChecked(checkStatus);
+}
+
+void PlayBackWidget::PlayPause(){
+    PlayBackWidget* owner = this;
+    bool isChecked = owner->mButtons.at(2)->isChecked();    // There are no functions currently available to check for playback, this'll do for now
+    if (!isChecked) {
+        auto name = "pause";
+        owner->mButtons.at(2)->setIcon(owner->mGUIResources.icon(name));
+        owner->mButtons.at(2)->setToolTip(tr("Pause"));
+        owner->mPushDelegate(PushType_Play);
+        owner->mButtons.at(2)->setChecked(true);
+    }
+    else{
+        auto name = "play";
+        owner->mButtons.at(2)->setIcon(owner->mGUIResources.icon(name));
+        owner->mButtons.at(2)->setToolTip(tr("Play"));
+        owner->mPushDelegate(PushType_Pause);
+        owner->mButtons.at(2)->setChecked(false);
+    }
+}
+
 int PlayBackWidget::constantWidth() const
 {
     return kButtonSize + 10;

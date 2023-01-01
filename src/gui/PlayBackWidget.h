@@ -30,6 +30,9 @@ public:
     PlayBackWidget(GUIResources& aResources, QWidget* aParent);
 
     void setPushDelegate(const PushDelegate& aDelegate);
+    bool isLoopChecked();
+    void checkLoop(bool checkStatus);
+    void PlayPause();
     int constantWidth() const;
     void pushPauseButton();
 

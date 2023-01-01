@@ -1,7 +1,9 @@
 #include <fstream>
+#include "qdir.h"
 #include "util/IDSolver.h"
 #include "ctrl/ProjectLoader.h"
 #include "core/Deserializer.h"
+#include <qstandardpaths.h>
 
 namespace ctrl
 {
@@ -22,6 +24,45 @@ bool ProjectLoader::load(
 
     if (file.fail())
     {
+        // Get appdata folder
+        QString writableAppData = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        writableAppData.replace("AnimeEffectsProject/AnimeEffects", "AnimeEffects"); // To remove redundancy
+        if (!QDir(writableAppData).exists()){
+            QDir().mkdir(writableAppData);
+        }
+        QString pathFilename = writableAppData + "/folderpaths.ann"; // Custom suffix to identify this type of file
+        QFile pathFile(pathFilename);
+
+        // Read file
+        QStringList recentfiles;
+        if (pathFile.open(QIODevice::ReadOnly) || pathFile.isOpen())
+        {
+            QTextStream in(&pathFile);
+            while (!in.atEnd()) {
+                recentfiles += in.readLine().split("\n");
+            }
+        }
+        qInfo() << aPath;
+        if (recentfiles.contains(aPath)){
+            auto unavailableIndex = recentfiles.indexOf(aPath);
+            recentfiles.removeAt(unavailableIndex);
+            qInfo() << recentfiles;
+            pathFile.close();
+            if (pathFile.open(QIODevice::ReadWrite)) {
+                    QTextStream stream(&pathFile);
+                    // TODO: Get this done without flushing the entire file
+                    auto textStream = recentfiles;
+                    QString textString = textStream.join("\n");
+                    qInfo() << "Stream: " + QString(textString);
+                    pathFile.resize(0);
+                    pathFile.write(textString.toLatin1());
+                    pathFile.close();
+                    mLog.push_back("Project removed, renamed or otherwise unavailable, please open it manually.\n"
+                                   "This path will not appear the next time you open the app.");
+                    return false;
+            }
+        }
+
         mLog.push_back("Can not open the project file.");
         return false;
     }

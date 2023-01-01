@@ -111,14 +111,15 @@ bool Exporter::FFMpeg::start(const QString& aArgments)
             //qDebug() << QString(process->readAll().data());
         }
     });
+
     mProcess->connect(process, &QProcess::errorOccurred, [=](QProcess::ProcessError aCode)
     {
         this->mErrorOccurred = true;
         this->mErrorCode = aCode;
         if (this->mProcess)
-        {
-            this->mErrorString = this->mProcess->errorString();
-        }
+            {
+                this->mErrorString = this->mProcess->errorString();
+            }
     });
     mProcess->connect(process, util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished), [=](int, QProcess::ExitStatus)
     {
@@ -128,9 +129,10 @@ bool Exporter::FFMpeg::start(const QString& aArgments)
     // TODO improve the arguments build process
     QStringList arguments;
     arguments = aArgments.split(' ');
-
+    arguments.replaceInStrings("%20", " ");
+    //qDebug() << arguments;
     mProcess->start(program, arguments, QIODevice::ReadWrite);
-
+    //qDebug() << mProcess->readAll().data();
     return !mErrorOccurred;
 }
 
@@ -355,7 +357,7 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam&
     }
 #else
     {
-        const QString outPath = "\"" + filePath.absoluteFilePath() + "\"";
+        QString outPath = filePath.absoluteFilePath();
 
         VideoCodec videoCodec;
         if (aVideo.codecIndex != -1)
@@ -403,13 +405,19 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam&
         }
         videoCodec.command.replace(QRegExp("\\$ifps(\\s|$)"), QString::number(mCommonParam.fps) + "\\1");
         videoCodec.command.replace(QRegExp("\\$icodec(\\s|$)"), videoCodec.icodec + "\\1");
-        videoCodec.command.replace(QRegExp("\\$obps(\\s|$)"), QString::number(aVideo.bps) + "\\1");
+        if (aVideo.bps != 0){ // It multiplied itself by a thousand when taken from the user for some reason
+        videoCodec.command.replace(QRegExp("\\$obps(\\s|$)"), QString::number(aVideo.bps/1000) + "k" + "\\1");
+        }
+        else{
+             videoCodec.command.replace(QRegExp("\\$obps(\\s|$)"), QString::number(5000) + "k ");
+        }
         videoCodec.command.replace(QRegExp("\\$ofps(\\s|$)"), QString::number(mCommonParam.fps) + "\\1");
         videoCodec.command.replace(QRegExp("\\$ocodec(\\s|$)"), videoCodec.name + "\\1");
-        videoCodec.command.replace(QRegExp("\\$opath(\\s|$)"), outPath + "\\1");
+        videoCodec.command.replace(QRegExp("\\$opath(\\s|$)"), outPath.replace(" ", "%20"));
         videoCodec.command.replace(QRegExp("\\$pixfmt(\\s|$)"), aVideo.pixfmt + "\\1");
         videoCodec.command.replace(QRegExp("\\$arg_colorfilter(\\s|$)"), (colorIndex == 0 ? QString("-vf colormatrix=bt601:bt709") : QString("")) + "\\1");
         videoCodec.command.replace(QRegExp("\\$arg_colorspace(\\s|$)"), QString("-colorspace ") + (colorIndex == 0 ? QString("bt709") : QString("smpte170m")) + "\\1");
+        // videoCodec.command.replace("\\", "");
 
         qDebug() << videoCodec.command;
 

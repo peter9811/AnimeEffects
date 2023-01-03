@@ -1,5 +1,7 @@
 # AnimeEffects
 
+🇯🇵 [日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-jp.md)
+
 A 2D animation tool which doesn't require a carefully thought-out plan, it simplifies animation by providing various functions based on the deformation of polygon meshes.<br>
 Originally developed by hidefuku, it is now being developed and maintained by its community.
 
@@ -10,7 +12,7 @@ Originally developed by hidefuku, it is now being developed and maintained by it
   * Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects Community Server</a> (courtesy of @Jose-Moreno)<br>
   * Twitter: <a href='https://twitter.com/anime_effects'>AnimeEffects</a> (maintained by @p_yukusai)<br>
 
-Note: For the present there may be incompatible changes made, these will be made known in the release affected should they ocurr.<br>
+Note: For the present there may be incompatible changes made, these will be made known in the release affected should they occur.<br>
 ***If you have any issues or wish to suggest new features, feel reach out to us on our socials!***
 
 ## Downloads
@@ -19,7 +21,7 @@ Note: For the present there may be incompatible changes made, these will be made
 ## Requirements
 * Windows/Linux/Mac
 * OpenGl 3.3 or higher
-  * On linux, you can check whether your graphics card supports OpenGL4.0 CoreProfile or not, run `glxinfo | grep "OpenGL core profile version"` on your terminal.
+  * On linux, you can check whether your graphics card supports OpenGL3.3 CoreProfile or not, run `glxinfo | grep "OpenGL core profile version"` on your terminal.
 * [FFmpeg](https://ffmpeg.org/download.html) (Necessary for video exporting, you can place it on your path or copy it to the "/tools" folder.)
 
 ## Development requirements
@@ -30,7 +32,7 @@ Note: For the present there may be incompatible changes made, these will be made
 ### Installing Dependencies
 #### Debian / Ubuntu
 
-* first update and install dependencies:
+* First update and install dependencies:
 
 ```
 sudo apt-get update
@@ -39,7 +41,7 @@ sudo apt-get install git gcc libglib2.0-0 qt5-default make
 ```
 
 #### Arch / Manjaro
-* first update and install dependencies:  
+* First update and install dependencies:  
 
 ```
 sudo pacman -Syu
@@ -47,7 +49,7 @@ sudo pacman -S git gcc glib2 qt5 make
 ```
 
 ### Clone / Building
-* clone AnimeEffects git repo and go to the "src" folder:  
+* Clone AnimeEffects git repo and go to the "src" folder:  
 
 ```
 git clone https://github.com/herace/AnimeEffects  
@@ -67,7 +69,7 @@ If you're not using QtCreator, it is adviced that you add the bin folder of your
 Clone the project and open "AnimeEffects.pro" using QtCreator
 Compile the project on the release profile 
 Open your console of preference
-Run "windeployqt.exe --release %path_to_the_executable%"
+Run "windeployqt.exe --release "path_to_the_executable""
 ```
 
 * When deployment is done, you may just run AnimeEffects.exe

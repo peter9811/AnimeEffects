@@ -16,12 +16,12 @@
 ***もし、何か問題があったり、新しい機能を提案したい場合は、私たちのソーシャルに連絡してください。***
 
 ## ダウンロード
-* AnimeEffectsの最新リリースを公開しました[ちら](https://github.com/AnimeEffectsDevs/AnimeEffects/releases) 、使用方法は、任意のフォルダに解凍し、実行ファイルを実行するだけです。<br>
+* AnimeEffectsの最新リリースを[公開しましたちら](https://github.com/AnimeEffectsDevs/AnimeEffects/releases) 、使用方法は、任意のフォルダに解凍し、実行ファイルを実行するだけです。<br>
 
 ## 要件
 * Windows/Linux/Mac
 * OpenGl 3.3 以上
-  * Linuxでは、お使いのグラフィックカードがOpenGL3.3のCoreProfileをサポートしているかどうかを確認するために、ターミナル上で「glxinfo | grep "OpenGL core profile version」と実行します。
+  * Linuxでは、お使いのグラフィックカードがOpenGL3.3のCoreProfileをサポートしているかどうかを確認するために、ターミナル上で「glxinfo | grep "OpenGL core profile version"」と実行します。
 * [FFmpeg](https://ffmpeg.org/download.html) (ビデオエクスポートに必要な場合、パスに配置したり、「/tools」フォルダーにコピーしたりできます。)
 
 ## Development requirements
@@ -66,10 +66,10 @@ make
 * コンパイルにはQtCreatorを使用することを推奨します:
 ```
 QtCreatorを使用していない場合は、選択したコンパイラとそのツールの「/bin」フォルダをパスに追加し、ビルドとデプロイに利用できるパワーシェルスクリプトをチェックアウトすることをお勧めします「MinGWを推奨します」
-プロジェクトをクローンし、QtCreatorで "AnimeEffects.pro "を開きます
+プロジェクトをクローンし、QtCreatorで 「AnimeEffects.pro」を開きます
 リリースプロファイルでプロジェクトをコンパイルする 
 お好みのコンソールを開く
-「windeployqt.exe --release "実行_可能_パス"」を実行します
+「windeployqt.exe --release "実行_可能_パス" を実行します
 ```
 
 * 展開が完了したら、AnimeEffects.exeを実行するだけでよいでしょう。

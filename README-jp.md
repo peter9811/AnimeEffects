@@ -16,7 +16,7 @@
 ***もし、何か問題があったり、新しい機能を提案したい場合は、私たちのソーシャルに連絡してください。***
 
 ## ダウンロード
-* AnimeEffectsの最新リリースを公開しました[ちら](https://github.com/AnimeEffectsDevs/AnimeEffects/releases) 、使用方法は、任意のフォルダに解凍し、実行ファイルを実行するだけです。<br>
+* AnimeEffectsの最新リリースを[公開しましたちら](https://github.com/AnimeEffectsDevs/AnimeEffects/releases) 、使用方法は、任意のフォルダに解凍し、実行ファイルを実行するだけです。<br>
 
 ## 要件
 * Windows/Linux/Mac

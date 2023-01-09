@@ -20,12 +20,20 @@ Note: For the present there may be incompatible changes made, these will be made
 
 ## Requirements
 * Windows/Linux/Mac
+  * See compatible versions bellow.
 * OpenGl 3.3 or higher
   * On linux, you can check whether your graphics card supports OpenGL3.3 CoreProfile or not, run `glxinfo | grep "OpenGL core profile version"` on your terminal.
 * [FFmpeg](https://ffmpeg.org/download.html) (Necessary for video exporting, you can place it on your path or copy it to the "/tools" folder.)
 
+## OS Targets
+#### This is what we are compiling and testing the software on, it may work on older versions but this is discouraged.
+* Windows 10 or newer.
+* Ubuntu LTS or newer.
+  * The provided AppImage will *not* work on older versions due to glibc.
+* macOS Big Sur or newer.
+
 ## Development requirements
-* Qt5.14 or later
+* Qt 5.14 or later.
 * MSVC2015/MinGW/GCC/Clang (32-bit or 64-bit)
 
 ## Linux

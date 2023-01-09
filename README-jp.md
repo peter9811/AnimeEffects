@@ -20,11 +20,19 @@
 
 ## 要件
 * Windows/Linux/Mac
+  * 下記の対応バージョンをご覧ください。
 * OpenGl 3.3 以上
   * Linuxでは、お使いのグラフィックカードがOpenGL3.3のCoreProfileをサポートしているかどうかを確認するために、ターミナル上で「glxinfo | grep "OpenGL core profile version"」と実行します。
 * [FFmpeg](https://ffmpeg.org/download.html) (ビデオエクスポートに必要な場合、パスに配置したり、「/tools」フォルダーにコピーしたりできます。)
 
-## Development requirements
+## OSターゲット
+#### これらのOSは、私たちがソフトウェアをコンパイルし、テストしているバージョンであり、古いバージョンでも動作する場合がありますが、これは推奨されません。
+* Windows 10 以降。
+* Ubuntu LTS 以降。
+  * 提供されたAppImageは、glibcの関係で古いバージョンでは*動作しない*。
+* macOS Big Sur 以降。
+
+## 開発要件
 * Qt5.14 以上
 * MSVC2015/MinGW/GCC/Clang (32-bitまたは64-bit)
 

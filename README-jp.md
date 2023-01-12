@@ -77,7 +77,7 @@ QtCreatorを使用していない場合は、選択したコンパイラとそ�
 プロジェクトをクローンし、QtCreatorで 「AnimeEffects.pro」を開きます
 リリースプロファイルでプロジェクトをコンパイルする 
 お好みのコンソールを開く
-「windeployqt.exe --release "実行_可能_パス" を実行します
+「windeployqt.exe --release "実行_可能_パス"」を実行します
 ```
 
-* 展開が完了したら、AnimeEffects.exeを実行するだけでよいでしょう。
+* 展開が完了したら、「AnimeEffects.exe」を実行するだけでよいでしょう。

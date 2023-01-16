@@ -35,3 +35,12 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: AnimeEffects.zip
         tag: ${{ github.ref }}
+        
+    - name: Github Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: AnimeEffects
+        path: AnimeEffects.zip
+
+        
+      

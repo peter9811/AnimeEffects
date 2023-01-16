@@ -1,5 +1,5 @@
 name: Ubuntu LTS
-on: push
+on: workflow_dispatch
 
 jobs:
   buildOnLTS:

@@ -28,6 +28,11 @@ QVector3D MathUtil::getAxisInversed(const QVector3D& aNormAxis, const QVector3D&
     return 2.0f * (aNormAxis * QVector3D::dotProduct(aNormAxis, aVec)) - aVec;
 }
 
+int MathUtil::getInverseIntForRange(const int& rangeMax, const int& number, const int& rangeMin)
+{
+    return (rangeMax - number) + rangeMin;
+}
+
 float MathUtil::getClockwiseRotationRad(const QVector2D& aFrom, const QVector2D& aTo)
 {
     if (aFrom.isNull() || aTo.isNull()) return 0.0f;

@@ -34,6 +34,7 @@ private:
     void onCanvasSizeTriggered();
     void onMaxFrameTriggered();
     void onLoopTriggered();
+    void onFPSTriggered();
     bool confirmMaxFrameUpdating(int aNewMaxFrame) const;
 
     ViaPoint& mViaPoint;
@@ -73,6 +74,19 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
+class ProjectFPSSettingDialog : public EasyDialog
+{
+    Q_OBJECT
+public:
+    ProjectFPSSettingDialog(core::Project& aProject, QWidget* aParent);
+    int fps() const { return mFPSBox->value(); }
+private:
+    bool confirmFPSUpdating(int aNewMaxFrame) const;
+    core::Project& mProject;
+    QSpinBox* mFPSBox;
+};
+
+//-------------------------------------------------------------------------------------------------
 class ProjectLoopSettingDialog : public EasyDialog
 {
     Q_OBJECT
@@ -82,6 +96,8 @@ public:
 private:
     QCheckBox* mLoopBox;
 };
+
+
 
 } // namespace gui
 

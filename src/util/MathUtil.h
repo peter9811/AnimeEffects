@@ -104,6 +104,8 @@ public:
         return getDegreeFromRadian(getAngleDifferenceRad(aFrom, aTo));
     }
 
+    static int getInverseIntForRange(const int& rangeMax, const int& number, const int& rangeMin);
+
     static float getClockwiseRotationRad(const QVector2D& aFrom, const QVector2D& aTo);
 
     static QVector2D blendVectorByClockwiseRotation(

@@ -26,7 +26,6 @@ private:
     void bindNode(core::Bone2& aBone, core::ObjectNode& aNode);
     void unbindNode(core::ObjectNode& aNode);
     void renderChildNodes(const core::RenderInfo& aInfo, QPainter& aPainter);
-
     core::Project& mProject;
     const GraphicStyle& mGraphicStyle;
     core::ObjectNode& mTarget;

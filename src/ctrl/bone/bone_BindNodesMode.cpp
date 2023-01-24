@@ -81,11 +81,13 @@ bool BindNodesMode::updateCursor(const CameraInfo& aCamera, const AbstractCursor
 void BindNodesMode::bindNode(Bone2& aBone, ObjectNode& aNode)
 {
     XC_ASSERT(!mKeyOwner.owns());
-    if (aBone.isBinding(aNode)) return; // the node was already bound
+    if (aBone.isBinding(aNode)){
+    return;
+    } // the node was already bound
 
     cmnd::Stack& stack = mProject.commandStack();
     {
-        cmnd::ScopedMacro macro(stack, CmndName::tr("bind a object to a bone"));
+        cmnd::ScopedMacro macro(stack, CmndName::tr("Bind node to bone"));
         macro.grabListener(new Notifier(mProject, mTarget, *mKeyOwner.key,
                                         TimeLineEvent::Type_ChangeKeyValue));
 
@@ -113,7 +115,7 @@ void BindNodesMode::unbindNode(ObjectNode& aNode)
     }
 
     cmnd::Stack& stack = mProject.commandStack();
-    cmnd::ScopedMacro macro(stack, CmndName::tr("unbind a object from bones"));
+    cmnd::ScopedMacro macro(stack, CmndName::tr("Unbind node from bones"));
     macro.grabListener(new Notifier(mProject, mTarget, *mKeyOwner.key,
                                     TimeLineEvent::Type_ChangeKeyValue));
 

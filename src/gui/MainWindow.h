@@ -22,6 +22,8 @@
 #include "gui/ResourceDialog.h"
 #include "gui/LocaleParam.h"
 #include "gui/MouseSetting.h"
+#include "qfilesystemwatcher.h"
+#include "res/res_ResourceUpdater.h"
 
 namespace gui
 {
@@ -41,6 +43,8 @@ public:
 
     void testNewProject(const QString& aFilePath);
     void closeAllProjects();
+    static QFileSystemWatcher* getWatcher();
+    static void showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon);
 
 public:
     void onNewProjectTriggered();
@@ -58,6 +62,7 @@ public:
     void onUndoTriggered();
     void onLoopToggle();
     void onRedoTriggered();
+
 private:
     virtual void keyPressEvent(QKeyEvent* aEvent);
     virtual void keyReleaseEvent(QKeyEvent* aEvent);

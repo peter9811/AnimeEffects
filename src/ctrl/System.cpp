@@ -133,57 +133,23 @@ System::LoadResult System::openProject(
         if (loader.load(aFileName, *projectScope, gl::DeviceInfo::instance(), aReporter))
         {
             mProjects.push_back(projectScope.take());
-
-            // Get appdata folder
-            QString writableAppData = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-            writableAppData.replace("AnimeEffectsProject/AnimeEffects", "AnimeEffects"); // To remove redundancy
-            if (!QDir(writableAppData).exists()){
-                QDir().mkdir(writableAppData);
-            }
-            QString pathFilename = writableAppData + "/folderpaths.ann"; // Custom suffix to identify this type of file
-            QFile pathFile(pathFilename);
-
-            // Read file
-            QStringList recentfiles;
-            if (pathFile.open(QIODevice::ReadOnly) || pathFile.isOpen())
-            {
-                QTextStream in(&pathFile);
-                while (!in.atEnd()) {
-                    recentfiles += in.readLine().split("\n");
-                }
-            }
-            pathFile.close();
+            // Get settings
+            QSettings settings;
+            QStringList recentfiles = settings.value("projectloader/recents").toStringList();
 
             // Check file length
-            if (recentfiles.length() == 0){
-                if (pathFile.open(QIODevice::ReadWrite)) {
-                        QTextStream stream(&pathFile);
-                        stream << aFileName << "\n";
-                    }
+            if (recentfiles.length() != 8){
+                recentfiles.append(aFileName);
             }
             // If length eight remove first
-            else if (recentfiles.length() == 8 && !recentfiles.contains(aFileName)){
-                    pathFile.close();
-                    if (pathFile.open(QIODevice::ReadWrite)) {
-                            QTextStream stream(&pathFile);
-                            // TODO: Get this done without flushing the entire file
-                            auto textStream = recentfiles;
-                            textStream.removeFirst();
-                            textStream.append(aFileName);
-                            auto textString = textStream.join("\n");
-                            pathFile.resize(0);
-                            pathFile.write(textString.toLatin1());
-                            pathFile.close();
-                    }
+            else if (recentfiles.length() == 8){
+                    recentfiles.pop_front();
             }
-            // Append otherwise
-            else{
-                if (pathFile.open(QIODevice::Append) && !recentfiles.contains(aFileName)) {
-                        QTextStream append(&pathFile);
-                        append << aFileName << "\n";
-                }
+            // Save
+            if (!settings.value("projectloader/recents").toStringList().contains(aFileName)){
+                settings.setValue("projectloader/recents", recentfiles);
             }
-            pathFile.close();
+
             return LoadResult(mProjects.back(), "Success.");
         }
 

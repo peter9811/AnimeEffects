@@ -3,7 +3,6 @@
 #include "ctrl/FFDEditor.h"
 #include "ctrl/ffd/ffd_BrushMode.h"
 #include "ctrl/ffd/ffd_DragMode.h"
-
 #include "gl/Util.h"
 #include "gl/ComputeTexture1D.h"
 
@@ -194,7 +193,7 @@ bool FFDEditor::setTarget(ObjectNode* aTarget)
             mRootTarget = nullptr;
             if (!message.isEmpty())
             {
-                mUILogger.pushLog(UILog::tr("FFDEditor : ") + message, UILogType_Warn);
+                mUILogger.pushLog(UILog::tr("FFD Editor : ") + message, UILogType_Warn);
             }
         }
     }
@@ -290,7 +289,7 @@ bool FFDEditor::resetCurrentTarget(QString* aMessage)
     }
     else if (aMessage)
     {
-        *aMessage = UILog::tr("There is no object which has meshes.");
+        *aMessage = UILog::tr("There are no object with meshes.");
     }
 
     return !mTargets.isEmpty();

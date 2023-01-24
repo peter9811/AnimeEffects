@@ -33,7 +33,7 @@ namespace gui
 {
 //-------------------------------------------------------------------------------------------------
 ExportDialog::ExportDialog(core::Project& aProject, const QString& aPath, QWidget* aParent)
-    : EasyDialog(tr("Export Dialog"), aParent)
+    : EasyDialog(tr("Export Animation..."), aParent)
     , mProject(aProject)
     , mCommonParam()
     , mSize()
@@ -103,9 +103,9 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout)
             this->mFixAspect = aCheck;
         });
 
-        aLayout.addRow(tr("image width :"), x);
-        aLayout.addRow(tr("image height :"), y);
-        aLayout.addRow(tr("fix aspect :"), fix);
+        aLayout.addRow(tr("Image width :"), x);
+        aLayout.addRow(tr("Image height :"), y);
+        aLayout.addRow(tr("Fix aspect ratio :"), fix);
     }
 }
 
@@ -145,8 +145,8 @@ void ExportDialog::pushFrameBox(QFormLayout& aLayout)
         }
     });
 
-    aLayout.addRow(tr("start frame :"), start);
-    aLayout.addRow(tr("end frame :"), end);
+    aLayout.addRow(tr("Initial frame :"), start);
+    aLayout.addRow(tr("Last frame :"), end);
 }
 
 void ExportDialog::pushFpsBox(QFormLayout& aLayout)
@@ -161,7 +161,7 @@ void ExportDialog::pushFpsBox(QFormLayout& aLayout)
         this->mCommonParam.fps = fps->value();
     });
 
-    aLayout.addRow(tr("fps :"), fps);
+    aLayout.addRow(tr("FPS :"), fps);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ QLayout* ImageExportDialog::createImageOption()
             this->mImageParam.name = name->text();
         });
 
-        form->addRow(tr("prefix name :"), name);
+        form->addRow(tr("Prefix name :"), name);
     }
 
     // quality
@@ -223,7 +223,7 @@ QLayout* ImageExportDialog::createImageOption()
             this->mImageParam.quality = quality->value();
         });
 
-        form->addRow(tr("quality :"), quality);
+        form->addRow(tr("Quality :"), quality);
     }
 
     this->pushSizeBox(*form);
@@ -269,12 +269,12 @@ QLayout* GifExportDialog::createGifOption()
     auto kbps = new QSpinBox();
     {
         setMinMaxOptionWidth(kbps);
-        kbps->setRange(1, 100 * 1000);
+        kbps->setRange(0, 100 * 1000);
         kbps->setValue(mGifParam.intermediateBps / 1000);
 
         this->connect(kbps, &QSpinBox::editingFinished, [=]()
         {
-            this->mGifParam.intermediateBps = kbps->value() * 1000;
+            this->mGifParam.intermediateBps = kbps->value();
         });
     }
 
@@ -290,8 +290,8 @@ QLayout* GifExportDialog::createGifOption()
             kbps->setEnabled(aCheck);
         });
 
-        form->addRow(tr("optimize palette :"), opti);
-        form->addRow(tr("relay bit rate (Kbps) :"), kbps);
+        form->addRow(tr("Optimize palette :"), opti);
+        form->addRow(tr("Relay bit rate (Kbps) :"), kbps);
     }
 
     return form;
@@ -360,7 +360,7 @@ void VideoExportDialog::updateCommentLabel(QLabel* aLabel, bool aGPUEnc)
 
     if (aGPUEnc)
     {
-        aLabel->setText(tr("The codec requires a special GPU."));
+        aLabel->setText(tr("This codec requires a dedicated GPU."));
     }
     else
     {
@@ -432,12 +432,12 @@ QLayout* VideoExportDialog::createVideoOption()
             {
                 if (codec.lossless)
                 {
-                    hints += tr("lossless");
+                    hints += tr("Lossless");
                 }
                 if (codec.transparent)
                 {
                     if (!hints.isEmpty()) hints += QString(", ");
-                    hints += tr("transparent");
+                    hints += tr("Transparent");
                 }
                 hints = QString(" (") + hints + ")";
             }
@@ -453,13 +453,13 @@ QLayout* VideoExportDialog::createVideoOption()
             this->updateCommentLabel(comment, mVideoParam.format.codecs.at(index).gpuenc);
         });
 
-        form->addRow(tr("codec :"), codecBox);
+        form->addRow(tr("Codec :"), codecBox);
     }
 
     // push colorspace
-    form->addRow(tr("color standard :"), colorBox);
+    form->addRow(tr("Color standard :"), colorBox);
     // push pixel format
-    form->addRow(tr("pixel format :"), pixfmtBox);
+    form->addRow(tr("Pixel format :"), pixfmtBox);
 
     this->pushSizeBox(*form);
     this->pushFrameBox(*form);
@@ -469,15 +469,15 @@ QLayout* VideoExportDialog::createVideoOption()
     {
         auto kbps = new QSpinBox();
         setMinMaxOptionWidth(kbps);
-        kbps->setRange(1, 100 * 1000);
+        kbps->setRange(0, 100 * 1000);
         kbps->setValue(mVideoParam.bps / 1000);
 
         this->connect(kbps, &QSpinBox::editingFinished, [=]()
         {
-            this->mVideoParam.bps = kbps->value() * 1000;
+            this->mVideoParam.bps = kbps->value();
         });
 
-        form->addRow(tr("bit rate (Kbps) :"), kbps);
+        form->addRow(tr("Bit rate (Kbps) :"), kbps);
     }
 
     // push comment

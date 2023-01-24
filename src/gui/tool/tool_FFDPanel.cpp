@@ -34,9 +34,9 @@ void FFDPanel::createBrush()
     mTypeGroup.reset(new SingleOutItem(3, QSize(kButtonSpace, kButtonSpace), this));
     mTypeGroup->setChoice(mParam.type);
     mTypeGroup->setToolTips(QStringList() <<
-                            tr("Drag Vertex") <<
-                            tr("Deform Mesh") <<
-                            tr("Erase Deforming"));
+                            tr("Move vertex") <<
+                            tr("Deform mesh") <<
+                            tr("Erase deformations"));
     mTypeGroup->setIcons(QVector<QIcon>() <<
                          mResources.icon("move") <<
                          mResources.icon("pencil") <<
@@ -52,9 +52,9 @@ void FFDPanel::createBrush()
     mHardnessGroup.reset(new SingleOutItem(3, QSize(kButtonSpace, kButtonSpace), this));
     mHardnessGroup->setChoice(mParam.hardness);
     mHardnessGroup->setToolTips(QStringList() <<
-                                tr("Quadratic") <<
-                                tr("Quartic") <<
-                                tr("Octic"));
+                                tr("Soft") <<
+                                tr("Normal") <<
+                                tr("Hard"));
     mHardnessGroup->setIcons(QVector<QIcon>() <<
                              mResources.icon("hardness1") <<
                              mResources.icon("hardness2") <<
@@ -68,7 +68,7 @@ void FFDPanel::createBrush()
     static const int kScale = 100;
 
     // radius
-    mRadius.reset(new SliderItem(tr("radius"), this->palette(), this));
+    mRadius.reset(new SliderItem(tr("Radius"), this->palette(), this));
     mRadius->setAttribute(util::Range(5, 1000), mParam.radius, 50);
     mRadius->connectOnChanged([=](int aValue)
     {
@@ -77,7 +77,7 @@ void FFDPanel::createBrush()
     });
 
     // pressure
-    mPressure.reset(new SliderItem(tr("pressure"), this->palette(), this));
+    mPressure.reset(new SliderItem(tr("Pressure"), this->palette(), this));
     mPressure->setAttribute(util::Range(0, kScale), mParam.pressure * kScale, kScale / 10);
     mPressure->connectOnMoved([=](int aValue)
     {
@@ -86,7 +86,7 @@ void FFDPanel::createBrush()
     });
 
     // blur
-    mBlur.reset(new SliderItem(tr("blur"), this->palette(), this));
+    mBlur.reset(new SliderItem(tr("Blur"), this->palette(), this));
     mBlur->setAttribute(util::Range(0, kScale), mParam.blur * kScale, kScale / 10);
     mBlur->connectOnMoved([=](int aValue)
     {
@@ -98,9 +98,9 @@ void FFDPanel::createBrush()
     mEraseHardnessGroup.reset(new SingleOutItem(3, QSize(kButtonSpace, kButtonSpace), this));
     mEraseHardnessGroup->setChoice(mParam.eraseHardness);
     mEraseHardnessGroup->setToolTips(QStringList() <<
-                                     tr("Quadratic") <<
-                                     tr("Quartic") <<
-                                     tr("Octic"));
+                                     tr("Soft") <<
+                                     tr("Normal") <<
+                                     tr("Hard"));
     mEraseHardnessGroup->setIcons(QVector<QIcon>() <<
                              mResources.icon("hardness1") <<
                              mResources.icon("hardness2") <<
@@ -112,7 +112,7 @@ void FFDPanel::createBrush()
     });
 
     // erase radius
-    mEraseRadius.reset(new SliderItem(tr("radius"), this->palette(), this));
+    mEraseRadius.reset(new SliderItem(tr("Radius"), this->palette(), this));
     mEraseRadius->setAttribute(util::Range(5, 1000), mParam.eraseRadius, 50);
     mEraseRadius->connectOnChanged([=](int aValue)
     {
@@ -121,7 +121,7 @@ void FFDPanel::createBrush()
     });
 
     // erase pressure
-    mErasePressure.reset(new SliderItem(tr("pressure"), this->palette(), this));
+    mErasePressure.reset(new SliderItem(tr("Pressure"), this->palette(), this));
     mErasePressure->setAttribute(util::Range(0, kScale), mParam.erasePressure * kScale, kScale / 10);
     mErasePressure->connectOnMoved([=](int aValue)
     {

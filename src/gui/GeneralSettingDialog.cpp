@@ -45,42 +45,81 @@ int rangeToIndex(const QString& aRange){
     else return 2; // Default range is InOut, it is referenced as "All" by Hidefuku
 }
 
-QString indexToEasing(int aIndex){
-    switch(aIndex){
-        case 0: return "None";
-        case 1: return "Linear";
-        case 2: return "Sine";
-        case 3: return "Quad";
-        case 4: return "Cubic";
-        case 5: return "Quart";
-        case 6: return "Quint";
-        case 7: return "Expo";
-        case 8: return "Circ";
-        case 9: return "Back";
-        case 10: return "Elastic";
-        case 11: return "Bounce";
-    default: return "Linear";
+QString indexToEasing(int aIndex, bool translated = true){
+    if (translated){
+        switch(aIndex){
+            case 0: return QCoreApplication::translate("GeneralSettingsDialog", "None");
+            case 1: return QCoreApplication::translate("GeneralSettingsDialog", "Linear");
+            case 2: return QCoreApplication::translate("GeneralSettingsDialog", "Sine");
+            case 3: return QCoreApplication::translate("GeneralSettingsDialog", "Quad");
+            case 4: return QCoreApplication::translate("GeneralSettingsDialog", "Cubic");
+            case 5: return QCoreApplication::translate("GeneralSettingsDialog", "Quart");
+            case 6: return QCoreApplication::translate("GeneralSettingsDialog", "Quint");
+            case 7: return QCoreApplication::translate("GeneralSettingsDialog", "Expo");
+            case 8: return QCoreApplication::translate("GeneralSettingsDialog", "Circ");
+            case 9: return QCoreApplication::translate("GeneralSettingsDialog", "Back");
+            case 10: return QCoreApplication::translate("GeneralSettingsDialog", "Elastic");
+            case 11: return QCoreApplication::translate("GeneralSettingsDialog", "Bounce");
+        default: return QCoreApplication::translate("GeneralSettingsDialog", "Linear");
+        }
+    }
+    else{
+        switch(aIndex){
+            case 0: return QString("None");
+            case 1: return QString("Linear");
+            case 2: return QString("Sine");
+            case 3: return QString("Quad");
+            case 4: return QString("Cubic");
+            case 5: return QString("Quart");
+            case 6: return QString("Quint");
+            case 7: return QString("Expo");
+            case 8: return QString("Circ");
+            case 9: return QString("Back");
+            case 10: return QString("Elastic");
+            case 11: return QString("Bounce");
+        default: return QString("Linear");
+    }
+  }
+}
+
+QString indexToRange(int aRange, bool translated = true){
+    if (translated){
+        switch(aRange){
+            case 0: return QCoreApplication::translate("GeneralSettingsDialog", "In");
+            case 1: return QCoreApplication::translate("GeneralSettingsDialog", "Out");
+            case 3: return QCoreApplication::translate("GeneralSettingsDialog", "All");
+        default: return QCoreApplication::translate("GeneralSettingsDialog", "All");
+        }
+    }
+    else{
+        switch(aRange){
+            case 0: return QString("In");
+            case 1: return QString("Out");
+            case 3: return QString("All");
+        default: return QString("All");
+        }
     }
 }
 
-QString indexToRange(int aRange){
-    switch(aRange){
-        case 0: return "In";
-        case 1: return "Out";
-        case 3: return "All";
-    default: return "All";
-    }
-}
-
-QString indexToLanguage(int aIndex)
+QString indexToLanguage(int aIndex, bool translated = true)
 {
-    switch (aIndex)
-    {
-    case 0: return "Auto";
-    case 1: return "English";
-    case 2: return "Japanese";
-    default: return "";
+    if (translated){
+        switch (aIndex){
+        case 0: return QCoreApplication::translate("GeneralSettingsDialog", "Auto");
+        case 1: return  QCoreApplication::translate("GeneralSettingsDialog", "English");;
+        case 2: return  QCoreApplication::translate("GeneralSettingsDialog", "Japanese");;
+        default: return  QCoreApplication::translate("GeneralSettingsDialog", "Auto");;
+        }
     }
+    else{
+        switch (aIndex){
+        case 0: return QString("Auto");
+        case 1: return QString("Enslish");
+        case 2: return QString("Japanese");
+        default: return QString("Auto");
+        }
+    }
+  }
 }
 
 QString indexToTimeFormat(int aIndex)
@@ -97,7 +136,6 @@ QString indexToTimeFormat(int aIndex)
     }
 }
 
-}
 
 namespace gui
 {
@@ -246,13 +284,13 @@ void GeneralSettingDialog::saveSettings()
 {
     QSettings settings;
     if (languageHasChanged())
-        settings.setValue("generalsettings/language", indexToLanguage(mLanguageBox->currentIndex()));
+        settings.setValue("generalsettings/language", indexToLanguage(mLanguageBox->currentIndex(), false));
 
     if(easingHasChanged()){
-        settings.setValue("generalsettings/easing", indexToEasing(mEasingBox->currentIndex()));
+        settings.setValue("generalsettings/easing", indexToEasing(mEasingBox->currentIndex(), false));
     }
     if(rangeHasChanged()){
-        settings.setValue("generalsettings/range", indexToRange(mRangeBox->currentIndex()));
+        settings.setValue("generalsettings/range", indexToRange(mRangeBox->currentIndex(), false));
     }
     if(timeFormatHasChanged())
         settings.setValue("generalsettings/ui/timeformat", mTimeFormatBox->currentIndex());

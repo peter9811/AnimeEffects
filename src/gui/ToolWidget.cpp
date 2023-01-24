@@ -96,21 +96,21 @@ void ToolWidget::setDriver(ctrl::Driver* aDriver)
 void ToolWidget::createViewPanel()
 {
     if (mViewPanel) delete mViewPanel;
-    mViewPanel = new tool::ViewPanel(this, mResources, tr("ViewSettings"));
+    mViewPanel = new tool::ViewPanel(this, mResources, tr("View Settings"));
 
-    mViewPanel->addButton("showmesh", true, tr("Show Polygon Wireframe"), [=](bool aChecked)
+    mViewPanel->addButton("showmesh", true, tr("Show mesh"), [=](bool aChecked)
     {
         this->viewSetting().showLayerMesh = aChecked;
         this->onViewSettingChanged(this->viewSetting());
     });
-    mViewPanel->addButton("cutimages", true, tr("Cut Images by the Frame"), [=](bool aChecked)
+    mViewPanel->addButton("cutimages", true, tr("Do not draw outside the frame"), [=](bool aChecked)
     {
         this->viewSetting().cutImagesByTheFrame = aChecked;
         this->onViewSettingChanged(this->viewSetting());
     });
 
     QString _rotateViewAntiClockwiseKeyBindingText = this->mKeyCommandMap.get("RotateCanvas15AntiClockwise")->binding.text();
-    mViewPanel->addButton("rotateac", false, tr("Rotate the View Anticlockwise (%1").arg(_rotateViewAntiClockwiseKeyBindingText), [=](bool)
+    mViewPanel->addButton("rotateac", false, tr("Rotate the canvas anticlockwise (%1").arg(_rotateViewAntiClockwiseKeyBindingText), [=](bool)
     {
         this->viewSetting().rotateViewACW = true;
         this->onViewSettingChanged(this->viewSetting());
@@ -118,7 +118,7 @@ void ToolWidget::createViewPanel()
     });
 
     QString _rotateResetKeyBindingText = this->mKeyCommandMap.get("ResetCanvasAngle")->binding.text();
-    mViewPanel->addButton("resetrot", false, tr("Reset Rotation of the View (%1)").arg(_rotateResetKeyBindingText), [=](bool)
+    mViewPanel->addButton("resetrot", false, tr("Reset rotation of the canvas (%1)").arg(_rotateResetKeyBindingText), [=](bool)
     {
         this->viewSetting().resetRotateView = true;
         this->onViewSettingChanged(this->viewSetting());
@@ -126,7 +126,7 @@ void ToolWidget::createViewPanel()
     });
 
     QString _rotateViewClockwiseKeyBindingText = this->mKeyCommandMap.get("RotateCanvas15Clockwise")->binding.text();
-    mViewPanel->addButton("rotatecw", false, tr("Rotate the View Clockwise (%1)").arg(_rotateViewClockwiseKeyBindingText), [=](bool)
+    mViewPanel->addButton("rotatecw", false, tr("Rotate the canvas clockwise (%1)").arg(_rotateViewClockwiseKeyBindingText), [=](bool)
     {
         this->viewSetting().rotateViewCW = true;
         this->onViewSettingChanged(this->viewSetting());

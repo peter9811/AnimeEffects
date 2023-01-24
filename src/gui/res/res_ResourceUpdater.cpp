@@ -324,7 +324,7 @@ void ResourceUpdater::load(QTreeWidget& aTree, const QString& aFilePath)
     {
         auto& stack = mProject.commandStack();
 
-        cmnd::ScopedMacro macro(stack, CmndName::tr("add new resource"));
+        cmnd::ScopedMacro macro(stack, CmndName::tr("Add new resource"));
 
         // notifier
         auto notifier = new AddNewOneNotifier(mViaPoint, mProject);
@@ -374,7 +374,7 @@ img::ResourceNode* ResourceUpdater::createPsdTree(const QString& aFilePath, bool
     if (file.fail())
     {
         QMessageBox::warning(nullptr, tr("FileIO Error"),
-                             tr("Can not found a PSD file."));
+                             tr("PSD file not found."));
         return nullptr;
     }
 
@@ -385,7 +385,7 @@ img::ResourceNode* ResourceUpdater::createPsdTree(const QString& aFilePath, bool
         const QString errorText =
                 "error(" + QString::number(reader.resultCode()) + ") " +
                 QString::fromStdString(reader.resultMessage());
-        QMessageBox::warning(nullptr, tr("PSD Parse Error"), errorText);
+        QMessageBox::warning(nullptr, tr("PSD parse error"), errorText);
         return nullptr;
     }
     file.close();
@@ -508,12 +508,26 @@ img::ResourceNode* createNewAppendNode(ModificationNotifier& aNotifier, img::Res
 }
 
 //-------------------------------------------------------------------------------------------------
-void ResourceUpdater::createImageReloaderRecursive(
+bool ResourceUpdater::createImageReloaderRecursive(
         cmnd::Stack& aStack, ModificationNotifier& aNotifier,
         QTreeWidgetItem& aCurItem, img::ResourceNode& aCurNode,
         img::ResourceNode& aNewNode)
 {
     using img::PSDFormat;
+
+    // This is to prevent a crash
+    if (!(aCurItem.childCount() == (int)aCurNode.children().size())){
+         QMessageBox msgBox;
+         QString aInfo = tr("Expected layer not found, if you wish to remove a layer or change its name, please do "
+                            "so from within AnimeEffects.");
+         msgBox.setIcon(QMessageBox::Critical);
+         msgBox.setWindowTitle(tr("Import Error: Unable to find layer"));
+         msgBox.setText(aInfo);
+         msgBox.setStandardButtons(QMessageBox::Ok);
+         msgBox.setDefaultButton(QMessageBox::Ok);
+         msgBox.exec();
+         return false;
+     }
 
     RESOURCE_UPDATER_DUMP("reload image %s", aCurNode.data().identifier().toLatin1().data());
 
@@ -545,8 +559,6 @@ void ResourceUpdater::createImageReloaderRecursive(
             aNewNode.data().freeImage();
         }
     }
-
-    XC_ASSERT(aCurItem.childCount() == (int)aCurNode.children().size());
 
     // each child
     for (auto child : aNewNode.children())
@@ -580,6 +592,7 @@ void ResourceUpdater::createImageReloaderRecursive(
             aStack.push(new GUITreeItemAppender(aCurItem, newItem));
         }
     }
+    return true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -660,7 +673,7 @@ bool ResourceUpdater::tryReloadCorrespondingImages(
     auto beIdentified = allChildrenCanBeIdentified(targetNode, *newNode);
     if (!beIdentified.first)
     {
-        auto text = tr("Failed to identify nodes by following duplications.") + "\n";
+        auto text = tr("Failed to identify nodes due to the following duplicates.") + "\n";
         for (auto& duplicated : beIdentified.second)
         {
             text += duplicated->treePath() + "\n";
@@ -687,7 +700,7 @@ bool ResourceUpdater::tryReloadCorrespondingImages(
                               newNode->data().identifier().toLatin1().data());
 
         auto& stack = mProject.commandStack();
-        cmnd::ScopedMacro macro(stack, CmndName::tr("reload images"));
+        cmnd::ScopedMacro macro(stack, CmndName::tr("Reload images"));
 
         // notifier
         auto notifier = new ModificationNotifier(mViaPoint, mProject, item->treePos());
@@ -695,7 +708,9 @@ bool ResourceUpdater::tryReloadCorrespondingImages(
         macro.grabListener(notifier);
 
         // create reload commands
-        createImageReloaderRecursive(stack, *notifier, aTarget, targetNode, *newNode);
+        if (!createImageReloaderRecursive(stack, *notifier, aTarget, targetNode, *newNode)){
+            return false;
+        }
 
         // create remove abandoned commands
         createAbandonedImageRemoverRecursive(stack, aTarget, targetNode);
@@ -725,7 +740,7 @@ void ResourceUpdater::remove(QTreeWidget& aTree, Item& aTopItem)
             {
                 QMessageBox::warning(
                             nullptr, tr("Operation Error"),
-                            tr("Some layers are referenced by objects yet."));
+                            tr("Some layers are still referenced by objects."));
                 return;
             }
         }
@@ -755,7 +770,7 @@ void ResourceUpdater::remove(QTreeWidget& aTree, Item& aTopItem)
         auto& stack = mProject.commandStack();
         auto& holder = mProject.resourceHolder();
 
-        cmnd::ScopedMacro macro(stack, CmndName::tr("delete images"));
+        cmnd::ScopedMacro macro(stack, CmndName::tr("Delete images"));
 
         // notifier
         auto notifier = new DeleteNotifier(mViaPoint, mProject);

@@ -21,7 +21,7 @@ jobs:
       shell: powershell
       run: |
         qmake src\AnimeEffects.pro
-        make -j8
+        mingw32-make -j8
         dir
         echo $QT_DIR
         mkdir .\AnimeEffects-Windows

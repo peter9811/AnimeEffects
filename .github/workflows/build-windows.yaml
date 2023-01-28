@@ -31,12 +31,12 @@ jobs:
         qmake -spec win32-g++ CONFIG+=release CONFIGs+=qml_release
         mingw32-make -j8
         dir
-        echo $QT_DIR
         mkdir .\AnimeEffects-Windows
         windeployqt --dir .\AnimeEffects-Windows .\release\AnimeEffects.exe
         Copy-Item -Path ".\data" -Destination ".\AnimeEffects-Windows\" -recurse -Force
         Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows\"
         tar.exe -a -c -f AnimeEffects-Windows.zip .\AnimeEffects-Windows
+        dir
         
     - name: Github Artifacts
       uses: actions/upload-artifact@v3

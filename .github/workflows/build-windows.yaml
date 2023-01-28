@@ -43,7 +43,7 @@ jobs:
       with:
         name: AnimeEffects-Windows
         path: |
-              AnimeEffects-Windows.zip
+              D:/a/AnimeEffects/AnimeEffects/src/AnimeEffects-Windows.zip
         
     - name: GitHub Releases
       uses: svenstaro/upload-release-action@v2

@@ -33,6 +33,11 @@ jobs:
         Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows\"
         tar.exe -a -c -f AnimeEffects-Windows.zip .\AnimeEffects-Windows
         
+    - name: Setup PATH
+      run: |
+          echo $env:Qt5_Dir\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo $env:IQTA_TOOLS\mingw810_32\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        
     - name: Github Artifacts
       uses: actions/upload-artifact@v3
       with:

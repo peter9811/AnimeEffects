@@ -18,6 +18,7 @@ jobs:
         host: 'windows'
         target: 'desktop'
         arch: 'win32_mingw81'
+        tools: "tools_cmake tools_ninja tools_mingw,qt.tools.win64_mingw810"
         
     - name: Build AnimeEffects
       shell: powershell

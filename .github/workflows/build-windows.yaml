@@ -32,7 +32,7 @@ jobs:
         mingw32-make -j8
         dir
         mkdir .\AnimeEffects-Windows
-        windeployqt --dir .\AnimeEffects-Windows .\release\AnimeEffects.exe
+        windeployqt --dir .\AnimeEffects-Windows .\AnimeEffects.exe
         Copy-Item -Path ".\data" -Destination ".\AnimeEffects-Windows\" -recurse -Force
         Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows\"
         tar.exe -a -c -f AnimeEffects-Windows.zip .\AnimeEffects-Windows
@@ -41,8 +41,9 @@ jobs:
     - name: Github Artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: AnimeEffects 
-        path: AnimeEffects-Windows.zip
+        name: AnimeEffects-Windows
+        path: |
+              AnimeEffects-Windows.zip
         
     - name: GitHub Releases
       uses: svenstaro/upload-release-action@v2

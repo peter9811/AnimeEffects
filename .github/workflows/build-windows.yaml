@@ -23,7 +23,7 @@ jobs:
     - name: Build AnimeEffects
       shell: powershell
       run: |
-        qmake src\AnimeEffects.pro
+        qmake -spec win32-g++ CONFIG+=release CONFIGs+=qml_release src\AnimeEffects.pro
         mingw32-make -j8
         dir
         echo $QT_DIR

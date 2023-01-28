@@ -13,9 +13,11 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
+        aqtversion: '==2.1.*'
         version: '5.15.2'
+        host: 'windows'
+        target: 'desktop'
         arch: 'win64_mingw81'
-        extra: '--external 7z'
         
     - name: Build AnimeEffects
       shell: powershell

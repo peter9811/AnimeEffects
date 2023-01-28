@@ -30,6 +30,12 @@ jobs:
         Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows\"
         tar.exe -a -c -f AnimeEffects-Windows.zip .\AnimeEffects-Windows
         
+    - name: Github Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: AnimeEffects 
+        path: AnimeEffects-Windows.zip
+        
     - name: GitHub Releases
       uses: svenstaro/upload-release-action@v2
       if: startsWith(github.ref, 'refs/tags/')

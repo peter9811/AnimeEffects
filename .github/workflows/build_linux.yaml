@@ -1,5 +1,8 @@
 name: Ubuntu LTS
-on: workflow_dispatch
+on: 
+    workflow_dispatch:
+    schedule:
+        - cron: '0 0 * * *'
 
 jobs:
   buildOnLTS:
@@ -41,11 +44,4 @@ jobs:
         path: |
           AnimeEffects-x86_64.AppImage
           /__w/AnimeEffects/AnimeEffects/appdir/AnimeEffects.desktop
-    
-    - name: GitHub Releases
-      uses: fnkr/github-action-ghr@v1.3
-      if: startsWith(github.ref, 'refs/tags/')
-      env:
-        GHR_PATH: AnimeEffects-x86_64.AppImage
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

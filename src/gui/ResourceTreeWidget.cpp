@@ -75,7 +75,7 @@ ResourceTreeWidget::ResourceTreeWidget(ViaPoint& aViaPoint, bool aUseCustomConte
         mFileWatch->connect(mFileWatch, &QAction::triggered,
                                this, &ResourceTreeWidget::onWatchTriggered);
 
-        mWatchRemove = new QAction(tr("Stop monitoring changes"), this);
+        mWatchRemove = new QAction(tr("Stop monitoring for changes"), this);
         mWatchRemove->connect(mWatchRemove, &QAction::triggered,
                                this, &ResourceTreeWidget::onWatchRemoveTriggered);
 
@@ -253,7 +253,7 @@ void ResourceTreeWidget::onChangePathActionTriggered(bool)
     if (item && item->isTopNode())
     {
         const QString fileName = QFileDialog::getOpenFileName(
-                    this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif)");
+                    this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
         if (fileName.isEmpty()) return;
 
         if (mHolder)
@@ -352,7 +352,11 @@ void ResourceTreeWidget::onWatchTriggered(bool)
     if (!mProject) return;
     res::Item* item = res::Item::cast(mActionItem);
     if (!item) return;
-
+    if (!QFile(mProject->resourceHolder().findAbsoluteFilePath(item->node())).exists()){
+        MainWindow::showInfoPopup(tr("File not found"), tr("The file couldn't be found, please change "
+                                                           "its file path using the button above."), "Warn");
+        return;
+    }
     auto fileWatcher = MainWindow::getWatcher();
 
     qDebug() << "files : " << fileWatcher->files();

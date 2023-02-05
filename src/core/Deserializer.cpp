@@ -43,6 +43,14 @@ void Deserializer::read(int& aValue)
     aValue = mIn.readSInt32();
 }
 
+void Deserializer::read(QList<int>& aValue)
+{
+    int size = aValue.size();
+    for(int x = 0; x < size; x+=1){
+        aValue[x] = mIn.readSInt32();
+    }
+}
+
 void Deserializer::read(float& aValue)
 {
     aValue = mIn.readFloat32();

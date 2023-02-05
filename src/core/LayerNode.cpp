@@ -55,6 +55,7 @@ void LayerNode::setDefaultImage(const img::ResourceHandle& aHandle, img::BlendMo
     key->setImageOffsetByCenter();
 
     mShaderHolder.reserveShaders(aBlendMode);
+    mShaderHolder.reserveHSVShaders();
     mShaderHolder.reserveGridShader();
     mShaderHolder.reserveClipperShaders();
 }
@@ -108,6 +109,17 @@ void LayerNode::setDefaultOpacity(float aValue)
         mTimeLine.grabDefaultKey(TimeKeyType_Opa, key);
     }
     key->setOpacity(aValue);
+}
+
+void LayerNode::setDefaultHSV(QList<int> aValue)
+{
+    auto key = (HSVKey*)mTimeLine.defaultKey(TimeKeyType_HSV);
+    if (!key)
+    {
+        key = new HSVKey();
+        mTimeLine.grabDefaultKey(TimeKeyType_HSV, key);
+    }
+    key->setHSV(aValue);
 }
 
 float LayerNode::initialDepth() const
@@ -172,6 +184,24 @@ void LayerNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAccess
 
     // render clippees
     renderClippees(aInfo, aAccessor);
+
+
+    // render hsv
+    QSettings settings;
+    auto behaviour = settings.value("generalsettings/keys/hsvBehaviour");
+    if (behaviour.isValid() && behaviour.toInt() == 1){
+        // HSV only between two keys
+        if(!mTimeLine.isEmpty(TimeKeyType_HSV) && aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()
+                && aInfo.time.frame.get() <= mTimeLine.map(TimeKeyType_HSV).values().last()->frame()){
+            renderHSV(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
+        }
+    }
+    else{
+        // Default
+        if(!mTimeLine.isEmpty(TimeKeyType_HSV) && aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()){
+            renderHSV(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
+        }
+    }
 }
 
 void LayerNode::renderClippees(
@@ -425,6 +455,116 @@ void LayerNode::renderShape(
     ggl.glFlush();
 }
 
+void LayerNode::renderHSV(
+        const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor, const QList<int>& HSVData)
+{
+    if (!mCurrentMesh) return;
+
+    gl::Global::Functions& ggl = gl::Global::functions();
+    const bool isClippee = (aInfo.clippingFrame && aInfo.clippingId != 0);
+
+    auto& expans = aAccessor.get(mTimeLine);
+    if (!expans.areaImageKey() || !expans.areaTexture()) return;
+
+    auto textureId = expans.areaTexture()->id();
+    auto blendMode = expans.blendMode();
+    auto textureSize = expans.areaTexture()->size();
+    auto texCoordOffset = mCurrentMesh->originOffset() - expans.imageOffset();
+    const QMatrix4x4 viewMatrix = aInfo.camera.viewMatrix();
+    auto& shader = mShaderHolder.HSVShader();
+    // update destination color
+    XC_PTR_ASSERT(aInfo.destTexturizer);
+    auto destTextureId = aInfo.destTexturizer->texture().id();
+
+    if (!aInfo.isGrid && blendMode != img::BlendMode_Normal)
+    {
+        aInfo.destTexturizer->update(
+                    aInfo.framebuffer, aInfo.dest, viewMatrix,
+                    *mCurrentMesh, mMeshTransformer.positions());
+    }
+
+    if (aInfo.isGrid)
+    {
+        ggl.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    else
+    {
+        // blend func
+        ggl.glEnable(GL_BLEND);
+        ggl.glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+
+        ggl.glActiveTexture(GL_TEXTURE0);
+        ggl.glBindTexture(GL_TEXTURE_2D, textureId);
+        ggl.glActiveTexture(GL_TEXTURE1);
+        ggl.glBindTexture(GL_TEXTURE_2D, destTextureId);
+
+        if (isClippee)
+        {
+            ggl.glActiveTexture(GL_TEXTURE2);
+            ggl.glBindTexture(GL_TEXTURE_2D, aInfo.clippingFrame->texture().id());
+        }
+    }
+
+    {
+        const float opacity = expans.worldOpacity();
+        QColor color(255, 255, 255, xc_clamp((int)(255 * opacity), 0, 255));
+        if (aInfo.isGrid) color = QColor(Qt::black);
+
+        shader.bind();
+        shader.setAttributeBuffer("inPosition", mMeshTransformer.positions(), GL_FLOAT, 3);
+        shader.setAttributeArray("inTexCoord", mCurrentMesh->texCoords(), mCurrentMesh->vertexCount());
+
+        shader.setUniformValue("uViewMatrix", viewMatrix);
+        shader.setUniformValue("uScreenSize", QSizeF(aInfo.camera.deviceScreenSize()));
+        shader.setUniformValue("uImageSize", QSizeF(textureSize));
+        shader.setUniformValue("uTexCoordOffset", texCoordOffset);
+        shader.setUniformValue("uDestTexture", 1);
+
+        QSettings settings;
+        auto setColor = settings.value("generalsettings/keys/hsvSetColor");
+        if (setColor.isValid()){
+            shader.setUniformValue("setColor", !setColor.toBool());
+        }
+        else{
+            shader.setUniformValue("setColor", false);
+        }
+        auto hue = float(int(float(HSVData[0]/360.0f)*1000)/1000.0f);
+        shader.setUniformValue("hue", hue);
+        shader.setUniformValue("saturation", float(HSVData[1]/100.0f));
+        shader.setUniformValue("value", float(HSVData[2]/100.0f));
+        shader.setUniformValue("uColor", color);
+        shader.setUniformValue("uTexture", 0);
+
+        if (isClippee)
+        {
+            shader.setUniformValue("uClippingId", (int)aInfo.clippingId);
+            shader.setUniformValue("uClippingTexture", 2);
+        }
+
+        gl::Util::drawElements(
+                    mCurrentMesh->primitiveMode(),
+                    GL_UNSIGNED_INT,
+                    mCurrentMesh->getIndexBuffer());
+
+        shader.release();
+    }
+
+    if (aInfo.isGrid)
+    {
+        ggl.glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+    else
+    {
+        ggl.glActiveTexture(GL_TEXTURE0);
+        ggl.glBindTexture(GL_TEXTURE_2D, 0);
+
+        // blend func
+        ggl.glDisable(GL_BLEND);
+    }
+
+    ggl.glFlush();
+}
+
 cmnd::Vector LayerNode::createResourceUpdater(const ResourceEvent& aEvent)
 {
     cmnd::Vector result;
@@ -508,12 +648,14 @@ bool LayerNode::deserialize(Deserializer& aIn)
         if (defaultKey)
         {
             mShaderHolder.reserveShaders(defaultKey->data().blendMode());
+            mShaderHolder.reserveHSVShaders();
         }
 
         auto& map = mTimeLine.map(TimeKeyType_Image);
         for (auto key : map)
         {
             mShaderHolder.reserveShaders(((ImageKey*)key)->data().blendMode());
+            mShaderHolder.reserveHSVShaders();
         }
     }
 

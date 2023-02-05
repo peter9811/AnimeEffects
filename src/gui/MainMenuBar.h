@@ -9,6 +9,8 @@
 #include "ctrl/VideoFormat.h"
 #include "gui/EasyDialog.h"
 #include "gui/GUIResources.h"
+#include "qprocess.h"
+
 namespace gui { class MainWindow; }
 namespace gui { class ViaPoint; }
 namespace gui
@@ -22,6 +24,7 @@ public:
     MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources& aGUIResources, QWidget* aParent);
     void setProject(core::Project* aProject);
     void setShowResourceWindow(bool aShow);
+    QStringList recentfiles;
 
 public:
     // signals
@@ -30,6 +33,14 @@ public:
     util::Signaler<void()> onTimeFormatChanged;
 
 private:
+    QScopedPointer<QProcess> mProcess;
+    QString osDef(){
+    #if defined (Q_OS_WIN)
+        return "Win";
+    #else
+        return "Posix";
+    #endif
+    };
     void loadVideoFormats();
     void onCanvasSizeTriggered();
     void onMaxFrameTriggered();

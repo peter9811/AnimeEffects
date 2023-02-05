@@ -78,6 +78,17 @@ void FolderNode::setDefaultOpacity(float aValue)
     key->setOpacity(aValue);
 }
 
+void FolderNode::setDefaultHSV(QList<int> aValue)
+{
+    auto key = (HSVKey*)mTimeLine.defaultKey(TimeKeyType_HSV);
+    if (!key)
+    {
+        key = new HSVKey();
+        mTimeLine.grabDefaultKey(TimeKeyType_HSV, key);
+    }
+    key->setHSV(aValue);
+}
+
 void FolderNode::grabHeightMap(HeightMap* aNode)
 {
     mHeightMap.reset(aNode);
@@ -109,6 +120,16 @@ void FolderNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAcces
 
     // render clippees
     renderClippees(aInfo, aAccessor);
+
+    // render hsv clippees
+    QSettings settings;
+    auto hsvfolder = settings.value("generalsettings/keys/hsvFolder");
+    if (hsvfolder.isValid() && hsvfolder.toBool()){
+        if (!mTimeLine.isEmpty(TimeKeyType_HSV) && aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()){
+            //renderHSV(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
+            renderHSVs(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
+        }
+    }
 }
 
 void FolderNode::renderClippees(
@@ -153,6 +174,23 @@ void FolderNode::renderClipper(
         if (child->renderer())
         {
             child->renderer()->renderClipper(aInfo, aAccessor, aClipperId);
+        }
+    }
+}
+
+// TODO: Fix this nonsense
+
+void FolderNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor, const QList<int>& HSVData){
+    renderHSVs(aInfo, aAccessor, HSVData);
+}
+
+void FolderNode::renderHSVs(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor, QList<int> aHSV)
+{
+    for (auto child : this->children())
+    {
+        if (child->renderer() && child->timeLine()->isEmpty(TimeKeyType_HSV))
+        {
+            child->renderer()->renderHSV(aInfo, aAccessor, aHSV);
         }
     }
 }

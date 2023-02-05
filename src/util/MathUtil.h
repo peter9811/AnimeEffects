@@ -19,6 +19,10 @@ public:
         return QVector2D(aRect.left() + aRect.width() * 0.5f,
                          aRect.top() + aRect.height() * 0.5f);
     }
+    static int getClamp(int aValue, int aMin, int aMax)
+    {
+        return (aValue > aMax) ? aMax : ((aValue < aMin) ? aMin : aValue);
+    }
 
     static QVector2D getCenterOffset(const QRect& aRect)
     {

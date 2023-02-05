@@ -4,7 +4,9 @@
 #include <QFormLayout>
 #include <QComboBox>
 #include <qstandardpaths.h>
+#include "MainWindow.h"
 #include "gui/GeneralSettingDialog.h"
+#include "qpushbutton.h"
 
 namespace
 {
@@ -142,6 +144,7 @@ namespace gui
 
 GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget* aParent)
     : EasyDialog(tr("General Settings"), aParent)
+    , mTabs(new QTabWidget(this))
     , mInitialLanguageIndex()
     , mLanguageBox()
     , mInitialTimeFormatIndex()
@@ -189,11 +192,24 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         {
             mInitialThemeKey = theme.toString();
         }
+        auto isSetColor = settings.value("generalsettings/keys/hsvSetColor");
+        if (isSetColor.isValid())
+        {
+            bHSVSetColor = isSetColor.toBool();
+        }
+        auto isHSVBehaviour= settings.value("generalsettings/keys/hsvBehaviour");
+        if (isHSVBehaviour.isValid())
+        {
+            mInitialHSVBehaviour = isHSVBehaviour.toInt();
+        }
+        auto isHSVFolder = settings.value("generalsettings/keys/hsvFolder");
+        if (isHSVFolder.isValid())
+        {
+            bHSVFolder = isHSVFolder.toBool();
+        }
     }
 
     auto form = new QFormLayout();
-    form->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    form->setLabelAlignment(Qt::AlignRight);
 
     // create inner widgets
     {
@@ -210,14 +226,14 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
             mEasingBox->addItem(indexToEasing(i));
         }
         mEasingBox->setCurrentIndex(mInitialEasingIndex);
-        form->addRow(tr("Default keyframe easing:"), mEasingBox);
+        form->addRow(tr("Default keyframe easing :"), mEasingBox);
 
         mRangeBox = new QComboBox();
         for (int i = 0; i < kRangeTypeCount; ++i){
             mRangeBox->addItem(indexToRange(i));
         }
         mRangeBox->setCurrentIndex(mInitialRangeIndex);
-        form->addRow(tr("Default keyframe range:"), mRangeBox);
+        form->addRow(tr("Default keyframe range :"), mRangeBox);
 
         mTimeFormatBox = new QComboBox();
         for (int i = 0; i < kTimeFormatTypeCount; ++i)
@@ -236,11 +252,40 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         }
         mThemeBox->setCurrentIndex(mThemeBox->findData(mInitialThemeKey));
         form->addRow(tr("Theme :"), mThemeBox);
+
+        mResetButton = new QPushButton(tr("Reset recent files list"));
+        mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
+        connect(mResetButton, &QPushButton::clicked, [=]() {
+                QSettings settings;
+                settings.remove("projectloader/recents");
+                MainWindow::showInfoPopup(tr("Success"), tr("All entries have been successfully removed"), "Info");
+           });
+        form->addRow(mResetButton);
     }
 
-    auto group = new QGroupBox(tr("Parameters"));
-    group->setLayout(form);
-    this->setMainWidget(group);
+
+    auto keysettings = new QFormLayout();
+    {
+        mHSVSetColor = new QCheckBox();
+        mHSVSetColor->setChecked(bHSVSetColor);
+        keysettings->addRow(tr("HSV | Blend color : "), mHSVSetColor);
+
+        mHSVFolder = new QCheckBox();
+        mHSVFolder->setChecked(bHSVFolder);
+        keysettings->addRow(tr("HSV | Enable folder support (not recommended)"), mHSVFolder);
+
+        mHSVBehaviour = new QComboBox();
+        mHSVBehaviour->addItem(tr("Render indefinitely"));
+        mHSVBehaviour->addItem(tr("Only render between keys"));
+        mHSVBehaviour->setCurrentIndex(mInitialHSVBehaviour);
+        keysettings->addRow(tr("HSV | Key rendering : "), mHSVBehaviour);
+    }
+
+    createTab(tr("General"), form);
+    createTab(tr("Animation keys"), keysettings);
+
+
+    this->setMainWidget(mTabs, false);
 
     this->setOkCancel([=](int aResult)->bool
     {
@@ -250,6 +295,24 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         }
         return true;
     });
+}
+
+QFormLayout* GeneralSettingDialog::createTab(const QString& aTitle, QFormLayout* aForm)
+{
+    auto scroll = new QScrollArea(this);
+    scroll->setWidgetResizable(true);
+
+    auto frame = new QFrame();
+    scroll->setWidget(frame);
+
+    auto form = new QFormLayout();
+    form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    form->setLabelAlignment(Qt::AlignRight);
+    frame->setLayout(aForm);
+
+    mTabs->addTab(scroll, aTitle);
+
+    return form;
 }
 
 bool GeneralSettingDialog::languageHasChanged()
@@ -275,6 +338,21 @@ bool GeneralSettingDialog::themeHasChanged()
     return (mInitialThemeKey != mThemeBox->currentData());
 }
 
+bool GeneralSettingDialog::HSVBehaviourHasChanged()
+{
+    return (mInitialHSVBehaviour != mHSVBehaviour->currentIndex());
+}
+
+bool GeneralSettingDialog::HSVSetColorHasChanged()
+{
+    return (bHSVSetColor != mHSVSetColor->isChecked());
+}
+
+bool GeneralSettingDialog::HSVFolderHasChanged()
+{
+    return (bHSVFolder!= mHSVFolder->isChecked());
+}
+
 QString GeneralSettingDialog::theme()
 {
     return mThemeBox->currentData().toString();
@@ -292,11 +370,20 @@ void GeneralSettingDialog::saveSettings()
     if(rangeHasChanged()){
         settings.setValue("generalsettings/range", indexToRange(mRangeBox->currentIndex(), false));
     }
-    if(timeFormatHasChanged())
+    if(timeFormatHasChanged()){
         settings.setValue("generalsettings/ui/timeformat", mTimeFormatBox->currentIndex());
-
-    if(themeHasChanged())
+    }
+    if(themeHasChanged()){
         settings.setValue("generalsettings/ui/theme", mThemeBox->currentData());
-}
-
+    }
+    if (HSVBehaviourHasChanged()){
+        settings.setValue("generalsettings/keys/hsvBehaviour", mHSVBehaviour->currentIndex());
+    }
+    if (HSVSetColorHasChanged()){
+        settings.setValue("generalsettings/keys/hsvSetColor", mHSVSetColor->isChecked());
+    }
+    if (HSVFolderHasChanged()){
+        settings.setValue("generalsettings/keys/hsvFolder", mHSVFolder->isChecked());
+    }
+  }
 } // namespace gui

@@ -148,6 +148,7 @@ System::LoadResult System::openProject(
             // Save
             if (!settings.value("projectloader/recents").toStringList().contains(aFileName)){
                 settings.setValue("projectloader/recents", recentfiles);
+                settings.sync();
             }
 
             return LoadResult(mProjects.back(), "Success.");

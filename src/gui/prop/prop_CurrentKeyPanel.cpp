@@ -353,6 +353,92 @@ bool OpaKeyGroup::keyExists() const
 }
 
 //-------------------------------------------------------------------------------------------------
+HSVKeyGroup::HSVKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth)
+    : KeyGroup(tr("HSV"), aLabelWidth)
+    , mAccessor(aAccessor)
+    , mKnocker()
+    , mEasing()
+    , mHue()
+    , mSaturation()
+    , mValue()
+    , mKeyExists(false)
+{
+    mKnocker = new KeyKnocker(tr("HSV"));
+    mKnocker->set([=](){ this->mAccessor.knockNewHSV(); this->makeSureExpand(); });
+    aPanel.addGroup(mKnocker);
+
+    {
+        aPanel.addGroup(this);
+
+        // easing
+        mEasing = new EasingItem(this);
+        this->addItem(tr("Easing :"), mEasing);
+        mEasing->onValueUpdated = [=](util::Easing::Param, util::Easing::Param aNext)
+        {
+            this->mAccessor.assignHSVEasing(aNext);
+        };
+
+        // hue
+        mHue = new IntegerItem(this);
+        mHue->setRange(0, 360);
+        mHue->box().setSingleStep(1);
+        mHue->onValueUpdated = [=] (int, int aNext){
+            this->mAccessor.assignHSV(aNext, "hue");
+        };
+
+        // saturation
+        mSaturation = new IntegerItem(this);
+        mSaturation->setRange(0, 100);
+        mSaturation->box().setSingleStep(1);
+        mSaturation->onValueUpdated = [=] (int, int aNext){
+            this->mAccessor.assignHSV(aNext, "sat");
+        };
+
+        // value
+        mValue = new IntegerItem(this);
+        mValue->setRange(0, 100);
+        mValue->box().setSingleStep(1);
+        mValue->onValueUpdated = [=] (int, int aNext){
+            this->mAccessor.assignHSV(aNext, "val");
+        };
+
+        this->addItem(tr("Hue :"), mHue);
+        this->addItem(tr("Saturation :"), mSaturation);
+        this->addItem(tr("Value : "), mValue);
+    }
+    setKeyEnabled(false);
+    setKeyExists(false);
+}
+
+void HSVKeyGroup::setKeyEnabled(bool aEnabled)
+{
+    mKnocker->setEnabled(aEnabled);
+    this->setEnabled(aEnabled);
+}
+
+void HSVKeyGroup::setKeyExists(bool aIsExists)
+{
+    mKeyExists = aIsExists;
+    mKnocker->setVisible(!aIsExists);
+    this->setVisible(aIsExists);
+}
+
+void HSVKeyGroup::setKeyValue(const core::TimeKey* aKey)
+{
+    TIMEKEY_PTR_TYPE_ASSERT(aKey, HSV);
+    const core::HSVKey::Data& data = ((const core::HSVKey*)aKey)->data();
+    mEasing->setValue(data.easing(), false);
+    mHue->setValue(data.hsv()[0]);
+    mSaturation->setValue(data.hsv()[1]);
+    mValue->setValue(data.hsv()[2]);
+}
+
+bool HSVKeyGroup::keyExists() const
+{
+    return mKeyExists;
+}
+
+//-------------------------------------------------------------------------------------------------
 PoseKeyGroup::PoseKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth)
     : KeyGroup(tr("Pose"), aLabelWidth)
     , mAccessor(aAccessor)
@@ -560,6 +646,7 @@ CurrentKeyPanel::CurrentKeyPanel(ViaPoint& aViaPoint, core::Project& aProject, c
     , mScalePanel()
     , mDepthPanel()
     , mOpaPanel()
+    , mHSVPanel()
     , mPosePanel()
     , mFFDPanel()
     , mImagePanel()
@@ -624,6 +711,7 @@ void CurrentKeyPanel::build()
     mScalePanel.reset(new ScaleKeyGroup(*this, mKeyAccessor, mLabelWidth));
     mDepthPanel.reset(new DepthKeyGroup(*this, mKeyAccessor, mLabelWidth));
     mOpaPanel.reset(new OpaKeyGroup(*this, mKeyAccessor, mLabelWidth));
+    mHSVPanel.reset(new HSVKeyGroup(*this, mKeyAccessor, mLabelWidth));
     mPosePanel.reset(new PoseKeyGroup(*this, mKeyAccessor, mLabelWidth));
     mFFDPanel.reset(new FFDKeyGroup(*this, mKeyAccessor, mLabelWidth));
     mImagePanel.reset(new ImageKeyGroup(*this, mKeyAccessor, mLabelWidth, mViaPoint));
@@ -640,6 +728,7 @@ void CurrentKeyPanel::updateKeyExists()
     mScalePanel->setKeyEnabled(enabled);
     mDepthPanel->setKeyEnabled(enabled);
     mOpaPanel->setKeyEnabled(enabled);
+    mHSVPanel->setKeyEnabled(enabled);
     mPosePanel->setKeyEnabled(enabled);
     mFFDPanel->setKeyEnabled(enabled);
     mImagePanel->setKeyEnabled(enabled);
@@ -657,6 +746,7 @@ void CurrentKeyPanel::updateKeyExists()
         mScalePanel->setKeyExists(timeLine.hasTimeKey(core::TimeKeyType_Scale, frame));
         mDepthPanel->setKeyExists(timeLine.hasTimeKey(core::TimeKeyType_Depth, frame));
         mOpaPanel->setKeyExists(timeLine.hasTimeKey(core::TimeKeyType_Opa, frame));
+        mHSVPanel->setKeyExists(timeLine.hasTimeKey(core::TimeKeyType_HSV, frame));
         mPosePanel->setKeyExists(timeLine.hasTimeKey(core::TimeKeyType_Pose, frame), hasAreaBone);
         mFFDPanel->setKeyExists(timeLine.hasTimeKey(core::TimeKeyType_FFD, frame), hasAnyMesh);
         mImagePanel->setKeyExists(timeLine.hasTimeKey(core::TimeKeyType_Image, frame), hasAnyImage);
@@ -689,6 +779,10 @@ void CurrentKeyPanel::updateKeyValue()
         if (mOpaPanel->keyExists())
         {
             mOpaPanel->setKeyValue(timeLine.timeKey(core::TimeKeyType_Opa, frame));
+        }
+        if (mHSVPanel->keyExists())
+        {
+            mHSVPanel->setKeyValue(timeLine.timeKey(core::TimeKeyType_HSV, frame));
         }
         if (mPosePanel->keyExists())
         {

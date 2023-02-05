@@ -44,7 +44,10 @@ public:
     void testNewProject(const QString& aFilePath);
     void closeAllProjects();
     static QFileSystemWatcher* getWatcher();
-    static void showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon);
+    QElapsedTimer timeElapsed;
+    qint64 lastPress;
+    qint64 lastRelease;
+    static void showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString &aDetailed = "nullptr");
 
 public:
     void onNewProjectTriggered();

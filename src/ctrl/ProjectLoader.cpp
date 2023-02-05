@@ -1,4 +1,6 @@
 #include <fstream>
+#include "gui/MainMenuBar.h"
+#include "gui/MainWindow.h"
 #include "qdir.h"
 #include "util/IDSolver.h"
 #include "ctrl/ProjectLoader.h"
@@ -34,6 +36,7 @@ bool ProjectLoader::load(
             qInfo() << recentfiles;
             mLog.push_back("Project removed, renamed or otherwise unavailable, please open it manually.\n"
                             "This path has been removed from your recents.");
+            settings.sync();
         }
 
         mLog.push_back("Can not open the project file.");
@@ -148,14 +151,14 @@ bool ProjectLoader::readHeader(util::LEStreamReader& aIn)
             (majorVersion == AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION &&
              minorVersion < AE_PROJECT_FORMAT_OLDEST_MINOR_VERSION))
     {
-        mLog.push_back("The version of the file is too old to read it.");
+        mLog.push_back("The file version is too old to read properly.");
         return false;
     }
     else if (majorVersion > AE_PROJECT_FORMAT_MAJOR_VERSION ||
              (majorVersion == AE_PROJECT_FORMAT_MAJOR_VERSION &&
               minorVersion > AE_PROJECT_FORMAT_MINOR_VERSION))
     {
-        mLog.push_back("The file has a version defined later than this executable.");
+        mLog.push_back("This file has been made with a new version of AnimeEffects, unable to read.");
         return false;
     }
 

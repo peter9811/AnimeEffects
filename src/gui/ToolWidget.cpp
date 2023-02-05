@@ -110,7 +110,7 @@ void ToolWidget::createViewPanel()
     });
 
     QString _rotateViewAntiClockwiseKeyBindingText = this->mKeyCommandMap.get("RotateCanvas15AntiClockwise")->binding.text();
-    mViewPanel->addButton("rotateac", false, tr("Rotate the canvas anticlockwise (%1").arg(_rotateViewAntiClockwiseKeyBindingText), [=](bool)
+    mViewPanel->addButton("rotateac", false, tr("Rotate the canvas counterclockwise (%1)").arg(_rotateViewAntiClockwiseKeyBindingText), [=](bool)
     {
         this->viewSetting().rotateViewACW = true;
         this->onViewSettingChanged(this->viewSetting());

@@ -35,6 +35,7 @@ private:
     int mFrameMax;
     bool mFixAspect;
     bool mSizeUpdating;
+    bool mWarningShown = false;
 };
 
 //-------------------------------------------------------------------------------------------------

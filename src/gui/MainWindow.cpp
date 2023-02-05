@@ -112,6 +112,12 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
         mViaPoint.setMainMenuBar(mMainMenuBar);
         this->setMenuBar(mMainMenuBar);
     }
+    // initialize timer
+    {
+        timeElapsed.start();
+        lastPress = 0;
+        lastRelease = 0;
+    }
 
     // create main display
     {
@@ -490,15 +496,45 @@ void MainWindow::keyPressEvent(QKeyEvent* aEvent)
 void MainWindow::keyPressEvent(QKeyEvent* aEvent)
 {
     //qDebug() << "input key =" << aEvent->key() << "text =" << aEvent->text();
-    mKeyCommandInvoker->onKeyPressed(aEvent);
-    QMainWindow::keyPressEvent(aEvent);
+
+    if (aEvent->isAutoRepeat()){
+        // Delay of 250ms
+        if (lastPress + 125 < timeElapsed.elapsed()){
+            lastPress = timeElapsed.elapsed();
+            mKeyCommandInvoker->onKeyPressed(aEvent);
+            QMainWindow::keyPressEvent(aEvent);
+        }
+        else{
+            // qDebug() << "Time elapsed is :" << (lastPress+500)-timeElapsed.elapsed();
+            return;
+        }
+    }
+    else{
+        mKeyCommandInvoker->onKeyPressed(aEvent);
+        QMainWindow::keyPressEvent(aEvent);
+    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent* aEvent)
 {
     //qDebug() << "release key =" << aEvent->key() << "text =" << aEvent->text();
-    mKeyCommandInvoker->onKeyReleased(aEvent);
-    QMainWindow::keyReleaseEvent(aEvent);
+
+    if (aEvent->isAutoRepeat()){
+        // Delay of 250ms
+        if (lastRelease + 125 < timeElapsed.elapsed()){
+            lastRelease = timeElapsed.elapsed();
+            mKeyCommandInvoker->onKeyReleased(aEvent);
+            QMainWindow::keyPressEvent(aEvent);
+        }
+        else{
+            // qDebug() << "time elapsed is :" << (lastPress+500)-timeElapsed.elapsed();
+            return;
+        }
+    }
+    else{
+        mKeyCommandInvoker->onKeyReleased(aEvent);
+        QMainWindow::keyReleaseEvent(aEvent);
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent* aEvent)
@@ -711,13 +747,13 @@ void MainWindow::onNewProjectTriggered()
     }
 }
 
-QFileSystemWatcher* watcher = new QFileSystemWatcher();
+QFileSystemWatcher* globalWatcher = new QFileSystemWatcher();
 
 QFileSystemWatcher* MainWindow::getWatcher(){
-    return watcher;
+    return globalWatcher;
 }
 
-void MainWindow::showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon)
+void MainWindow::showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed)
 {
     QMessageBox box;
     if(aIcon == "Info"){
@@ -733,6 +769,9 @@ void MainWindow::showInfoPopup(const QString& aTitle, const QString& aDetailText
     box.setDefaultButton(QMessageBox::Ok);
     box.setWindowTitle(aTitle);
     box.setText(aDetailText);
+    if (aDetailed != "nullptr"){
+        box.setDetailedText(aDetailed);
+    }
     box.exec();
 }
 
@@ -1042,7 +1081,7 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat)
             auto infoText =
                     tr("Video export requires FFmpeg.") + "\n" +
                     tr("Install FFmpeg on the system, or place a FFmpeg executable "
-                       "under /tools in the folder where you extracted AnimeEffects.");
+                       "under \"/tools\" in the folder where you installed AnimeEffects.");
             message.setInformativeText(infoText);
             message.setStandardButtons(QMessageBox::Ok);
             message.setDefaultButton(QMessageBox::Ok);

@@ -342,6 +342,17 @@ void assignOpaKeyData(
                     CmndName::tr("Update opacity key"));
 }
 
+void assignHSVKeyData(
+        Project& aProject, ObjectNode& aTarget, int aFrame,
+        const HSVKey::Data& aNewData)
+{
+    assignKeyData<HSVKey, TimeKeyType_HSV>(
+                aProject, aTarget, aFrame, aNewData,
+                aFrame == TimeLine::kDefaultKeyIndex ?
+                    CmndName::tr("Update default HSV key") :
+                    CmndName::tr("Update HSV key"));
+}
+
 void assignPoseKeyEasing(
         Project& aProject, ObjectNode& aTarget, int aFrame,
         const util::Easing::Param& aNewData)
@@ -507,6 +518,13 @@ void pushNewOpaKey(
 {
     pushNewKey<OpaKey, TimeKeyType_Opa>(
                 aProject, aTarget, aFrame, aKey, CmndName::tr("Add new opacity key"));
+}
+
+void pushNewHSVKey(
+        Project& aProject, ObjectNode& aTarget, int aFrame, HSVKey* aKey)
+{
+    pushNewKey<HSVKey, TimeKeyType_HSV>(
+                aProject, aTarget, aFrame, aKey, CmndName::tr("Add new HSV key"));
 }
 
 void pushNewPoseKey(

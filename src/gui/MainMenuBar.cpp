@@ -4,6 +4,9 @@
 #include <QMessageBox>
 #include <QDomDocument>
 #include <qstandardpaths.h>
+#include <QJsonDocument>
+#include <QDesktopServices>
+#include "qprocess.h"
 #include "util/TextUtil.h"
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
@@ -47,9 +50,19 @@ QDomDocument getVideoExportDocument()
     return prop;
 }
 
+QString osDef(){
+    #if defined(Q_OS_WIN)
+        QString operatingSystem = "Win";
+    #else
+        QString operatingSystem = "Posix"
+    #endif
+    return operatingSystem;
+}
+
 //-------------------------------------------------------------------------------------------------
 MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources &aGUIResources, QWidget* aParent)
     : QMenuBar(aParent)
+    , mProcess()
     , mViaPoint(aViaPoint)
     , mProject()
     , mProjectActions()
@@ -70,7 +83,8 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         {
             // Get settings
             QSettings settings;
-            QStringList recentfiles = settings.value("projectloader/recents").toStringList();
+            settings.sync();
+            recentfiles = settings.value("projectloader/recents").toStringList();
 
             // Path placeholders
             if (recentfiles.length() != 8){
@@ -128,6 +142,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             }
 
             // Connections
+            connect(placeholderAction, &QAction::triggered, [=](){ qDebug() << "You've earned yourself a cookie!"; });
             connect(firstPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(firstPath); });
             connect(secondPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(secondPath); });
             connect(thirdPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(thirdPath); });
@@ -312,7 +327,114 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             msgBox.exec();
         });
 
+        QAction* checkForUpdates = new QAction(tr("Check for Updates..."), this);
+        connect(checkForUpdates, &QAction::triggered, [=]()
+        {
+            // Qt is so stupid...
+            QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
+            qInfo() << "checking for updates on : " << url;
+            QString program;
+            QStringList arguments;
+            QString os = osDef();
+            // You're more likely to have curl in Windows (since from Windows 10+ it comes preinstalled)
+            // And you're more likely to have wget on Linux (since it comes preinstalled on most distros)
+            // If you're on MacOS I'm sorry :P
+            if (os == "Win"){
+                program = "curl.exe";
+                arguments << url << "-H \"Accept: application/json";
+            }
+            else{
+                program = "wget";
+                arguments << "-qO-" << url << "-H \"Content-Type: application/json";
+            }
+            mProcess.reset(new QProcess(nullptr));
+            mProcess->setProcessChannelMode(QProcess::MergedChannels);
+            auto process = mProcess.data();
+            mProcess->connect(process, &QProcess::readyRead, [=]()
+            {
+                if (this->mProcess)
+                {
+                    QByteArray response_data = this->mProcess->readAll().data();
+                    QJsonDocument jsonResponse = QJsonDocument::fromJson(response_data);
+                    QString latestVersion = jsonResponse[0]["name"].toString().replace("v", "");
+                    // qDebug() << jsonResponse[0]["name"];
+                    if (latestVersion != ""){
+                        QString currentVersion = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." + QString::number(AE_MICRO_VERSION);
+                        // qDebug() << "latest version: " << latestVersion;
+                        // qDebug() << "current version : " << currentVersion;
+                        bool onLatest;
+                        if (latestVersion == currentVersion){
+                            qDebug() << "already on latest version : " << latestVersion;
+                            onLatest = true;
+                        }
+                        else{
+                            onLatest = false;
+                        }
+                        QMessageBox updateBox;
+                        if (onLatest){
+                            updateBox.setStandardButtons(QMessageBox::Ok);
+                            updateBox.setDefaultButton(QMessageBox::Ok);
+                        }
+                        else{
+                            updateBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+                            updateBox.setDefaultButton(QMessageBox::Yes);
+                        }
+
+                        if (!onLatest){
+                            updateBox.setWindowTitle(tr("New release available"));
+                            updateBox.setText(tr("<center>A new release is available, version: ") + latestVersion + tr(".<br>Do you wish to go to the release page to download it?</center>"));
+                        }
+                        else{
+                            updateBox.setWindowTitle(tr("On latest"));
+                            updateBox.setText(tr("<center>You already have the latest release available. <br>Version: ") + currentVersion + "</center7>");
+                        }
+
+                        if(updateBox.exec() == QMessageBox::Yes){
+                          QDesktopServices::openUrl(QUrl("https://github.com/AnimeEffectsDevs/AnimeEffects/releases/latest"));
+                        }
+                        else {
+                          qDebug() << "openurl canceled by user";
+                        }
+                        return;
+                    }
+                }
+            });
+
+            mProcess->connect(process, &QProcess::errorOccurred, [=](QProcess::ProcessError aCode)
+            {
+                qDebug() << program + " error : " << aCode;
+                // More a comfort feature to let the user know what happened than anything else.
+                QString aError;
+                switch(aCode){
+                case QProcess::ProcessError::ReadError:
+                    aError = tr("Unable to Read from Process");
+                    break;
+                case QProcess::ProcessError::UnknownError:
+                    aError = tr("Unknown Error");
+                    break;
+                case QProcess::ProcessError::WriteError:
+                    aError = tr("Unable to Write to Process");
+                    break;
+                case QProcess::ProcessError::Crashed:
+                    aError = tr("Process Crashed");
+                    break;
+                case QProcess::ProcessError::FailedToStart:
+                    aError = tr("Failed to Start Process");
+                    break;
+                case QProcess::ProcessError::Timedout:
+                    aError = tr("Process couldn't be opened in time");
+                    break;
+                }
+                MainWindow::showInfoPopup(tr("Process error"), "<center>" + tr("An error has ocurred while launching ") + program.toUpper().replace(".exe", "") +
+                                          tr(" to check for updates, please check if you have it installed.") + "</center>", "Critical", aError);
+                return;
+            });
+
+            mProcess->start(program, arguments, QIODevice::ReadWrite);
+        });
+
         helpMenu->addAction(aboutMe);
+        helpMenu->addAction(checkForUpdates);
     }
 
     this->addAction(fileMenu->menuAction());

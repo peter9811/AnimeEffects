@@ -24,6 +24,11 @@ public:
     gl::EasyShaderProgram& gridShader();
     const gl::EasyShaderProgram& gridShader() const;
 
+    gl::EasyShaderProgram& reserveHSVShader();
+    void reserveHSVShaders();
+    gl::EasyShaderProgram& HSVShader();
+    const gl::EasyShaderProgram& HSVShader() const;
+
     gl::EasyShaderProgram& reserveClipperShader(bool aIsClippee);
     void reserveClipperShaders();
     gl::EasyShaderProgram& clipperShader(bool aIsClippee);
@@ -31,6 +36,7 @@ public:
 
 private:
     QVector<gl::EasyShaderProgram*> mShaders;
+    QVector<gl::EasyShaderProgram*> mHSVShaders;
     QVector<gl::EasyShaderProgram*> mGridShaders;
     QVector<gl::EasyShaderProgram*> mClipperShaders;
 };

@@ -20,7 +20,8 @@ static const std::array<const char*, core::TimeKeyType_TERM> kTimeKeyNames = {
     "Pose",
     "Mesh",
     "FFD",
-    "Image"
+    "Image",
+    "HSV"
 };
 
 static const std::array<core::TimeKeyType, core::TimeKeyType_TERM> kTimeKeyTypeInOrderOfOperations = {
@@ -33,7 +34,8 @@ static const std::array<core::TimeKeyType, core::TimeKeyType_TERM> kTimeKeyTypeI
     core::TimeKeyType_Rotate,
     core::TimeKeyType_Scale,
     core::TimeKeyType_Depth,
-    core::TimeKeyType_Opa
+    core::TimeKeyType_Opa,
+    core::TimeKeyType_HSV
 };
 
 }
@@ -451,6 +453,9 @@ bool TimeLine::deserializeTimeKey(Deserializer& aIn, TimeKeyType aType, int aInd
     else if (aType == TimeKeyType_Opa)
     {
         key = new OpaKey();
+    }
+    else if(aType == TimeKeyType_HSV){
+        key = new HSVKey();
     }
     else if (aType == TimeKeyType_Bone)
     {

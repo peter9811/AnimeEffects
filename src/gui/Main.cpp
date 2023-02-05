@@ -157,6 +157,14 @@ int entryPoint(int argc, char *argv[])
         const QString testPath = resourceDir + "/sample.psd";
         mainWindow->testNewProject(testPath);
 #endif
+        // assoc handle
+        auto arguments = app.arguments();
+        if (arguments.last().contains(".anie")){
+            auto file = arguments.last();
+            if (QFile(file).exists()){
+                mainWindow->onOpenRecentTriggered(file);
+            }
+        }
 
         resources->triggerOnThemeChanged();
 

@@ -25,11 +25,11 @@ MouseSettingDialog::MouseSettingDialog(ViaPoint& aViaPoint, QWidget* aParent)
     {
         mInvertMainViewScalingBox = new QCheckBox();
         mInvertMainViewScalingBox->setChecked(mInitialValues.invertMainViewScaling);
-        form->addRow(tr("Reverse canvas scaling :"), mInvertMainViewScalingBox);
+        form->addRow(tr("Inverse canvas scrolling :"), mInvertMainViewScalingBox);
 
         mInvertTimeLineScalingBox = new QCheckBox();
         mInvertTimeLineScalingBox->setChecked(mInitialValues.invertTimeLineScaling);
-        form->addRow(tr("Reverse timeline scaling :"), mInvertTimeLineScalingBox);
+        form->addRow(tr("Inverse timeline scrolling :"), mInvertTimeLineScalingBox);
 
         mMiddleMouseMoveCanvas = new QCheckBox();
         mMiddleMouseMoveCanvas->setChecked(mInitialValues.middleMouseMoveCanvas);

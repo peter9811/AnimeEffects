@@ -1,5 +1,6 @@
 #include <QScrollBar>
 #include "gui/TimeLineWidget.h"
+#include "gui/PlayBackWidget.h"
 
 namespace gui
 {
@@ -156,6 +157,10 @@ void TimeLineWidget::onPlayBackUpdated()
         }
         else
         {
+            if (curFrame.get() == mInner->maxFrame())
+            {
+                mProject->animator().stop();
+            }
             if (mLastFrame == curFrame)
             {
                 const int elapsedTime = mElapsed.elapsed();

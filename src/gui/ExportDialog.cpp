@@ -13,8 +13,10 @@
 #include <QFileInfo>
 #include <QPlainTextEdit>
 #include <QFontMetrics>
+#include "MainMenuBar.h"
 #include "util/SelectArgs.h"
 #include "gui/ExportDialog.h"
+#include "MainWindow.h"
 
 
 namespace
@@ -64,6 +66,11 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout)
         auto fix = new QCheckBox();
         x->setRange(1, 32767);
         y->setRange(1, 32767);
+        if (!(mCommonParam.size.width() % 2 == 0) || !(mCommonParam.size.height() % 2 == 0)){
+            MainWindow::showInfoPopup(tr("Value is Odd"), tr("The width or height of the image ends with an odd number. "
+            "Please change these parameters to an even number as they may cause the export to fail."), "Warn");
+            mWarningShown = true;
+        }
         x->setValue(mCommonParam.size.width());
         y->setValue(mCommonParam.size.height());
         setMinMaxOptionWidth(x);
@@ -73,6 +80,12 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout)
         this->connect(x, util::SelectArgs<int>::from(&QSpinBox::valueChanged), [=](int aValue)
         {
             if (mSizeUpdating) return;
+            if (!(aValue % 2 == 0) && !mWarningShown){
+                MainWindow::showInfoPopup(tr("Value is Odd"), tr("A width or height ending in an odd number"
+                " may make the exporting process fail, please try another value."), "Warn");
+                mWarningShown = true;
+                return;
+            }
             mSizeUpdating = true;
             QSize& size = this->mCommonParam.size;
             size.setWidth(aValue);
@@ -87,6 +100,14 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout)
         this->connect(y, util::SelectArgs<int>::from(&QSpinBox::valueChanged), [=](int aValue)
         {
             if (mSizeUpdating) return;
+
+            if (!(aValue % 2 == 0) && !mWarningShown){
+                MainWindow::showInfoPopup(tr("Value is Odd"), tr("A height or width ending in an odd number"
+                " may make the exporting process fail, please try another value."), "Warn");
+                mWarningShown = true;
+                return;
+            }
+
             mSizeUpdating = true;
             QSize& size = this->mCommonParam.size;
             size.setHeight(aValue);
@@ -241,7 +262,7 @@ GifExportDialog::GifExportDialog(
 {
     {
         this->commonParam().fps = std::min(this->commonParam().fps, 30);
-        mGifParam.optimizePalette = false;
+        mGifParam.optimizePalette = true;
         mGifParam.intermediateBps = 5 * 1000 * 1000;
     }
 

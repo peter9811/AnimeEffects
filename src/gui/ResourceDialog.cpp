@@ -105,7 +105,7 @@ void ResourceDialog::onAddResourceTriggered(bool)
     if (!mProject) return;
 
     const QStringList fileName = QFileDialog::getOpenFileNames(
-                this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif)");
+                this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
     if (fileName.isEmpty()) return;
 
     for(int i = 0; i < fileName.count();i++){

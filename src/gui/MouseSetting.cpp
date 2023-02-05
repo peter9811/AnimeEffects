@@ -32,7 +32,7 @@ void MouseSetting::load()
 
     invertMainViewScaling = invMVScale.isValid() ? invMVScale.toBool() : false;
     invertTimeLineScaling = invTLScale.isValid() ? invTLScale.toBool() : false;
-    middleMouseMoveCanvas = mmMoveCanvas.isValid() ? mmMoveCanvas.toBool() : false;
+    middleMouseMoveCanvas = mmMoveCanvas.isValid() ? mmMoveCanvas.toBool() : true;
 }
 
 void MouseSetting::save()

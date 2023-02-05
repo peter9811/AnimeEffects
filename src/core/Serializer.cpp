@@ -28,6 +28,14 @@ void Serializer::write(float aValue)
     mOut.write((float32)aValue);
 }
 
+void Serializer::write(QList<int> aValue)
+{
+    int size = aValue.size();
+    for(int x = 0; x < size; x+=1){
+        mOut.write((sint32)aValue[x]);
+    }
+}
+
 void Serializer::write(const QPoint& aValue)
 {
     mOut.write((sint32)aValue.x());

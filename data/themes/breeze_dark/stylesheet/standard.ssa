@@ -723,6 +723,13 @@ QPushButton
     min-height: 1.1em;
 }
 
+QPushButton#browser::enabled {
+    image: url(data/themes/classic/icon/filew.png);
+}
+QPushButton#browser::disabled {
+    image: url(data/themes/classic/icon/file.png);
+}
+
 QComboBox:open,
 QPushButton:open
 {

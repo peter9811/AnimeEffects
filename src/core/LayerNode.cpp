@@ -528,10 +528,14 @@ void LayerNode::renderHSV(
         else{
             shader.setUniformValue("setColor", false);
         }
-        auto hue = float(int(float(HSVData[0]/360.0f)*1000)/1000.0f);
+
+        float hue = (float)HSVData[0] / 360.0;
+        float saturation = (float)HSVData[1] / 100.0;
+        float value = (float)HSVData[2] / 100.0;
+
         shader.setUniformValue("hue", hue);
-        shader.setUniformValue("saturation", float(HSVData[1]/100.0f));
-        shader.setUniformValue("value", float(HSVData[2]/100.0f));
+        shader.setUniformValue("saturation", saturation);
+        shader.setUniformValue("value", value);
         shader.setUniformValue("uColor", color);
         shader.setUniformValue("uTexture", 0);
 

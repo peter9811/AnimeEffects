@@ -54,7 +54,7 @@ QString osDef(){
     #if defined(Q_OS_WIN)
         QString operatingSystem = "Win";
     #else
-        QString operatingSystem = "Posix"
+        QString operatingSystem = "Posix";
     #endif
     return operatingSystem;
 }

@@ -1,4 +1,3 @@
-#begin_vertex_shader   //---------------------------------------------------------------
 #version 330
 
 in vec3 inWorldPosition;

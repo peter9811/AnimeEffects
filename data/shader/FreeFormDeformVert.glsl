@@ -1,4 +1,3 @@
-#begin_vertex_shader   //---------------------------------------------------------------
 #version 330
 
 #variation HARDNESS 0

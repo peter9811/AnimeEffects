@@ -7,7 +7,8 @@ namespace gl
 {
 
 ExtendShader::ExtendShader()
-    : mOriginalCode()
+    : mOriginalCodeVert()
+    , mOriginalCodeFrag()
     , mVertexCode()
     , mFragmentCode()
     , mVariation()
@@ -15,25 +16,42 @@ ExtendShader::ExtendShader()
 {
 }
 
-bool ExtendShader::openFromFile(const QString& aFilePath)
-{
+bool ExtendShader::openFromFile(const QString &aFilePath, QString &originalCode) {
     mVariation.clear();
     QFile file(aFilePath);
-    if (file.open(QIODevice::ReadOnly))
-    {
+    if (file.open(QIODevice::ReadOnly)) {
         QTextStream in(&file);
-        mOriginalCode = in.readAll();
+        originalCode = in.readAll();
         return true;
     }
     mLog = file.errorString() + "\n" + aFilePath;
     return false;
 }
 
-void ExtendShader::openFromText(const QString& aText)
+bool ExtendShader::openFromFileVert(const QString& aFilePath)
 {
+    return openFromFile(aFilePath, mOriginalCodeVert);
+}
+
+bool ExtendShader::openFromFileFrag(const QString& aFilePath)
+{
+    return openFromFile(aFilePath, mOriginalCodeFrag);
+}
+
+void ExtendShader::openFromText(const QString& aText, QString &originalCode) {
     mVariation.clear();
-    mOriginalCode = aText;
+    originalCode = aText;
     mLog = "";
+}
+
+void ExtendShader::openFromTextVert(const QString& aText)
+{
+    openFromText(aText, mOriginalCodeVert);
+}
+
+void ExtendShader::openFromTextFrag(const QString& aText)
+{
+    openFromText(aText, mOriginalCodeFrag);
 }
 
 void ExtendShader::setVariationValue(const QString& aName, const QString& aValue)
@@ -44,30 +62,33 @@ void ExtendShader::setVariationValue(const QString& aName, const QString& aValue
 
 bool ExtendShader::resolveVariation()
 {
-    QTextStream in(&mOriginalCode);
     QTextStream out(&mVertexCode);
+    mVertexCode.clear();
+
+    QTextStream vertexIn(&mOriginalCodeVert);
+    QTextStream fragmentIn(&mOriginalCodeFrag);
 
     mLog = "";
     bool isSuccess = true;
 
+    int currentShader = 0; // 0 = vertex, 1 = fragment
     while (1)
     {
-        QString line = in.readLine();
-        if (line.isNull()) break;
-
+        QString line;
+        if (currentShader == 0)
         {
-            QRegExp vtxReg("^#begin_vertex_shader(\\s+|$)");
-            QRegExp frgReg("^#begin_fragment_shader(\\s+|$)");
-            if (vtxReg.indexIn(line) != -1)
+            line = vertexIn.readLine();
+            if (line.isNull())
             {
-                out.setString(&mVertexCode);
-                continue;
-            }
-            if (frgReg.indexIn(line) != -1)
-            {
+                currentShader = 1;
                 out.setString(&mFragmentCode);
                 continue;
             }
+        }
+        if (currentShader == 1)
+        {
+            line = fragmentIn.readLine();
+            if (line.isNull()) break;
         }
 
         QRegExp lineReg("^#variation\\s+(.*)$");

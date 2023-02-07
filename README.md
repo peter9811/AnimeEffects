@@ -31,6 +31,7 @@ Note: For the present there may be incompatible changes made, these will be made
 * Ubuntu LTS or newer.
   * The provided AppImage will *not* work on older versions due to glibc.
 * macOS Big Sur or newer.
+  * None of our contributors actually has a Mac to test AnimeEffects on, but we do keep track of compilation errors and artifacts.
 
 ## Development requirements
 * Qt 5.14 or later.

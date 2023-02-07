@@ -9,6 +9,36 @@ namespace gui {
 namespace prop {
 
 //-------------------------------------------------------------------------------------------------
+bool triggeredByArrows = false;
+
+SpinBox::SpinBox(QWidget* parent)
+    : QSpinBox(parent)
+{
+}
+
+void SpinBox::stepBy(int steps)
+{
+    triggeredByArrows = true;
+    QSpinBox::stepBy(steps);
+    emit editingFinished();
+    triggeredByArrows = false;
+}
+
+//-------------------------------------------------------------------------------------------------
+DoubleSpinBox::DoubleSpinBox(QWidget* parent)
+    : QDoubleSpinBox(parent)
+{
+}
+
+void DoubleSpinBox::stepBy(int steps)
+{
+    triggeredByArrows = true;
+    QDoubleSpinBox::stepBy(steps);
+    emit editingFinished();
+    triggeredByArrows = false;
+}
+
+//-------------------------------------------------------------------------------------------------
 CheckItem::CheckItem(QWidget* aParent)
     : mBox()
     , mStamp()
@@ -192,12 +222,15 @@ EasingItem::EasingItem(QWidget* aParent)
         });
     }
 
-    mDBox = new QDoubleSpinBox(aParent);
+    mDBox = new DoubleSpinBox(aParent);
     mLayout->addWidget(mDBox);
     mDBox->connect(mDBox, &QAbstractSpinBox::editingFinished, [=]()
     {
         this->onEditingFinished();
-        mDBox->clearFocus();
+        if (!triggeredByArrows)
+        {
+            mDBox->clearFocus();
+        }
     });
 
     mBox[0]->addItems(util::Easing::getTypeNameList());
@@ -263,14 +296,17 @@ IntegerItem::IntegerItem(QWidget* aParent)
     , mStamp()
     , mSignal(true)
 {
-    mBox = new QSpinBox(aParent);
+    mBox = new SpinBox(aParent);
 
     mStamp = mBox->value();
 
     mBox->connect(mBox, &QAbstractSpinBox::editingFinished, [=]()
     {
         this->onEditingFinished();
-        mBox->clearFocus();
+        if (!triggeredByArrows)
+        {
+            mBox->clearFocus();
+        }
     });
 }
 
@@ -309,7 +345,7 @@ DecimalItem::DecimalItem(QWidget* aParent)
     , mStamp()
     , mSignal(true)
 {
-    mBox = new QDoubleSpinBox(aParent);
+    mBox = new DoubleSpinBox(aParent);
 
     mStamp = mBox->value();
     mBox->setDecimals(3);
@@ -317,7 +353,10 @@ DecimalItem::DecimalItem(QWidget* aParent)
     mBox->connect(mBox, &QAbstractSpinBox::editingFinished, [=]()
     {
         this->onEditingFinished();
-        mBox->clearFocus();
+        if (!triggeredByArrows)
+        {
+            mBox->clearFocus();
+        }
     });
 }
 
@@ -365,14 +404,17 @@ Vector2DItem::Vector2DItem(QWidget* aParent)
 
     for (int i = 0; i < 2; ++i)
     {
-        mBox[i] = new QDoubleSpinBox(aParent);
+        mBox[i] = new DoubleSpinBox(aParent);
         mBox[i]->setDecimals(3);
         mLayout->addWidget(mBox[i]);
 
         mBox[i]->connect(mBox[i], &QAbstractSpinBox::editingFinished, [=]()
         {
             this->onEditingFinished();
-            mBox[i]->clearFocus();
+            if (!triggeredByArrows)
+            {
+                mBox[i]->clearFocus();
+            }
         });
     }
     mStamp = QVector2D(mBox[0]->value(), mBox[1]->value());

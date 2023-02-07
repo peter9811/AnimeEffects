@@ -19,6 +19,28 @@ namespace gui {
 namespace prop {
 
 //-------------------------------------------------------------------------------------------------
+class SpinBox : public QSpinBox
+{
+    Q_OBJECT
+
+public:
+    SpinBox(QWidget *parent = nullptr);
+
+    virtual void stepBy(int steps) override;
+};
+
+//-------------------------------------------------------------------------------------------------
+class DoubleSpinBox : public QDoubleSpinBox
+{
+    Q_OBJECT
+
+public:
+    DoubleSpinBox(QWidget *parent = nullptr);
+
+    virtual void stepBy(int steps) override;
+};
+
+//-------------------------------------------------------------------------------------------------
 class CheckItem
         : public ItemBase
 {

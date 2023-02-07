@@ -197,7 +197,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         {
             bHSVSetColor = isSetColor.toBool();
         }
-        auto isHSVBehaviour= settings.value("generalsettings/keys/hsvBehaviour");
+        auto isHSVBehaviour = settings.value("generalsettings/keys/hsvBehaviour");
         if (isHSVBehaviour.isValid())
         {
             mInitialHSVBehaviour = isHSVBehaviour.toInt();
@@ -206,6 +206,11 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         if (isHSVFolder.isValid())
         {
             bHSVFolder = isHSVFolder.toBool();
+        }
+        auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
+        if (isKeyDelay.isValid())
+        {
+            mKeyDelay = isKeyDelay.toInt();
         }
     }
 
@@ -281,8 +286,17 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         keysettings->addRow(tr("HSV | Key rendering : "), mHSVBehaviour);
     }
 
+    auto keybindingSettings = new QFormLayout();
+    {
+        mKeyDelayBox = new QSpinBox();
+        mKeyDelayBox->setRange(0, 10000);
+        mKeyDelayBox->setValue(mKeyDelay);
+        keybindingSettings->addRow(tr("Global keybind delay (ms) : "), mKeyDelayBox);
+    }
+
     createTab(tr("General"), form);
     createTab(tr("Animation keys"), keysettings);
+    createTab(tr("Keybindings"), keybindingSettings);
 
 
     this->setMainWidget(mTabs, false);
@@ -358,6 +372,11 @@ QString GeneralSettingDialog::theme()
     return mThemeBox->currentData().toString();
 }
 
+bool GeneralSettingDialog::keyDelayHasChanged()
+{
+    return (mKeyDelay != mKeyDelayBox->value());
+}
+
 void GeneralSettingDialog::saveSettings()
 {
     QSettings settings;
@@ -384,6 +403,9 @@ void GeneralSettingDialog::saveSettings()
     }
     if (HSVFolderHasChanged()){
         settings.setValue("generalsettings/keys/hsvFolder", mHSVFolder->isChecked());
+    }
+    if (keyDelayHasChanged()){
+        settings.setValue("generalsettings/keybindings/keyDelay", mKeyDelayBox->value());
     }
   }
 } // namespace gui

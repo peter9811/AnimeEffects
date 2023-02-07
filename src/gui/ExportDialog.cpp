@@ -261,7 +261,8 @@ GifExportDialog::GifExportDialog(
     , mGifParam()
 {
     {
-        this->commonParam().fps = std::min(this->commonParam().fps, 30);
+        int fpsCheck = this->commonParam().fps != 0 && this->commonParam().fps <= 500 ? this->commonParam().fps : 30;
+        this->commonParam().fps = fpsCheck;
         mGifParam.optimizePalette = true;
         mGifParam.intermediateBps = 5 * 1000 * 1000;
     }

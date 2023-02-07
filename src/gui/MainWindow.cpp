@@ -498,8 +498,11 @@ void MainWindow::keyPressEvent(QKeyEvent* aEvent)
     //qDebug() << "input key =" << aEvent->key() << "text =" << aEvent->text();
 
     if (aEvent->isAutoRepeat()){
-        // Delay of 250ms
-        if (lastPress + 125 < timeElapsed.elapsed()){
+        // Default delay of 125ms
+        QSettings settings;
+        auto delay = settings.value("generalsettings/keybindings/keyDelay");
+        qint64 delayInMs = delay.isValid() ? delay.toInt() : 125;
+        if (lastPress + delayInMs < timeElapsed.elapsed()){
             lastPress = timeElapsed.elapsed();
             mKeyCommandInvoker->onKeyPressed(aEvent);
             QMainWindow::keyPressEvent(aEvent);
@@ -520,8 +523,11 @@ void MainWindow::keyReleaseEvent(QKeyEvent* aEvent)
     //qDebug() << "release key =" << aEvent->key() << "text =" << aEvent->text();
 
     if (aEvent->isAutoRepeat()){
-        // Delay of 250ms
-        if (lastRelease + 125 < timeElapsed.elapsed()){
+        // Default delay of 125ms
+        QSettings settings;
+        auto delay = settings.value("generalsettings/keybindings/keyDelay");
+        qint64 delayInMs = delay.isValid() ? delay.toInt() : 125;
+        if (lastRelease + delayInMs < timeElapsed.elapsed()){
             lastRelease = timeElapsed.elapsed();
             mKeyCommandInvoker->onKeyReleased(aEvent);
             QMainWindow::keyPressEvent(aEvent);

@@ -7,6 +7,7 @@
 #include <QFormLayout>
 #include "gui/EasyDialog.h"
 #include "core/TimeFormat.h"
+#include "qspinbox.h"
 
 namespace gui
 {
@@ -25,6 +26,7 @@ public:
     bool HSVBehaviourHasChanged();
     bool HSVSetColorHasChanged();
     bool HSVFolderHasChanged();
+    bool keyDelayHasChanged();
     QString theme();
 private:
     void saveSettings();
@@ -57,6 +59,9 @@ private:
 
     QString mInitialThemeKey;
     QComboBox* mThemeBox;
+
+    int mKeyDelay;
+    QSpinBox* mKeyDelayBox;
 
     GUIResources& mGUIResources;
 };

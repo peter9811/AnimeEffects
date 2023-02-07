@@ -11,8 +11,13 @@ class ExtendShader
 {
 public:
     ExtendShader();
-    bool openFromFile(const QString& aFilePath);
-    void openFromText(const QString& aText);
+    bool openFromFile(const QString &aFilePath, QString &originalCode);
+    bool openFromFileVert(const QString &aFilePath);
+    bool openFromFileFrag(const QString &aFilePath);
+
+    void openFromText(const QString &aText, QString &originalCode);
+    void openFromTextVert(const QString &aText);
+    void openFromTextFrag(const QString &aText);
 
     void setVariationValue(const QString& aName, const QString& aValue);
     bool resolveVariation();
@@ -24,7 +29,8 @@ public:
 
 private:
     struct VariationUnit { QString name; QString value; };
-    QString mOriginalCode;
+    QString mOriginalCodeVert;
+    QString mOriginalCodeFrag;
     QString mVertexCode;
     QString mFragmentCode;
     std::vector<VariationUnit> mVariation;

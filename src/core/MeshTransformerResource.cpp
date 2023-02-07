@@ -55,7 +55,7 @@ void MeshTransformerResource::buildShader(
     gl::ExtendShader source;
 
     // parse shader source
-    source.openFromText(aCode);
+    source.openFromTextVert(aCode);
 
     // set variation
     source.setVariationValue("USE_SKINNING", QString::number(aUseSkinning ? 1 : 0));

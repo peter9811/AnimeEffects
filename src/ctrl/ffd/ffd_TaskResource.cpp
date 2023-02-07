@@ -99,7 +99,7 @@ void TaskResource::buildShader(
     gl::ExtendShader source;
 
     // parse shader source
-    source.openFromText(aCode);
+    source.openFromTextVert(aCode);
 
     // set variation
     if (aType != kTypeFocuser)
@@ -160,7 +160,7 @@ void TaskResource::buildBlurShader(
     gl::ExtendShader source;
 
     // parse shader source
-    source.openFromText(aCode);
+    source.openFromTextVert(aCode);
 
     // resolve variation
     if (!source.resolveVariation())

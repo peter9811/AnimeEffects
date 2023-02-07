@@ -28,17 +28,17 @@ FFDEditor::FFDEditor(Project& aProject,
     {
         gl::Global::makeCurrent();
         mDriverResources.grabMeshTransformerResoure(new core::MeshTransformerResource());
-        mDriverResources.meshTransformerResource()->setup("./data/shader/MeshTransform.glslex");
+        mDriverResources.meshTransformerResource()->setup("./data/shader/MeshTransformVert.glsl");
     }
     if (!mDriverResources.ffdTaskResource())
     {
         gl::Global::makeCurrent();
         mDriverResources.grabFFDTaskResource(new ffd::TaskResource());
         mDriverResources.ffdTaskResource()->setup(
-                    "./data/shader/FreeFormDeform.glslex",
-                    "./data/shader/FFDErase.glslex",
-                    "./data/shader/FFDFocusVertex.glslex",
-                    "./data/shader/FFDBlur.glslex");
+                    "./data/shader/FreeFormDeformVert.glsl",
+                    "./data/shader/FFDEraseVert.glsl",
+                    "./data/shader/FFDFocusVertexVert.glsl",
+                    "./data/shader/FFDBlurVert.glsl");
     }
 
 #if 0
@@ -48,13 +48,17 @@ FFDEditor::FFDEditor(Project& aProject,
         gl::ExtendShader source;
 
         // parse shader source
-        if (!source.openFromFile("./data/shader/TestBlur.glslex"))
+        if (!source.openFromFileVert("./data/shader/TestBlurVert.glsl"))
         {
-            XC_FATAL_ERROR("OpenGL Error", "Failed to open shader.", source.log());
+            XC_FATAL_ERROR("OpenGL Error", "Failed to open vertex shader.", source.log());
+        }
+        if (!source.openFromFileFrag("./data/shader/TestBlurVert.glsl"))
+        {
+            XC_FATAL_ERROR("OpenGL Error", "Failed to open fragment shader.", source.log());
         }
 
         // resolve variation
-        if (!source.resolveVariation())
+        if (!source.resolveVariationSeparate())
         {
             XC_FATAL_ERROR("OpenGL Error", "Failed to resolve shader variation.",
                            source.log());

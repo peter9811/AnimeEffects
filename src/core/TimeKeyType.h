@@ -16,6 +16,7 @@ enum TimeKeyType
     TimeKeyType_Mesh,
     TimeKeyType_FFD,
     TimeKeyType_Image,
+    TimeKeyType_HSV,
     TimeKeyType_TERM
 };
 

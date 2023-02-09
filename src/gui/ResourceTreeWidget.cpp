@@ -1,5 +1,9 @@
 #include <QMenu>
 #include <QFileDialog>
+#include <chrono>
+#include <thread>
+#include "qfilesystemwatcher.h"
+#include "qmessagebox.h"
 #include "util/TreeUtil.h"
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
@@ -9,6 +13,7 @@
 #include "gui/res/res_Item.h"
 #include "gui/res/res_ResourceUpdater.h"
 #include "gui/res/res_Notifier.h"
+#include "MainWindow.h"
 
 namespace gui {
 
@@ -21,6 +26,8 @@ ResourceTreeWidget::ResourceTreeWidget(ViaPoint& aViaPoint, bool aUseCustomConte
     , mChangePathAction()
     , mRenameAction()
     , mReloadAction()
+    , mFileWatch()
+    , mWatchRemove()
     , mDeleteAction()
     , mRenaming()
 {
@@ -52,19 +59,27 @@ ResourceTreeWidget::ResourceTreeWidget(ViaPoint& aViaPoint, bool aUseCustomConte
         this->connect(this, &QWidget::customContextMenuRequested,
                       this, &ResourceTreeWidget::onContextMenuRequested);
 
-        mChangePathAction = new QAction(tr("change file path"), this);
+        mChangePathAction = new QAction(tr("Change file path"), this);
         mChangePathAction->connect(mChangePathAction, &QAction::triggered,
                                    this, &ResourceTreeWidget::onChangePathActionTriggered);
 
-        mRenameAction = new QAction(tr("rename"), this);
+        mRenameAction = new QAction(tr("Rename"), this);
         mRenameAction->connect(mRenameAction, &QAction::triggered,
                                this, &ResourceTreeWidget::onRenameActionTriggered);
 
-        mReloadAction = new QAction(tr("reload images"), this);
+        mReloadAction = new QAction(tr("Reload images"), this);
         mReloadAction->connect(mReloadAction, &QAction::triggered,
                                this, &ResourceTreeWidget::onReloadActionTriggered);
 
-        mDeleteAction = new QAction(tr("delete"), this);
+        mFileWatch = new QAction(tr("Monitor for changes"), this);
+        mFileWatch->connect(mFileWatch, &QAction::triggered,
+                               this, &ResourceTreeWidget::onWatchTriggered);
+
+        mWatchRemove = new QAction(tr("Stop monitoring for changes"), this);
+        mWatchRemove->connect(mWatchRemove, &QAction::triggered,
+                               this, &ResourceTreeWidget::onWatchRemoveTriggered);
+
+        mDeleteAction = new QAction(tr("Delete"), this);
         mDeleteAction->connect(mDeleteAction, &QAction::triggered,
                                this, &ResourceTreeWidget::onDeleteActionTriggered);
     }
@@ -222,6 +237,9 @@ void ResourceTreeWidget::onContextMenuRequested(const QPoint& aPos)
         if (item && item->isTopNode())
         {
             menu.addSeparator();
+            menu.addAction(mFileWatch);
+            menu.addAction(mWatchRemove);
+            menu.addSeparator();
             menu.addAction(mDeleteAction);
         }
 
@@ -235,13 +253,13 @@ void ResourceTreeWidget::onChangePathActionTriggered(bool)
     if (item && item->isTopNode())
     {
         const QString fileName = QFileDialog::getOpenFileName(
-                    this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif)");
+                    this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
         if (fileName.isEmpty()) return;
 
         if (mHolder)
         {
             auto& stack = mProject->commandStack();
-            cmnd::ScopedMacro macro(stack, CmndName::tr("update a resource file path"));
+            cmnd::ScopedMacro macro(stack, CmndName::tr("Update resource file path"));
 
             // notifier
             auto notifier = new res::ChangeFilePathNotifier(mViaPoint, item->node());
@@ -298,7 +316,7 @@ void ResourceTreeWidget::endRenameEditor()
         if (curName != newName)
         {
             auto& stack = mProject->commandStack();
-            cmnd::ScopedMacro macro(stack, CmndName::tr("rename a resource"));
+            cmnd::ScopedMacro macro(stack, CmndName::tr("Rename resource"));
 
             // notifier
             auto notifier = new res::RenameNotifier(mViaPoint, *mProject, item->treePos());
@@ -327,6 +345,55 @@ void ResourceTreeWidget::onReloadActionTriggered(bool)
 
     res::ResourceUpdater updater(mViaPoint, *mProject);
     updater.reload(*item);
+}
+
+void ResourceTreeWidget::onWatchTriggered(bool)
+{
+    if (!mProject) return;
+    res::Item* item = res::Item::cast(mActionItem);
+    if (!item) return;
+    if (!QFile(mProject->resourceHolder().findAbsoluteFilePath(item->node())).exists()){
+        MainWindow::showInfoPopup(tr("File not found"), tr("The file couldn't be found, please change "
+                                                           "its file path using the button above."), "Warn");
+        return;
+    }
+    auto fileWatcher = MainWindow::getWatcher();
+
+    qDebug() << "files : " << fileWatcher->files();
+    if (fileWatcher->files().contains(QString(mProject->resourceHolder().findAbsoluteFilePath(item->node())))){
+        MainWindow::showInfoPopup(tr("Invalid Selection"), tr("Already watching for changes in this file"), "Warn");
+        return;
+    }
+    fileWatcher->addPath(mProject->resourceHolder().findAbsoluteFilePath(item->node()));
+    if (true){
+        connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, [=]{
+            using namespace std::chrono;
+            using namespace std::this_thread;
+            sleep_for(milliseconds(500));
+            res::ResourceUpdater updater(mViaPoint, *mProject);
+            updater.reload(*item);});
+        MainWindow::showInfoPopup(tr("Success"), tr("This file will be monitored for changes."), "Info");
+        qDebug() << "Watching path: " << mProject->resourceHolder().findAbsoluteFilePath(item->node());
+    }
+}
+
+void ResourceTreeWidget::onWatchRemoveTriggered(bool)
+{
+    if (!mProject) return;
+    res::Item* item = res::Item::cast(mActionItem);
+    if (!item) return;
+
+    auto fileWatcher = MainWindow::getWatcher();
+
+    qDebug() << "files : " << fileWatcher->files();
+    if (fileWatcher->files().contains(QString(mProject->resourceHolder().findAbsoluteFilePath(item->node())))){
+        fileWatcher->removePath(mProject->resourceHolder().findAbsoluteFilePath(item->node()));
+        MainWindow::showInfoPopup(tr("Success"), tr("The file will no longer be monitored"), "Info");
+        return;
+    }
+    else{
+        MainWindow::showInfoPopup(tr("File not monitored"), tr("The file is not being currently monitored"), "Warn");
+    }
 }
 
 void ResourceTreeWidget::onDeleteActionTriggered(bool)

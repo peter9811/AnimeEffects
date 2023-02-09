@@ -9,6 +9,8 @@
 #include "ctrl/VideoFormat.h"
 #include "gui/EasyDialog.h"
 #include "gui/GUIResources.h"
+#include "qprocess.h"
+
 namespace gui { class MainWindow; }
 namespace gui { class ViaPoint; }
 namespace gui
@@ -22,6 +24,7 @@ public:
     MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources& aGUIResources, QWidget* aParent);
     void setProject(core::Project* aProject);
     void setShowResourceWindow(bool aShow);
+    QStringList recentfiles;
 
 public:
     // signals
@@ -30,10 +33,19 @@ public:
     util::Signaler<void()> onTimeFormatChanged;
 
 private:
+    QScopedPointer<QProcess> mProcess;
+    QString osDef(){
+    #if defined (Q_OS_WIN)
+        return "Win";
+    #else
+        return "Posix";
+    #endif
+    };
     void loadVideoFormats();
     void onCanvasSizeTriggered();
     void onMaxFrameTriggered();
     void onLoopTriggered();
+    void onFPSTriggered();
     bool confirmMaxFrameUpdating(int aNewMaxFrame) const;
 
     ViaPoint& mViaPoint;
@@ -73,6 +85,19 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
+class ProjectFPSSettingDialog : public EasyDialog
+{
+    Q_OBJECT
+public:
+    ProjectFPSSettingDialog(core::Project& aProject, QWidget* aParent);
+    int fps() const { return mFPSBox->value(); }
+private:
+    bool confirmFPSUpdating(int aNewMaxFrame) const;
+    core::Project& mProject;
+    QSpinBox* mFPSBox;
+};
+
+//-------------------------------------------------------------------------------------------------
 class ProjectLoopSettingDialog : public EasyDialog
 {
     Q_OBJECT
@@ -82,6 +107,8 @@ public:
 private:
     QCheckBox* mLoopBox;
 };
+
+
 
 } // namespace gui
 

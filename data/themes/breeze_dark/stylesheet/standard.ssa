@@ -156,125 +156,6 @@ QCheckBox:disabled
     color: #b0b0b0;
 }
 
-QGroupBox
-{
-    /* Need to make sure the groupbox doesn't compress below the title. */
-    min-height: 1.2em;
-    border: 0.04em solid #76797c;
-    border-radius: 0.09em;
-    /**
-     * This gives us enough space at the top to ensure we can move the
-     * title to be inside the guidelines, and the padding at the top
-     * ensures we have space below the title.
-     */
-    margin-top: 0.5em;
-    padding-top: 1em;
-}
-
-QGroupBox:focus
-{
-    border: 0.04em solid #76797c;
-    border-radius: 0.09em;
-}
-
-QGroupBox::title
-{
-    /* We need to move 0.6em up to be inside the lines, +1em for padding. */
-    top: -1.6em;
-    subcontrol-origin: content;
-    subcontrol-position: top center;
-    background: #323232;
-    padding-left: 0.2em;
-    padding-right: 0.2em;
-}
-
-QCheckBox::indicator,
-QTreeView::indicator,
-QGroupBox::indicator
-{
-    width: 1em;
-    height: 1em;
-}
-
-QGroupBox::indicator:unchecked,
-QGroupBox::indicator:unchecked:focus,
-QCheckBox::indicator:unchecked,
-QCheckBox::indicator:unchecked:focus,
-QTreeView::indicator:unchecked,
-QTreeView::indicator:unchecked:focus
-{
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_unchecked_disabled.svg);
-}
-
-QGroupBox::indicator:unchecked,
-QCheckBox::indicator:unchecked:hover,
-QCheckBox::indicator:unchecked:pressed,
-QTreeView::indicator:unchecked:hover,
-QTreeView::indicator:unchecked:pressed,
-QGroupBox::indicator:unchecked:hover,
-QGroupBox::indicator:unchecked:pressed
-{
-    border: none;
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_unchecked.svg);
-}
-
-QCheckBox::indicator:checked,
-QTreeView::indicator:checked,
-QGroupBox::indicator:checked
-{
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_checked.svg);
-}
-
-QCheckBox::indicator:checked:hover,
-QCheckBox::indicator:checked:focus,
-QCheckBox::indicator:checked:pressed,
-QTreeView::indicator:checked:hover,
-QTreeView::indicator:checked:focus,
-QTreeView::indicator:checked:pressed,
-QGroupBox::indicator:checked:hover,
-QGroupBox::indicator:checked:focus,
-QGroupBox::indicator:checked:pressed
-{
-    border: none;
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_checked.svg);
-}
-
-QCheckBox::indicator:indeterminate,
-QTreeView::indicator:indeterminate
-{
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_indeterminate.svg);
-}
-
-QCheckBox::indicator:indeterminate:focus,
-QCheckBox::indicator:indeterminate:hover,
-QCheckBox::indicator:indeterminate:pressed,
-QTreeView::indicator:indeterminate:focus,
-QTreeView::indicator:indeterminate:hover,
-QTreeView::indicator:indeterminate:pressed
-{
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_indeterminate.svg);
-}
-
-QCheckBox::indicator:indeterminate:disabled,
-QTreeView::indicator:indeterminate:disabled
-{
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_indeterminate_disabled.svg);
-}
-
-QCheckBox::indicator:checked:disabled,
-QTreeView::indicator:checked:disabled,
-QGroupBox::indicator:checked:disabled
-{
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_checked_disabled.svg);
-}
-
-QCheckBox::indicator:unchecked:disabled,
-QTreeView::indicator:unchecked:disabled,
-QGroupBox::indicator:unchecked:disabled
-{
-    border-image: url(data/themes/breeze_dark/icon/breeze/checkbox_unchecked_disabled.svg);
-}
-
 QRadioButton
 {
     spacing: 0.23em;
@@ -842,6 +723,13 @@ QPushButton
     min-height: 1.1em;
 }
 
+QPushButton#browser::enabled {
+    image: url(data/themes/classic/icon/filew.png);
+}
+QPushButton#browser::disabled {
+    image: url(data/themes/classic/icon/file.png);
+}
+
 QComboBox:open,
 QPushButton:open
 {
@@ -1077,6 +965,76 @@ QAbstractSpinBox:up-button:hover
     padding-right: 0.1em;
     width: 0.8em;
     height: 0.5em;
+}
+
+QAbstractSpinBox:down-button,
+QAbstractSpinBox:down-button:hover
+{
+    background-color: transparent;
+    subcontrol-origin: padding;
+    subcontrol-position: center left;
+    padding-left: 0.1em;
+    width: 0.8em;
+    height: 0.5em;
+}
+
+/**
+ *  Bug fixes for elongated items in QSpinBoxes.
+ *  By default, the items are bounded by `down-button`
+ *  and `up-button`, so this doesn't actually affect the styling.
+ *
+ *  This does however affect some custom styling using
+ *  QStyle.CC_ComboBox, which affects QDateEdit. This cannot
+ *  be selected using QDateEdit, since it uses a global style.
+ *  This sounds nonsensical, because CC_ComboBox isn't a spin box,
+ *  but through trial and error, this is in fact the case.
+ *
+ *  Affects #40.
+ */
+QAbstractSpinBox::up-arrow,
+QAbstractSpinBox::up-arrow:disabled,
+QAbstractSpinBox::up-arrow:off,
+QAbstractSpinBox::up-arrow:!off:!disabled:hover,
+QAbstractSpinBox::down-arrow,
+QAbstractSpinBox::down-arrow:disabled,
+QAbstractSpinBox::down-arrow:off,
+QAbstractSpinBox::down-arrow:!off:!disabled:hover
+{
+    border-image: none;
+    width: 0.8em;
+    height: 0.5em;
+}
+
+QAbstractSpinBox::up-arrow
+{
+    image: url(data/themes/breeze_dark/icon/breeze/up_arrow.svg);
+}
+
+QAbstractSpinBox::up-arrow:disabled,
+QAbstractSpinBox::up-arrow:off
+{
+    image: url(data/themes/breeze_dark/icon/breeze/up_arrow_disabled.svg);
+}
+
+QAbstractSpinBox::up-arrow:hover
+{
+    image: url(data/themes/breeze_dark/icon/breeze/up_arrow_hover.svg);
+}
+
+QAbstractSpinBox::down-arrow
+{
+    image: url(data/themes/breeze_dark/icon/breeze/down_arrow.svg);
+}
+
+QAbstractSpinBox::down-arrow:disabled,
+QAbstractSpinBox::down-arrow:off
+{
+    image: url(data/themes/breeze_dark/icon/breeze/down_arrow_disabled.svg);
+}
+
+QAbstractSpinBox::down-arrow:!off:!disabled:hover
+{
+    image: url(data/themes/breeze_dark/icon/breeze/down_arrow_hover.svg);
 }
 
 QAbstractSpinBox:down-button,

@@ -7,12 +7,14 @@ namespace core
 
 ShaderHolder::ShaderHolder()
     : mShaders()
+    , mHSVShaders()
     , mGridShaders()
     , mClipperShaders()
 {
     mShaders.resize(img::BlendMode_TERM * 2);
     mGridShaders.resize(1);
     mClipperShaders.resize(2);
+    mHSVShaders.resize(1);
 }
 
 ShaderHolder::~ShaderHolder()
@@ -29,6 +31,11 @@ ShaderHolder::~ShaderHolder()
     {
         if (p) delete p;
     }
+    for (auto p : mHSVShaders)
+    {
+        if (p) delete p;
+    }
+
 }
 
 gl::EasyShaderProgram& ShaderHolder::reserveShader(img::BlendMode aBlendMode, bool aIsClippee)
@@ -40,9 +47,14 @@ gl::EasyShaderProgram& ShaderHolder::reserveShader(img::BlendMode aBlendMode, bo
         auto shader = mShaders[index];
 
         gl::ExtendShader source;
-        if (!source.openFromFile("./data/shader/LayerDrawing.glslex"))
+        if (!source.openFromFileVert("./data/shader/LayerDrawingVert.glsl"))
         {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open shader file.",
+            XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.",
+                           source.log());
+        }
+        if (!source.openFromFileFrag("./data/shader/LayerDrawingFrag.glsl"))
+        {
+            XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.",
                            source.log());
         }
 
@@ -92,6 +104,66 @@ const gl::EasyShaderProgram& ShaderHolder::shader(img::BlendMode aBlendMode, boo
     return *(mShaders.at(index));
 }
 
+gl::EasyShaderProgram& ShaderHolder::reserveHSVShader()
+{
+    const int index = 0;
+    if (!mHSVShaders[index])
+    {
+        mHSVShaders[index] = new gl::EasyShaderProgram();
+        auto shader = mHSVShaders[index];
+
+        gl::ExtendShader source;
+        if (!source.openFromFileVert("./data/shader/HSVAdjustVert.glsl"))
+        {
+            XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.",
+                           source.log());
+        }
+        if (!source.openFromFileFrag("./data/shader/HSVAdjustFrag.glsl"))
+        {
+            XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.",
+                           source.log());
+        }
+
+        if (!source.resolveVariation())
+        {
+            XC_FATAL_ERROR("OpenGL Error", "Failed to resolve shader variation.",
+                           source.log());
+        }
+
+        if (!shader->setAllSource(source))
+        {
+            XC_FATAL_ERROR("OpenGL Error", "Failed to compile shader.",
+                           shader->log());
+        }
+
+        if (!shader->link())
+        {
+            XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.",
+                           shader->log());
+        }
+    }
+    return *mHSVShaders[index];
+}
+
+void ShaderHolder::reserveHSVShaders()
+{
+    reserveHSVShader();
+}
+
+gl::EasyShaderProgram& ShaderHolder::HSVShader()
+{
+    const int index = 0;
+    XC_PTR_ASSERT(mHSVShaders.at(index));
+    return *(mHSVShaders.at(index));
+}
+
+const gl::EasyShaderProgram& ShaderHolder::HSVShader() const
+{
+    const int index = 0;
+    XC_PTR_ASSERT(mHSVShaders.at(index));
+    return *(mHSVShaders.at(index));
+}
+
 gl::EasyShaderProgram& ShaderHolder::reserveGridShader()
 {
     if (!mGridShaders[0])
@@ -100,11 +172,17 @@ gl::EasyShaderProgram& ShaderHolder::reserveGridShader()
         auto shader = mGridShaders[0];
 
         gl::ExtendShader source;
-        if (!source.openFromFile("./data/shader/GridDrawing.glslex"))
+        if (!source.openFromFileVert("./data/shader/GridDrawingVert.glsl"))
         {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open shader file.",
+            XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.",
                            source.log());
         }
+        if (!source.openFromFileFrag("./data/shader/GridDrawingFrag.glsl"))
+        {
+            XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.",
+                           source.log());
+        }
+
         if (!source.resolveVariation())
         {
             XC_FATAL_ERROR("OpenGL Error", "Failed to resolve shader variation.",
@@ -138,6 +216,7 @@ const gl::EasyShaderProgram& ShaderHolder::gridShader() const
     return *(mGridShaders.at(0));
 }
 
+
 gl::EasyShaderProgram& ShaderHolder::reserveClipperShader(bool aIsClippee)
 {
     if (!mClipperShaders.at(aIsClippee))
@@ -146,9 +225,14 @@ gl::EasyShaderProgram& ShaderHolder::reserveClipperShader(bool aIsClippee)
         auto shader = mClipperShaders[aIsClippee];
 
         gl::ExtendShader source;
-        if (!source.openFromFile("./data/shader/ClipperWriting.glslex"))
+        if (!source.openFromFileVert("./data/shader/ClipperWritingVert.glsl"))
         {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open shader file.",
+            XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.",
+                           source.log());
+        }
+        if (!source.openFromFileFrag("./data/shader/ClipperWritingFrag.glsl"))
+        {
+            XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.",
                            source.log());
         }
 

@@ -254,7 +254,7 @@ void TimeLineEditor::beginMoveKey(const time::Focuser::SingleFocus& aTarget)
 
     mOnUpdatingKey = true;
     {
-        cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("move a key"));
+        cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Move key"));
 
         auto notifier = TimeLineUtil::createMoveNotifier(
                             *mProject, *aTarget.node, aTarget.pos);
@@ -277,7 +277,7 @@ bool TimeLineEditor::beginMoveKeys(const QPoint& aWorldPos)
 
         if (mFocus.select(notifier->event()))
         {
-            cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("move keys"));
+            cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Move keys"));
 
             macro.grabListener(notifier);
             mMoveRef = new TimeLineUtil::MoveFrameOfKey(notifier->event());
@@ -370,8 +370,8 @@ bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& 
         notifier->event() = aEvent;
         notifier->event().setType(TimeLineEvent::Type_CopyKey);
 
-        // push delete keys command
-        cmnd::ScopedMacro macro(stack, CmndName::tr("paste keys"));
+        // push paste keys command
+        cmnd::ScopedMacro macro(stack, CmndName::tr("Paste keys"));
         macro.grabListener(notifier);
 
         QMap<const TimeKey*, TimeKey*> parentMap;
@@ -436,7 +436,7 @@ void TimeLineEditor::deleteCheckedKeys(core::TimeLineEvent& aEvent)
         notifier->event().setType(core::TimeLineEvent::Type_RemoveKey);
 
         // push delete keys command
-        cmnd::ScopedMacro macro(stack, CmndName::tr("delete keys"));
+        cmnd::ScopedMacro macro(stack, CmndName::tr("Delete keys"));
         macro.grabListener(notifier);
 
         for (auto target : aEvent.targets())

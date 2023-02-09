@@ -48,6 +48,7 @@ public:
     void read(bool& aValue);
     void read(int& aValue);
     void read(float& aValue);
+    void read(QList<int>& aValue);
     void read(QPoint& aValue);
     void read(QVector2D& aValue);
     void read(QVector3D& aValue);

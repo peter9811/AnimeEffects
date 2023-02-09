@@ -13,6 +13,7 @@
 #include "core/ScaleKey.h"
 #include "core/DepthKey.h"
 #include "core/OpaKey.h"
+#include "core/HsvKey.h"
 #include "core/BoneKey.h"
 #include "core/PoseKey.h"
 #include "core/FFDKey.h"
@@ -134,6 +135,11 @@ void assignOpaKeyData(
         core::Project& aProject, core::ObjectNode& aTarget, int aFrame,
         const core::OpaKey::Data& aNewData);
 
+void assignHSVKeyData(
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame,
+        const core::HSVKey::Data& aNewData
+        );
+
 void assignPoseKeyEasing(
         core::Project& aProject, core::ObjectNode& aTarget, int aFrame,
         const util::Easing::Param& aNewData);
@@ -175,6 +181,10 @@ void pushNewDepthKey(
 void pushNewOpaKey(
         core::Project& aProject, core::ObjectNode& aTarget, int aFrame,
         core::OpaKey* aKey);
+
+void pushNewHSVKey(
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame,
+        core::HSVKey* aKey);
 
 void pushNewPoseKey(
         core::Project& aProject, core::ObjectNode& aTarget, int aFrame,

@@ -40,6 +40,13 @@ const core::OpaKey::Data& getOpaKeyData(const core::ObjectNode& aTarget, int aFr
     return ((const core::OpaKey*)key)->data();
 }
 
+const core::HSVKey::Data& getHSVKeyData(const core::ObjectNode& aTarget, int aFrame)
+{
+    auto key = aTarget.timeLine()->timeKey(core::TimeKeyType_HSV, aFrame);
+    XC_PTR_ASSERT(key);
+    return ((const core::HSVKey*)key)->data();
+}
+
 #if 0
 const core::PoseKey::Data& getPoseKeyData(const core::ObjectNode& aTarget, int aFrame)
 {
@@ -103,6 +110,17 @@ void KeyAccessor::assignDefaultOpacity(float aNext)
     core::OpaKey::Data newData = key->data();
     newData.setOpacity(aNext);
     ctrl::TimeLineUtil::assignOpaKeyData(
+                *mProject, *mTarget, core::TimeLine::kDefaultKeyIndex, newData);
+}
+
+void KeyAccessor::assignDefaultHSV(QList<int> aNext)
+{
+    ASSERT_AND_RETURN_INVALID_TARGET();
+    auto key = (const core::HSVKey*)currline().defaultKey(core::TimeKeyType_HSV);
+    XC_PTR_ASSERT(key);
+    core::HSVKey::Data newData = key->data();
+    newData.setHSV(aNext);
+    ctrl::TimeLineUtil::assignHSVKeyData(
                 *mProject, *mTarget, core::TimeLine::kDefaultKeyIndex, newData);
 }
 
@@ -247,6 +265,24 @@ void KeyAccessor::assignOpacity(float aOpacity)
     ctrl::TimeLineUtil::assignOpaKeyData(*mProject, *mTarget, frame, newData);
 }
 
+void KeyAccessor::assignHSV(int aValue, QString aType)
+{
+    ASSERT_AND_RETURN_INVALID_TARGET();
+    const int frame = getFrame();
+    auto newData = getHSVKeyData(*mTarget, frame);
+    if (aType == "hue"){
+        newData.setHue(aValue);
+    }
+    else if (aType == "sat"){
+        newData.setSaturation(aValue);
+    }
+    else if (aType == "val"){
+        newData.setValue(aValue);
+    }
+
+    ctrl::TimeLineUtil::assignHSVKeyData(*mProject, *mTarget, frame, newData);
+}
+
 void KeyAccessor::assignOpaEasing(util::Easing::Param aNext)
 {
     ASSERT_AND_RETURN_INVALID_TARGET();
@@ -256,6 +292,17 @@ void KeyAccessor::assignOpaEasing(util::Easing::Param aNext)
     newData.easing() = aNext;
 
     ctrl::TimeLineUtil::assignOpaKeyData(*mProject, *mTarget, frame, newData);
+}
+
+void KeyAccessor::assignHSVEasing(util::Easing::Param aNext)
+{
+    ASSERT_AND_RETURN_INVALID_TARGET();
+    XC_ASSERT(aNext.isValidParam());
+    const int frame = getFrame();
+    auto newData = getHSVKeyData(*mTarget, frame);
+    newData.easing() = aNext;
+
+    ctrl::TimeLineUtil::assignHSVKeyData(*mProject, *mTarget, frame, newData);
 }
 
 void KeyAccessor::assignPoseEasing(util::Easing::Param aNext)
@@ -333,6 +380,15 @@ void KeyAccessor::knockNewOpacity()
     newKey->data() = currline().current().opa();
 
     ctrl::TimeLineUtil::pushNewOpaKey(*mProject, *mTarget, getFrame(), newKey);
+}
+
+void KeyAccessor::knockNewHSV()
+{
+    ASSERT_AND_RETURN_INVALID_TARGET();
+    auto newKey = new core::HSVKey();
+    newKey->data() = currline().current().hsv();
+
+    ctrl::TimeLineUtil::pushNewHSVKey(*mProject, *mTarget, getFrame(), newKey);
 }
 
 void KeyAccessor::knockNewPose()

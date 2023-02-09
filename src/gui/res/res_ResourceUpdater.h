@@ -29,7 +29,7 @@ private:
     img::ResourceNode* createQImageTree(const QString& aFilePath, bool aLoadImage) const;
     img::ResourceNode* createPsdTree(const QString& aFilePath, bool aLoadImage);
 
-    void createImageReloaderRecursive(
+    bool createImageReloaderRecursive(
             cmnd::Stack& aStack,
             ModificationNotifier& aNotifier,
             QTreeWidgetItem& aCurItem,

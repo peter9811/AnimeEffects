@@ -7,6 +7,7 @@
 #include "core/RotateKey.h"
 #include "core/ScaleKey.h"
 #include "core/OpaKey.h"
+#include "core/HsvKey.h"
 #include "core/BoneKey.h"
 #include "core/PoseKey.h"
 #include "core/MeshKey.h"
@@ -39,6 +40,9 @@ public:
 
     OpaKey::Data& opa() { return mOpa; }
     const OpaKey::Data& opa() const { return mOpa; }
+
+    HSVKey::Data& hsv() {return mHSV;}
+    const HSVKey::Data& hsv() const {return mHSV;}
 
     void setWorldOpacity(float aValue) { mWorldOpacity = aValue; }
     float worldOpacity() const { return mWorldOpacity; }
@@ -83,6 +87,7 @@ private:
     std::array<Frame, TimeKeyType_TERM> mKeyCaches;
     SRTExpans mSRT;
     OpaKey::Data mOpa;
+    HSVKey::Data mHSV;
     float mWorldOpacity;
     float mDepth;
     float mWorldDepth;

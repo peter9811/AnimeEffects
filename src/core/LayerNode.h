@@ -37,6 +37,8 @@ public:
     void setDefaultDepth(float aValue);
     // default opacity
     void setDefaultOpacity(float aValue);
+    // default hsv
+    void setDefaultHSV(QList<int> aValue);
 
     // from ObjectNode
     virtual ObjectType type() const { return ObjectType_Layer; }
@@ -69,6 +71,7 @@ public:
             const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
     virtual void setClipped(bool aIsClipped);
     virtual bool isClipped() const { return mIsClipped; }
+    virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData);
     virtual bool hasBlendMode() const { return true; }
     virtual img::BlendMode blendMode() const;
     virtual void setBlendMode(img::BlendMode);

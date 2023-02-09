@@ -2,6 +2,7 @@
 #define CTRL_BONE_NODESELECTOR_H
 
 #include <vector>
+#include "core/Bone2.h"
 #include "core/ObjectNode.h"
 #include "core/CameraInfo.h"
 #include "ctrl/GraphicStyle.h"

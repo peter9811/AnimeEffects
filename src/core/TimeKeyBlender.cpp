@@ -261,6 +261,9 @@ void TimeKeyBlender::updateCurrents(ObjectNode* aRootNode, const TimeInfo& aTime
             // build opa
             blendOpaKey(pos, aTime);
 
+            // build hsv
+            blendHSVKey(pos, aTime);
+
             // build mesh
             blendMeshKey(pos, aTime);
 
@@ -608,6 +611,57 @@ void TimeKeyBlender::blendDepthKey(PositionType aPos, const TimeInfo& aTime)
         }
     }
 }
+
+void TimeKeyBlender::blendHSVKey(PositionType aPos, const TimeInfo& aTime)
+{
+    auto seekData = mSeeker->data(aPos);
+    if (!seekData.objNode || !seekData.expans) return;
+    auto& node = *seekData.objNode;
+    auto& expans = *seekData.expans;
+    if (!node.timeLine()) return;
+
+    // set cache frame
+    expans.setKeyCache(TimeKeyType_HSV, aTime.frame);
+
+    // get blend info
+    TimeKeyGatherer blend(node.timeLine()->map(TimeKeyType_HSV), aTime);
+
+    // no key is exists
+    if (blend.isEmpty())
+    {
+        auto defaultKey = (HSVKey*)node.timeLine()->defaultKey(TimeKeyType_HSV);
+        expans.hsv() = defaultKey ? defaultKey->data() : HSVKey::Data();
+    }
+    else if (blend.hasSameFrame())
+    {
+        // a key is exists
+        expans.hsv() = ((const HSVKey*)blend.point(0).key)->data();
+    }
+    else if (blend.isSingle())
+    {
+        // perfect following
+        expans.hsv() = ((const HSVKey*)blend.singlePoint().key)->data();
+    }
+    else
+    {
+        // calculate hsv change
+        const float time = getEasingRateFromTwoKeys<HSVKey>(blend);
+        const HSVKey* k0 = (const HSVKey*)blend.point(0).key;
+        const HSVKey* k1 = (const HSVKey*)blend.point(1).key;
+        for (int x = 0; x < 3; x+=1){
+            // blend
+            switch(x){
+            case 0: expans.hsv().setHue(k0->hsv().at(0) * (1.0f - time) + k1->hsv().at(0) * time);
+                    break;
+            case 1: expans.hsv().setSaturation(k0->hsv().at(1) * (1.0f - time) + k1->hsv().at(1) * time);
+                    break;
+            case 2: expans.hsv().setValue(k0->hsv().at(2) * (1.0f - time) + k1->hsv().at(2) * time);
+                    break;
+            }
+        }
+    }
+}
+
 
 void TimeKeyBlender::blendOpaKey(PositionType aPos, const TimeInfo& aTime)
 {

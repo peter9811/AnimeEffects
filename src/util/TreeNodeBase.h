@@ -248,9 +248,9 @@ public:
     TreeNodeType* nextSib() { return mNextSib; }
     const TreeNodeType* nextSib() const { return mNextSib; }
 
-
     Children& children() { return mChildren; }
     const Children& children() const { return mChildren; }
+
 
 private:
     friend Children;

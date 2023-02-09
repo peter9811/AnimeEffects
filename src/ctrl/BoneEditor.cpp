@@ -42,7 +42,7 @@ bool BoneEditor::setTarget(core::ObjectNode* aTarget)
 
     if (!message.isEmpty())
     {
-        mUILogger.pushLog(UILog::tr("BoneEditor : ") + message, UILogType_Warn);
+        mUILogger.pushLog(UILog::tr("Bone Editor : ") + message, UILogType_Warn);
     }
 
     return mTarget && mKeyOwner;
@@ -143,7 +143,7 @@ void BoneEditor::resetCurrentTarget(QString* aMessage)
             mTarget.node = nullptr;
             if (aMessage)
             {
-                *aMessage = UILog::tr("The object which has an invalid posture was given.");
+                *aMessage = UILog::tr("An object with invalid pose was given.");
             }
         }
     }

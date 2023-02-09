@@ -1,4 +1,6 @@
 #include <fstream>
+#include "gui/MainMenuBar.h"
+#include "gui/MainWindow.h"
 #include "qdir.h"
 #include "util/IDSolver.h"
 #include "ctrl/ProjectLoader.h"
@@ -24,43 +26,17 @@ bool ProjectLoader::load(
 
     if (file.fail())
     {
-        // Get appdata folder
-        QString writableAppData = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-        writableAppData.replace("AnimeEffectsProject/AnimeEffects", "AnimeEffects"); // To remove redundancy
-        if (!QDir(writableAppData).exists()){
-            QDir().mkdir(writableAppData);
-        }
-        QString pathFilename = writableAppData + "/folderpaths.ann"; // Custom suffix to identify this type of file
-        QFile pathFile(pathFilename);
-
-        // Read file
-        QStringList recentfiles;
-        if (pathFile.open(QIODevice::ReadOnly) || pathFile.isOpen())
-        {
-            QTextStream in(&pathFile);
-            while (!in.atEnd()) {
-                recentfiles += in.readLine().split("\n");
-            }
-        }
+        QSettings settings;
+        QStringList recentfiles = settings.value("projectloader/recents").toStringList();
         qInfo() << aPath;
         if (recentfiles.contains(aPath)){
             auto unavailableIndex = recentfiles.indexOf(aPath);
             recentfiles.removeAt(unavailableIndex);
+            settings.setValue("projectloader/recents", recentfiles);
             qInfo() << recentfiles;
-            pathFile.close();
-            if (pathFile.open(QIODevice::ReadWrite)) {
-                    QTextStream stream(&pathFile);
-                    // TODO: Get this done without flushing the entire file
-                    auto textStream = recentfiles;
-                    QString textString = textStream.join("\n");
-                    qInfo() << "Stream: " + QString(textString);
-                    pathFile.resize(0);
-                    pathFile.write(textString.toLatin1());
-                    pathFile.close();
-                    mLog.push_back("Project removed, renamed or otherwise unavailable, please open it manually.\n"
-                                   "This path will not appear the next time you open the app.");
-                    return false;
-            }
+            mLog.push_back("Project removed, renamed or otherwise unavailable, please open it manually.\n"
+                            "This path has been removed from your recents.");
+            settings.sync();
         }
 
         mLog.push_back("Can not open the project file.");
@@ -175,14 +151,14 @@ bool ProjectLoader::readHeader(util::LEStreamReader& aIn)
             (majorVersion == AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION &&
              minorVersion < AE_PROJECT_FORMAT_OLDEST_MINOR_VERSION))
     {
-        mLog.push_back("The version of the file is too old to read it.");
+        mLog.push_back("The file version is too old to read properly.");
         return false;
     }
     else if (majorVersion > AE_PROJECT_FORMAT_MAJOR_VERSION ||
              (majorVersion == AE_PROJECT_FORMAT_MAJOR_VERSION &&
               minorVersion > AE_PROJECT_FORMAT_MINOR_VERSION))
     {
-        mLog.push_back("The file has a version defined later than this executable.");
+        mLog.push_back("This file has been made with a new version of AnimeEffects, unable to read.");
         return false;
     }
 

@@ -33,7 +33,7 @@ bool MeshEditor::setTarget(core::ObjectNode* aTarget)
 
     if (!aTarget || !aTarget->timeLine()) return false;
 
-    auto group = UILog::tr("MeshEditor : ");
+    auto group = UILog::tr("Mesh Editor : ");
 
     // for layer only
     if (aTarget->type() != ObjectType_Layer)
@@ -121,7 +121,7 @@ void MeshEditor::resetTarget(ObjectNode* aPrev, ObjectNode* aNext, QString* aMes
             mTarget.node = nullptr;
             if (aMessage)
             {
-                *aMessage = UILog::tr("The object which has an invalid posture was given.");
+                *aMessage = UILog::tr("An object with invalid pose was given.");
             }
         }
     }

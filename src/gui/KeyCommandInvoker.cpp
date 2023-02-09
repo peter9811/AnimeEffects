@@ -14,7 +14,7 @@ KeyCommandInvoker::KeyCommandInvoker(KeyCommandMap& aMap)
 
 void KeyCommandInvoker::onKeyPressed(const QKeyEvent* aEvent)
 {
-    if (aEvent->isAutoRepeat()) return;
+    // if (aEvent->isAutoRepeat()) return;
 
     // release the previous command
     releaseLastCommand();
@@ -64,8 +64,8 @@ void KeyCommandInvoker::onKeyPressed(const QKeyEvent* aEvent)
 void KeyCommandInvoker::onKeyReleased(const QKeyEvent* aEvent)
 {
     //qDebug() << "rls" << aEvent->key() << aEvent->modifiers() << aEvent->isAutoRepeat();
-    if (aEvent->isAutoRepeat()) return;
-
+    Q_UNUSED(aEvent);
+    // if (aEvent->isAutoRepeat()) return;
     releaseLastCommand();
 }
 

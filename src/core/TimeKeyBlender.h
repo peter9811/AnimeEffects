@@ -67,6 +67,7 @@ private:
     void blendSRTKeys(PositionType aPos, const TimeInfo& aTime);
     void blendDepthKey(PositionType aPos, const TimeInfo& aTime);
     void blendOpaKey(PositionType aPos, const TimeInfo& aTime);
+    void blendHSVKey(PositionType aPos, const TimeInfo& aTime);
     void blendBoneKey(PositionType aPos, const TimeInfo& aTime);
     void blendPoseKey(PositionType aPos, const TimeInfo& aTime);
     void blendMeshKey(PositionType aPos, const TimeInfo& aTime);

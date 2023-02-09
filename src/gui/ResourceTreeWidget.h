@@ -27,9 +27,11 @@ public:
 
     void load(const QString& aFileName);
     void updateTreeRootName(core::ResourceHolder& aHolder);
+    void onReloadActionTriggered(bool aIsTriggered);
+    void onWatchTriggered(bool aIsTriggered);
+    void onWatchRemoveTriggered(bool aIsTriggered);
 
     util::Signaler<void(const NodeList&)> onNodeSelectionChanged;
-
 private:
     void resetTreeView(core::ResourceHolder& aHolder);
     QTreeWidgetItem* findItem(const util::TreePos& aPos);
@@ -39,7 +41,6 @@ private:
     void onContextMenuRequested(const QPoint& aPos);
     void onChangePathActionTriggered(bool aIsTriggered);
     void onRenameActionTriggered(bool aIsTriggered);
-    void onReloadActionTriggered(bool aIsTriggered);
     void onDeleteActionTriggered(bool aIsTriggered);
 
     ViaPoint& mViaPoint;
@@ -49,6 +50,8 @@ private:
     QAction* mChangePathAction;
     QAction* mRenameAction;
     QAction* mReloadAction;
+    QAction* mFileWatch;
+    QAction* mWatchRemove;
     QAction* mDeleteAction;
     bool mRenaming;
 };

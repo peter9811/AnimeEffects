@@ -26,9 +26,9 @@ void MeshPanel::createMode()
     mTypeGroup.reset(new SingleOutItem(3, QSize(kButtonSpace, kButtonSpace), this));
     mTypeGroup->setChoice(mParam.mode);
     mTypeGroup->setToolTips(QStringList() <<
-                            tr("Add Vertices") <<
-                            tr("Erase Vertices") <<
-                            tr("Split Polygons"));
+                            tr("Add a vertex") <<
+                            tr("Delete a vertex") <<
+                            tr("Split a polygon"));
     mTypeGroup->setIcons(QVector<QIcon>() <<
                          mResources.icon("plus") <<
                          mResources.icon("minus") <<

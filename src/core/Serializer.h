@@ -33,6 +33,7 @@ public:
     void write(bool aValue);
     void write(int aValue);
     void write(float aValue);
+    void write(QList<int> aValue);
     void write(const QPoint& aValue);
     void write(const QVector2D& aValue);
     void write(const QVector3D& aValue);

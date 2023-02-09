@@ -4,6 +4,9 @@
 #include <QMessageBox>
 #include <QDomDocument>
 #include <qstandardpaths.h>
+#include <QJsonDocument>
+#include <QDesktopServices>
+#include "qprocess.h"
 #include "util/TextUtil.h"
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
@@ -47,9 +50,19 @@ QDomDocument getVideoExportDocument()
     return prop;
 }
 
+QString osDef(){
+    #if defined(Q_OS_WIN)
+        QString operatingSystem = "Win";
+    #else
+        QString operatingSystem = "Posix";
+    #endif
+    return operatingSystem;
+}
+
 //-------------------------------------------------------------------------------------------------
 MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources &aGUIResources, QWidget* aParent)
     : QMenuBar(aParent)
+    , mProcess()
     , mViaPoint(aViaPoint)
     , mProject()
     , mProjectActions()
@@ -68,25 +81,11 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         QAction* openProject    = new QAction(tr("Open Project..."), this);
         QMenu* openRecent     = new QMenu(tr("Open Recent..."), this);
         {
-            // Get appdata folder
-            QString writableAppData = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-            writableAppData.replace("AnimeEffectsProject/AnimeEffects", "AnimeEffects"); // To remove redundancy
-            if (!QDir(writableAppData).exists()){
-                QDir().mkdir(writableAppData);
-            }
-            QString pathFilename = writableAppData + "/folderpaths.ann"; // Custom suffix to identify this type of file
-            QFile pathFile(pathFilename);
+            // Get settings
+            QSettings settings;
+            settings.sync();
+            recentfiles = settings.value("projectloader/recents").toStringList();
 
-            // Read file
-            QStringList recentfiles;
-            if (pathFile.open(QIODevice::ReadOnly) || pathFile.isOpen())
-            {
-                QTextStream in(&pathFile);
-                while (!in.atEnd()) {
-                    recentfiles += in.readLine().split("\n");
-                }
-            }
-            pathFile.close();
             // Path placeholders
             if (recentfiles.length() != 8){
                 while (recentfiles.length() != 8){
@@ -101,6 +100,8 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             QString sixthPath = recentfiles[5];
             QString seventhPath = recentfiles[6];
             QString eigthPath = recentfiles[7];
+            QStringList list;
+            list << firstPath << secondPath << thirdPath << fourthPath << fifthPath << sixthPath << seventhPath << eigthPath;
 
             // Path actions
             QAction * placeholderAction = new QAction(tr("No other projects..."), this);
@@ -113,57 +114,35 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             QAction* seventhPathAction = new QAction(seventhPath);
             QAction* eigthPathAction = new QAction(eigthPath);
             // Path addition
-            // There *has* to be a better way to do this, but I do not know of it :(
-            if (firstPath == QString("Path placeholder")){
-                openRecent->addAction(placeholderAction);
-            }
-            else{
-                openRecent->addAction(firstPathAction);
-            }
-            if (secondPath == QString("Path placeholder")){
-                openRecent->addAction(placeholderAction);
-            }
-            else{
-                openRecent->addAction(secondPathAction);
-            }
-            if (thirdPath == QString("Path placeholder")){
-                openRecent->addAction(placeholderAction);
-            }
-            else{
-                openRecent->addAction(thirdPathAction);
-            }
-            if (fourthPath == QString("Path placeholder")){
-                openRecent->addAction(placeholderAction);
-            }
-            else{
-                openRecent->addAction(fourthPathAction);
-            }
-            if (fifthPath == QString("Path placeholder")){
-                openRecent->addAction(placeholderAction);
-            }
-            else{
-                openRecent->addAction(fifthPathAction);
-            }
-            if (sixthPath == QString("Path placeholder")){
-                openRecent->addAction(placeholderAction);
-            }
-            else{
-                openRecent->addAction(sixthPathAction);
-            }
-            if (seventhPath == QString("Path placeholder")){
-                openRecent->addAction(placeholderAction);
-            }
-            else{
-                openRecent->addAction(seventhPathAction);
-            }
-            if (eigthPath == QString("Path placeholder")){
-                openRecent->addAction(placeholderAction);
-            }
-            else{
-                openRecent->addAction(eigthPathAction);
+            // Better than before, but still not very DRY code.
+            for (int x = 0; x <= 7; x+=1){
+                if (list[x] == QString("Path placeholder")){
+                    openRecent->addAction(placeholderAction);
+                }
+                else{
+                    switch(x){
+                    case 0: openRecent->addAction(firstPathAction);
+                            break;
+                    case 1: openRecent->addAction(secondPathAction);
+                            break;
+                    case 2: openRecent->addAction(thirdPathAction);
+                            break;
+                    case 3: openRecent->addAction(fourthPathAction);
+                            break;
+                    case 4: openRecent->addAction(fifthPathAction);
+                            break;
+                    case 5: openRecent->addAction(sixthPathAction);
+                            break;
+                    case 6: openRecent->addAction(seventhPathAction);
+                            break;
+                    case 7: openRecent->addAction(eigthPathAction);
+                            break;
+                    }
+                }
             }
 
             // Connections
+            connect(placeholderAction, &QAction::triggered, [=](){ qDebug() << "You've earned yourself a cookie!"; });
             connect(firstPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(firstPath); });
             connect(secondPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(secondPath); });
             connect(thirdPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(thirdPath); });
@@ -241,20 +220,24 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
     QMenu* projMenu = new QMenu(tr("Project"), this);
     {
         QAction* canvSize = new QAction(tr("Canvas Size..."), this);
-        QAction* maxFrame = new QAction(tr("Max Frame..."), this);
+        QAction* maxFrame = new QAction(tr("Max Frames..."), this);
         QAction* loopAnim = new QAction(tr("Loop..."), this);
+        QAction* setFPS = new QAction(tr("Set FPS..."), this);
 
         mProjectActions.push_back(canvSize);
         mProjectActions.push_back(maxFrame);
         mProjectActions.push_back(loopAnim);
+        mProjectActions.push_back(setFPS);
 
         connect(canvSize, &QAction::triggered, this, &MainMenuBar::onCanvasSizeTriggered);
         connect(maxFrame, &QAction::triggered, this, &MainMenuBar::onMaxFrameTriggered);
         connect(loopAnim, &QAction::triggered, this, &MainMenuBar::onLoopTriggered);
+        connect(setFPS, &QAction::triggered, this, &MainMenuBar::onFPSTriggered);
 
         projMenu->addAction(canvSize);
         projMenu->addAction(maxFrame);
         projMenu->addAction(loopAnim);
+        projMenu->addAction(setFPS);
     }
 
     QMenu* windowMenu = new QMenu(tr("Window"), this);
@@ -323,29 +306,135 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             auto formatVersionString = QString::number(AE_PROJECT_FORMAT_MAJOR_VERSION) + "." + QString::number(AE_PROJECT_FORMAT_MINOR_VERSION);
             auto platform = QSysInfo::productType();
             auto qtVersion = QString::number(QT_VERSION_MAJOR) + "." + QString::number(QT_VERSION_MINOR) + "." + QString::number(QT_VERSION_PATCH);
-            auto toUp = platform[0].toUpper(); // First letter capitalization :D
-            platform[0] = toUp;
-            QString msgStr = "### AnimeEffects for " + platform + " version " + versionString + "<br />" + "Original code and artwork by [Hidefuku](https://github.com/hidefuku).<br />Current development handled by the [AnimeEffectsDevs](https://github.com/AnimeEffectsDevs).";
+            platform[0] = platform[0].toUpper(); // First letter capitalization :D
+            QString msgStr = tr("### AnimeEffects for ") + platform + tr(" version ") + versionString + "<br />" + tr("Original code and artwork by [Hidefuku](https://github.com/hidefuku).<br />Current development handled by the [AnimeEffectsDevs](https://github.com/AnimeEffectsDevs).");
             msgBox.setText(msgStr);
             msgBox.setTextFormat(Qt::TextFormat::MarkdownText);
             QString detail;
-            detail += "Version: " + versionString + "\n";
-            detail += "Platform: " + platform + " " + QSysInfo::productVersion() + "\n";
-            detail += "Build ABI: " + QSysInfo::buildAbi() + "\n";
-            detail += "Build CPU: " + QSysInfo::buildCpuArchitecture() + "\n";
-            detail += "Current CPU: " + QSysInfo::currentCpuArchitecture() + "\n";
-            detail += "Current GPU: " + QString(this->mViaPoint.glDeviceInfo().renderer.c_str()) + "\n";
-            detail += "GPU Vendor: " + QString(this->mViaPoint.glDeviceInfo().vender.c_str()) + "\n";
-            detail += "OpenGL Version: " + QString(this->mViaPoint.glDeviceInfo().version.c_str()) + "\n";
-            detail += "Qt Version: " + qtVersion + "\n";
-            detail += "Format Version: " + formatVersionString + "\n";
+            detail += tr("Version: ") + versionString + "\n";
+            detail += tr("Platform: ") + platform + " " + QSysInfo::productVersion() + "\n";
+            detail += tr("Build ABI: ") + QSysInfo::buildAbi() + "\n";
+            detail += tr("Build CPU: ") + QSysInfo::buildCpuArchitecture() + "\n";
+            detail += tr("Current CPU: ") + QSysInfo::currentCpuArchitecture() + "\n";
+            detail += tr("Current GPU: ") + QString(this->mViaPoint.glDeviceInfo().renderer.c_str()) + "\n";
+            detail += tr("GPU Vendor: ") + QString(this->mViaPoint.glDeviceInfo().vender.c_str()) + "\n";
+            detail += tr("OpenGL Version: ") + QString(this->mViaPoint.glDeviceInfo().version.c_str()) + "\n";
+            detail += tr("Qt Version: ") + qtVersion + "\n";
+            detail += tr("Format Version: ") + formatVersionString + "\n";
             msgBox.setDetailedText(detail);
             msgBox.setStandardButtons(QMessageBox::Ok);
             msgBox.setDefaultButton(QMessageBox::Ok);
             msgBox.exec();
         });
 
+        QAction* checkForUpdates = new QAction(tr("Check for Updates..."), this);
+        connect(checkForUpdates, &QAction::triggered, [=]()
+        {
+            // Qt is so stupid...
+            QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
+            qInfo() << "checking for updates on : " << url;
+            QString program;
+            QStringList arguments;
+            QString os = osDef();
+            // You're more likely to have curl in Windows (since from Windows 10+ it comes preinstalled)
+            // And you're more likely to have wget on Linux (since it comes preinstalled on most distros)
+            // If you're on MacOS I'm sorry :P
+            if (os == "Win"){
+                program = "curl.exe";
+                arguments << url << "-H \"Accept: application/json";
+            }
+            else{
+                program = "wget";
+                arguments << "-qO-" << url << "-H \"Content-Type: application/json";
+            }
+            mProcess.reset(new QProcess(nullptr));
+            mProcess->setProcessChannelMode(QProcess::MergedChannels);
+            auto process = mProcess.data();
+            mProcess->connect(process, &QProcess::readyRead, [=]()
+            {
+                if (this->mProcess)
+                {
+                    QByteArray response_data = this->mProcess->readAll().data();
+                    QJsonDocument jsonResponse = QJsonDocument::fromJson(response_data);
+                    QString latestVersion = jsonResponse[0]["name"].toString().replace("v", "");
+                    // qDebug() << jsonResponse[0]["name"];
+                    if (latestVersion != ""){
+                        QString currentVersion = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." + QString::number(AE_MICRO_VERSION);
+                        // qDebug() << "latest version: " << latestVersion;
+                        // qDebug() << "current version : " << currentVersion;
+                        bool onLatest;
+                        if (latestVersion == currentVersion){
+                            qDebug() << "already on latest version : " << latestVersion;
+                            onLatest = true;
+                        }
+                        else{
+                            onLatest = false;
+                        }
+                        QMessageBox updateBox;
+                        if (onLatest){
+                            updateBox.setStandardButtons(QMessageBox::Ok);
+                            updateBox.setDefaultButton(QMessageBox::Ok);
+                        }
+                        else{
+                            updateBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+                            updateBox.setDefaultButton(QMessageBox::Yes);
+                        }
+
+                        if (!onLatest){
+                            updateBox.setWindowTitle(tr("New release available"));
+                            updateBox.setText(tr("<center>A new release is available, version: ") + latestVersion + tr(".<br>Do you wish to go to the release page to download it?</center>"));
+                        }
+                        else{
+                            updateBox.setWindowTitle(tr("On latest"));
+                            updateBox.setText(tr("<center>You already have the latest release available. <br>Version: ") + currentVersion + "</center7>");
+                        }
+
+                        if(updateBox.exec() == QMessageBox::Yes){
+                          QDesktopServices::openUrl(QUrl("https://github.com/AnimeEffectsDevs/AnimeEffects/releases/latest"));
+                        }
+                        else {
+                          qDebug() << "openurl canceled by user";
+                        }
+                        return;
+                    }
+                }
+            });
+
+            mProcess->connect(process, &QProcess::errorOccurred, [=](QProcess::ProcessError aCode)
+            {
+                qDebug() << program + " error : " << aCode;
+                // More a comfort feature to let the user know what happened than anything else.
+                QString aError;
+                switch(aCode){
+                case QProcess::ProcessError::ReadError:
+                    aError = tr("Unable to Read from Process");
+                    break;
+                case QProcess::ProcessError::UnknownError:
+                    aError = tr("Unknown Error");
+                    break;
+                case QProcess::ProcessError::WriteError:
+                    aError = tr("Unable to Write to Process");
+                    break;
+                case QProcess::ProcessError::Crashed:
+                    aError = tr("Process Crashed");
+                    break;
+                case QProcess::ProcessError::FailedToStart:
+                    aError = tr("Failed to Start Process");
+                    break;
+                case QProcess::ProcessError::Timedout:
+                    aError = tr("Process couldn't be opened in time");
+                    break;
+                }
+                MainWindow::showInfoPopup(tr("Process error"), "<center>" + tr("An error has ocurred while launching ") + program.toUpper().replace(".exe", "") +
+                                          tr(" to check for updates, please check if you have it installed.") + "</center>", "Critical", aError);
+                return;
+            });
+
+            mProcess->start(program, arguments, QIODevice::ReadWrite);
+        });
+
         helpMenu->addAction(aboutMe);
+        helpMenu->addAction(checkForUpdates);
     }
 
     this->addAction(fileMenu->menuAction());
@@ -478,7 +567,7 @@ ProjectCanvasSizeSettingDialog::ProjectCanvasSizeSettingDialog(
             mHeightBox->setValue(curSize.height());
             sizeLayout->addWidget(mHeightBox);
         }
-        form->addRow(tr("size :"), sizeLayout);
+        form->addRow(tr("Size :"), sizeLayout);
 
         auto group = new QGroupBox(tr("Parameters"));
         group->setLayout(form);
@@ -510,7 +599,7 @@ void MainMenuBar::onCanvasSizeTriggered()
     // create commands
     {
         cmnd::ScopedMacro macro(mProject->commandStack(),
-                                CmndName::tr("change the canvas size"));
+                                CmndName::tr("Change the canvas size"));
 
         core::Project* projectPtr = mProject;
         auto command = new cmnd::Delegatable([=]()
@@ -553,7 +642,7 @@ ProjectMaxFrameSettingDialog::ProjectMaxFrameSettingDialog(core::Project& aProje
             mMaxFrameBox->setValue(curMaxFrame);
             layout->addWidget(mMaxFrameBox);
         }
-        form->addRow(tr("max frame :"), layout);
+        form->addRow(tr("Max frame :"), layout);
 
         auto group = new QGroupBox(tr("Parameters"));
         group->setLayout(form);
@@ -584,8 +673,8 @@ bool ProjectMaxFrameSettingDialog::confirmMaxFrameUpdating(int aNewMaxFrame) con
         return true;
     }
 
-    auto message1 = tr("Can not set the specified frame.");
-    auto message2 = tr("There are some keys that exeeding the specified frame.");
+    auto message1 = tr("Frame value cannot be set.");
+    auto message2 = tr("One or more keys exceed the specified frame value.");
     QMessageBox::warning(nullptr, tr("Operation Error"), message1 + "\n" + message2);
     return false;
 }
@@ -612,7 +701,7 @@ void MainMenuBar::onMaxFrameTriggered()
     // create commands
     {
         cmnd::ScopedMacro macro(mProject->commandStack(),
-                                CmndName::tr("change the max frame"));
+                                CmndName::tr("Change the max frame"));
 
         core::Project* projectPtr = mProject;
         auto command = new cmnd::Delegatable([=]()
@@ -652,7 +741,7 @@ ProjectLoopSettingDialog::ProjectLoopSettingDialog(core::Project& aProject, QWid
             mLoopBox->setChecked(curLoop);
             layout->addWidget(mLoopBox);
         }
-        form->addRow(tr("loop animation :"), layout);
+        form->addRow(tr("Loop animation :"), layout);
 
         auto group = new QGroupBox(tr("Parameters"));
         group->setLayout(form);
@@ -683,7 +772,7 @@ void MainMenuBar::onLoopTriggered()
     // create commands
     {
         cmnd::ScopedMacro macro(mProject->commandStack(),
-                                CmndName::tr("change the animation loop setting"));
+                                CmndName::tr("Change loop settings"));
 
         core::Project* projectPtr = mProject;
         auto command = new cmnd::Delegatable([=]()
@@ -698,6 +787,97 @@ void MainMenuBar::onLoopTriggered()
         {
             projectPtr->attribute().setLoop(curLoop);
             auto event = core::ProjectEvent::loopChangeEvent(*projectPtr);
+            projectPtr->onProjectAttributeModified(event, true);
+            this->onProjectAttributeUpdated();
+            this->onVisualUpdated();
+        });
+        mProject->commandStack().push(command);
+    }
+}
+
+// ----------------------------------------------------------------------------- //
+ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidget *aParent)
+    : EasyDialog(tr("Set FPS "), aParent)
+    , mProject(aProject)
+    , mFPSBox()
+
+{
+    // create inner widgets
+    auto curFPS = mProject.attribute().fps();
+    {
+        auto form = new QFormLayout();
+        form->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
+        form->setLabelAlignment(Qt::AlignRight);
+
+        auto layout = new QHBoxLayout();
+        {
+            mFPSBox = new QSpinBox();
+            mFPSBox->setRange(1, std::numeric_limits<int>::max());
+            mFPSBox->setValue(curFPS);
+            layout->addWidget(mFPSBox);
+        }
+        form->addRow(tr("Frames per second :"), layout);
+
+        auto group = new QGroupBox(tr("Parameters"));
+        group->setLayout(form);
+        this->setMainWidget(group);
+    }
+
+    this->setOkCancel([=](int aIndex)->bool
+    {
+        if (aIndex == 0)
+        {
+            return this->confirmFPSUpdating(this->mFPSBox->value());
+        }
+        return true;
+    });
+    this->fixSize();
+}
+
+bool ProjectFPSSettingDialog::confirmFPSUpdating(int aNewFPS) const
+{
+    XC_ASSERT(aNewFPS > 0);
+    if (aNewFPS!=0) return true;
+    return false;
+}
+
+void MainMenuBar::onFPSTriggered()
+{
+    if (!mProject) return;
+
+    auto curFPS = mProject->attribute().fps();
+
+    // create dialog
+    QScopedPointer<ProjectFPSSettingDialog> dialog(
+                new ProjectFPSSettingDialog(*mProject, this));
+
+    // execute dialog
+    dialog->exec();
+    if (dialog->result() != QDialog::Accepted) return;
+
+    // get new canvas size
+    const int newFPS = dialog->fps();
+    XC_ASSERT(newFPS > 0);
+    if (curFPS == newFPS) return;
+
+    // create commands
+    {
+        cmnd::ScopedMacro macro(mProject->commandStack(),
+                                CmndName::tr("Change the FPS"));
+
+        core::Project* projectPtr = mProject;
+        auto command = new cmnd::Delegatable([=]()
+        {
+            projectPtr->attribute().setFps(newFPS);
+            auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
+            projectPtr->onProjectAttributeModified(event, false);
+            this->onProjectAttributeUpdated();
+            this->onVisualUpdated();
+        },
+        [=]()
+        {
+            projectPtr->attribute().setFps(curFPS);
+            auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
             projectPtr->onProjectAttributeModified(event, true);
             this->onProjectAttributeUpdated();
             this->onVisualUpdated();

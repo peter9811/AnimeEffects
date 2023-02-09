@@ -23,13 +23,15 @@ ResourceDialog::ResourceDialog(ViaPoint& aViaPoint, bool aModal, QWidget* aParen
     // menu bar
     if (!aModal)
     {
+        // Remove redundant menu
         auto menuBar = new QMenuBar(this);
-        auto fileMenu = new QMenu(tr("File"), menuBar);
-        auto addResource = new QAction(tr("Add Resources"), fileMenu);
+        // auto fileMenu = new QMenu(tr("File"), menuBar);
+        auto addResource = new QAction(tr("Add Resources"));
         connect(addResource, &QAction::triggered, this, &ResourceDialog::onAddResourceTriggered);
-        fileMenu->addAction(addResource);
+        // fileMenu->addAction(addResource);
         menuBar->setNativeMenuBar(false);
-        menuBar->addMenu(fileMenu);
+        menuBar->addAction(addResource);
+        // menuBar->addMenu(fileMenu);
         menuBar->show();
         this->setMenuBar(menuBar);
 
@@ -103,7 +105,7 @@ void ResourceDialog::onAddResourceTriggered(bool)
     if (!mProject) return;
 
     const QStringList fileName = QFileDialog::getOpenFileNames(
-                this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif)");
+                this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
     if (fileName.isEmpty()) return;
 
     for(int i = 0; i < fileName.count();i++){

@@ -24,6 +24,8 @@ public:
     void setDefaultDepth(float aValue);
     // default opacity
     void setDefaultOpacity(float aValue);
+    // default hsv
+    void setDefaultHSV (QList<int>);
 
     void grabHeightMap(HeightMap* aNode);
     const HeightMap* heightMap() const { return mHeightMap.data(); }
@@ -53,11 +55,14 @@ public:
     virtual void render(const RenderInfo&, const TimeCacheAccessor&);
     virtual void renderClipper(
             const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
+    virtual void renderHSV(
+            const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData);
     virtual void setClipped(bool aIsClipped);
     virtual bool isClipped() const { return mIsClipped; }
 
 private:
     void renderClippees(const RenderInfo&, const TimeCacheAccessor&);
+    void renderHSVs(const RenderInfo&, const TimeCacheAccessor&, QList<int> aHSV);
     bool isClipper() const;
 
     QString mName;

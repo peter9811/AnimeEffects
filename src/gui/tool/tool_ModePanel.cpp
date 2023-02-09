@@ -17,12 +17,12 @@ ModePanel::ModePanel(QWidget* aParent, GUIResources& aResources, const PushDeleg
     mGroup->setExclusive(true);
     this->setLayout(&mLayout);
 
-    addButton(ctrl::ToolType_Cursor, "cursor", tr("Camera Cursor"));
-    addButton(ctrl::ToolType_SRT,    "srt",    tr("Scale Rotate Translate"));
-    addButton(ctrl::ToolType_Bone,   "bone",   tr("Bone Creating"));
-    addButton(ctrl::ToolType_Pose,   "pose",   tr("Bone Posing"));
-    addButton(ctrl::ToolType_Mesh,   "mesh",   tr("Mesh Creating"));
-    addButton(ctrl::ToolType_FFD,    "ffd",    tr("Free Form Deform"));
+    addButton(ctrl::ToolType_Cursor, "cursor", tr("Pan Tool"));
+    addButton(ctrl::ToolType_SRT,    "srt",    tr("Transform"));
+    addButton(ctrl::ToolType_Bone,   "bone",   tr("Add Bones"));
+    addButton(ctrl::ToolType_Pose,   "pose",   tr("Manipulate Bones"));
+    addButton(ctrl::ToolType_Mesh,   "mesh",   tr("Create Meshes"));
+    addButton(ctrl::ToolType_FFD,    "ffd",    tr("Free-form Deform"));
 
     mGUIResources.onThemeChanged.connect(this, &ModePanel::onThemeUpdated);
 }

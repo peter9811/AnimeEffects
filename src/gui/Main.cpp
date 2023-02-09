@@ -100,9 +100,11 @@ int entryPoint(int argc, char *argv[])
     int result = 0;
 
     // create qt application
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
-    XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    // app.setAttribute(Qt::AA_DontUseNativeDialogs);
+    XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
 
     // application path
 #if defined(Q_OS_MAC)
@@ -155,6 +157,14 @@ int entryPoint(int argc, char *argv[])
         const QString testPath = resourceDir + "/sample.psd";
         mainWindow->testNewProject(testPath);
 #endif
+        // assoc handle
+        auto arguments = app.arguments();
+        if (arguments.last().contains(".anie")){
+            auto file = arguments.last();
+            if (QFile(file).exists()){
+                mainWindow->onOpenRecentTriggered(file);
+            }
+        }
 
         resources->triggerOnThemeChanged();
 

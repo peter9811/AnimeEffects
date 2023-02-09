@@ -19,6 +19,7 @@ public:
     // default values
     void assignDefaultDepth(float);
     void assignDefaultOpacity(float);
+    void assignDefaultHSV(QList<int>);
     void assignDefaultImageResource(img::ResourceNode&);
     void assignDefaultImageOffset(const QVector2D&);
     void assignDefaultImageCellSize(int);
@@ -45,6 +46,10 @@ public:
     void assignOpaEasing(util::Easing::Param);
     void assignOpacity(float);
 
+    // hsv
+    void assignHSVEasing(util::Easing::Param);
+    void assignHSV(int aValue, QString aType);
+
     // pose
     void assignPoseEasing(util::Easing::Param);
 
@@ -62,6 +67,7 @@ public:
     void knockNewScale();
     void knockNewDepth();
     void knockNewOpacity();
+    void knockNewHSV();
     void knockNewPose();
     void knockNewFFD();
     void knockNewImage(const img::ResourceHandle& aHandle);

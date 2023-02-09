@@ -47,6 +47,7 @@ SOURCES += \
     AbstractCursor.cpp \
     CameraInfo.cpp \
     GridMesh.cpp \
+    HSVKey.cpp \
     LayerNode.cpp \
     ObjectNodeUtil.cpp \
     ObjectTree.cpp \
@@ -100,6 +101,7 @@ SOURCES += \
 HEADERS += \
     AbstractCursor.h \
     CameraInfo.h \
+    HsvKey.h \
     TimeKeyType.h \
     GridMesh.h \
     LayerNode.h \

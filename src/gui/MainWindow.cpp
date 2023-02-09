@@ -7,6 +7,7 @@
 #include <QShortcut>
 #include <QElapsedTimer>
 #include <QMessageBox>
+#include <QFileSystemWatcher>
 #include "util/IProgressReporter.h"
 #include "gl/Global.h"
 #include "ctrl/Exporter.h"
@@ -111,6 +112,12 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
         mViaPoint.setMainMenuBar(mMainMenuBar);
         this->setMenuBar(mMainMenuBar);
     }
+    // initialize timer
+    {
+        timeElapsed.start();
+        lastPress = 0;
+        lastRelease = 0;
+    }
 
     // create main display
     {
@@ -134,7 +141,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     // create targeting widget
     {
         QDockWidget* dockWidget = new QDockWidget(this);
-        dockWidget->setWindowTitle(tr("Target Dock"));
+        dockWidget->setWindowTitle(tr("Animation Dock"));
         dockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         dockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         this->addDockWidget(Qt::BottomDockWidgetArea, dockWidget);
@@ -489,15 +496,51 @@ void MainWindow::keyPressEvent(QKeyEvent* aEvent)
 void MainWindow::keyPressEvent(QKeyEvent* aEvent)
 {
     //qDebug() << "input key =" << aEvent->key() << "text =" << aEvent->text();
-    mKeyCommandInvoker->onKeyPressed(aEvent);
-    QMainWindow::keyPressEvent(aEvent);
+
+    if (aEvent->isAutoRepeat()){
+        // Default delay of 125ms
+        QSettings settings;
+        auto delay = settings.value("generalsettings/keybindings/keyDelay");
+        qint64 delayInMs = delay.isValid() ? delay.toInt() : 125;
+        if (lastPress + delayInMs < timeElapsed.elapsed()){
+            lastPress = timeElapsed.elapsed();
+            mKeyCommandInvoker->onKeyPressed(aEvent);
+            QMainWindow::keyPressEvent(aEvent);
+        }
+        else{
+            // qDebug() << "Time elapsed is :" << (lastPress+500)-timeElapsed.elapsed();
+            return;
+        }
+    }
+    else{
+        mKeyCommandInvoker->onKeyPressed(aEvent);
+        QMainWindow::keyPressEvent(aEvent);
+    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent* aEvent)
 {
     //qDebug() << "release key =" << aEvent->key() << "text =" << aEvent->text();
-    mKeyCommandInvoker->onKeyReleased(aEvent);
-    QMainWindow::keyReleaseEvent(aEvent);
+
+    if (aEvent->isAutoRepeat()){
+        // Default delay of 125ms
+        QSettings settings;
+        auto delay = settings.value("generalsettings/keybindings/keyDelay");
+        qint64 delayInMs = delay.isValid() ? delay.toInt() : 125;
+        if (lastRelease + delayInMs < timeElapsed.elapsed()){
+            lastRelease = timeElapsed.elapsed();
+            mKeyCommandInvoker->onKeyReleased(aEvent);
+            QMainWindow::keyPressEvent(aEvent);
+        }
+        else{
+            // qDebug() << "time elapsed is :" << (lastPress+500)-timeElapsed.elapsed();
+            return;
+        }
+    }
+    else{
+        mKeyCommandInvoker->onKeyReleased(aEvent);
+        QMainWindow::keyReleaseEvent(aEvent);
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent* aEvent)
@@ -571,7 +614,7 @@ int MainWindow::confirmProjectClosing(bool aCurrentOnly)
 
     msgBox.addButton(tr("Save Changes"), QMessageBox::YesRole);
     msgBox.addButton(tr("Discard Changes"), QMessageBox::NoRole);
-    auto cancel = msgBox.addButton(tr("Cancel Closing"), QMessageBox::RejectRole);
+    auto cancel = msgBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
     msgBox.setDefaultButton(cancel);
     msgBox.exec();
     auto clicked = msgBox.clickedButton();
@@ -710,6 +753,34 @@ void MainWindow::onNewProjectTriggered()
     }
 }
 
+QFileSystemWatcher* globalWatcher = new QFileSystemWatcher();
+
+QFileSystemWatcher* MainWindow::getWatcher(){
+    return globalWatcher;
+}
+
+void MainWindow::showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed)
+{
+    QMessageBox box;
+    if(aIcon == "Info"){
+        box.setIcon(QMessageBox::Information);
+    }
+    else if (aIcon == "Warn"){
+        box.setIcon(QMessageBox::Warning);
+    }
+    else if (aIcon == "Critical"){
+        box.setIcon(QMessageBox::Critical);
+    }
+    box.setStandardButtons(QMessageBox::Ok);
+    box.setDefaultButton(QMessageBox::Ok);
+    box.setWindowTitle(aTitle);
+    box.setText(aDetailText);
+    if (aDetailed != "nullptr"){
+        box.setDetailedText(aDetailed);
+    }
+    box.exec();
+}
+
 void MainWindow::onOpenProjectTriggered()
 {
     // stop animation and main display rendering
@@ -730,12 +801,12 @@ void MainWindow::onOpenProjectTriggered()
     }
 
     if (result)
-    {
+        {
         resetProjectRefs(result.project);
         mProjectTabBar->pushProject(*result.project);
 
         mMainDisplay->resetCamera();
-    }
+        }
     else
     {
         QMessageBox::warning(nullptr, tr("Loading Error"), result.messages());
@@ -837,9 +908,19 @@ void MainWindow::onCloseProjectTriggered()
 {
     if (mCurrent)
     {
+
+        // Sneaky potential crash
+        QFileSystemWatcher* watcher = MainWindow::getWatcher();
+        for (unsigned int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1){
+            if (watcher->files().contains(mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode))){
+                watcher->removePath(mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode));
+            }
+        }
+
         if (mCurrent->isModified())
         {
             auto result = confirmProjectClosing(true);
+
             if (result == QMessageBox::Cancel)
             {
                 return;
@@ -949,7 +1030,7 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat)
     else if (fileInfo.suffix() != suffix)
     {
         QMessageBox::warning(nullptr, tr("Operation Error"),
-                             tr("Invalid suffix specification."));
+                             tr("Invalid extension specified."));
         return;
     }
 
@@ -1006,7 +1087,7 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat)
             auto infoText =
                     tr("Video export requires FFmpeg.") + "\n" +
                     tr("Install FFmpeg on the system, or place a FFmpeg executable "
-                       "under /tools of the folder you expanded AnimeEffects.");
+                       "under \"/tools\" in the folder where you installed AnimeEffects.");
             message.setInformativeText(infoText);
             message.setStandardButtons(QMessageBox::Ok);
             message.setDefaultButton(QMessageBox::Ok);

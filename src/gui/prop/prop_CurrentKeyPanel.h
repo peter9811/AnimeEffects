@@ -111,6 +111,28 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
+class HSVKeyGroup : public KeyGroup
+{
+    Q_OBJECT
+public:
+    HSVKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth);
+    void setKeyEnabled(bool);
+    void setKeyExists(bool);
+    void setKeyValue(const core::TimeKey* aKey);
+    bool keyExists() const;
+
+private:
+    KeyAccessor& mAccessor;
+    KeyKnocker* mKnocker;
+    EasingItem* mEasing;
+    IntegerItem* mHue;
+    IntegerItem* mSaturation;
+    IntegerItem* mValue;
+    bool mKeyExists;
+};
+
+
+//-------------------------------------------------------------------------------------------------
 class PoseKeyGroup : public KeyGroup
 {
     Q_OBJECT
@@ -196,6 +218,7 @@ private:
     QScopedPointer<ScaleKeyGroup> mScalePanel;
     QScopedPointer<DepthKeyGroup> mDepthPanel;
     QScopedPointer<OpaKeyGroup> mOpaPanel;
+    QScopedPointer<HSVKeyGroup> mHSVPanel;
     QScopedPointer<PoseKeyGroup> mPosePanel;
     QScopedPointer<FFDKeyGroup> mFFDPanel;
     QScopedPointer<ImageKeyGroup> mImagePanel;

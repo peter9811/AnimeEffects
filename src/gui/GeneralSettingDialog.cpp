@@ -4,7 +4,9 @@
 #include <QFormLayout>
 #include <QComboBox>
 #include <qstandardpaths.h>
+#include "MainWindow.h"
 #include "gui/GeneralSettingDialog.h"
+#include "qpushbutton.h"
 
 namespace
 {
@@ -45,42 +47,81 @@ int rangeToIndex(const QString& aRange){
     else return 2; // Default range is InOut, it is referenced as "All" by Hidefuku
 }
 
-QString indexToEasing(int aIndex){
-    switch(aIndex){
-        case 0: return "None";
-        case 1: return "Linear";
-        case 2: return "Sine";
-        case 3: return "Quad";
-        case 4: return "Cubic";
-        case 5: return "Quart";
-        case 6: return "Quint";
-        case 7: return "Expo";
-        case 8: return "Circ";
-        case 9: return "Back";
-        case 10: return "Elastic";
-        case 11: return "Bounce";
-    default: return "Linear";
+QString indexToEasing(int aIndex, bool translated = true){
+    if (translated){
+        switch(aIndex){
+            case 0: return QCoreApplication::translate("GeneralSettingsDialog", "None");
+            case 1: return QCoreApplication::translate("GeneralSettingsDialog", "Linear");
+            case 2: return QCoreApplication::translate("GeneralSettingsDialog", "Sine");
+            case 3: return QCoreApplication::translate("GeneralSettingsDialog", "Quad");
+            case 4: return QCoreApplication::translate("GeneralSettingsDialog", "Cubic");
+            case 5: return QCoreApplication::translate("GeneralSettingsDialog", "Quart");
+            case 6: return QCoreApplication::translate("GeneralSettingsDialog", "Quint");
+            case 7: return QCoreApplication::translate("GeneralSettingsDialog", "Expo");
+            case 8: return QCoreApplication::translate("GeneralSettingsDialog", "Circ");
+            case 9: return QCoreApplication::translate("GeneralSettingsDialog", "Back");
+            case 10: return QCoreApplication::translate("GeneralSettingsDialog", "Elastic");
+            case 11: return QCoreApplication::translate("GeneralSettingsDialog", "Bounce");
+        default: return QCoreApplication::translate("GeneralSettingsDialog", "Linear");
+        }
+    }
+    else{
+        switch(aIndex){
+            case 0: return QString("None");
+            case 1: return QString("Linear");
+            case 2: return QString("Sine");
+            case 3: return QString("Quad");
+            case 4: return QString("Cubic");
+            case 5: return QString("Quart");
+            case 6: return QString("Quint");
+            case 7: return QString("Expo");
+            case 8: return QString("Circ");
+            case 9: return QString("Back");
+            case 10: return QString("Elastic");
+            case 11: return QString("Bounce");
+        default: return QString("Linear");
+    }
+  }
+}
+
+QString indexToRange(int aRange, bool translated = true){
+    if (translated){
+        switch(aRange){
+            case 0: return QCoreApplication::translate("GeneralSettingsDialog", "In");
+            case 1: return QCoreApplication::translate("GeneralSettingsDialog", "Out");
+            case 3: return QCoreApplication::translate("GeneralSettingsDialog", "All");
+        default: return QCoreApplication::translate("GeneralSettingsDialog", "All");
+        }
+    }
+    else{
+        switch(aRange){
+            case 0: return QString("In");
+            case 1: return QString("Out");
+            case 3: return QString("All");
+        default: return QString("All");
+        }
     }
 }
 
-QString indexToRange(int aRange){
-    switch(aRange){
-        case 0: return "In";
-        case 1: return "Out";
-        case 3: return "All";
-    default: return "All";
-    }
-}
-
-QString indexToLanguage(int aIndex)
+QString indexToLanguage(int aIndex, bool translated = true)
 {
-    switch (aIndex)
-    {
-    case 0: return "Auto";
-    case 1: return "English";
-    case 2: return "Japanese";
-    default: return "";
+    if (translated){
+        switch (aIndex){
+        case 0: return QCoreApplication::translate("GeneralSettingsDialog", "Auto");
+        case 1: return  QCoreApplication::translate("GeneralSettingsDialog", "English");;
+        case 2: return  QCoreApplication::translate("GeneralSettingsDialog", "Japanese");;
+        default: return  QCoreApplication::translate("GeneralSettingsDialog", "Auto");;
+        }
     }
+    else{
+        switch (aIndex){
+        case 0: return QString("Auto");
+        case 1: return QString("Enslish");
+        case 2: return QString("Japanese");
+        default: return QString("Auto");
+        }
+    }
+  }
 }
 
 QString indexToTimeFormat(int aIndex)
@@ -97,13 +138,13 @@ QString indexToTimeFormat(int aIndex)
     }
 }
 
-}
 
 namespace gui
 {
 
 GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget* aParent)
     : EasyDialog(tr("General Settings"), aParent)
+    , mTabs(new QTabWidget(this))
     , mInitialLanguageIndex()
     , mLanguageBox()
     , mInitialTimeFormatIndex()
@@ -151,11 +192,29 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         {
             mInitialThemeKey = theme.toString();
         }
+        auto isSetColor = settings.value("generalsettings/keys/hsvSetColor");
+        if (isSetColor.isValid())
+        {
+            bHSVSetColor = isSetColor.toBool();
+        }
+        auto isHSVBehaviour = settings.value("generalsettings/keys/hsvBehaviour");
+        if (isHSVBehaviour.isValid())
+        {
+            mInitialHSVBehaviour = isHSVBehaviour.toInt();
+        }
+        auto isHSVFolder = settings.value("generalsettings/keys/hsvFolder");
+        if (isHSVFolder.isValid())
+        {
+            bHSVFolder = isHSVFolder.toBool();
+        }
+        auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
+        if (isKeyDelay.isValid())
+        {
+            mKeyDelay = isKeyDelay.toInt();
+        }
     }
 
     auto form = new QFormLayout();
-    form->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    form->setLabelAlignment(Qt::AlignRight);
 
     // create inner widgets
     {
@@ -172,14 +231,14 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
             mEasingBox->addItem(indexToEasing(i));
         }
         mEasingBox->setCurrentIndex(mInitialEasingIndex);
-        form->addRow(tr("Default keyframe easing:"), mEasingBox);
+        form->addRow(tr("Default keyframe easing :"), mEasingBox);
 
         mRangeBox = new QComboBox();
         for (int i = 0; i < kRangeTypeCount; ++i){
             mRangeBox->addItem(indexToRange(i));
         }
         mRangeBox->setCurrentIndex(mInitialRangeIndex);
-        form->addRow(tr("Default keyframe range:"), mRangeBox);
+        form->addRow(tr("Default keyframe range :"), mRangeBox);
 
         mTimeFormatBox = new QComboBox();
         for (int i = 0; i < kTimeFormatTypeCount; ++i)
@@ -198,11 +257,49 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         }
         mThemeBox->setCurrentIndex(mThemeBox->findData(mInitialThemeKey));
         form->addRow(tr("Theme :"), mThemeBox);
+
+        mResetButton = new QPushButton(tr("Reset recent files list"));
+        mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
+        connect(mResetButton, &QPushButton::clicked, [=]() {
+                QSettings settings;
+                settings.remove("projectloader/recents");
+                MainWindow::showInfoPopup(tr("Success"), tr("All entries have been successfully removed"), "Info");
+           });
+        form->addRow(mResetButton);
     }
 
-    auto group = new QGroupBox(tr("Parameters"));
-    group->setLayout(form);
-    this->setMainWidget(group);
+
+    auto keysettings = new QFormLayout();
+    {
+        mHSVSetColor = new QCheckBox();
+        mHSVSetColor->setChecked(bHSVSetColor);
+        keysettings->addRow(tr("HSV | Blend color : "), mHSVSetColor);
+
+        mHSVFolder = new QCheckBox();
+        mHSVFolder->setChecked(bHSVFolder);
+        keysettings->addRow(tr("HSV | Enable folder support (not recommended)"), mHSVFolder);
+
+        mHSVBehaviour = new QComboBox();
+        mHSVBehaviour->addItem(tr("Render indefinitely"));
+        mHSVBehaviour->addItem(tr("Only render between keys"));
+        mHSVBehaviour->setCurrentIndex(mInitialHSVBehaviour);
+        keysettings->addRow(tr("HSV | Key rendering : "), mHSVBehaviour);
+    }
+
+    auto keybindingSettings = new QFormLayout();
+    {
+        mKeyDelayBox = new QSpinBox();
+        mKeyDelayBox->setRange(0, 10000);
+        mKeyDelayBox->setValue(mKeyDelay);
+        keybindingSettings->addRow(tr("Global keybind delay (ms) : "), mKeyDelayBox);
+    }
+
+    createTab(tr("General"), form);
+    createTab(tr("Animation keys"), keysettings);
+    createTab(tr("Keybindings"), keybindingSettings);
+
+
+    this->setMainWidget(mTabs, false);
 
     this->setOkCancel([=](int aResult)->bool
     {
@@ -212,6 +309,24 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         }
         return true;
     });
+}
+
+QFormLayout* GeneralSettingDialog::createTab(const QString& aTitle, QFormLayout* aForm)
+{
+    auto scroll = new QScrollArea(this);
+    scroll->setWidgetResizable(true);
+
+    auto frame = new QFrame();
+    scroll->setWidget(frame);
+
+    auto form = new QFormLayout();
+    form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    form->setLabelAlignment(Qt::AlignRight);
+    frame->setLayout(aForm);
+
+    mTabs->addTab(scroll, aTitle);
+
+    return form;
 }
 
 bool GeneralSettingDialog::languageHasChanged()
@@ -237,28 +352,60 @@ bool GeneralSettingDialog::themeHasChanged()
     return (mInitialThemeKey != mThemeBox->currentData());
 }
 
+bool GeneralSettingDialog::HSVBehaviourHasChanged()
+{
+    return (mInitialHSVBehaviour != mHSVBehaviour->currentIndex());
+}
+
+bool GeneralSettingDialog::HSVSetColorHasChanged()
+{
+    return (bHSVSetColor != mHSVSetColor->isChecked());
+}
+
+bool GeneralSettingDialog::HSVFolderHasChanged()
+{
+    return (bHSVFolder!= mHSVFolder->isChecked());
+}
+
 QString GeneralSettingDialog::theme()
 {
     return mThemeBox->currentData().toString();
+}
+
+bool GeneralSettingDialog::keyDelayHasChanged()
+{
+    return (mKeyDelay != mKeyDelayBox->value());
 }
 
 void GeneralSettingDialog::saveSettings()
 {
     QSettings settings;
     if (languageHasChanged())
-        settings.setValue("generalsettings/language", indexToLanguage(mLanguageBox->currentIndex()));
+        settings.setValue("generalsettings/language", indexToLanguage(mLanguageBox->currentIndex(), false));
 
     if(easingHasChanged()){
-        settings.setValue("generalsettings/easing", indexToEasing(mEasingBox->currentIndex()));
+        settings.setValue("generalsettings/easing", indexToEasing(mEasingBox->currentIndex(), false));
     }
     if(rangeHasChanged()){
-        settings.setValue("generalsettings/range", indexToRange(mRangeBox->currentIndex()));
+        settings.setValue("generalsettings/range", indexToRange(mRangeBox->currentIndex(), false));
     }
-    if(timeFormatHasChanged())
+    if(timeFormatHasChanged()){
         settings.setValue("generalsettings/ui/timeformat", mTimeFormatBox->currentIndex());
-
-    if(themeHasChanged())
+    }
+    if(themeHasChanged()){
         settings.setValue("generalsettings/ui/theme", mThemeBox->currentData());
-}
-
+    }
+    if (HSVBehaviourHasChanged()){
+        settings.setValue("generalsettings/keys/hsvBehaviour", mHSVBehaviour->currentIndex());
+    }
+    if (HSVSetColorHasChanged()){
+        settings.setValue("generalsettings/keys/hsvSetColor", mHSVSetColor->isChecked());
+    }
+    if (HSVFolderHasChanged()){
+        settings.setValue("generalsettings/keys/hsvFolder", mHSVFolder->isChecked());
+    }
+    if (keyDelayHasChanged()){
+        settings.setValue("generalsettings/keybindings/keyDelay", mKeyDelayBox->value());
+    }
+  }
 } // namespace gui

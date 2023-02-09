@@ -51,7 +51,7 @@ void ConstantPanel::setTarget(core::ObjectNode* aTarget)
 
     if (mTarget)
     {
-        this->setTitle(mTarget->name() + " : " + tr("Constant"));
+        this->setTitle(mTarget->name() + " : " + tr("Constants"));
         this->show();
     }
     else
@@ -86,7 +86,7 @@ void ConstantPanel::build()
         {
             assignBlendMode(this->mProject, this->mTarget, (img::BlendMode)aNext);
         };
-        mRenderingAttributes->addItem(tr("blend :"), mBlendMode);
+        mRenderingAttributes->addItem(tr("Blend :"), mBlendMode);
 
         // clipped
         mClipped = new CheckItem(mRenderingAttributes);
@@ -94,7 +94,7 @@ void ConstantPanel::build()
         {
             assignClipped(this->mProject, this->mTarget, aNext);
         };
-        mRenderingAttributes->addItem(tr("clipped :"), mClipped);
+        mRenderingAttributes->addItem(tr("Clipped :"), mClipped);
     }
 
     this->addStretch();

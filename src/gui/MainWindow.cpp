@@ -493,11 +493,20 @@ void MainWindow::keyPressEvent(QKeyEvent* aEvent)
 }
 #endif
 
+QList<QString> disallowedRepeats = {"MoveCanvas", "RotateCanvas", "SaveProject"};
+
 void MainWindow::keyPressEvent(QKeyEvent* aEvent)
 {
     //qDebug() << "input key =" << aEvent->key() << "text =" << aEvent->text();
-
     if (aEvent->isAutoRepeat()){
+        for (auto command : mKeyCommandMap->commands()){
+            if (disallowedRepeats.contains(command->key)){
+                const ctrl::KeyBinding keyBind(aEvent->key(), aEvent->modifiers());
+                if (command->binding.matchesExactlyWith(keyBind)){
+                    return;
+                }
+            }
+        }
         // Default delay of 125ms
         QSettings settings;
         auto delay = settings.value("generalsettings/keybindings/keyDelay");
@@ -521,8 +530,15 @@ void MainWindow::keyPressEvent(QKeyEvent* aEvent)
 void MainWindow::keyReleaseEvent(QKeyEvent* aEvent)
 {
     //qDebug() << "release key =" << aEvent->key() << "text =" << aEvent->text();
-
     if (aEvent->isAutoRepeat()){
+        for (auto command : mKeyCommandMap->commands()){
+            if (disallowedRepeats.contains(command->key)){
+                const ctrl::KeyBinding keyBind(aEvent->key(), aEvent->modifiers());
+                if (command->binding.matchesExactlyWith(keyBind)){
+                    return;
+                }
+            }
+        }
         // Default delay of 125ms
         QSettings settings;
         auto delay = settings.value("generalsettings/keybindings/keyDelay");

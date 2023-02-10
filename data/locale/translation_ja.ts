@@ -368,91 +368,106 @@
     </message>
     <message>
         <location filename="../../src/ctrl/TimeLineUtil.cpp" line="352"/>
+        <source>Update default HSV key</source>
+        <translation>デフォルトのHSVキーを更新</translation>
+    </message>
+    <message>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="353"/>
+        <source>Update HSV key</source>
+        <translation>HSVキーを更新</translation>
+    </message>
+    <message>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="363"/>
         <source>Update default pose key</source>
         <translation>初期ポーズを更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="353"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="364"/>
         <source>Update pose key</source>
         <translation>ポーズキーを更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="363"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="374"/>
         <source>Update default FFD key</source>
         <translation>初期自由変形を更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="364"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="375"/>
         <source>Update FFD key</source>
         <translation>自由変形キーを更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="378"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="389"/>
         <source>Update default image resource key</source>
         <translation>初期画像のリソースを更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="379"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="390"/>
         <source>update image resource key</source>
         <translation>画像キーのリソースを更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="403"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="414"/>
         <source>Update the image&apos;s default offset key</source>
         <translation>初期画像の中心を更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="404"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="415"/>
         <source>Update the image&apos;s offset key</source>
         <translation>画像キーの中心を更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="430"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="441"/>
         <source>Update the default mesh size key</source>
         <translation>初期画像のメッシュ単位を更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="431"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="442"/>
         <source>Update mesh size key</source>
         <translation>メッシュサイズキー更新</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="482"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="493"/>
         <source>Add new movement key</source>
         <translation>新しい移動キーを追加</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="488"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="499"/>
         <source>Add new rotation key</source>
         <translation>新しい回転キーを追加</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="495"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="506"/>
         <source>Add new scaling key</source>
         <translation>新しい拡縮キーを追加</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="502"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="513"/>
         <source>Add new depth key</source>
         <translation>新しい深度キーを追加</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="509"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="520"/>
         <source>Add new opacity key</source>
         <translation>新しい不透明度キーを追加</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="519"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="527"/>
+        <source>Add new HSV key</source>
+        <translation>新しいHSVキーの追加</translation>
+    </message>
+    <message>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="537"/>
         <source>Add new pose key</source>
         <translation>新しいポーズキーを追加</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="531"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="549"/>
         <source>Add new FFD key</source>
         <translation>新しい自由変形キーを追加</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="538"/>
+        <location filename="../../src/ctrl/TimeLineUtil.cpp" line="556"/>
         <source>Add new image key</source>
         <translation>新しい画像キーの追加</translation>
     </message>
@@ -584,79 +599,79 @@
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="53"/>
         <source>None</source>
-        <translation type="unfinished">なし</translation>
+        <translation>なし</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="54"/>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="65"/>
         <source>Linear</source>
-        <translation type="unfinished">リニア</translation>
+        <translation>リニア</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="55"/>
         <source>Sine</source>
-        <translation type="unfinished">正弦曲線</translation>
+        <translation>正弦曲線</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="56"/>
         <source>Quad</source>
-        <translation type="unfinished">二次式</translation>
+        <translation>二次式</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="57"/>
         <source>Cubic</source>
-        <translation type="unfinished">三次式</translation>
+        <translation>三次式</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="58"/>
         <source>Quart</source>
-        <translation type="unfinished">四次式</translation>
+        <translation>四次式</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="59"/>
         <source>Quint</source>
-        <translation type="unfinished">五次式</translation>
+        <translation>五次式</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="60"/>
         <source>Expo</source>
-        <translation type="unfinished">指数</translation>
+        <translation>指数</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="61"/>
         <source>Circ</source>
-        <translation type="unfinished">円形</translation>
+        <translation>円形</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="62"/>
         <source>Back</source>
-        <translation type="unfinished">バック</translation>
+        <translation>バック</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="63"/>
         <source>Elastic</source>
-        <translation type="unfinished">ゴム状</translation>
+        <translation>ゴム状</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="64"/>
         <source>Bounce</source>
-        <translation type="unfinished">バウンス</translation>
+        <translation>バウンス</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="90"/>
         <source>In</source>
-        <translation type="unfinished"></translation>
+        <translation>イン</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="91"/>
         <source>Out</source>
-        <translation type="unfinished"></translation>
+        <translation>アウト</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="92"/>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="93"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>オール</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="110"/>
@@ -761,12 +776,12 @@
         <translation>無効なポーズを持つオブジェクトが指定されました。</translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/FFDEditor.cpp" line="196"/>
+        <location filename="../../src/ctrl/FFDEditor.cpp" line="200"/>
         <source>FFD Editor : </source>
         <translation>FFDエディタ : </translation>
     </message>
     <message>
-        <location filename="../../src/ctrl/FFDEditor.cpp" line="292"/>
+        <location filename="../../src/ctrl/FFDEditor.cpp" line="296"/>
         <source>There are no object with meshes.</source>
         <translation>メッシュを持つオブジェクトは存在しない。</translation>
     </message>
@@ -889,74 +904,126 @@
         <translation>一般設定</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="208"/>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="227"/>
         <source>Language (needs restarting) :</source>
         <translation>言語（要リブート） :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="215"/>
         <source>Default keyframe easing:</source>
+        <translation type="vanished">デフォルトのキーフレームイージング :</translation>
+    </message>
+    <message>
+        <source>Default keyframe range:</source>
+        <translation type="vanished">デフォルトのキーフレーム範囲 :</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="234"/>
+        <source>Default keyframe easing :</source>
         <translation>デフォルトのキーフレームイージング :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="222"/>
-        <source>Default keyframe range:</source>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="241"/>
+        <source>Default keyframe range :</source>
         <translation>デフォルトのキーフレーム範囲 :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="230"/>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="249"/>
         <source>Timeline format :</source>
         <translation>タイムライン形式 :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="240"/>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="259"/>
         <source>Theme :</source>
         <translation>テーマ :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="242"/>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="261"/>
         <source>Reset recent files list</source>
         <translation>最近使ったファイル一覧をリセットする</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="243"/>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="262"/>
         <source>Deletes all project entries from your recents</source>
         <translation>すべてのプロジェクトのエントリーを履歴から削除します</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="247"/>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="266"/>
         <source>Success</source>
         <translation>成功</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="247"/>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="266"/>
         <source>All entries have been successfully removed</source>
         <translation>すべてのエントリーが正常に削除されました</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="276"/>
+        <source>HSV | Blend color : </source>
+        <translation>HSV | ブレンドカラー : </translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="280"/>
+        <source>HSV | Enable folder support (not recommended)</source>
+        <translation>HSV | フォルダサポートを有効にする (推奨しません)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="283"/>
+        <source>Render indefinitely</source>
+        <translation>無期限レンダリング</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="284"/>
+        <source>Only render between keys</source>
+        <translation>キー間のみレンダリング</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="286"/>
+        <source>HSV | Key rendering : </source>
+        <translation>HSV | キーレンダリング : </translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="294"/>
+        <source>Global keybind delay (ms) : </source>
+        <translation>グローバルキーバインドディレイ(ミリ秒) : </translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="297"/>
+        <source>General</source>
+        <translation>一般</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="298"/>
+        <source>Animation keys</source>
+        <translation>アニメーションキー</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="299"/>
+        <source>Keybindings</source>
+        <translation>キーバインド</translation>
     </message>
     <message>
         <source>language (needs restarting) :</source>
         <translation type="vanished">言語 (要アプリケーション再起動) :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/GeneralSettingDialog.cpp" line="252"/>
         <source>Parameters</source>
-        <translation>パラメーター</translation>
+        <translation type="vanished">パラメーター</translation>
     </message>
 </context>
 <context>
     <name>gui::GifExportDialog</name>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="270"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="271"/>
         <source>Parameters</source>
         <translation>パラメーター</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="314"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="315"/>
         <source>Optimize palette :</source>
         <translation>パレットを最適化する :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="315"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="316"/>
         <source>Relay bit rate (Kbps) :</source>
         <translation>中継ビットレート(Kbps) :</translation>
     </message>
@@ -1442,22 +1509,22 @@
         <translation>ツールドック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="602"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="608"/>
         <source> has been modified. Save changes?</source>
         <translation> は変更が加えられてます。変更を保存しますか？</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="606"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="612"/>
         <source>Some projects have been modified. Save changes?</source>
         <translation>いくつかのプロジェクトは変更が加えられてます。変更を保存しますか？</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="609"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="615"/>
         <source>Save Changes</source>
         <translation>変更を保存する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="610"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="616"/>
         <source>Discard Changes</source>
         <translation>変更を破棄する</translation>
     </message>
@@ -1471,65 +1538,65 @@
         <translation>アニメーションドック</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="611"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="617"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="633"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="639"/>
         <source>Undone : </source>
         <translation>元に戻す : </translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="691"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="697"/>
         <source>Redone : </source>
         <translation>やり直す : </translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="741"/>
-        <location filename="../../src/gui/MainWindow.cpp" line="806"/>
-        <location filename="../../src/gui/MainWindow.cpp" line="841"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="747"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="812"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="847"/>
         <source>Loading Error</source>
         <translation>読み込みエラー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="784"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="790"/>
         <source>Open File</source>
         <translation>ファイルを開く</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="858"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="864"/>
         <source>Save File</source>
         <translation>ファイルを保存する</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="948"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="954"/>
         <source>Export Folder</source>
         <translation>出力フォルダ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="992"/>
-        <location filename="../../src/gui/MainWindow.cpp" line="1092"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="998"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="1098"/>
         <source>Export Error</source>
         <translation>出力エラー</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="1027"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="1033"/>
         <source>Invalid extension specified.</source>
         <translation>指定された拡張子が無効です。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="1080"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="1086"/>
         <source>FFmpeg was not found.</source>
         <translation>FFmpegが見つかりませんでした。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="1082"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="1088"/>
         <source>Video export requires FFmpeg.</source>
         <translation>動画出力にはFFmpegが必要です。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="1083"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="1089"/>
         <source>Install FFmpeg on the system, or place a FFmpeg executable under &quot;/tools&quot; in the folder where you installed AnimeEffects.</source>
         <translation>FFmpegをシステムにインストールするか、AnimeEffectsをインストールしたフォルダの「/tools」以下にFFmpegの実行ファイルを置いてください。</translation>
     </message>
@@ -1538,22 +1605,22 @@
         <translation type="vanished">FFmpegをシステムにインストールするか、FFmpegの実行ファイルをAnimeEffectsを展開したフォルダの/tools以下に配置してください。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="972"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="978"/>
         <source>File already exists.</source>
         <translation>ファイルはすでに存在しています。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="973"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="979"/>
         <source>Do you want to overwrite the existing file?</source>
         <translation>既存のファイルに上書きしますか？</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="1011"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="1017"/>
         <source>Export File</source>
         <translation>出力ファイル</translation>
     </message>
     <message>
-        <location filename="../../src/gui/MainWindow.cpp" line="1026"/>
+        <location filename="../../src/gui/MainWindow.cpp" line="1032"/>
         <source>Operation Error</source>
         <translation>操作エラー</translation>
     </message>
@@ -2122,8 +2189,12 @@
     </message>
     <message>
         <location filename="../../src/gui/ToolWidget.cpp" line="113"/>
+        <source>Rotate the canvas counterclockwise (%1)</source>
+        <translation>キャンバスを反時計回りに15°回転させる (%1))</translation>
+    </message>
+    <message>
         <source>Rotate the canvas counterclockwise (%1</source>
-        <translation>キャンバスを反時計回りに15°回転させる (%1)</translation>
+        <translation type="vanished">キャンバスを反時計回りに15°回転させる (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/ToolWidget.cpp" line="121"/>
@@ -2139,42 +2210,42 @@
 <context>
     <name>gui::VideoExportDialog</name>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="334"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="335"/>
         <source>Parameters</source>
         <translation>パラメーター</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="384"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="385"/>
         <source>This codec requires a dedicated GPU.</source>
         <translation>このコーデックには専用のGPUが必要です。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="456"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="457"/>
         <source>Lossless</source>
         <translation>ロスレス</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="461"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="462"/>
         <source>Transparent</source>
         <translation>トランスペアレント</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="477"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="478"/>
         <source>Codec :</source>
         <translation>コーデック :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="481"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="482"/>
         <source>Color standard :</source>
         <translation>色規格 :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="483"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="484"/>
         <source>Pixel format :</source>
         <translation>ピクセルフォーマット :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/ExportDialog.cpp" line="501"/>
+        <location filename="../../src/gui/ExportDialog.cpp" line="502"/>
         <source>Bit rate (Kbps) :</source>
         <translation>ビットレート(Kbps) :</translation>
     </message>
@@ -2254,12 +2325,12 @@
         <translation type="vanished">最大テキスト表示幅 :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="568"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="655"/>
         <source>Max text width :</source>
         <translation>最大テキスト表示幅 :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="581"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="668"/>
         <source>Current Keys</source>
         <translation>現在のキー</translation>
     </message>
@@ -2380,13 +2451,13 @@
 <context>
     <name>gui::prop::FFDKeyGroup</name>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="409"/>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="415"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="495"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="501"/>
         <source>FFD</source>
         <translation>自由変形</translation>
     </message>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="424"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="510"/>
         <source>Easing :</source>
         <translation>イージング :</translation>
     </message>
@@ -2396,25 +2467,54 @@
     </message>
 </context>
 <context>
+    <name>gui::prop::HSVKeyGroup</name>
+    <message>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="357"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="366"/>
+        <source>HSV</source>
+        <translation>HSV</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="375"/>
+        <source>Easing :</source>
+        <translation>イージング :</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="405"/>
+        <source>Hue :</source>
+        <translation>色相 :</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="406"/>
+        <source>Saturation :</source>
+        <translation>彩度 :</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="407"/>
+        <source>Value : </source>
+        <translation>明度 : </translation>
+    </message>
+</context>
+<context>
     <name>gui::prop::ImageKeyGroup</name>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="462"/>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="471"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="548"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="557"/>
         <source>Image</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="489"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="575"/>
         <source>Resource :</source>
         <translation>リソース :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="498"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="584"/>
         <source>Center :</source>
         <translation>中心 :</translation>
     </message>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="508"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="594"/>
         <source>Cell size :</source>
         <translation>メッシュ単位 :</translation>
     </message>
@@ -2506,13 +2606,13 @@
 <context>
     <name>gui::prop::PoseKeyGroup</name>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="357"/>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="363"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="443"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="449"/>
         <source>Pose</source>
         <translation>ポーズ</translation>
     </message>
     <message>
-        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="372"/>
+        <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="458"/>
         <source>Easing :</source>
         <translation>イージング :</translation>
     </message>

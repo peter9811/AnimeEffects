@@ -236,9 +236,21 @@ void MainDisplayWidget::initializeGL()
         XC_FATAL_ERROR("OpenGL Error", "Failed to initialize opengl functions.", "");
     }
 
+    if (!this->context()->hasExtension(QByteArrayLiteral("GL_ARB_sync")))
+    {
+        XC_FATAL_ERROR("OpenGL Error", "Opengl extension ARB_sync is not supported by your hardware.", "");
+    }
+    QOpenGLExtension_ARB_sync* sync = new gl::Global::SyncExtension();
+    if (!sync->initializeOpenGLFunctions())
+    {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to initialize opengl functions.", "");
+    }
+
     // setup global info
     gl::Global::setContext(*this);
     gl::Global::setFunctions(*functions);
+    gl::Global::setSyncExtension(*sync);
+
     // setup gl root
     mGLRoot.setContextAccessor(mGLContextAccessor);
     mGLRoot.setFunctions(*functions);

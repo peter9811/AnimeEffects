@@ -148,16 +148,16 @@ bool PrimitiveDrawer::State::hasDifferentValueWith(const Command& aCommand) cons
 bool PrimitiveDrawer::PlaneShader::init()
 {
     static const char* kVertexShaderText =
-            "#version 330 \n"
+            "#version 140 \n"
             "in vec2 inPosition;"
             "uniform mat4 uViewMtx;"
             "void main(void){"
             "  gl_Position = uViewMtx * vec4(inPosition, 0.0, 1.0);"
             "}";
     static const char* kFragmentShaderText =
-            "#version 330 \n"
+            "#version 140 \n"
             "uniform vec4 uColor;"
-            "layout(location = 0, index = 0) out vec4 oFragColor;"
+            "out vec4 oFragColor;"
             "void main(void){"
             "  oFragColor = uColor;"
             "}";
@@ -179,7 +179,7 @@ bool PrimitiveDrawer::PlaneShader::init()
 bool PrimitiveDrawer::StippleShader::init()
 {
     static const char* kVertexShaderText =
-            "#version 330 \n"
+            "#version 140 \n"
             "in vec2 inPosition;"
             "in vec2 inLength;"
             "out vec2 vLength;"
@@ -190,11 +190,11 @@ bool PrimitiveDrawer::StippleShader::init()
             "  vLength = (uViewMtx * vec4(inLength, 0.0, 1.0)).xy * uScreenSize;"
             "}";
     static const char* kFragmentShaderText =
-            "#version 330 \n"
+            "#version 140 \n"
             "in vec2 vLength;"
             "uniform vec4 uColor;"
             "uniform vec2 uWave;"
-            "layout(location = 0, index = 0) out vec4 oFragColor;"
+            "out vec4 oFragColor;"
             "void main(void){"
             "  float f = cos(uWave.x * vLength.x * 3.1415926);"
             "  oFragColor = vec4(uColor.rgb, uColor.a * smoothstep(0.0, 1.0, f + uWave.y));"
@@ -220,7 +220,7 @@ bool PrimitiveDrawer::StippleShader::init()
 bool PrimitiveDrawer::TextureShader::init()
 {
     static const char* kVertexShaderText =
-            "#version 330 \n"
+            "#version 140 \n"
             "in vec2 inPosition;"
             "in vec2 inTexCoord;"
             "out vec2 vTexCoord;"
@@ -230,11 +230,11 @@ bool PrimitiveDrawer::TextureShader::init()
             "  vTexCoord = inTexCoord;"
             "}";
     static const char* kFragmentShaderText =
-            "#version 330 \n"
+            "#version 140 \n"
             "in vec2 vTexCoord;"
             "uniform vec4 uColor;"
             "uniform sampler2D uTexture;"
-            "layout(location = 0, index = 0) out vec4 oFragColor;"
+            "out vec4 oFragColor;"
             "void main(void){"
             "  oFragColor = uColor * texture(uTexture, vTexCoord);"
             "}";

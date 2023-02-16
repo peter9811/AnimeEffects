@@ -1,4 +1,4 @@
-QT      += core gui opengl xml
+QT      += core gui opengl openglextensions xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG  += qt c++11

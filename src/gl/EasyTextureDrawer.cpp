@@ -15,7 +15,7 @@ EasyTextureDrawer::EasyTextureDrawer()
 bool EasyTextureDrawer::init()
 {
     static const char* kVertexShaderText =
-            "#version 330 \n"
+            "#version 140 \n"
             "in vec2 inPosition;"
             "in vec2 inTexCoord;"
             "out vec2 vTexCoord;"
@@ -24,10 +24,10 @@ bool EasyTextureDrawer::init()
             "  vTexCoord = inTexCoord;"
             "}";
     static const char* kFragmentShaderText =
-            "#version 330 \n"
+            "#version 140 \n"
             "uniform sampler2D uTexture0;"
             "in vec2 vTexCoord;"
-            "layout(location = 0, index = 0) out vec4 oFragColor;"
+            "out vec4 oFragColor;"
             "void main(void){"
             "  oFragColor = texture(uTexture0, vTexCoord);"
             "}";

@@ -164,22 +164,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         }
 
         auto easing = settings.value("generalsettings/easing");
-
-        if (easing.isValid()){
-            mInitialEasingIndex = easingToIndex(easing.toString());
-        }
-        else{
-            mInitialEasingIndex = easingToIndex("Linear");
-        }
+        mInitialEasingIndex = easing.isValid()? easingToIndex(easing.toString()) : easingToIndex("Linear");
 
         auto range = settings.value("generalsettings/range");
-
-        if (range.isValid()){
-            mInitialRangeIndex = rangeToIndex(range.toString());
-        }
-        else{
-            mInitialRangeIndex = rangeToIndex("All");
-        }
+        mInitialRangeIndex = range.isValid()? rangeToIndex(range.toString()) : rangeToIndex("All");
 
         auto timeScale = settings.value("generalsettings/ui/timeformat");
         if (timeScale.isValid())
@@ -192,26 +180,25 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         {
             mInitialThemeKey = theme.toString();
         }
-        auto isSetColor = settings.value("generalsettings/keys/hsvSetColor");
-        if (isSetColor.isValid())
-        {
-            bHSVSetColor = isSetColor.toBool();
-        }
+
+        auto isAutoSave = settings.value("generalsettings/projects/autosaveEnabled");
+        bAutoSave = isAutoSave.isValid()? isAutoSave.toBool() : false;
+
+        auto isAutoSaveDelay = settings.value("generalsettings/projects/autosaveDelay");
+        mAutoSaveDelay = isAutoSaveDelay.isValid()? isAutoSaveDelay.toInt() : 5;
+
+        auto isBlendColor = settings.value("generalsettings/keys/hsvSetColor");
+        bHSVBlendColor = isBlendColor.isValid()? isBlendColor.toBool() : true;
+
+        // Index 0 is "Render indefinetely"
         auto isHSVBehaviour = settings.value("generalsettings/keys/hsvBehaviour");
-        if (isHSVBehaviour.isValid())
-        {
-            mInitialHSVBehaviour = isHSVBehaviour.toInt();
-        }
+        mInitialHSVBehaviour = isHSVBehaviour.isValid()? isHSVBehaviour.toInt() : 0;
+
         auto isHSVFolder = settings.value("generalsettings/keys/hsvFolder");
-        if (isHSVFolder.isValid())
-        {
-            bHSVFolder = isHSVFolder.toBool();
-        }
+        bHSVFolder = isHSVFolder.isValid()? isHSVFolder.toBool() : false;
+
         auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
-        if (isKeyDelay.isValid())
-        {
-            mKeyDelay = isKeyDelay.toInt();
-        }
+        mKeyDelay = isKeyDelay.isValid()? isKeyDelay.toInt() : 125;
     }
 
     auto form = new QFormLayout();
@@ -268,12 +255,22 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         form->addRow(mResetButton);
     }
 
+    auto projectSaving = new QFormLayout();
+    {
+        mAutoSave = new QCheckBox();
+        mAutoSave->setChecked(bAutoSave);
+        projectSaving->addRow(tr("Automatically save your project : "), mAutoSave);
+
+        mAutoSaveDelayBox = new QSpinBox();
+        mAutoSaveDelayBox->setValue(mAutoSaveDelay);
+        projectSaving->addRow(tr("Time in minutes between autosaves : "), mAutoSaveDelayBox);
+    }
 
     auto keysettings = new QFormLayout();
     {
-        mHSVSetColor = new QCheckBox();
-        mHSVSetColor->setChecked(bHSVSetColor);
-        keysettings->addRow(tr("HSV | Blend color : "), mHSVSetColor);
+        mHSVBlendColor = new QCheckBox();
+        mHSVBlendColor->setChecked(bHSVBlendColor);
+        keysettings->addRow(tr("HSV | Blend color : "), mHSVBlendColor);
 
         mHSVFolder = new QCheckBox();
         mHSVFolder->setChecked(bHSVFolder);
@@ -295,6 +292,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
     }
 
     createTab(tr("General"), form);
+    createTab(tr("Project settings"), projectSaving);
     createTab(tr("Animation keys"), keysettings);
     createTab(tr("Keybindings"), keybindingSettings);
 
@@ -352,6 +350,16 @@ bool GeneralSettingDialog::themeHasChanged()
     return (mInitialThemeKey != mThemeBox->currentData());
 }
 
+bool GeneralSettingDialog::autoSaveHasChanged()
+{
+    return (bAutoSave != mAutoSave->isChecked());
+}
+
+bool GeneralSettingDialog::autoSaveDelayHasChanged()
+{
+    return (mAutoSaveDelay != mAutoSaveDelayBox->value());
+}
+
 bool GeneralSettingDialog::HSVBehaviourHasChanged()
 {
     return (mInitialHSVBehaviour != mHSVBehaviour->currentIndex());
@@ -359,7 +367,7 @@ bool GeneralSettingDialog::HSVBehaviourHasChanged()
 
 bool GeneralSettingDialog::HSVSetColorHasChanged()
 {
-    return (bHSVSetColor != mHSVSetColor->isChecked());
+    return (bHSVBlendColor != mHSVBlendColor->isChecked());
 }
 
 bool GeneralSettingDialog::HSVFolderHasChanged()
@@ -395,11 +403,17 @@ void GeneralSettingDialog::saveSettings()
     if(themeHasChanged()){
         settings.setValue("generalsettings/ui/theme", mThemeBox->currentData());
     }
+    if(autoSaveHasChanged()){
+        settings.setValue("generalsettings/projects/autosaveEnabled", mAutoSave->isChecked());
+    }
+    if(autoSaveDelayHasChanged()){
+        settings.setValue("generalsettings/projects/autosaveDelay", mAutoSaveDelayBox->value());
+    }
     if (HSVBehaviourHasChanged()){
         settings.setValue("generalsettings/keys/hsvBehaviour", mHSVBehaviour->currentIndex());
     }
     if (HSVSetColorHasChanged()){
-        settings.setValue("generalsettings/keys/hsvSetColor", mHSVSetColor->isChecked());
+        settings.setValue("generalsettings/keys/hsvSetColor", mHSVBlendColor->isChecked());
     }
     if (HSVFolderHasChanged()){
         settings.setValue("generalsettings/keys/hsvFolder", mHSVFolder->isChecked());

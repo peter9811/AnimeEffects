@@ -86,7 +86,7 @@ bool Driver::updateCursor(const core::AbstractCursor& aCursor,
     ScopeCounter counter(mOnUpdating);
 
     // stop animation
-    if (aCursor.emitsPressedEvent())
+    if (aCursor.emitsLeftPressedEvent() && mToolType != ToolType_Cursor)
     {
         mProject.animator().stop();
     }

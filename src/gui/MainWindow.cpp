@@ -310,11 +310,36 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
         if (key) key->invoker = [=](){ this->onMovementTriggered("Last");};
     }
 #endif
+
+    // autosave
+
+    QSettings settings;
+    bool autosave = settings.value("generalsettings/projects/autosaveEnabled").isValid()?
+                settings.value("generalsettings/projects/autosaveEnabled").toBool() : false;
+
+    if (autosave){
+        autosaveTimer = new QTimer(this);
+        connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
+        autosaveTimer->start();
+    }
 }
 
 MainWindow::~MainWindow()
 {
     closeAllProjects();
+}
+
+void MainWindow::autoSave(){
+    QSettings settings;
+    int autoDelay = settings.value("generalsettings/projects/autosaveDelay").isValid()?
+                settings.value("generalsettings/projects/autosaveDelay").toInt() : 5;
+    autosaveTimer->setInterval(autoDelay*60000);
+    if (mCurrent && !mCurrent->isNameless() && mCurrent->isModified())
+    {
+        mViaPoint.pushLog("Automatically saved project: " + QFileInfo(mCurrent->fileName()).fileName(), ctrl::UILogType_Info);
+        // qDebug() << "Interval of " + QString(std::to_string(autoDelay*60000).c_str()) + " milliseconds has elapsed.";
+        processProjectSaving(*mCurrent);
+    }
 }
 
 void MainWindow::showWithSettings()
@@ -382,7 +407,7 @@ void MainWindow::closeAllProjects()
 {
     mProjectTabBar->removeAllProject();
     resetProjectRefs(nullptr);
-    mSystem.closeAllProjects();
+    mSystem.closeAllProjects();   
 }
 
 void MainWindow::resetProjectRefs(core::Project* aProject)

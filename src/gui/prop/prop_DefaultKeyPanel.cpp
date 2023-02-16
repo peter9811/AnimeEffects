@@ -54,6 +54,7 @@ DefaultOpaGroup::DefaultOpaGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLab
         // opacity
         mOpacity = new DecimalItem(this);
         mOpacity->setRange(0.0f, 1.0f);
+        mOpacity->box().setSingleStep(0.1);
         mOpacity->onValueUpdated = [=](double, double aNext)
         {
             this->mAccessor.assignDefaultOpacity(aNext);

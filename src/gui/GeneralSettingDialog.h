@@ -22,6 +22,8 @@ public:
     bool rangeHasChanged();
     bool languageHasChanged();
     bool timeFormatHasChanged();
+    bool autoSaveHasChanged();
+    bool autoSaveDelayHasChanged();
     bool themeHasChanged();
     bool HSVBehaviourHasChanged();
     bool HSVSetColorHasChanged();
@@ -45,8 +47,14 @@ private:
     int mInitialRangeIndex;
     QComboBox* mRangeBox;
 
-    bool bHSVSetColor;
-    QCheckBox* mHSVSetColor;
+    bool bAutoSave;
+    QCheckBox* mAutoSave;
+
+    int mAutoSaveDelay;
+    QSpinBox* mAutoSaveDelayBox;
+
+    bool bHSVBlendColor;
+    QCheckBox* mHSVBlendColor;
 
     bool bHSVFolder;
     QCheckBox* mHSVFolder;

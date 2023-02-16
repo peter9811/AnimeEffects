@@ -34,6 +34,3 @@
 # Build Directory
 build*/
 /src/AnimeEffects-Windows/
-
-.vscode/
-CMakeLists.txt

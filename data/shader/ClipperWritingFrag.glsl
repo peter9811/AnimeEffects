@@ -1,4 +1,4 @@
-#version 330
+#version 140
 
 #variation IS_CLIPPEE 0
 

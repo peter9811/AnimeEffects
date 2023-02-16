@@ -1,4 +1,4 @@
-#version 330
+#version 140
 
 uniform bool setColor;
 
@@ -21,7 +21,7 @@ uniform usampler2D uClippingTexture;
 in vec2 vTexCoord;
 in vec2 vDestCoord;
 
-layout(location = 0, index = 0) out vec4 oFragColor;
+out vec4 oFragColor;
 
 
 vec3 RGBtoHSV(vec3 c)

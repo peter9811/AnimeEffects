@@ -2,7 +2,8 @@
 #define GL_GLOBAL_H
 
 //#include <QOpenGLFunctions_4_0_Core>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_3_1>
+#include <QOpenGLExtensions>
 #include <QOpenGLContext>
 #include <QOpenGLWidget>
 #include <QGLFormat>
@@ -14,14 +15,19 @@ class Global
 {
 public:
     //typedef QOpenGLFunctions_4_0_Core Functions;
-    typedef QOpenGLFunctions_3_3_Core Functions;
+    typedef QOpenGLFunctions_3_1 Functions;
+    typedef QOpenGLExtension_ARB_sync SyncExtension;
     enum { kMajorVersion = 3 };
-    enum { kMinorVersion = 3 };
+    enum { kMinorVersion = 1 };
     static QGLFormat::OpenGLVersionFlag kVersionFlag;
 
     static void setFunctions(Functions& aFunctions);
     static void clearFunctions();
     static Functions& functions();
+
+    static void setSyncExtension(SyncExtension& aSyncExtension);
+    static void clearSyncExtension();
+    static SyncExtension& syncExtension();
 
     //static void setContext(QOpenGLContext& aContext, QSurface& aSurface);
     static void setContext(QOpenGLWidget& aWidget);

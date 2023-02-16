@@ -1,4 +1,4 @@
-#version 330
+#version 140
 
 // A is background and B is top layer
 // We unsupport dissolve, darker color, lighter color, hue, saturation, color, luminosity,
@@ -42,7 +42,7 @@ uniform usampler2D uClippingTexture;
 in vec2 vTexCoord;
 in vec2 vDestCoord;
 
-layout(location = 0, index = 0) out vec4 oFragColor;
+out vec4 oFragColor;
 
 vec4 blendColor(const vec4 src, const vec4 dst)
 {

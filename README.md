@@ -6,7 +6,7 @@ A 2D animation tool which doesn't require a carefully thought-out plan, it simpl
 Originally developed by hidefuku, it is now being developed and maintained by its community.
 
 * Official Website:<br>
-  * *Under construction* <br>
+  * https://animeeffectsdevs.github.io/
 
 * Official socials:<br>
   * Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects Community Server</a> (courtesy of @Jose-Moreno)<br>

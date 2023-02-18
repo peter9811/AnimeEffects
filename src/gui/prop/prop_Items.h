@@ -14,7 +14,6 @@
 #include <QLineEdit>
 #include "util/Easing.h"
 #include "gui/prop/prop_ItemBase.h"
-#include "gui/ViaPoint.h"
 
 namespace gui {
 namespace prop {

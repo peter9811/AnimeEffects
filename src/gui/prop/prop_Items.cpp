@@ -1,6 +1,7 @@
 #include <QDebug>
 #include <QHeaderView>
 #include <QStandardItem>
+#include <QApplication>
 #include "util/SelectArgs.h"
 #include "cmnd/ScopedMacro.h"
 #include "gui/prop/prop_Items.h"
@@ -9,33 +10,39 @@ namespace gui {
 namespace prop {
 
 //-------------------------------------------------------------------------------------------------
-bool triggeredByArrows = false;
+template <typename SpinBoxType>
+void stepByHelper(SpinBoxType *spinBox, int steps)
+{
+    spinBox->mTriggeredByArrows = true;
+    int stepRate = (QApplication::keyboardModifiers() == Qt::ShiftModifier) ? 10 : 1;
+    spinBox->QAbstractSpinBox::stepBy(steps * stepRate);
+    emit spinBox->editingFinished();
+    spinBox->mTriggeredByArrows = false;
+}
 
 SpinBox::SpinBox(QWidget* parent)
     : QSpinBox(parent)
+    , mTriggeredByArrows(false)
 {
+    setAccelerated(true);
 }
 
 void SpinBox::stepBy(int steps)
 {
-    triggeredByArrows = true;
-    QSpinBox::stepBy(steps);
-    emit editingFinished();
-    triggeredByArrows = false;
+    stepByHelper(this, steps);
 }
 
 //-------------------------------------------------------------------------------------------------
 DoubleSpinBox::DoubleSpinBox(QWidget* parent)
     : QDoubleSpinBox(parent)
+    , mTriggeredByArrows(false)
 {
+    setAccelerated(true);
 }
 
 void DoubleSpinBox::stepBy(int steps)
 {
-    triggeredByArrows = true;
-    QDoubleSpinBox::stepBy(steps);
-    emit editingFinished();
-    triggeredByArrows = false;
+    stepByHelper(this, steps);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -227,7 +234,7 @@ EasingItem::EasingItem(QWidget* aParent)
     mDBox->connect(mDBox, &QAbstractSpinBox::editingFinished, [=]()
     {
         this->onEditingFinished();
-        if (!triggeredByArrows)
+        if (!mDBox->mTriggeredByArrows)
         {
             mDBox->clearFocus();
         }
@@ -303,7 +310,7 @@ IntegerItem::IntegerItem(QWidget* aParent)
     mBox->connect(mBox, &QAbstractSpinBox::editingFinished, [=]()
     {
         this->onEditingFinished();
-        if (!triggeredByArrows)
+        if (!mBox->mTriggeredByArrows)
         {
             mBox->clearFocus();
         }
@@ -353,7 +360,7 @@ DecimalItem::DecimalItem(QWidget* aParent)
     mBox->connect(mBox, &QAbstractSpinBox::editingFinished, [=]()
     {
         this->onEditingFinished();
-        if (!triggeredByArrows)
+        if (!mBox->mTriggeredByArrows)
         {
             mBox->clearFocus();
         }
@@ -411,7 +418,7 @@ Vector2DItem::Vector2DItem(QWidget* aParent)
         mBox[i]->connect(mBox[i], &QAbstractSpinBox::editingFinished, [=]()
         {
             this->onEditingFinished();
-            if (!triggeredByArrows)
+            if (!mBox[i]->mTriggeredByArrows)
             {
                 mBox[i]->clearFocus();
             }

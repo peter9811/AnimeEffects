@@ -14,9 +14,13 @@
 #include <QLineEdit>
 #include "util/Easing.h"
 #include "gui/prop/prop_ItemBase.h"
+#include "gui/ViaPoint.h"
 
 namespace gui {
 namespace prop {
+
+template <typename SpinBoxType>
+void stepByHelper(SpinBoxType *spinBox, int steps);
 
 //-------------------------------------------------------------------------------------------------
 class SpinBox : public QSpinBox
@@ -27,6 +31,8 @@ public:
     SpinBox(QWidget *parent = nullptr);
 
     virtual void stepBy(int steps) override;
+
+    bool mTriggeredByArrows;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -38,6 +44,8 @@ public:
     DoubleSpinBox(QWidget *parent = nullptr);
 
     virtual void stepBy(int steps) override;
+
+    bool mTriggeredByArrows;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -155,7 +163,7 @@ private:
 
     QLayout* mLayout;
     std::array<QComboBox*, 2> mBox;
-    QDoubleSpinBox* mDBox;
+    DoubleSpinBox* mDBox;
     util::Easing::Param mStamp;
     bool mSignal;
 };
@@ -169,8 +177,8 @@ public:
 
     IntegerItem(QWidget* aParent);
 
-    QSpinBox& box() { return *mBox; }
-    const QSpinBox& box() const { return *mBox; }
+    SpinBox& box() { return *mBox; }
+    const SpinBox& box() const { return *mBox; }
 
     int value() const { return mBox->value(); }
     void setValue(int aValue) { mBox->setValue(aValue); mStamp = aValue; }
@@ -185,7 +193,7 @@ public:
 private:
     void onEditingFinished();
 
-    QSpinBox* mBox;
+    SpinBox* mBox;
     int mStamp;
     bool mSignal;
 };
@@ -199,8 +207,8 @@ public:
 
     DecimalItem(QWidget* aParent);
 
-    QDoubleSpinBox& box() { return *mBox; }
-    const QDoubleSpinBox& box() const { return *mBox; }
+    DoubleSpinBox& box() { return *mBox; }
+    const DoubleSpinBox& box() const { return *mBox; }
 
     double value() const { return mBox->value(); }
     void setValue(double aValue) { mBox->setValue(aValue); mStamp = aValue; }
@@ -215,7 +223,7 @@ public:
 private:
     void onEditingFinished();
 
-    QDoubleSpinBox* mBox;
+    DoubleSpinBox* mBox;
     double mStamp;
     bool mSignal;
 };
@@ -243,7 +251,7 @@ private:
     void onEditingFinished();
 
     QLayout* mLayout;
-    QDoubleSpinBox* mBox[2];
+    DoubleSpinBox* mBox[2];
     QVector2D mStamp;
     bool mSignal;
 };

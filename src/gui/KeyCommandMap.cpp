@@ -47,6 +47,15 @@ KeyCommandMap::KeyCommandMap(QWidget& aParent)
     addNewKey("Redo", general, tr("Redo last action"),
               ctrl::KeyBinding(Qt::Key_Z, Qt::ControlModifier | Qt::ShiftModifier));
 
+    addNewKey("Copy", timeline, tr("Copy selected key(s)"),
+              ctrl::KeyBinding(Qt::Key_C, Qt::ControlModifier));
+
+    addNewKey("Paste", timeline, tr("Paste selected key(s)"),
+              ctrl::KeyBinding(Qt::Key_V, Qt::ControlModifier));
+
+    addNewKey("Delete", timeline, tr("Delete selected key(s)"),
+              ctrl::KeyBinding(Qt::Key_X, Qt::ControlModifier));
+
     addNewKey("SaveProject", general, tr("Save project"),
               ctrl::KeyBinding(Qt::Key_S, Qt::ControlModifier));
 
@@ -78,31 +87,31 @@ KeyCommandMap::KeyCommandMap(QWidget& aParent)
               ctrl::KeyBinding(Qt::Key_Space, Qt::ShiftModifier));
 
 	addNewKey("RotateCanvas15Clockwise", view, tr("Rotate canvas 15° clockwise"),
-			  ctrl::KeyBinding(Qt::Key_6, Qt::KeypadModifier));
+              ctrl::KeyBinding(Qt::Key_E, Qt::AltModifier));
 
     addNewKey("RotateCanvas15AntiClockwise", view, tr("Rotate canvas 15° anticlockwise"),
-			  ctrl::KeyBinding(Qt::Key_4, Qt::KeypadModifier));
+              ctrl::KeyBinding(Qt::Key_Q, Qt::AltModifier));
 
     addNewKey("ResetCanvasAngle", view, tr("Reset canvas angle"),
-              ctrl::KeyBinding(Qt::Key_Space, Qt::NoModifier, Qt::Key_F1));
+              ctrl::KeyBinding(Qt::Key_F1));
 
     addNewKey("SelectCursor", tools, tr("Select cursor tool"),
-              ctrl::KeyBinding());
+              ctrl::KeyBinding(Qt::Key_1));
 
     addNewKey("SelectSRT", tools, tr("Select SRT editor"),
-              ctrl::KeyBinding());
+              ctrl::KeyBinding(Qt::Key_2));
 
     addNewKey("SelectBone", tools, tr("Select bone editor"),
-              ctrl::KeyBinding());
+              ctrl::KeyBinding(Qt::Key_3));
 
     addNewKey("SelectPose", tools, tr("Select pose editor"),
-              ctrl::KeyBinding());
+              ctrl::KeyBinding(Qt::Key_4));
 
     addNewKey("SelectMesh", tools, tr("Select mesh editor"),
-              ctrl::KeyBinding());
+              ctrl::KeyBinding(Qt::Key_5));
 
     addNewKey("SelectFFD", tools, tr("Select FFD editor"),
-              ctrl::KeyBinding());
+              ctrl::KeyBinding(Qt::Key_6));
 
     resetSubKeyCommands();
 }
@@ -122,11 +131,30 @@ void KeyCommandMap::addNewKey(const QString& aKey, const QString& aGroup,
 
 void KeyCommandMap::readFrom(const QSettings& aSrc)
 {
+    QSettings settings;
+    if(settings.value("keybindReset").isValid() && settings.value("keybindReset").toBool()){
+        //this->deleteFrom(aSrc);
+        for (auto command : mCommands)
+        {
+            if(aSrc.value(command->key).isValid()){aSrc.value(command->key).clear();};
+        }
+        settings.value("keybindReset").clear();
+        settings.sync();
+        return;
+    }
+
     for (auto command : mCommands)
     {
         readValue(aSrc, *command);
     }
     resetSubKeyCommands();
+}
+
+void KeyCommandMap::deleteFrom(const QSettings& aSrc){
+    for (auto command : mCommands)
+    {
+        eraseValue(aSrc, *command);
+    }
 }
 
 void KeyCommandMap::writeTo(QSettings& aDest)
@@ -142,6 +170,10 @@ void KeyCommandMap::readValue(const QSettings& aSrc, KeyCommand& aCommand)
 {
     auto v = aSrc.value(aCommand.key);
     aCommand.binding.setSerialValue(v.isValid() ? v.toString() : QString());
+}
+
+void KeyCommandMap::eraseValue(const QSettings& aSrc, KeyCommand& aCommand){
+   if(aSrc.value(aCommand.key).isValid()){aSrc.value(aCommand.key).clear();};
 }
 
 void KeyCommandMap::writeValue(QSettings& aDest, const KeyCommand& aCommand)

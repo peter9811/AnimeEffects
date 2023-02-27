@@ -326,6 +326,13 @@ bool TimeLineEditor::checkContactWithKeyFocus(core::TimeLineEvent& aEvent, const
     return mFocus.select(aEvent);
 }
 
+bool TimeLineEditor::retrieveFocusTargets(core::TimeLineEvent& aEvent){
+    if(mFocus.hasRange()){
+        return mFocus.select(aEvent);
+    }
+    return false;
+}
+
 bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& aWorldPos)
 {
     XC_ASSERT(!aEvent.targets().isEmpty());

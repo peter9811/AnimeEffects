@@ -199,6 +199,9 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
 
         auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
         mKeyDelay = isKeyDelay.isValid()? isKeyDelay.toInt() : 125;
+
+        auto isAutoShowMesh = settings.value("generalsettings/tools/autoshowmesh");
+        bAutoShowMesh = isAutoShowMesh.isValid()? isAutoShowMesh.toBool() : false;
     }
 
     auto form = new QFormLayout();
@@ -244,15 +247,6 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         }
         mThemeBox->setCurrentIndex(mThemeBox->findData(mInitialThemeKey));
         form->addRow(tr("Theme :"), mThemeBox);
-
-        mResetButton = new QPushButton(tr("Reset recent files list"));
-        mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
-        connect(mResetButton, &QPushButton::clicked, [=]() {
-                QSettings settings;
-                settings.remove("projectloader/recents");
-                MainWindow::showInfoPopup(tr("Success"), tr("All entries have been successfully removed"), "Info");
-           });
-        form->addRow(mResetButton);
     }
 
     auto projectSaving = new QFormLayout();
@@ -264,6 +258,15 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         mAutoSaveDelayBox = new QSpinBox();
         mAutoSaveDelayBox->setValue(mAutoSaveDelay);
         projectSaving->addRow(tr("Time in minutes between autosaves : "), mAutoSaveDelayBox);
+
+        mResetButton = new QPushButton(tr("Reset recent files list"));
+        mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
+        connect(mResetButton, &QPushButton::clicked, [=]() {
+                QSettings settings;
+                settings.remove("projectloader/recents");
+                MainWindow::showInfoPopup(tr("Success"), tr("All entries have been successfully removed"), "Info");
+           });
+        projectSaving->addRow(mResetButton);
     }
 
     auto keysettings = new QFormLayout();
@@ -289,12 +292,36 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         mKeyDelayBox->setRange(0, 10000);
         mKeyDelayBox->setValue(mKeyDelay);
         keybindingSettings->addRow(tr("Global keybind delay (ms) : "), mKeyDelayBox);
+
+        mResetKeybindsButton = new QPushButton(tr("Reset keybinds"));
+        mResetKeybindsButton->setToolTip(tr("Reset all keybinds, a restart is required."));
+        connect(mResetKeybindsButton, &QPushButton::clicked, [=]() {
+                QSettings settings;
+                settings.setValue("keybindReset", settings.value("keybindReset").isValid()?
+                    settings.value("keybindReset").toBool()?false:true/*  _(:з)∠)_ */:true);
+                MainWindow::showInfoPopup(tr("Keybinds reset status"), settings.value("keybindReset").toBool()?
+                tr("The keybinds will be reset when you restart.") :
+                tr("The keybinds will not be reset when you restart."), "Info");
+           });
+        keybindingSettings->addRow(mResetKeybindsButton);
+    }
+
+    auto toolSettings = new QFormLayout();
+    {
+        mAutoShowMesh = new QCheckBox();
+        mAutoShowMesh->setChecked(bAutoShowMesh);
+        connect(mAutoShowMesh, &QPushButton::clicked, [=]() {
+                QSettings settings;
+                settings.setValue("generalsettings/tools/autoshowmesh", mAutoShowMesh->isChecked());
+           });
+        toolSettings->addRow(tr("Automatically show mesh when selecting FFD"), mAutoShowMesh);
     }
 
     createTab(tr("General"), form);
     createTab(tr("Project settings"), projectSaving);
     createTab(tr("Animation keys"), keysettings);
     createTab(tr("Keybindings"), keybindingSettings);
+    createTab(tr("Tool settings"), toolSettings);
 
 
     this->setMainWidget(mTabs, false);

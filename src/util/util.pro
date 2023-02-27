@@ -17,6 +17,7 @@ DEPENDPATH  += ..
 SOURCES += \
     CollDetect.cpp \
     MathUtil.cpp \
+    NetworkUtil.cpp \
     TextUtil.cpp \
     TreePos.cpp \
     PackBits.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
     EasingName.cpp
 
 HEADERS += \
+    NetworkUtil.h \
     Signaler.h \
     CollDetect.h \
     Segment2D.h \

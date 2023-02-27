@@ -126,7 +126,6 @@ void FolderNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAcces
     auto hsvfolder = settings.value("generalsettings/keys/hsvFolder");
     if (hsvfolder.isValid() && hsvfolder.toBool()){
         if (!mTimeLine.isEmpty(TimeKeyType_HSV) && aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()){
-            //renderHSV(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
             renderHSVs(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
         }
     }

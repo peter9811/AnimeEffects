@@ -41,6 +41,9 @@ private:
     void mResetRecents();
     QPushButton* mResetButton;
 
+    void mResetKeybinds();
+    QPushButton* mResetKeybindsButton;
+
     int mInitialEasingIndex;
     QComboBox* mEasingBox;
 
@@ -70,6 +73,9 @@ private:
 
     int mKeyDelay;
     QSpinBox* mKeyDelayBox;
+
+    bool bAutoShowMesh;
+    QCheckBox* mAutoShowMesh;
 
     GUIResources& mGUIResources;
 };

@@ -40,7 +40,9 @@ QIcon GUIResources::icon(const QString& aName) const
     }
     else
     {
-        XC_ASSERT(0);
+        //I don't see a benefit to asserting zero
+        //just because an Icon is missing...
+        //XC_ASSERT(0);
         return QIcon();
     }
 }

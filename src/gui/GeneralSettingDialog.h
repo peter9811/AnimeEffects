@@ -18,6 +18,10 @@ class GeneralSettingDialog : public EasyDialog
 public:
     GeneralSettingDialog(GUIResources& aGUIResources, QWidget* aParent);
     QFormLayout* createTab(const QString& aTitle, QFormLayout *aForm);
+    void selectTab(int aIndex){
+        //General - 0 ; Project settings - 1 ; FFmpeg settings - 2 ; Animation keys - 3 ; Keybindings - 4
+        mTabs->setCurrentIndex(aIndex);
+    }
     bool easingHasChanged();
     bool rangeHasChanged();
     bool languageHasChanged();
@@ -76,6 +80,10 @@ private:
 
     bool bAutoShowMesh;
     QCheckBox* mAutoShowMesh;
+
+    QPushButton* ffmpegTroubleshoot;
+    QPushButton* selectFromExe;
+    QPushButton* autoSetup;
 
     GUIResources& mGUIResources;
 };

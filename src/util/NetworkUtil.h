@@ -28,7 +28,7 @@ namespace util
                 #elif defined (Q_OS_LINUX)
                     return "linux";
                 #elif defined (Q_OS_MACOS)
-                    return "mac"
+                    return "mac";
                 #endif
             }
 

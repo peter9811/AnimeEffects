@@ -328,18 +328,6 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             msgBox.exec();
         });
 
-        QAction* ffmpegHelper = new QAction(tr("FFMpeg helper..."), this);
-        connect(ffmpegHelper, &QAction::triggered, [=]()
-        {
-            util::NetworkUtil networking;
-            // https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/releases/latest
-            QFileInfo ffmpeg = networking.downloadGithubFile("https://api.github.com/repos/ferdium/ferdium-app/releases/latest",
-                                          "Ferdium-win-AutoSetup-6.2.4-x64.exe", 0, this);
-            qDebug() << ffmpeg.fileName();
-            qDebug() << ffmpeg.isExecutable();
-            qDebug() << QFile(ffmpeg.absoluteFilePath()).remove();
-        });
-
         QAction* checkForUpdates = new QAction(tr("Check for Updates..."), this);
         connect(checkForUpdates, &QAction::triggered, [=]()
         {
@@ -428,7 +416,6 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         });
 
         helpMenu->addAction(aboutMe);
-        helpMenu->addAction(ffmpegHelper);
         helpMenu->addAction(checkForUpdates);
     }
 

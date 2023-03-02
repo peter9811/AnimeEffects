@@ -4,9 +4,11 @@
 #include <QFormLayout>
 #include <QComboBox>
 #include <qstandardpaths.h>
+#include <QFileDialog>
+#include <QMessageBox>
 #include "MainWindow.h"
 #include "gui/GeneralSettingDialog.h"
-#include "qpushbutton.h"
+#include "util/NetworkUtil.h"
 
 namespace
 {
@@ -255,9 +257,18 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         mAutoSave->setChecked(bAutoSave);
         projectSaving->addRow(tr("Automatically save your project : "), mAutoSave);
 
+
         mAutoSaveDelayBox = new QSpinBox();
         mAutoSaveDelayBox->setValue(mAutoSaveDelay);
         projectSaving->addRow(tr("Time in minutes between autosaves : "), mAutoSaveDelayBox);
+
+        mAutoShowMesh = new QCheckBox();
+        mAutoShowMesh->setChecked(bAutoShowMesh);
+        connect(mAutoShowMesh, &QPushButton::clicked, [=]() {
+                QSettings settings;
+                settings.setValue("generalsettings/tools/autoshowmesh", mAutoShowMesh->isChecked());
+           });
+        projectSaving->addRow(tr("Automatically show mesh when selecting FFD : "), mAutoShowMesh);
 
         mResetButton = new QPushButton(tr("Reset recent files list"));
         mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
@@ -306,22 +317,187 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         keybindingSettings->addRow(mResetKeybindsButton);
     }
 
-    auto toolSettings = new QFormLayout();
+    auto ffmpegSettings = new QFormLayout();
     {
-        mAutoShowMesh = new QCheckBox();
-        mAutoShowMesh->setChecked(bAutoShowMesh);
-        connect(mAutoShowMesh, &QPushButton::clicked, [=]() {
-                QSettings settings;
-                settings.setValue("generalsettings/tools/autoshowmesh", mAutoShowMesh->isChecked());
-           });
-        toolSettings->addRow(tr("Automatically show mesh when selecting FFD"), mAutoShowMesh);
-    }
+
+        ffmpegTroubleshoot = new QPushButton(tr("Troubleshoot FFmpeg"));
+        connect(ffmpegTroubleshoot, &QPushButton::clicked, [=](){
+            util::NetworkUtil networking;
+            QFileInfo ffmpeg_file;
+            QString ffmpeg;
+            QMessageBox ffmpegNotif;
+
+            if (networking.os() == "win"){
+                ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
+            }
+            else {
+                ffmpeg_file = QFileInfo("./tools/ffmpeg");
+            }
+            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()){
+                ffmpeg = "ffmpeg";
+            }
+            else{
+                ffmpeg = ffmpeg_file.absoluteFilePath();
+            }
+
+            // Exists?
+            bool fExists = networking.libExists(ffmpeg);
+
+            if (!fExists){
+                ffmpegNotif.setWindowTitle(tr("FFmpeg error"));
+                ffmpegNotif.setText(tr("FFmpeg is either missing, corrupted or otherwise doesn't work."));
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                return;
+            }
+            // Test file
+            QString testFile = QFileInfo("./data/themes/classic/icon/filew.png").absoluteFilePath();
+
+            // Sample gif test
+            QProcess gif;
+            gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
+            gif.waitForFinished();
+            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo("gif.gif").exists() ? true : false;
+            qDebug() << "Gif exists: "<< QFileInfo("gif.gif").exists() << "| Gif remove: " << QFile("gif.gif").remove();
+            gif.deleteLater();
+
+            if (!exportSuccess){
+                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't export"));
+                ffmpegNotif.setText(tr("FFmpeg was unable to export, please check if it's a valid FFmpeg executable."));
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                return;
+            }
+
+            // Palettegen test
+            QProcess palettegen;
+            palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"},
+                              QProcess::ReadWrite);
+            palettegen.waitForFinished();
+            bool pGenSuccess =  palettegen.exitStatus() == 0 && QFileInfo("palette.png").exists()? true : false;
+            if (!pGenSuccess){
+                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
+                ffmpegNotif.setText(tr("FFmpeg was unable to generate palettes, please check if it's a valid FFmpeg executable."));
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                return;
+            }
+            qDebug() << "Palette exists: "<< QFileInfo("palette.png").exists() << "| Palete remove: "
+                     << QFile("palette.png").remove();
+            palettegen.deleteLater();
+
+
+            ffmpegNotif.setWindowTitle(tr("FFmpeg test success"));
+            ffmpegNotif.setText(tr("All tests have passed, FFmpeg is working correctly."));
+            ffmpegNotif.setDetailedText(tr("Tests:\nCheck FFmpeg version ... 🗸\nCheck FFmpeg exporting ... 🗸\n"
+                                           "Check FFmpeg palette generation ... 🗸"));
+            ffmpegNotif.addButton(QMessageBox::Ok);
+            ffmpegNotif.exec();
+            return;
+
+        });
+
+        selectFromExe = new QPushButton(tr("Select from executable and automatically setup"));
+        selectFromExe->setToolTip(tr("This will remove previous instances of FFmpeg from your tools directory"
+                                     " and replace them with your custom executable."));
+        connect(selectFromExe, &QPushButton::clicked, [=](){
+            util::NetworkUtil net;
+            QDir dir = QDir("./tools");
+            if (!dir.exists()){
+                dir.mkpath(dir.absolutePath());
+            }
+            QString file = net.os() == "win"? "/ffmpeg.exe" : "/ffmpeg";
+
+            if (QFileInfo(dir.absolutePath() + file).exists()){
+                QFile(dir.absolutePath() + file).moveToTrash();
+            }
+
+            QFileInfo ffmpeg = QFileInfo(QFileDialog::getOpenFileName(nullptr, "Select FFmpeg executable"));
+            qDebug() << "Selected exe: " << ffmpeg.fileName() << " | " << ffmpeg.absoluteFilePath();
+            QFile(ffmpeg.absoluteFilePath()).copy(dir.absolutePath() + file);
+
+            QMessageBox success;
+            success.setText(tr("Operation successful"));
+            success.setWindowTitle(tr("Success"));
+            success.addButton(QMessageBox::Ok);
+            success.exec();
+        });
+
+
+        autoSetup = new QPushButton(tr("Download and automatically setup"));
+        connect(autoSetup, &QPushButton::clicked, [=](){
+            util::NetworkUtil networking;
+
+            QDir dir = QDir("./tools");
+            if (!dir.exists()){
+                dir.mkpath(dir.absolutePath());
+            }
+            QString file = networking.os() == "win"? "/ffmpeg.exe" : "/ffmpeg";
+            if (QFileInfo(dir.absolutePath() + file).exists()){
+                QFile(dir.absolutePath() + file).moveToTrash();
+            }
+            QString os = networking.os();
+            QString arch = networking.arch();
+            QString gitFile;
+            // ID checking is probably overkill, but security is important!
+            int id;
+            if (os == "win"){
+                if (arch == "x86"){
+                    gitFile = "ffmpeg-win32.exe";
+                    id = 97679467;
+                }
+                else{
+                    gitFile = "ffmpeg-win64.exe";
+                    id = 97679053;
+                }
+            }
+            else if (os == "linux"){
+                if (arch == "x86"){
+                    gitFile = "ffmpeg-linux32";
+                    id = 97679324;
+                }
+                else{
+                    gitFile = "ffmpeg-linux64";
+                    id = 97679172;
+                }
+            }
+            else{
+                gitFile = "ffmpeg-macos";
+                id = 97679141;
+            }
+
+            QFileInfo ffmpeg = networking.downloadGithubFile("https://api.github.com/repos/AnimeEffectsDevs/ffmpeg-bin/releases/latest",
+                                          gitFile, id, this);
+            qDebug() << "Download name : " << ffmpeg.fileName() << "\n" << "Download is executable : " << ffmpeg.isExecutable();
+            if (ffmpeg.isExecutable()){
+                QFile(ffmpeg.absoluteFilePath()).rename(dir.absolutePath() + file);
+                qDebug() << "FFmpeg moved : " << QFile(dir.absolutePath() + file).exists();
+                if (QFile(dir.absolutePath() + file).exists()){
+                    QMessageBox success;
+                    success.setWindowTitle(tr("Success"));
+                    success.setText(tr("FFmpeg was successfully setup."));
+                    success.exec();
+                    return;
+                }
+            }
+            QMessageBox error;
+            error.setWindowTitle(tr("Error"));
+            error.setText(tr("An error has ocurred, please send the bellow info to the developers."));
+            error.setDetailedText("Filename : " + ffmpeg.fileName() + "\nIs Executable : " + ffmpeg.isExecutable()
+                                  + "\nDownload params : " + "Hardcoded API | " + gitFile + " | " + id);
+            error.exec();
+        });
+
+        ffmpegSettings->addRow(ffmpegTroubleshoot);
+        ffmpegSettings->addRow(selectFromExe);
+        ffmpegSettings->addRow(autoSetup);
+    };
 
     createTab(tr("General"), form);
-    createTab(tr("Project settings"), projectSaving);
+    createTab(tr("Project and Tools"), projectSaving);
+    createTab(tr("FFmpeg"), ffmpegSettings);
     createTab(tr("Animation keys"), keysettings);
     createTab(tr("Keybindings"), keybindingSettings);
-    createTab(tr("Tool settings"), toolSettings);
 
 
     this->setMainWidget(mTabs, false);

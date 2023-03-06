@@ -6,7 +6,7 @@
 もともとHidefukuによって開発されていましたが、現在はコミュニティによって開発および維持されています。
 
 * 公式サイト:<br>
-  * *工事中* <br>
+  * https://animeeffectsdevs.github.io/<br>
 
 * 公式ソーシャル:<br>
   * Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects コミュニティサーバー</a> (@Jose-Moreno の厚意により)<br>

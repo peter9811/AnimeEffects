@@ -1,8 +1,11 @@
+# Bionic has reached EOL and will be removed in the next update #
+# It will still available for now in case someone wants to do something with it #
+
 name: Ubuntu 18.04
 on: 
     workflow_dispatch:
-    schedule:
-        - cron: '0 0 * * *'
+    # schedule:
+        # - cron: '0 0 * * *'
 
 jobs:
   buildOnBionic:

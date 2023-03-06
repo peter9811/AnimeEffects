@@ -8,6 +8,7 @@
 #include <QElapsedTimer>
 #include <QMessageBox>
 #include <QFileSystemWatcher>
+#include "GeneralSettingDialog.h"
 #include "util/IProgressReporter.h"
 #include "gl/Global.h"
 #include "ctrl/Exporter.h"
@@ -17,6 +18,7 @@
 #include "gui/ResourceDialog.h"
 #include "gui/ProjectHook.h"
 #include "gui/menu/menu_ProgressReporter.h"
+#include "util/NetworkUtil.h"
 
 namespace
 {
@@ -1044,7 +1046,51 @@ void MainWindow::onExportImageSeqTriggered(const QString& aSuffix)
 void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat)
 {
     if (!mCurrent) return;
+    QSettings settings;
+    settings.sync();
+    auto ffCheck = settings.value("ffmpeg_check");
+    if(!ffCheck.isValid() || ffCheck == true){
+        util::NetworkUtil networking;
+        QFileInfo ffmpeg_file;
+        QString ffmpeg;
 
+        if (networking.os() == "win"){
+            ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
+        }
+        else {
+            ffmpeg_file = QFileInfo("./tools/ffmpeg");
+        }
+        if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()){
+            ffmpeg = "ffmpeg";
+        }
+        else{
+            ffmpeg = ffmpeg_file.absoluteFilePath();
+        }
+
+        // Exists?
+        bool fExists = networking.libExists(ffmpeg, "-version");
+
+        if(!fExists){
+            QMessageBox message;
+            message.setIcon(QMessageBox::Warning);
+            message.setText(tr("FFmpeg was not found."));
+            auto infoText =
+                       tr("Exporting video requires FFmpeg to be installed on your computer, "
+                       "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
+                       "In the following screen you can instruct AnimeEffects to download and install it automatically for you, "
+                       "or you can download it by yourself and tell AnimeEffects where it is.");
+            message.setInformativeText(infoText);
+            message.setStandardButtons(QMessageBox::Ok);
+            message.setDefaultButton(QMessageBox::Ok);
+            message.exec();
+
+            GeneralSettingDialog *generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+            generalSettingsDialog->selectTab(2);
+            generalSettingsDialog->exec();
+            return;
+        }
+        ffCheck.setValue(false);
+    }
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
 

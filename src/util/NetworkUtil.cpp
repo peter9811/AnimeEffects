@@ -48,9 +48,9 @@ NetworkUtil::NetworkUtil()
         return QJsonDocument::fromJson(data.data());
     }
 
-    bool NetworkUtil::libExists(QString aLib){
+    bool NetworkUtil::libExists(QString aLib, QString versionType){
         QProcess process;
-        process.start(aLib, {"-V"}, QProcess::ReadWrite);
+        process.start(aLib, {versionType}, QProcess::ReadWrite);
         process.waitForFinished();
         if(process.exitStatus() == 0)
         {

@@ -16,7 +16,7 @@ namespace util
             NetworkUtil();
             QByteArray getByteArray(QString aURL);
             QJsonDocument getJsonFrom(QString aURL);
-            bool libExists(QString aLib);
+            bool libExists(QString aLib, QString versionType = "-V");
             QList<QString> libArgs(QList<QString> anArgument, QString aType);
             QFileInfo downloadGithubFile(QString aURL, QString aFile, int aID, QWidget* aParent);
 

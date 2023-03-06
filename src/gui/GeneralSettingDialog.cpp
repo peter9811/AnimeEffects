@@ -341,7 +341,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
             }
 
             // Exists?
-            bool fExists = networking.libExists(ffmpeg);
+            bool fExists = networking.libExists(ffmpeg, "-version");
 
             if (!fExists){
                 ffmpegNotif.setWindowTitle(tr("FFmpeg error"));

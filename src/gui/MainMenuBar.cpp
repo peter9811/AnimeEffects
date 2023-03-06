@@ -51,15 +51,6 @@ QDomDocument getVideoExportDocument()
     return prop;
 }
 
-QString osDef(){
-    #if defined(Q_OS_WIN)
-        QString operatingSystem = "Win";
-    #else
-        QString operatingSystem = "Posix";
-    #endif
-    return operatingSystem;
-}
-
 //-------------------------------------------------------------------------------------------------
 MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources &aGUIResources, QWidget* aParent)
     : QMenuBar(aParent)

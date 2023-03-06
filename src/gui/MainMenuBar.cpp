@@ -391,8 +391,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
                              if (arch == "x86"){ file = "AnimeEffects-Windows-x86.zip"; }
                              else{ file = "AnimeEffects-Windows-x64.zip"; }
                          }
-                         // This will change when Bionic reaches EOL for their Hardware and maintenance updates.
-                         else if (os == "linux"){ file = "AnimeEffects-Linux-Compatibility.zip"; }
+                         else if (os == "linux"){ file = "AnimeEffects-Linux.zip"; }
                          else if (os == "mac"){ file = "AnimeEffects-MacOS.zip"; }
                          QFileInfo aeUpdate = networking.downloadGithubFile("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/releases/latest", file, 0, this);
                          QDesktopServices::openUrl(QUrl::fromLocalFile(aeUpdate.absoluteFilePath()));

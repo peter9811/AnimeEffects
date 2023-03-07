@@ -455,53 +455,25 @@ Exporter::Result Exporter::execute()
         if (mProgressReporter)
         {
             mProgressReporter->setProgress((int)(100 * mProgress));
+            QString sectionName = "";
             if (98.5f <= (float)100*mProgress){
-                QString sectionName = QCoreApplication::translate("Exporter", "Finishing up");
-                switch (mTick){
-                    case 0 ... 4: sectionName = sectionName + ".";
-                                  mTick+=1;
-                                  break;
-
-                    case 5 ... 9: sectionName = sectionName + "..";
-                                  mTick+=1;
-                                  break;
-
-                    case 10 ... 14: sectionName = sectionName + "...";
-                                    mTick+=1;
-                                    break;
-
-                    case 15 ... 18: mTick+=1;
-                                    break;
-
-                    case 19 : mTick=0;
-                              break;
-                }
-              mProgressReporter->setSection(sectionName);
+                sectionName = QCoreApplication::translate("Exporter", "Finishing up");
             }
             else
-                {
-                QString sectionName = QCoreApplication::translate("Exporter", "Rendering");
-                switch (mTick){
-                    case 0 ... 4: sectionName = sectionName + ".";
-                                  mTick+=1;
-                                  break;
-
-                    case 5 ... 9: sectionName = sectionName + "..";
-                                  mTick+=1;
-                                  break;
-
-                    case 10 ... 14: sectionName = sectionName + "...";
-                                    mTick+=1;
-                                    break;
-
-                    case 15 ... 18: mTick+=1;
-                                    break;
-
-                    case 19 : mTick=0;
-                              break;
-                }
-              mProgressReporter->setSection(sectionName);
+            {
+                sectionName = QCoreApplication::translate("Exporter", "Rendering");
             }
+
+            int tickRate = 4;
+            sectionName += QStringLiteral(".").repeated(qFloor(mTick / tickRate) + 1);
+
+            mTick += 1;
+            if (mTick >= 3 * tickRate)
+            {
+                mTick = 0;
+            }
+
+            mProgressReporter->setSection(sectionName);
 
             if (mProgressReporter->wasCanceled())
             {

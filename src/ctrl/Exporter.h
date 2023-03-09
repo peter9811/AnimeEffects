@@ -123,6 +123,7 @@ private:
         QStringList mLogs;
     };
 
+    int mTick = 0;
     Result execute();
     Result start();
     bool update();

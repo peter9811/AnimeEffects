@@ -1,4 +1,4 @@
-QT      += core gui opengl xml
+QT      += core gui opengl openglextensions xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG  += qt c++11
@@ -15,7 +15,7 @@ HEADERS += \
 
 DEFINES += "AE_MAJOR_VERSION=1"
 DEFINES += "AE_MINOR_VERSION=4"
-DEFINES += "AE_MICRO_VERSION=2"
+DEFINES += "AE_MICRO_VERSION=3"
 
 DEFINES += "AE_PROJECT_FORMAT_MAJOR_VERSION=0"
 DEFINES += "AE_PROJECT_FORMAT_MINOR_VERSION=6"

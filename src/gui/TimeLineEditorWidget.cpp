@@ -75,6 +75,7 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
     , mEditor()
     , mCamera()
     , mTimeCursor(this)
+    , mKeyCommandMap(*aViaPoint.keyCommandMap())
     , mCopyKey()
     , mPasteKey()
     , mDeleteKey()
@@ -103,6 +104,22 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
 
         mDeleteKey = new QAction(tr("Delete key"), this);
         mDeleteKey->connect(mDeleteKey, &QAction::triggered, this, &TimeLineEditorWidget::onDeleteKeyTriggered);
+    }
+    this->update();
+    {
+        auto key = mKeyCommandMap.get("Copy");
+        if (key) key->invoker = [=](){mTargets = core::TimeLineEvent();
+            mEditor->retrieveFocusTargets(mTargets); mCopyKey->trigger();};
+    }
+    {
+        auto key = mKeyCommandMap.get("Paste");
+        if (key) key->invoker = [=](){if(!mCopyTargets.targets().isEmpty()){
+                mPastePos = this->mapFromGlobal(QCursor::pos());; mPasteKey->trigger();}};
+    }
+    {
+        auto key = mKeyCommandMap.get("Delete");
+        if (key) key->invoker = [=](){mTargets = core::TimeLineEvent();
+            if(mEditor->retrieveFocusTargets(mTargets)){mDeleteKey->trigger();}};
     }
 }
 

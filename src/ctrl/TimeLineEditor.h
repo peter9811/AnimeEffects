@@ -55,6 +55,7 @@ public:
     QSize modelSpaceSize() const;
     QPoint currentTimeCursorPos() const;
     bool checkContactWithKeyFocus(core::TimeLineEvent& aEvent, const QPoint& aPos);
+    bool retrieveFocusTargets(core::TimeLineEvent& aEvent);
     bool pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& aWorldPos);
     void deleteCheckedKeys(core::TimeLineEvent& aEvent);
 

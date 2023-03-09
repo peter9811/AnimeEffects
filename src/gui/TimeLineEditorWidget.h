@@ -8,6 +8,7 @@
 #include "ctrl/TimeLineEditor.h"
 #include "gui/ViaPoint.h"
 #include "gui/GUIResources.h"
+#include "KeyCommandMap.h"
 
 namespace gui
 {
@@ -110,6 +111,7 @@ private:
     const core::CameraInfo* mCamera;
     TimeCursor mTimeCursor;
 
+    KeyCommandMap& mKeyCommandMap;
     QAction* mCopyKey;
     QAction* mPasteKey;
     QAction* mDeleteKey;

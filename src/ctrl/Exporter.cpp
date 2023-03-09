@@ -1,5 +1,6 @@
 #include <QFileInfo>
 #include <QBuffer>
+#include <QApplication>
 #include "util/SelectArgs.h"
 #include "gl/Global.h"
 #include "gl/Util.h"
@@ -454,6 +455,25 @@ Exporter::Result Exporter::execute()
         if (mProgressReporter)
         {
             mProgressReporter->setProgress((int)(100 * mProgress));
+            QString sectionName = "";
+            if (98.5f <= (float)100*mProgress){
+                sectionName = QCoreApplication::translate("Exporter", "Finishing up");
+            }
+            else
+            {
+                sectionName = QCoreApplication::translate("Exporter", "Rendering");
+            }
+
+            int tickRate = 4;
+            sectionName += QStringLiteral(".").repeated(qFloor(mTick / tickRate) + 1);
+
+            mTick += 1;
+            if (mTick >= 3 * tickRate)
+            {
+                mTick = 0;
+            }
+
+            mProgressReporter->setSection(sectionName);
 
             if (mProgressReporter->wasCanceled())
             {

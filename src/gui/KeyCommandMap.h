@@ -37,6 +37,7 @@ public:
     ~KeyCommandMap();
 
     void readFrom(const QSettings& aSrc);
+    void deleteFrom(const QSettings& aSrc);
     void writeTo(QSettings& aDest);
 
     KeyCommand* get(const QString& aIdentifier) { return mSearchMap[aIdentifier]; }
@@ -49,6 +50,7 @@ private:
     void addNewKey(const QString& aKey, const QString& aGroup,
                    const QString& aName, const ctrl::KeyBinding& aBinding);
     void readValue(const QSettings& aSrc, KeyCommand& aCommand);
+    void eraseValue(const QSettings& aSrc, KeyCommand& aCommand);
     void writeValue(QSettings& aDest, const KeyCommand& aCommand);
     void resetSubKeyCommands();
 

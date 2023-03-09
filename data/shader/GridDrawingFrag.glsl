@@ -1,7 +1,7 @@
-#version 330
+#version 140
 
 uniform vec4 uColor;
-layout(location = 0, index = 0) out vec4 oFragColor;
+out vec4 oFragColor;
 
 void main(void)
 {

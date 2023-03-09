@@ -34,13 +34,6 @@ public:
 
 private:
     QScopedPointer<QProcess> mProcess;
-    QString osDef(){
-    #if defined (Q_OS_WIN)
-        return "Win";
-    #else
-        return "Posix";
-    #endif
-    };
     void loadVideoFormats();
     void onCanvasSizeTriggered();
     void onMaxFrameTriggered();

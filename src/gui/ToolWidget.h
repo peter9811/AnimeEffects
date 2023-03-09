@@ -46,6 +46,14 @@ private:
     void setPanelActivity(bool aIsActive);
     void setButtonActivity(ctrl::ToolType aType, bool aIsActive);
     void updateGeometry();
+    bool meshFromFunction = false;
+    void showHideMesh(bool aShow){
+        if (this->viewSetting().showLayerMesh && aShow && !meshFromFunction){return;};
+        if (aShow){meshFromFunction = true;}
+        mViewPanel->button(0)->setChecked(aShow);
+        this->viewSetting().showLayerMesh = aShow;
+        this->onViewSettingChanged(this->viewSetting());
+    }
     void onModePanelPushed(ctrl::ToolType, bool);
     void onParamUpdated(bool aLayoutChanged);
 

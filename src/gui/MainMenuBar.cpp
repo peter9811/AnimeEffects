@@ -3,8 +3,8 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QDomDocument>
-#include <qstandardpaths.h>
 #include <QJsonDocument>
+#include <qstandardpaths.h>
 #include <QDesktopServices>
 #include "qprocess.h"
 #include "util/TextUtil.h"
@@ -19,6 +19,7 @@
 #include "gui/KeyBindingDialog.h"
 #include "gui/GeneralSettingDialog.h"
 #include "gui/MouseSettingDialog.h"
+#include "util/NetworkUtil.h"
 
 namespace gui
 {
@@ -48,15 +49,6 @@ QDomDocument getVideoExportDocument()
     file.close();
 
     return prop;
-}
-
-QString osDef(){
-    #if defined(Q_OS_WIN)
-        QString operatingSystem = "Win";
-    #else
-        QString operatingSystem = "Posix";
-    #endif
-    return operatingSystem;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -219,10 +211,10 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
     QMenu* projMenu = new QMenu(tr("Project"), this);
     {
-        QAction* canvSize = new QAction(tr("Canvas Size..."), this);
-        QAction* maxFrame = new QAction(tr("Max Frames..."), this);
-        QAction* loopAnim = new QAction(tr("Loop..."), this);
-        QAction* setFPS = new QAction(tr("Set FPS..."), this);
+        QAction* canvSize = new QAction(tr("Set canvas size..."), this);
+        QAction* maxFrame = new QAction(tr("Set maximum frame count..."), this);
+        QAction* loopAnim = new QAction(tr("Set animation loop..."), this);
+        QAction* setFPS = new QAction(tr("Set frames per second..."), this);
 
         mProjectActions.push_back(canvSize);
         mProjectActions.push_back(maxFrame);
@@ -330,107 +322,87 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         QAction* checkForUpdates = new QAction(tr("Check for Updates..."), this);
         connect(checkForUpdates, &QAction::triggered, [=]()
         {
-            // Qt is so stupid...
+            util::NetworkUtil networking;
             QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
-            qInfo() << "checking for updates on : " << url;
-            QString program;
-            QStringList arguments;
-            QString os = osDef();
-            // You're more likely to have curl in Windows (since from Windows 10+ it comes preinstalled)
-            // And you're more likely to have wget on Linux (since it comes preinstalled on most distros)
-            // If you're on MacOS I'm sorry :P
-            if (os == "Win"){
-                program = "curl.exe";
-                arguments << url << "-H \"Accept: application/json";
-            }
-            else{
-                program = "wget";
-                arguments << "-qO-" << url << "-H \"Content-Type: application/json";
-            }
-            mProcess.reset(new QProcess(nullptr));
-            mProcess->setProcessChannelMode(QProcess::MergedChannels);
-            auto process = mProcess.data();
-            mProcess->connect(process, &QProcess::readyRead, [=]()
-            {
-                if (this->mProcess)
-                {
-                    QByteArray response_data = this->mProcess->readAll().data();
-                    QJsonDocument jsonResponse = QJsonDocument::fromJson(response_data);
-                    QString latestVersion = jsonResponse[0]["name"].toString().replace("v", "");
-                    // qDebug() << jsonResponse[0]["name"];
-                    if (latestVersion != ""){
-                        QString currentVersion = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." + QString::number(AE_MICRO_VERSION);
-                        // qDebug() << "latest version: " << latestVersion;
-                        // qDebug() << "current version : " << currentVersion;
-                        bool onLatest;
-                        if (latestVersion == currentVersion){
-                            qDebug() << "already on latest version : " << latestVersion;
-                            onLatest = true;
-                        }
-                        else{
-                            onLatest = false;
-                        }
-                        QMessageBox updateBox;
-                        if (onLatest){
-                            updateBox.setStandardButtons(QMessageBox::Ok);
-                            updateBox.setDefaultButton(QMessageBox::Ok);
-                        }
-                        else{
-                            updateBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
-                            updateBox.setDefaultButton(QMessageBox::Yes);
-                        }
+            qDebug("--------");
+            qInfo() << "Checking for updates on : " << url;
+            QJsonDocument jsonResponse = networking.getJsonFrom(url);
+            QString currentVersion = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." + QString::number(AE_MICRO_VERSION);
+            /*
+            qDebug()<< "Response : " << jsonResponse.toJson().data();
+            qDebug()<< "Current version: " << currentVersion << "\n" << "Latest stable: " << jsonResponse[0]["name"].toString().replace("v", "");;
+            */
+            QString latestVersion = !jsonResponse.isEmpty()? jsonResponse[0]["name"].toString().replace("v", "") : "null";
+            if (latestVersion != ""){
+                QMessageBox updateBox;
+                bool onLatest = false; bool onPreview = false; bool failed = false;
 
-                        if (!onLatest){
-                            updateBox.setWindowTitle(tr("New release available"));
-                            updateBox.setText(tr("<center>A new release is available, version: ") + latestVersion + tr(".<br>Do you wish to go to the release page to download it?</center>"));
-                        }
-                        else{
-                            updateBox.setWindowTitle(tr("On latest"));
-                            updateBox.setText(tr("<center>You already have the latest release available. <br>Version: ") + currentVersion + "</center7>");
-                        }
-
-                        if(updateBox.exec() == QMessageBox::Yes){
-                          QDesktopServices::openUrl(QUrl("https://github.com/AnimeEffectsDevs/AnimeEffects/releases/latest"));
-                        }
-                        else {
-                          qDebug() << "openurl canceled by user";
-                        }
-                        return;
-                    }
+                // Failed
+                if (latestVersion == "null"){
+                    qDebug() << "Failed to get version";
+                    updateBox.setWindowTitle(tr("Failed"));
+                    updateBox.setText(tr("<center>Unable to get latest version. <br>Please check your internet "
+                                         "connection and if you have curl or wget installed.</center>"));
+                    failed = true;
                 }
-            });
-
-            mProcess->connect(process, &QProcess::errorOccurred, [=](QProcess::ProcessError aCode)
-            {
-                qDebug() << program + " error : " << aCode;
-                // More a comfort feature to let the user know what happened than anything else.
-                QString aError;
-                switch(aCode){
-                case QProcess::ProcessError::ReadError:
-                    aError = tr("Unable to Read from Process");
-                    break;
-                case QProcess::ProcessError::UnknownError:
-                    aError = tr("Unknown Error");
-                    break;
-                case QProcess::ProcessError::WriteError:
-                    aError = tr("Unable to Write to Process");
-                    break;
-                case QProcess::ProcessError::Crashed:
-                    aError = tr("Process Crashed");
-                    break;
-                case QProcess::ProcessError::FailedToStart:
-                    aError = tr("Failed to Start Process");
-                    break;
-                case QProcess::ProcessError::Timedout:
-                    aError = tr("Process couldn't be opened in time");
-                    break;
+                // Latest version
+                if (latestVersion == currentVersion){
+                    qDebug() << "On latest version :" << latestVersion;
+                    updateBox.setWindowTitle(tr("On latest"));
+                    updateBox.setText(tr("<center>You already have the latest stable release available. <br>Version: ")
+                                      + currentVersion + "</center>");
+                    onLatest = true;
                 }
-                MainWindow::showInfoPopup(tr("Process error"), "<center>" + tr("An error has ocurred while launching ") + program.toUpper().replace(".exe", "") +
-                                          tr(" to check for updates, please check if you have it installed.") + "</center>", "Critical", aError);
+                // Preview version
+                else if (latestVersion < currentVersion){
+                    qDebug() << "On preview version :" << currentVersion;
+
+                    updateBox.setWindowTitle(tr("On preview"));
+                    updateBox.setText(tr("<center>Your current version is higher than the latest stable release. "
+                                         "<br>Version: ") + currentVersion + "</center>");
+                    onPreview = true;
+                }
+                // Old version
+                else{
+                    qDebug() << "On version :" << currentVersion;
+                    updateBox.setWindowTitle(tr("New release available"));
+                    updateBox.setText(tr("<center>A new stable release is available, version: ") + latestVersion +
+                                      tr(".<br>Do you wish to download it or to go to the GitHub page?</center>"));
+                }
+
+                if (onLatest || onPreview || failed){
+                    updateBox.setStandardButtons(QMessageBox::Ok);
+                    updateBox.setDefaultButton(QMessageBox::Ok);
+                }
+                else{
+                     QAbstractButton* downloadButton = updateBox.addButton(tr("Download"), QMessageBox::AcceptRole);
+                     QAbstractButton* gotoButton = updateBox.addButton(tr("Go to page"), QMessageBox::AcceptRole);
+                     updateBox.addButton(QMessageBox::Cancel);
+                     updateBox.exec();
+
+                     if(updateBox.clickedButton() == gotoButton){
+                       QDesktopServices::openUrl(QUrl("https://github.com/AnimeEffectsDevs/AnimeEffects/releases/latest"));
+                     }
+                     else if(updateBox.clickedButton() == downloadButton){
+                         QString os = networking.os();
+                         QString arch = networking.arch();
+                         QString file;
+                         if (os == "win"){
+                             if (arch == "x86"){ file = "AnimeEffects-Windows-x86.zip"; }
+                             else{ file = "AnimeEffects-Windows-x64.zip"; }
+                         }
+                         else if (os == "linux"){ file = "AnimeEffects-Linux.zip"; }
+                         else if (os == "mac"){ file = "AnimeEffects-MacOS.zip"; }
+                         QFileInfo aeUpdate = networking.downloadGithubFile("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/releases/latest", file, 0, this);
+                         QDesktopServices::openUrl(QUrl::fromLocalFile(aeUpdate.absoluteFilePath()));
+                     }
+                     qDebug("--------");
+                     return;
+                }
+                updateBox.exec();
+                qDebug("--------");
                 return;
-            });
-
-            mProcess->start(program, arguments, QIODevice::ReadWrite);
+            }
         });
 
         helpMenu->addAction(aboutMe);
@@ -538,7 +510,7 @@ void MainMenuBar::loadVideoFormats()
 //-------------------------------------------------------------------------------------------------
 ProjectCanvasSizeSettingDialog::ProjectCanvasSizeSettingDialog(
         ViaPoint& aViaPoint, core::Project& aProject, QWidget *aParent)
-    : EasyDialog(tr("Set Canvas Size"), aParent)
+    : EasyDialog(tr("Set canvas size"), aParent)
     , mViaPoint(aViaPoint)
     , mProject(aProject)
 {
@@ -624,7 +596,7 @@ void MainMenuBar::onCanvasSizeTriggered()
 
 //-------------------------------------------------------------------------------------------------
 ProjectMaxFrameSettingDialog::ProjectMaxFrameSettingDialog(core::Project& aProject, QWidget *aParent)
-    : EasyDialog(tr("Set Max Frame"), aParent)
+    : EasyDialog(tr("Set max frames"), aParent)
     , mProject(aProject)
     , mMaxFrameBox()
 {
@@ -642,7 +614,7 @@ ProjectMaxFrameSettingDialog::ProjectMaxFrameSettingDialog(core::Project& aProje
             mMaxFrameBox->setValue(curMaxFrame);
             layout->addWidget(mMaxFrameBox);
         }
-        form->addRow(tr("Max frame :"), layout);
+        form->addRow(tr("Max frame count :"), layout);
 
         auto group = new QGroupBox(tr("Parameters"));
         group->setLayout(form);
@@ -726,7 +698,7 @@ void MainMenuBar::onMaxFrameTriggered()
 
 //-------------------------------------------------------------------------------------------------
 ProjectLoopSettingDialog::ProjectLoopSettingDialog(core::Project& aProject, QWidget* aParent)
-    : EasyDialog(tr("Set Animation Loop"), aParent)
+    : EasyDialog(tr("Set loop"), aParent)
 {
     // create inner widgets
     auto curLoop = aProject.attribute().loop();
@@ -797,7 +769,7 @@ void MainMenuBar::onLoopTriggered()
 
 // ----------------------------------------------------------------------------- //
 ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidget *aParent)
-    : EasyDialog(tr("Set FPS "), aParent)
+    : EasyDialog(tr("Set FPS"), aParent)
     , mProject(aProject)
     , mFPSBox()
 

@@ -69,7 +69,8 @@ ToolWidget::ToolWidget(ViaPoint& aViaPoint, GUIResources& aResources, KeyCommand
         }
         {
             auto key = mViaPoint.keyCommandMap()->get("SelectMesh");
-            if (key) key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_Mesh); };
+            if (key) key->invoker = [=]() {
+                        this->mModePanel->pushButton(ctrl::ToolType_Mesh); };
         }
         {
             auto key = mViaPoint.keyCommandMap()->get("SelectFFD");
@@ -194,6 +195,17 @@ void ToolWidget::onModePanelPushed(ctrl::ToolType aType, bool aChecked)
         mPosePanel->hide();
         mMeshPanel->hide();
 
+        QSettings settings;
+        auto autoshowmesh = settings.value("generalsettings/tools/autoshowmesh");
+        if (autoshowmesh.isValid() && autoshowmesh.toBool()){
+            if (mToolType != ctrl::ToolType_FFD){
+                if(meshFromFunction){
+                    meshFromFunction = false;
+                    showHideMesh(false);
+                }
+            }
+        }
+
         if (mToolType == ctrl::ToolType_SRT)
         {
             mSRTPanel->show();
@@ -208,6 +220,9 @@ void ToolWidget::onModePanelPushed(ctrl::ToolType aType, bool aChecked)
         }
         else if (mToolType == ctrl::ToolType_FFD)
         {
+            if (autoshowmesh.isValid() && autoshowmesh.toBool()){
+                showHideMesh(true);
+            }
             mFFDPanel->show();
         }
         else if (mToolType == ctrl::ToolType_Mesh)

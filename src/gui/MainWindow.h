@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QFileInfo>
 #include <QScopedPointer>
+#include <QTimer>
 #include "ctrl/System.h"
 #include "gui/MainMenuBar.h"
 #include "gui/MainDisplayWidget.h"
@@ -40,7 +41,6 @@ public:
 
     void showWithSettings();
     void saveCurrentSettings(int aResultCode);
-
     void testNewProject(const QString& aFilePath);
     void closeAllProjects();
     static QFileSystemWatcher* getWatcher();
@@ -48,6 +48,9 @@ public:
     qint64 lastPress;
     qint64 lastRelease;
     static void showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString &aDetailed = "nullptr");
+    QTimer *autosaveTimer;
+    public slots:
+        void autoSave();
 
 public:
     void onNewProjectTriggered();
@@ -88,6 +91,7 @@ private:
     QScopedPointer<MainDisplayStyle> mMainDisplayStyle;
     MainDisplayWidget* mMainDisplay;
     ProjectTabBar* mProjectTabBar;
+    QVector<core::Project*> mProjects;
     TargetWidget* mTarget;
     PropertyWidget* mProperty;
     QDockWidget* mDockPropertyWidget;

@@ -4,9 +4,11 @@
 #include <QFormLayout>
 #include <QComboBox>
 #include <qstandardpaths.h>
+#include <QFileDialog>
+#include <QMessageBox>
 #include "MainWindow.h"
 #include "gui/GeneralSettingDialog.h"
-#include "qpushbutton.h"
+#include "util/NetworkUtil.h"
 
 namespace
 {
@@ -164,22 +166,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         }
 
         auto easing = settings.value("generalsettings/easing");
-
-        if (easing.isValid()){
-            mInitialEasingIndex = easingToIndex(easing.toString());
-        }
-        else{
-            mInitialEasingIndex = easingToIndex("Linear");
-        }
+        mInitialEasingIndex = easing.isValid()? easingToIndex(easing.toString()) : easingToIndex("Linear");
 
         auto range = settings.value("generalsettings/range");
-
-        if (range.isValid()){
-            mInitialRangeIndex = rangeToIndex(range.toString());
-        }
-        else{
-            mInitialRangeIndex = rangeToIndex("All");
-        }
+        mInitialRangeIndex = range.isValid()? rangeToIndex(range.toString()) : rangeToIndex("All");
 
         auto timeScale = settings.value("generalsettings/ui/timeformat");
         if (timeScale.isValid())
@@ -192,26 +182,28 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         {
             mInitialThemeKey = theme.toString();
         }
-        auto isSetColor = settings.value("generalsettings/keys/hsvSetColor");
-        if (isSetColor.isValid())
-        {
-            bHSVSetColor = isSetColor.toBool();
-        }
+
+        auto isAutoSave = settings.value("generalsettings/projects/autosaveEnabled");
+        bAutoSave = isAutoSave.isValid()? isAutoSave.toBool() : false;
+
+        auto isAutoSaveDelay = settings.value("generalsettings/projects/autosaveDelay");
+        mAutoSaveDelay = isAutoSaveDelay.isValid()? isAutoSaveDelay.toInt() : 5;
+
+        auto isBlendColor = settings.value("generalsettings/keys/hsvSetColor");
+        bHSVBlendColor = isBlendColor.isValid()? isBlendColor.toBool() : true;
+
+        // Index 0 is "Render indefinetely"
         auto isHSVBehaviour = settings.value("generalsettings/keys/hsvBehaviour");
-        if (isHSVBehaviour.isValid())
-        {
-            mInitialHSVBehaviour = isHSVBehaviour.toInt();
-        }
+        mInitialHSVBehaviour = isHSVBehaviour.isValid()? isHSVBehaviour.toInt() : 0;
+
         auto isHSVFolder = settings.value("generalsettings/keys/hsvFolder");
-        if (isHSVFolder.isValid())
-        {
-            bHSVFolder = isHSVFolder.toBool();
-        }
+        bHSVFolder = isHSVFolder.isValid()? isHSVFolder.toBool() : false;
+
         auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
-        if (isKeyDelay.isValid())
-        {
-            mKeyDelay = isKeyDelay.toInt();
-        }
+        mKeyDelay = isKeyDelay.isValid()? isKeyDelay.toInt() : 125;
+
+        auto isAutoShowMesh = settings.value("generalsettings/tools/autoshowmesh");
+        bAutoShowMesh = isAutoShowMesh.isValid()? isAutoShowMesh.toBool() : false;
     }
 
     auto form = new QFormLayout();
@@ -257,6 +249,26 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         }
         mThemeBox->setCurrentIndex(mThemeBox->findData(mInitialThemeKey));
         form->addRow(tr("Theme :"), mThemeBox);
+    }
+
+    auto projectSaving = new QFormLayout();
+    {
+        mAutoSave = new QCheckBox();
+        mAutoSave->setChecked(bAutoSave);
+        projectSaving->addRow(tr("Automatically save your project : "), mAutoSave);
+
+
+        mAutoSaveDelayBox = new QSpinBox();
+        mAutoSaveDelayBox->setValue(mAutoSaveDelay);
+        projectSaving->addRow(tr("Time in minutes between autosaves : "), mAutoSaveDelayBox);
+
+        mAutoShowMesh = new QCheckBox();
+        mAutoShowMesh->setChecked(bAutoShowMesh);
+        connect(mAutoShowMesh, &QPushButton::clicked, [=]() {
+                QSettings settings;
+                settings.setValue("generalsettings/tools/autoshowmesh", mAutoShowMesh->isChecked());
+           });
+        projectSaving->addRow(tr("Automatically show mesh when selecting FFD : "), mAutoShowMesh);
 
         mResetButton = new QPushButton(tr("Reset recent files list"));
         mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
@@ -265,15 +277,14 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
                 settings.remove("projectloader/recents");
                 MainWindow::showInfoPopup(tr("Success"), tr("All entries have been successfully removed"), "Info");
            });
-        form->addRow(mResetButton);
+        projectSaving->addRow(mResetButton);
     }
-
 
     auto keysettings = new QFormLayout();
     {
-        mHSVSetColor = new QCheckBox();
-        mHSVSetColor->setChecked(bHSVSetColor);
-        keysettings->addRow(tr("HSV | Blend color : "), mHSVSetColor);
+        mHSVBlendColor = new QCheckBox();
+        mHSVBlendColor->setChecked(bHSVBlendColor);
+        keysettings->addRow(tr("HSV | Blend color : "), mHSVBlendColor);
 
         mHSVFolder = new QCheckBox();
         mHSVFolder->setChecked(bHSVFolder);
@@ -292,9 +303,199 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         mKeyDelayBox->setRange(0, 10000);
         mKeyDelayBox->setValue(mKeyDelay);
         keybindingSettings->addRow(tr("Global keybind delay (ms) : "), mKeyDelayBox);
+
+        mResetKeybindsButton = new QPushButton(tr("Reset keybinds"));
+        mResetKeybindsButton->setToolTip(tr("Reset all keybinds, a restart is required."));
+        connect(mResetKeybindsButton, &QPushButton::clicked, [=]() {
+                QSettings settings;
+                settings.setValue("keybindReset", settings.value("keybindReset").isValid()?
+                    settings.value("keybindReset").toBool()?false:true/*  _(:з)∠)_ */:true);
+                MainWindow::showInfoPopup(tr("Keybinds reset status"), settings.value("keybindReset").toBool()?
+                tr("The keybinds will be reset when you restart.") :
+                tr("The keybinds will not be reset when you restart."), "Info");
+           });
+        keybindingSettings->addRow(mResetKeybindsButton);
     }
 
+    auto ffmpegSettings = new QFormLayout();
+    {
+
+        ffmpegTroubleshoot = new QPushButton(tr("Troubleshoot FFmpeg"));
+        connect(ffmpegTroubleshoot, &QPushButton::clicked, [=](){
+            util::NetworkUtil networking;
+            QFileInfo ffmpeg_file;
+            QString ffmpeg;
+            QMessageBox ffmpegNotif;
+
+            if (networking.os() == "win"){
+                ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
+            }
+            else {
+                ffmpeg_file = QFileInfo("./tools/ffmpeg");
+            }
+            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()){
+                ffmpeg = "ffmpeg";
+            }
+            else{
+                ffmpeg = ffmpeg_file.absoluteFilePath();
+            }
+
+            // Exists?
+            bool fExists = networking.libExists(ffmpeg, "-version");
+
+            if (!fExists){
+                ffmpegNotif.setWindowTitle(tr("FFmpeg error"));
+                ffmpegNotif.setText(tr("FFmpeg is either missing, corrupted or otherwise doesn't work."));
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                return;
+            }
+            // Test file
+            QString testFile = QFileInfo("./data/themes/classic/icon/filew.png").absoluteFilePath();
+
+            // Sample gif test
+            QProcess gif;
+            gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
+            gif.waitForFinished();
+            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo("gif.gif").exists() ? true : false;
+            qDebug() << "Gif exists: "<< QFileInfo("gif.gif").exists() << "| Gif remove: " << QFile("gif.gif").remove();
+            gif.deleteLater();
+
+            if (!exportSuccess){
+                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't export"));
+                ffmpegNotif.setText(tr("FFmpeg was unable to export, please check if it's a valid FFmpeg executable."));
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                return;
+            }
+
+            // Palettegen test
+            QProcess palettegen;
+            palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"},
+                              QProcess::ReadWrite);
+            palettegen.waitForFinished();
+            bool pGenSuccess =  palettegen.exitStatus() == 0 && QFileInfo("palette.png").exists()? true : false;
+            if (!pGenSuccess){
+                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
+                ffmpegNotif.setText(tr("FFmpeg was unable to generate palettes, please check if it's a valid FFmpeg executable."));
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                return;
+            }
+            qDebug() << "Palette exists: "<< QFileInfo("palette.png").exists() << "| Palete remove: "
+                     << QFile("palette.png").remove();
+            palettegen.deleteLater();
+
+
+            ffmpegNotif.setWindowTitle(tr("FFmpeg test success"));
+            ffmpegNotif.setText(tr("All tests have passed, FFmpeg is working correctly."));
+            ffmpegNotif.setDetailedText(tr("Tests:\nCheck FFmpeg version ... 🗸\nCheck FFmpeg exporting ... 🗸\n"
+                                           "Check FFmpeg palette generation ... 🗸"));
+            ffmpegNotif.addButton(QMessageBox::Ok);
+            ffmpegNotif.exec();
+            return;
+
+        });
+
+        selectFromExe = new QPushButton(tr("Select from executable and automatically setup"));
+        selectFromExe->setToolTip(tr("This will remove previous instances of FFmpeg from your tools directory"
+                                     " and replace them with your custom executable."));
+        connect(selectFromExe, &QPushButton::clicked, [=](){
+            util::NetworkUtil net;
+            QDir dir = QDir("./tools");
+            if (!dir.exists()){
+                dir.mkpath(dir.absolutePath());
+            }
+            QString file = net.os() == "win"? "/ffmpeg.exe" : "/ffmpeg";
+
+            if (QFileInfo(dir.absolutePath() + file).exists()){
+                QFile(dir.absolutePath() + file).moveToTrash();
+            }
+
+            QFileInfo ffmpeg = QFileInfo(QFileDialog::getOpenFileName(nullptr, "Select FFmpeg executable"));
+            qDebug() << "Selected exe: " << ffmpeg.fileName() << " | " << ffmpeg.absoluteFilePath();
+            QFile(ffmpeg.absoluteFilePath()).copy(dir.absolutePath() + file);
+
+            QMessageBox success;
+            success.setText(tr("Operation successful"));
+            success.setWindowTitle(tr("Success"));
+            success.addButton(QMessageBox::Ok);
+            success.exec();
+        });
+
+
+        autoSetup = new QPushButton(tr("Download and automatically setup"));
+        connect(autoSetup, &QPushButton::clicked, [=](){
+            util::NetworkUtil networking;
+
+            QDir dir = QDir("./tools");
+            if (!dir.exists()){
+                dir.mkpath(dir.absolutePath());
+            }
+            QString file = networking.os() == "win"? "/ffmpeg.exe" : "/ffmpeg";
+            if (QFileInfo(dir.absolutePath() + file).exists()){
+                QFile(dir.absolutePath() + file).moveToTrash();
+            }
+            QString os = networking.os();
+            QString arch = networking.arch();
+            QString gitFile;
+            // ID checking is probably overkill, but security is important!
+            int id;
+            if (os == "win"){
+                if (arch == "x86"){
+                    gitFile = "ffmpeg-win32.exe";
+                    id = 97679467;
+                }
+                else{
+                    gitFile = "ffmpeg-win64.exe";
+                    id = 97679053;
+                }
+            }
+            else if (os == "linux"){
+                if (arch == "x86"){
+                    gitFile = "ffmpeg-linux32";
+                    id = 97679324;
+                }
+                else{
+                    gitFile = "ffmpeg-linux64";
+                    id = 97679172;
+                }
+            }
+            else{
+                gitFile = "ffmpeg-macos";
+                id = 97679141;
+            }
+
+            QFileInfo ffmpeg = networking.downloadGithubFile("https://api.github.com/repos/AnimeEffectsDevs/ffmpeg-bin/releases/latest",
+                                          gitFile, id, this);
+            qDebug() << "Download name : " << ffmpeg.fileName() << "\n" << "Download is executable : " << ffmpeg.isExecutable();
+            if (ffmpeg.isExecutable()){
+                QFile(ffmpeg.absoluteFilePath()).rename(dir.absolutePath() + file);
+                qDebug() << "FFmpeg moved : " << QFile(dir.absolutePath() + file).exists();
+                if (QFile(dir.absolutePath() + file).exists()){
+                    QMessageBox success;
+                    success.setWindowTitle(tr("Success"));
+                    success.setText(tr("FFmpeg was successfully setup."));
+                    success.exec();
+                    return;
+                }
+            }
+            QMessageBox error;
+            error.setWindowTitle(tr("Error"));
+            error.setText(tr("An error has ocurred, please send the bellow info to the developers."));
+            error.setDetailedText("Filename : " + ffmpeg.fileName() + "\nIs Executable : " + ffmpeg.isExecutable()
+                                  + "\nDownload params : " + "Hardcoded API | " + gitFile + " | " + id);
+            error.exec();
+        });
+
+        ffmpegSettings->addRow(ffmpegTroubleshoot);
+        ffmpegSettings->addRow(selectFromExe);
+        ffmpegSettings->addRow(autoSetup);
+    };
+
     createTab(tr("General"), form);
+    createTab(tr("Project and Tools"), projectSaving);
+    createTab(tr("FFmpeg"), ffmpegSettings);
     createTab(tr("Animation keys"), keysettings);
     createTab(tr("Keybindings"), keybindingSettings);
 
@@ -352,6 +553,16 @@ bool GeneralSettingDialog::themeHasChanged()
     return (mInitialThemeKey != mThemeBox->currentData());
 }
 
+bool GeneralSettingDialog::autoSaveHasChanged()
+{
+    return (bAutoSave != mAutoSave->isChecked());
+}
+
+bool GeneralSettingDialog::autoSaveDelayHasChanged()
+{
+    return (mAutoSaveDelay != mAutoSaveDelayBox->value());
+}
+
 bool GeneralSettingDialog::HSVBehaviourHasChanged()
 {
     return (mInitialHSVBehaviour != mHSVBehaviour->currentIndex());
@@ -359,7 +570,7 @@ bool GeneralSettingDialog::HSVBehaviourHasChanged()
 
 bool GeneralSettingDialog::HSVSetColorHasChanged()
 {
-    return (bHSVSetColor != mHSVSetColor->isChecked());
+    return (bHSVBlendColor != mHSVBlendColor->isChecked());
 }
 
 bool GeneralSettingDialog::HSVFolderHasChanged()
@@ -395,11 +606,17 @@ void GeneralSettingDialog::saveSettings()
     if(themeHasChanged()){
         settings.setValue("generalsettings/ui/theme", mThemeBox->currentData());
     }
+    if(autoSaveHasChanged()){
+        settings.setValue("generalsettings/projects/autosaveEnabled", mAutoSave->isChecked());
+    }
+    if(autoSaveDelayHasChanged()){
+        settings.setValue("generalsettings/projects/autosaveDelay", mAutoSaveDelayBox->value());
+    }
     if (HSVBehaviourHasChanged()){
         settings.setValue("generalsettings/keys/hsvBehaviour", mHSVBehaviour->currentIndex());
     }
     if (HSVSetColorHasChanged()){
-        settings.setValue("generalsettings/keys/hsvSetColor", mHSVSetColor->isChecked());
+        settings.setValue("generalsettings/keys/hsvSetColor", mHSVBlendColor->isChecked());
     }
     if (HSVFolderHasChanged()){
         settings.setValue("generalsettings/keys/hsvFolder", mHSVFolder->isChecked());

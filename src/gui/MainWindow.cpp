@@ -8,6 +8,7 @@
 #include <QElapsedTimer>
 #include <QMessageBox>
 #include <QFileSystemWatcher>
+#include "GeneralSettingDialog.h"
 #include "util/IProgressReporter.h"
 #include "gl/Global.h"
 #include "ctrl/Exporter.h"
@@ -17,6 +18,7 @@
 #include "gui/ResourceDialog.h"
 #include "gui/ProjectHook.h"
 #include "gui/menu/menu_ProgressReporter.h"
+#include "util/NetworkUtil.h"
 
 namespace
 {
@@ -310,11 +312,36 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
         if (key) key->invoker = [=](){ this->onMovementTriggered("Last");};
     }
 #endif
+
+    // autosave
+
+    QSettings settings;
+    bool autosave = settings.value("generalsettings/projects/autosaveEnabled").isValid()?
+                settings.value("generalsettings/projects/autosaveEnabled").toBool() : false;
+
+    if (autosave){
+        autosaveTimer = new QTimer(this);
+        connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
+        autosaveTimer->start();
+    }
 }
 
 MainWindow::~MainWindow()
 {
     closeAllProjects();
+}
+
+void MainWindow::autoSave(){
+    QSettings settings;
+    int autoDelay = settings.value("generalsettings/projects/autosaveDelay").isValid()?
+                settings.value("generalsettings/projects/autosaveDelay").toInt() : 5;
+    autosaveTimer->setInterval(autoDelay*60000);
+    if (mCurrent && !mCurrent->isNameless() && mCurrent->isModified())
+    {
+        mViaPoint.pushLog("Automatically saved project: " + QFileInfo(mCurrent->fileName()).fileName(), ctrl::UILogType_Info);
+        // qDebug() << "Interval of " + QString(std::to_string(autoDelay*60000).c_str()) + " milliseconds has elapsed.";
+        processProjectSaving(*mCurrent);
+    }
 }
 
 void MainWindow::showWithSettings()
@@ -382,7 +409,7 @@ void MainWindow::closeAllProjects()
 {
     mProjectTabBar->removeAllProject();
     resetProjectRefs(nullptr);
-    mSystem.closeAllProjects();
+    mSystem.closeAllProjects();   
 }
 
 void MainWindow::resetProjectRefs(core::Project* aProject)
@@ -1019,7 +1046,51 @@ void MainWindow::onExportImageSeqTriggered(const QString& aSuffix)
 void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat)
 {
     if (!mCurrent) return;
+    QSettings settings;
+    settings.sync();
+    auto ffCheck = settings.value("ffmpeg_check");
+    if(!ffCheck.isValid() || ffCheck == true){
+        util::NetworkUtil networking;
+        QFileInfo ffmpeg_file;
+        QString ffmpeg;
 
+        if (networking.os() == "win"){
+            ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
+        }
+        else {
+            ffmpeg_file = QFileInfo("./tools/ffmpeg");
+        }
+        if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()){
+            ffmpeg = "ffmpeg";
+        }
+        else{
+            ffmpeg = ffmpeg_file.absoluteFilePath();
+        }
+
+        // Exists?
+        bool fExists = networking.libExists(ffmpeg, "-version");
+
+        if(!fExists){
+            QMessageBox message;
+            message.setIcon(QMessageBox::Warning);
+            message.setText(tr("FFmpeg was not found."));
+            auto infoText =
+                       tr("Exporting video requires FFmpeg to be installed on your computer, "
+                       "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
+                       "In the following screen you can instruct AnimeEffects to download and install it automatically for you, "
+                       "or you can download it by yourself and tell AnimeEffects where it is.");
+            message.setInformativeText(infoText);
+            message.setStandardButtons(QMessageBox::Ok);
+            message.setDefaultButton(QMessageBox::Ok);
+            message.exec();
+
+            GeneralSettingDialog *generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+            generalSettingsDialog->selectTab(2);
+            generalSettingsDialog->exec();
+            return;
+        }
+        ffCheck.setValue(false);
+    }
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
 

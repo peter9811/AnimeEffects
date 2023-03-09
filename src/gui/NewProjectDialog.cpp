@@ -71,7 +71,7 @@ QWidget* NewProjectDialog::createOption()
             this->mAttribute.setMaxFrame(frame->value());
         });
 
-        form->addRow(tr("Max frames :"), frame);
+        form->addRow(tr("Maximum frame count :"), frame);
     }
     // fps
     {

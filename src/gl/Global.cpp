@@ -9,7 +9,6 @@ gl::Global::SyncExtension* gGLSyncExtension = nullptr;
 //QSurface* gGlobalSurface = nullptr;
 QOpenGLWidget* gGLGlobalWidget = nullptr;
 }
-QGLFormat::OpenGLVersionFlag gl::Global::kVersionFlag = QGLFormat::OpenGL_Version_3_1;
 
 namespace gl
 {
@@ -98,3 +97,5 @@ void Global::doneCurrent()
 #endif
 
 } // namespace gl
+
+const QPair<int, int> gl::Global::kVersion{ 3, 1 };

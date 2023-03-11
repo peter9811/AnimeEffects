@@ -64,8 +64,8 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     {
         QSurfaceFormat format;
 #if defined(USE_GL_CORE_PROFILE)
-        format.setVersion(gl::Global::kMajorVersion, gl::Global::kMinorVersion);
-        format.setProfile(QSurfaceFormat::CoreProfile);
+        format.setVersion(gl::Global::kVersion.first, gl::Global::kVersion.second);
+        format.setProfile(QSurfaceFormat::NoProfile);
 #endif
         format.setSamples(4);
         QSurfaceFormat::setDefaultFormat(format);

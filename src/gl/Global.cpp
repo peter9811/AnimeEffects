@@ -98,4 +98,8 @@ void Global::doneCurrent()
 
 } // namespace gl
 
-const QPair<int, int> gl::Global::kVersion{ 3, 1 };
+#if defined (Q_OS_MACOS)
+    const QPair<int, int> gl::Global::kVersion{ 3, 3 };
+#else
+    const QPair<int, int> gl::Global::kVersion{ 3, 1 };
+#endif

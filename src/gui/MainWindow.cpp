@@ -64,11 +64,11 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     {
         QSurfaceFormat format;
 #if defined(USE_GL_CORE_PROFILE)
-    format.setVersion(gl::Global::kVersion.first, gl::Global::kVersion.second);
+        format.setVersion(gl::Global::kVersion.first, gl::Global::kVersion.second);
 #if defined (Q_OS_MACOS)
-    format.setProfile(QSurfaceFormat::CoreProfile);
+        format.setProfile(QSurfaceFormat::CoreProfile);
 #else
-    format.setProfile(QSurfaceFormat::NoProfile);
+        format.setProfile(QSurfaceFormat::NoProfile);
 #endif
 #endif
         format.setSamples(4);

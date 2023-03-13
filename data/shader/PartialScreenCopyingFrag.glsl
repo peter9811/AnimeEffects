@@ -1,10 +1,10 @@
-#version 140
+#version 330
 
 uniform sampler2D uDestTexture;
 
 in vec2 vDestCoord;
 
-out vec4 oFragColor;
+layout(location = 0, index = 0) out vec4 oFragColor;
 
 void main(void)
 {

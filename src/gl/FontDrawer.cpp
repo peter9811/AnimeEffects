@@ -28,15 +28,15 @@ FontDrawer::FontDrawer()
 bool FontDrawer::initShader()
 {
     static const char* kVertexShaderText =
-            "#version 140 \n"
+            "#version 330 \n"
             "in vec2 inPosition;"
             "uniform mat4 uViewMtx;"
             "void main(void){"
             "  gl_Position = uViewMtx * vec4(inPosition, 0.0, 1.0);"
             "}";
     static const char* kFragmentShaderText =
-            "#version 140 \n"
-            "out vec4 oFragColor;"
+            "#version 330 \n"
+            "layout(location = 0, index = 0) out vec4 oFragColor;"
             "void main(void){"
             "  oFragColor = vec4(1);"
             "}";

@@ -1,4 +1,4 @@
-#version 140
+#version 330
 
 #variation USE_SKINNING 1
 #variation USE_DUAL_QUATERNION 1

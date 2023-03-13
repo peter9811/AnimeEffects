@@ -45,14 +45,6 @@ MainDisplayWidget::MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent)
     , mMovingCanvasByMiddleMouseButton(false)
     , mDevicePixelRatio(1.0)
 {
-#ifdef USE_GL_CORE_PROFILE
-    // setup opengl format
-    QSurfaceFormat format = this->format();
-    format.setVersion(gl::Global::kMajorVersion, gl::Global::kMinorVersion);
-    format.setProfile(QSurfaceFormat::CoreProfile);
-    this->setFormat(format);
-#endif
-
     this->setObjectName(QStringLiteral("MainDisplayWidget"));
     this->setMouseTracking(true);
     this->setAutoFillBackground(false); // avoid auto fill on QPainter::begin()
@@ -218,11 +210,18 @@ void MainDisplayWidget::initializeGL()
     }
     // check version
     {
-        auto flags = QGLFormat::openGLVersionFlags();
-        if (!flags.testFlag(gl::Global::kVersionFlag))
+        auto version = this->format().version();
+        if (version < gl::Global::kVersion)
         {
-            auto version = QString::number(gl::Global::kMajorVersion) + "." + QString::number(gl::Global::kMinorVersion);
-            XC_FATAL_ERROR("OpenGL Error", QString("The OpenGL version lower than ") + version + ".", "");
+            auto obtainedVersion = QString::number(version.first) + "." + QString::number(version.second);
+            auto requiredVersion = QString::number(gl::Global::kVersion.first) + "." + QString::number(gl::Global::kVersion.second);
+            XC_FATAL_ERROR("OpenGL Error",
+                QString("Failed to get the correct OpenGL version.\n"
+                        "The obtained version is %1,\n"
+                        "but the required version is %2.")
+                        .arg(obtainedVersion)
+                        .arg(requiredVersion),
+                "");
         }
     }
     // initialize opengl functions
@@ -236,20 +235,9 @@ void MainDisplayWidget::initializeGL()
         XC_FATAL_ERROR("OpenGL Error", "Failed to initialize opengl functions.", "");
     }
 
-    if (!this->context()->hasExtension(QByteArrayLiteral("GL_ARB_sync")))
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Opengl extension ARB_sync is not supported by your hardware.", "");
-    }
-    QOpenGLExtension_ARB_sync* sync = new gl::Global::SyncExtension();
-    if (!sync->initializeOpenGLFunctions())
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to initialize opengl functions.", "");
-    }
-
     // setup global info
     gl::Global::setContext(*this);
     gl::Global::setFunctions(*functions);
-    gl::Global::setSyncExtension(*sync);
 
     // setup gl root
     mGLRoot.setContextAccessor(mGLContextAccessor);

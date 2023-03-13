@@ -24,7 +24,7 @@ void Task::request()
     onRequested();
 
     Global::Functions& ggl = Global::functions();
-    mSync = Global::syncExtension().glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    mSync = ggl.glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     ggl.glFlush();
     XC_ASSERT(ggl.glGetError() == GL_NO_ERROR);
 }
@@ -33,7 +33,7 @@ bool Task::isRunning() const
 {
     if (mSync == 0) return false;
 
-    GLenum result = Global::syncExtension().glClientWaitSync(mSync, 0, 0);
+    GLenum result = Global::functions().glClientWaitSync(mSync, 0, 0);
     XC_ASSERT(result != GL_INVALID_VALUE);
     XC_ASSERT(result != GL_WAIT_FAILED);
 
@@ -47,7 +47,7 @@ void Task::finish()
 
     while (mSync)
     {
-        GLenum result = Global::syncExtension().glClientWaitSync(mSync, 0, kTimeOutNanoSec);
+        GLenum result = ggl.glClientWaitSync(mSync, 0, kTimeOutNanoSec);
         XC_ASSERT(result != GL_INVALID_VALUE);
         XC_ASSERT(result != GL_WAIT_FAILED);
 
@@ -66,7 +66,7 @@ void Task::deleteSync()
 {
     if (mSync)
     {
-        Global::syncExtension().glDeleteSync(mSync);
+        Global::functions().glDeleteSync(mSync);
         mSync = 0;
     }
 }

@@ -4,12 +4,10 @@
 namespace
 {
 gl::Global::Functions* gGLGlobalFunctions = nullptr;
-gl::Global::SyncExtension* gGLSyncExtension = nullptr;
 //QOpenGLContext* gGLGlobalContext = nullptr;
 //QSurface* gGlobalSurface = nullptr;
 QOpenGLWidget* gGLGlobalWidget = nullptr;
 }
-QGLFormat::OpenGLVersionFlag gl::Global::kVersionFlag = QGLFormat::OpenGL_Version_3_1;
 
 namespace gl
 {
@@ -29,23 +27,6 @@ Global::Functions& Global::functions()
 {
     XC_PTR_ASSERT(gGLGlobalFunctions);
     return *gGLGlobalFunctions;
-}
-
-void Global::setSyncExtension(SyncExtension& aSyncExtension)
-{
-    XC_ASSERT(!gGLSyncExtension);
-    gGLSyncExtension = &aSyncExtension;
-}
-
-void Global::clearSyncExtension()
-{
-    gGLSyncExtension = nullptr;
-}
-
-Global::SyncExtension& Global::syncExtension()
-{
-    XC_PTR_ASSERT(gGLSyncExtension);
-    return *gGLSyncExtension;
 }
 
 #if 0
@@ -98,3 +79,5 @@ void Global::doneCurrent()
 #endif
 
 } // namespace gl
+
+const QPair<int, int> gl::Global::kVersion{ 3, 3 };

@@ -2,36 +2,36 @@
 
 🇺🇸 [English](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README.md)
 
-慎重に検討した計画を必要としない2Dアニメーションツールでは、ポリゴンメッシュの変形に基づいてさまざまな機能を提供することにより、アニメーションを簡素化します。
-もともとHidefukuによって開発されていましたが、現在はコミュニティによって開発および維持されています。
+レイヤー構造や設計を気にすることなく、手軽に制作できる2Dアニメーションツールです。ポリゴンメッシュの変形をベースとした様々な機能により、アニメーション制作を簡素化することができます。
+もともとHidefukuによって開発されていましたが、現在は有志コミュニティによって開発およびメンテナンスされています。
 
 * 公式サイト:<br>
   * https://animeeffectsdevs.github.io/<br>
 
-* 公式ソーシャル:<br>
+* 公式SNS:<br>
   * Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects コミュニティサーバー</a> (@Jose-Moreno の厚意により)<br>
-  * Twitter: <a href='https://twitter.com/anime_effects'>AnimeEffects</a> (@p_yukusai が維持)<br>
+  * Twitter: <a href='https://twitter.com/anime_effects'>AnimeEffects</a> (@p_yukusai によって運営されています)<br>
 
-注：現在の場合、互換性のない変更が行われる可能性があります。これらは、発生した場合に影響を受けるリリースで知られるようになります。<br>
-***もし、何か問題があったり、新しい機能を提案したい場合は、私たちのソーシャルに連絡してください。***
+注意: 今後、互換性のない変更が行われる可能性があります。影響を受ける変更があった場合は、リリースの時に通知されます。<br>
+***もし、何か問題があったり、新しい機能を提案したい場合は、公式SNSにて連絡してください。***
 
 ## ダウンロード
-* AnimeEffectsの最新リリースを[公開しましたちら](https://github.com/AnimeEffectsDevs/AnimeEffects/releases) 、使用方法は、任意のフォルダに解凍し、実行ファイルを実行するだけです。<br>
+* AnimeEffectsの[最新リリース](https://github.com/AnimeEffectsDevs/AnimeEffects/releases) からダウンロードしてください。任意のフォルダに解凍し、実行ファイルを実行するだけです。<br>
 
 ## 要件
 * Windows/Linux/Mac
-  * 下記の対応バージョンをご覧ください。
+  * 具体的な対応要件については、下記の詳細をご覧ください。
 * OpenGl 3.3 以上
-  * Linuxでは、お使いのグラフィックカードがOpenGL3.3のCoreProfileをサポートしているかどうかを確認するために、ターミナル上で「glxinfo | grep "OpenGL core profile version"」と実行します。
-* [FFmpeg](https://ffmpeg.org/download.html) (ビデオエクスポートに必要な場合、パスに配置したり、「/tools」フォルダーにコピーしたりできます。)
+  * Linuxの場合、コマンドラインにて`glxinfo | grep "OpenGL core profile version`を実行し、グラフィックカードがOpenGL3.3のCoreProfileをサポートしているかどうかを確認してください。
+* [FFmpeg](https://ffmpeg.org/download.html) (動画出力に必要です。任意の実行パスに配置するか、「/tools」フォルダーに実行ファイルを配置してください。)
 
 ## OSターゲット
-#### これらのOSは、私たちがソフトウェアをコンパイルし、テストしているバージョンであり、古いバージョンでも動作する場合がありますが、これは推奨されません。
+#### これらのOSは、私たちがソフトウェアをコンパイルし、テストしているバージョンです。これより古いバージョンでも動作する場合がありますが非推奨です。
 * Windows 10 以降。
 * Ubuntu LTS 以降。
-  * 提供されたAppImageは、glibcの関係で古いバージョンでは*動作しない*。
+  * 提供されたAppImageは、glibcの関係で古いバージョンでは*動作しません*。
 * macOS Big Sur 以降。
-  * 私たちは誰もアニメエフェクトをテストするためのMacを持っていませんが、コンパイルエラーとアーティファクトを記録しています。
+  * 私たちは誰もAnimeEffectsをテストするためのMacを持っていませんが、コンパイルエラーとアーティファクトを記録しています。
 
 ## 開発要件
 * Qt5.14 以上
@@ -74,11 +74,11 @@ make
 ## Windows
 * コンパイルにはQtCreatorを使用することを推奨します:
 ```
-QtCreatorを使用していない場合は、選択したコンパイラとそのツールの「/bin」フォルダをパスに追加し、ビルドとデプロイに利用できるパワーシェルスクリプトをチェックアウトすることをお勧めします「MinGWを推奨します」
-プロジェクトをクローンし、QtCreatorで 「AnimeEffects.pro」を開きます
-リリースプロファイルでプロジェクトをコンパイルする 
-お好みのコンソールを開く
-「windeployqt.exe --release "実行_可能_パス"」を実行します
+QtCreatorを使用していない場合は、選択したコンパイラとそのツールの「/bin」フォルダをパスに追加し、
+ビルドとデプロイに利用できるPowershell Scriptをチェックアウトすることをお勧めします(MinGW 推奨です)。
+プロジェクトをクローンし、QtCreatorで 「AnimeEffects.pro」を開きます。
+リリースプロファイルでプロジェクトをコンパイルしてください。
+コンソールを開き、「windeployqt.exe --release "実行ファイルパス"」を実行します
 ```
 
-* 展開が完了したら、「AnimeEffects.exe」を実行するだけでよいでしょう。
+* デブロイが完了したら、AnimeEffects.exe を実行してください。

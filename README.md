@@ -81,7 +81,7 @@ If you're not using QtCreator, it is adviced that you add the bin folder of your
 Clone the project and open "AnimeEffects.pro" using QtCreator
 Compile the project on the release profile 
 Open your console of preference
-Run "windeployqt.exe --dir "AnimeEffectsWin" "path_to_the_executable"" and then copy the "Data" folder and the AnimeEffects executable to AnimeEffectsWin
+Run "windeployqt.exe --dir "AnimeEffectsWin" "path_to_the_executable" and then copy the "Data" folder and the AnimeEffects executable to AnimeEffectsWin
 ```
 
 * When deployment is done, you may just run AnimeEffects.exe

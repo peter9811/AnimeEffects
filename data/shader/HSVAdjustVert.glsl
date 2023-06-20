@@ -9,12 +9,12 @@ uniform vec2 uScreenSize;
 uniform vec2 uImageSize;
 uniform vec2 uTexCoordOffset;
 
-#variation IS_CLIPPEE 0
+// #variation IS_CLIPPEE 0
 
-#if IS_CLIPPEE
-uniform int uClippingId;
-uniform usampler2D uClippingTexture;
-#endif
+// #if IS_CLIPPEE
+// uniform int uClippingId;
+// uniform usampler2D uClippingTexture;
+// #endif
 
 out vec2 vTexCoord;
 out vec2 vDestCoord;

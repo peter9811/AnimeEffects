@@ -1,6 +1,8 @@
 #include <float.h>
 #include <QPolygonF>
 #include "XC.h"
+#include "qjsonarray.h"
+#include "qjsonobject.h"
 #include "util/CollDetect.h"
 #include "util/MathUtil.h"
 #include "cmnd/BasicCommands.h"
@@ -696,6 +698,110 @@ bool MeshKey::Data::serialize(Serializer& aOut) const
     }
 
     return aOut.checkStream();
+}
+
+template<typename vec2d>
+QJsonObject vecToObject(vec2d vector){
+    QJsonObject vectors;
+    vectors["X"] = vector.x(); vectors["Y"] = vector.y();
+    return vectors;
+}
+
+QJsonObject MeshKey::Data::serializeToJson() const{
+    QJsonObject mesh;
+    // Offset
+    mesh["OriginOffsetX"] = mOriginOffset.x(); mesh["OriginOffsetY"] = mOriginOffset.y();
+    // Vertices
+    mesh["VertexCount"] = mVertices.count();
+    QJsonArray vertices;
+    for (auto vtx : mVertices){
+        vertices.append(vecToObject(vtx->vec()));
+    }
+    mesh["Vertices"] = vertices;
+    // Edges
+    mesh["EdgeCount"] = mEdges.count();
+    QJsonArray edgeArray;
+    QHash<MeshEdge*, int> edgeMap;
+    int edgeIndex = 0;
+    for (auto edge : mEdges){
+        QJsonObject edges;
+        edges["edgeVtx0"] = ((int)edge->vtx(0)->index());
+        edges["edgeVtx1"] = ((int)edge->vtx(1)->index());
+        edgeArray.append(edges);
+        edgeMap[edge] = edgeIndex;
+        ++edgeIndex;
+    }
+    mesh["Edges"] = edgeArray;
+    // Faces
+    mesh["FaceCount"] = ((int)mFaces.count());
+    QJsonArray faceArray;
+    for (auto face : mFaces){
+        QJsonObject faces;
+        faces["faceEdge0"] = edgeMap[face->edge(0)];
+        faces["faceEdge1"] = edgeMap[face->edge(1)];
+        faces["faceEdge2"] = edgeMap[face->edge(2)];
+        faceArray.append(faces);
+    }
+    mesh["Faces"] = faceArray;
+    return mesh;
+}
+
+QVector2D objToVec(QJsonObject obj){
+    return QVector2D(obj["X"].toDouble(), obj["Y"].toDouble());
+}
+
+bool MeshKey::Data::deserializeFromJson(QJsonObject json){
+    destroy();
+    // Origin Offset
+    mOriginOffset = QVector2D(json["OriginOffsetX"].toDouble(), json["OriginOffsetY"].toDouble());
+    // Vertex
+    int vtxCount = json["VertexCount"].toInt(); if (vtxCount == 0) {return false;}
+    QMap<int, MeshVtx*> vtxMap;
+    QJsonArray vtx = json["Vertices"].toArray();
+    for(int i = 0; i < vtxCount; i++){
+        MeshVtx* vertex = new MeshVtx(objToVec(vtx[i].toObject()));
+        vertex->setIndex(i);
+        mVertices.push_back(vertex);
+        vtxMap[i] = vertex;
+    }
+    // Edge
+    int edgeCount = json["EdgeCount"].toInt(); if (edgeCount == 0) {return false;}
+    QMap<int, MeshEdge*> edgeMap;
+    QJsonArray edges = json["Edges"].toArray();
+    for (int i = 0; i < edgeCount; i++)
+    {
+        auto edgeObj = edges[i].toObject();
+        auto v0 = edgeObj["edgeVtx0"].toInt();
+        auto v1 = edgeObj["edgeVtx1"].toInt();
+        if (!xc_contains(v0, 0, vtxCount - 1) || !xc_contains(v1, 0, vtxCount - 1)) {return false;}
+        auto edge = new MeshEdge();
+        edge->rawInit(*vtxMap[v0], *vtxMap[v1]);
+        mEdges.push_back(edge);
+        edgeMap[i] = edge;
+    }
+    // Faces
+    int faceCount = json["FaceCount"].toInt(); if (faceCount == 0) {return false;}
+    QJsonArray faces = json["Faces"].toArray();
+    for (int i = 0; i < faceCount; i++)
+    {
+        auto faceObj = faces[i].toObject();
+        auto e0 = faceObj["faceEdge0"].toInt();
+        auto e1 = faceObj["faceEdge1"].toInt();
+        auto e2 = faceObj["faceEdge1"].toInt();
+
+        if (!xc_contains(e0, 0, edgeCount - 1) ||!xc_contains(e1, 0, edgeCount - 1) ||!xc_contains(e2, 0, edgeCount - 1)){
+            return false;
+        }
+
+        auto face = new MeshFace();
+        face->rawInit(*edgeMap[e0], *edgeMap[e1], *edgeMap[e2]);
+        mFaces.push_back(face);
+    }
+
+    updateGLAttribute();
+    getMeshBuffer();
+
+    return true;
 }
 
 bool MeshKey::Data::deserialize(Deserializer& aIn)

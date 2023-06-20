@@ -4,6 +4,8 @@
 #include <QPoint>
 #include <QtMath>
 #include <QScopedArrayPointer>
+#include "qjsonarray.h"
+#include "qjsonobject.h"
 #include "util/TriangleRasterizer.h"
 #include "util/CollDetect.h"
 #include "util/MathUtil.h"
@@ -508,6 +510,137 @@ std::pair<bool, gl::Vector3> GridMesh::gatherValidPositions(
 
     return std::pair<bool, gl::Vector3>(
                 count > 0, gl::Vector3::make(blended.x(), blended.y(), 0.0f));
+}
+
+// I know this is horrible, I'm too tired to make it pretty ;w;
+
+QJsonObject posToJson(QVector2D vector){
+    QJsonObject pos; pos["X"] = vector.x(); pos["Y"] = vector.y(); return pos;
+}
+QJsonObject posToJson(QSize size){
+    QJsonObject pos; pos["H"] = size.height(); pos["W"] = size.width(); return pos;
+}
+QVector2D jsonToPos(QJsonObject json){
+    return QVector2D{static_cast<float>(json["X"].toDouble()), static_cast<float>(json["Y"].toDouble())};
+}
+QSize jsonToSize(QJsonObject json){
+    return QSize{json["W"].toInt(), json["H"].toInt()};
+}
+util::ArrayBuffer<GLuint> arrayToGL(QJsonArray json, int count){
+    util::ArrayBuffer<GLuint> GL;
+    for (int i = 0; i < count; ++i) { GL[i] = json[i].toInt(); }
+    return GL;
+}
+util::ArrayBuffer<gl::Vector3> arrayToVec3(QJsonArray json, int count){
+    util::ArrayBuffer<gl::Vector3> GL;
+    for (int i = 0; i < count; ++i){
+        auto jsonObj = json[i].toObject();
+        GL[i].x = jsonObj["X"].toDouble(); GL[i].y = jsonObj["Y"].toDouble(); GL[i].x = jsonObj["Z"].toDouble();
+    }
+    return GL;
+}
+
+util::ArrayBuffer<gl::Vector2> arrayToVec2(QJsonArray json, int count){
+    util::ArrayBuffer<gl::Vector2> GL;
+    for (int i = 0; i < count; ++i){
+        auto jsonObj = json[i].toObject();
+        GL[i].x = jsonObj["X"].toDouble(); GL[i].y = jsonObj["Y"].toDouble();
+    }
+    return GL;
+}
+
+QJsonArray glToArray(const GLuint* glint, int count){
+    QJsonArray GL;
+    for (int i = 0; i < count; ++i) { GL.append(QString::number(uint32(glint[i]))); }
+    return GL;
+}
+QJsonArray glToArray(const gl::Vector3* glvec, int count){
+    QJsonArray glArray;
+    for (int i = 0; i < count; ++i){
+        QJsonObject GL;
+        GL["X"] = (float32)glvec[i].x; GL["Y"] = (float32)glvec[i].y; GL["Z"] = (float32)glvec[i].z;
+        glArray.append(GL);
+    }
+    return glArray;
+}
+QJsonArray glToArray(const gl::Vector2* glvec, int count){
+    QJsonArray glArray;
+    for (int i = 0; i < count; ++i){
+        QJsonObject GL;
+        GL["X"] = (float32)glvec[i].x; GL["Y"] = (float32)glvec[i].y;
+        glArray.append(GL);
+    }
+    return glArray;
+}
+
+QJsonObject GridMesh::serializeToJson() const{
+    QJsonObject grid;
+    grid["Size"] = posToJson(mSize);
+    grid["OriginOffset"] = posToJson(mOriginOffset);
+    grid["CellPx"] = mCellPx;
+    grid["IndexCount"] = mIndexCount;
+    if(mIndexCount > 0){
+        grid["Indices"] = glToArray(mIndices.data(), mIndexCount);
+    }
+    grid["VertexCount"] = mVertexCount;
+    if(mVertexCount > 0){
+        grid["Positions"] = glToArray(mPositions.data(), mVertexCount);
+        grid["Offsets"] = glToArray(mOffsets.data(),   mVertexCount);
+        grid["TexCoords"] = glToArray(mTexCoords.data(), mVertexCount);
+        grid["Normals"] = glToArray(mNormals.data(),   mVertexCount);
+        grid["ConnectSize"] = QString::number(size_t(mVertexCount * sizeof(HexaConnection)));
+        const size_t connectSize = mVertexCount * sizeof(HexaConnection);
+        auto xcmem = XCMemBlock((uint8*)mHexaConnections.data(), connectSize);
+        grid["XCMemSize"] = QString::number((uint64)xcmem.size);
+        if (xcmem.data){
+            const char* memdata;
+            auto pad = xcmem.size % 4;
+            if (pad) {
+                int size; for (size = 0; size < (4 - (int)pad); ++size);
+                memdata = (const char*)xcmem.data + (char)size;
+            }
+            else{
+                memdata = (const char*)xcmem.data;
+            }
+            grid["XCMemData"] = memdata;
+        }
+    }
+    return grid;
+}
+
+bool GridMesh::deserializeFromJson(QJsonObject json){
+    QJsonObject mesh = json["GridMesh"].toObject();
+    mSize = jsonToSize(json);
+    mOriginOffset = jsonToPos(json);
+    mCellPx = json["CellPx"].toInt();
+    mIndexCount = json["IndexCount"].toInt();
+    if(mIndexCount > 0){
+        mIndices = arrayToGL(json["Indices"].toArray(), mIndexCount);
+    }
+    mVertexCount = json["VertexCount"].toInt();
+    if(mVertexCount > 0){
+        mPositions = arrayToVec3(json["Positions"].toArray(), mVertexCount);
+        mOffsets = arrayToVec3(json["Offsets"].toArray(), mVertexCount);
+        mTexCoords = arrayToVec2(json["TexCoords"].toArray(), mVertexCount);
+        mNormals = arrayToVec3(json["Normals"].toArray(), mVertexCount);
+        const uint64 rawSize = json["XCMemSize"].toInt();
+        if (std::numeric_limits<size_t>::max() < rawSize) return false;
+        const size_t size = (size_t)rawSize;
+        auto xcmemString = json["XCMemData"].toString().toStdString();
+        const char* XCMemData = xcmemString.c_str();
+        if (size > 0)
+        {
+            mHexaConnections.construct(size);
+            for (auto x = 0; x < rawSize; x++){
+                std::vector<int> id;
+                for(auto x= 0; x < 6; x++){
+                    mHexaConnections.data()->id[x] = (uint8)XCMemData[x];
+                }
+
+            }
+        }
+    }
+    return true;
 }
 
 bool GridMesh::serialize(Serializer& aOut) const

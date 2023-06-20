@@ -1,7 +1,7 @@
 #ifndef GL_GLOBAL_H
 #define GL_GLOBAL_H
 
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_4_0_Core>
 #include <QOpenGLContext>
 #include <QOpenGLWidget>
 #include <QGLFormat>
@@ -12,7 +12,7 @@ namespace gl
 class Global
 {
 public:
-    typedef QOpenGLFunctions_3_3_Core Functions;
+    typedef QOpenGLFunctions_4_0_Core Functions;
     static const QPair<int, int> kVersion;
 
     static void setFunctions(Functions& aFunctions);

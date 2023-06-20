@@ -1,4 +1,6 @@
 #include <QtMath>
+#include "qjsonarray.h"
+#include "qjsonobject.h"
 #include "util/MathUtil.h"
 #include "util/CollDetect.h"
 #include "core/Constant.h"
@@ -368,6 +370,97 @@ bool BoneShape::serialize(Serializer& aOut) const
     aOut.write(mPolygon);
 
     return aOut.checkStream();
+}
+
+void addVecToJson(QVector2D vector, QJsonObject *json, QString varName){
+    json->insert(varName + "X", vector.x()); json->insert(varName + "Y", vector.y());
+}
+
+void addRectToJson(QRectF rect, QJsonObject *json, QString varName){
+    json->insert(varName + "Left", rect.left());
+    json->insert(varName + "Top", rect.top());
+    json->insert(varName + "Width", rect.width());
+    json->insert(varName + "Height", rect.height());
+}
+
+void addPolyToJson(QPolygonF poly, QJsonObject *json, QString varName){
+    QJsonObject polyObj;
+    QJsonArray polys;
+    polyObj["PolyCount"] = poly.count();
+    int vtxCount = 0;
+    while(vtxCount != poly.count()){
+        for(auto vtx: poly){
+            QJsonObject vertex;
+            vertex["X"] = vtx.x();
+            vertex["Y"] = vtx.y();
+            polys.append(vertex);
+            vtxCount++;
+        }
+    }
+    polyObj["Vertices"] = polys;
+    json->insert(varName, polyObj);
+}
+
+QVector2D objToVect(QJsonObject obj, QString varName){
+    return QVector2D(obj[varName + "X"].toDouble(), obj[varName + "Y"].toDouble());
+}
+
+QRectF objToRect(QJsonObject obj, QString varName){
+    return QRectF(obj[varName+"Left"].toDouble(), obj[varName+"Top"].toDouble(),
+           obj[varName+"Width"].toDouble(), obj[varName+"Height"].toDouble());
+}
+
+QPolygonF objToPoly(QJsonObject obj, QString varName){
+    QJsonObject polyKey = obj[varName].toObject();
+    QJsonArray polyArray = polyKey["Vertices"].toArray();
+    QPolygonF poly;
+    int polyCount = polyKey["PolyCount"].toInt();
+    int vtxCount = 0;
+    while(vtxCount != polyCount){
+        for(auto vtx: qAsConst(polyArray)){
+            QJsonObject vertex = vtx.toObject();
+            poly.append(QPointF(vertex["X"].toDouble(), vertex["Y"].toDouble()));
+            vtxCount++;
+        }
+    }
+    return poly;
+}
+
+void BoneShape::deserializeFromJson(QJsonObject json){
+    QJsonObject shape = json["Shape"].toObject();
+    mIsValid = shape["Valid"].toBool();
+    mSegment.start = objToVect(shape, "SegmentStart");
+    mSegment.dir = objToVect(shape, "SegmentDir");
+    mVUnit = objToVect(shape, "Unit");
+    mVDirAngle = shape["DirAngle"].toDouble();
+    mLength = shape["Length"].toDouble();
+    mRadius[0] = objToVect(shape, "Radius0");
+    mRadius[1] = objToVect(shape, "Radius1");
+    mRootBendRange.angle[0] = shape["RootBendAngle0"].toDouble();
+    mRootBendRange.angle[1] = shape["RootBendAngle1"].toDouble();
+    mTailBendRange.angle[0] = shape["TailBendRange0"].toDouble();
+    mTailBendRange.angle[1] = shape["TailBendRange1"].toDouble();
+    mBounding = objToRect(shape, "Bounding");
+    mPolygon = objToPoly(shape, "Polygon");
+}
+
+QJsonObject BoneShape::serializeToJson() const{
+    QJsonObject shape;
+    shape["Valid"] = mIsValid;
+    addVecToJson(mSegment.start, &shape, "SegmentStart");
+    addVecToJson(mSegment.dir, &shape, "SegmentDir");
+    addVecToJson(mVUnit, &shape, "Unit");
+    shape["DirAngle"] = mVDirAngle;
+    shape["Length"] = mLength;
+    addVecToJson(mRadius[0], &shape, "Radius0");
+    addVecToJson(mRadius[1], &shape, "Radius1");
+    shape["RootBendAngle0"] = mRootBendRange.angle[0];
+    shape["RootBendAngle1"] = mRootBendRange.angle[1];
+    shape["TailBendRange0"] = mTailBendRange.angle[0];
+    shape["TailBendRange1"] = mTailBendRange.angle[1];
+    addRectToJson(mBounding, &shape, "Bounding");
+    addPolyToJson(mPolygon, &shape, "Polygon");
+    return shape;
 }
 
 bool BoneShape::deserialize(Deserializer& aIn)

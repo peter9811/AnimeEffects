@@ -5,6 +5,7 @@
 #include <QDropEvent>
 #include <QHeaderView>
 #include <QAction>
+#include "ctrl/TimeLineEditor.h"
 #include "util/PlacePointer.h"
 #include "util/LinkPointer.h"
 #include "util/TreePos.h"
@@ -86,6 +87,7 @@ private:
     void onContextMenuRequested(const QPoint& aPos);
     void onSlimActionTriggered(bool aIsTriggered);
     void onRenameActionTriggered(bool aIsTriggered);
+    void onPasteActionTriggered(bool aIsTriggered);
     void onObjectActionTriggered(bool aIsTriggered);
     void onFolderActionTriggered(bool aIsTriggered);
     void onDeleteActionTriggered(bool aIsTriggered);
@@ -100,6 +102,7 @@ private:
     QVector<util::TreePos> mRemovedPositions;
     QVector<util::TreePos> mInsertedPositions;
     util::PlacePointer<cmnd::ScopedMacro> mMacroScope;
+    QScopedPointer<ctrl::TimeLineEditor> mEditor;
     core::ObjectTreeNotifier* mObjTreeNotifier;
     QModelIndex mDragIndex;
     QAbstractItemView::DropIndicatorPosition mDropIndicatorPos;
@@ -107,6 +110,7 @@ private:
     QTreeWidgetItem* mActionItem;
     QAction* mSlimAction;
     QAction* mRenameAction;
+    QAction* mPasteAction;
     QAction* mObjectAction;
     QAction* mFolderAction;
     QAction* mDeleteAction;

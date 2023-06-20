@@ -1,3 +1,5 @@
+#include "qjsonarray.h"
+#include "qjsonobject.h"
 #include "util/MathUtil.h"
 #include "core/Bone2.h"
 
@@ -250,6 +252,70 @@ bool Bone2::serialize(Serializer& aOut) const
     aOut.write(mRotate);
 
     return aOut.checkStream();
+}
+
+template <typename vec2d>
+void addVecToJson(vec2d vector, QJsonObject *json, QString varName){
+    json->insert(varName + "X", vector.x()); json->insert(varName + "Y", vector.y());
+}
+
+QVector2D objToVec(QJsonObject obj, QString varName){
+    return QVector2D(obj[varName + "X"].toDouble(), obj[varName + "Y"].toDouble());
+}
+
+void Bone2::deserializeFromJson(QJsonObject json, bool isChild){
+    if (!isChild){
+        json = json["Bone"].toObject();
+    }
+    mLocalPos = objToVec(json, "LocalPos");
+    mLocalAngle = json["LocalAngle"].toDouble();
+    mRange[0] = objToVec(json, "Range0");
+    mRange[1] = objToVec(json, "Range1");
+    mShape.deserializeFromJson(json);
+    mWorldPos = objToVec(json, "WorldPos");
+    mRotate = json["Rotate"].toDouble();
+    QJsonArray childArray = json["Children"].toArray();
+    int childCount = childArray.size();
+    int childIndex = 0;
+    if(!isChild){
+        while(childIndex != childCount){
+            for(auto child: childArray){
+                QJsonObject childObj = child.toObject();
+                Bone2* childBone = new Bone2;
+                childBone->deserializeFromJson(childObj, true);
+                children().insert(childIndex, childBone);
+            }
+            childIndex++;
+        }
+    }
+}
+
+QJsonObject Bone2::serializeToJson(bool isChild) const{
+    QJsonObject bone;
+    addVecToJson(mLocalPos, &bone, "LocalPos");
+    bone["LocalAngle"] = mLocalAngle;
+    addVecToJson(mRange[0], &bone, "Range0");
+    addVecToJson(mRange[1], &bone, "Range1");
+    bone["Shape"] = mShape.serializeToJson();
+    addVecToJson(mWorldPos, &bone, "WorldPos");
+    bone["WorldAngle"] = mWorldAngle;
+    bone["Rotate"] = mRotate;
+    QJsonArray childBones;
+    if(!isChild){
+        for(auto child: children()){
+            QJsonObject childBone = child->serializeToJson(true);
+            childBones.append(childBone);
+            while(!child->children().empty()){
+                for(auto childSib: child->children()){
+                    QJsonObject childBone = childSib->serializeToJson(true);
+                    childBones.append(childBone);
+                    child = childSib;
+                }
+            }
+        }
+        bone["Children"] = childBones;
+    }
+    return bone;
 }
 
 bool Bone2::deserialize(Deserializer& aIn)

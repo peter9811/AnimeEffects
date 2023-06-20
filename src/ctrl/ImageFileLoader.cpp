@@ -2,6 +2,7 @@
 #include <fstream>
 #include <QDebug>
 #include "XC.h"
+#include "qapplication.h"
 #include "util/TextUtil.h"
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
@@ -211,7 +212,7 @@ bool ImageFileLoader::loadPsd(
     file->close(); // do not use any more
 
     // update reporter
-    aReporter.setSection("Building a Object Tree...");
+    aReporter.setSection(QCoreApplication::translate("Image Loader", "Building a Object Tree..."));
     aReporter.setMaximum(reader.format()->layerAndMaskInfo().layerCount);
     aReporter.setProgress(0);
     int progress = 0;

@@ -86,6 +86,9 @@ QGroupBox {
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position:top left;
+	color: #ffffff;
+	border-top 1em transparent;
+	border-bottom: 0.1em inset #76797c;
 }
 
 QPushButton {

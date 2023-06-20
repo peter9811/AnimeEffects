@@ -3,8 +3,8 @@
 
 namespace
 {
-static const int kButtonSize = 23;
-static const int kButtonSpace = kButtonSize;
+int kButtonSize = 23;
+int kButtonSpace = kButtonSize;
 }
 
 namespace gui {
@@ -16,12 +16,16 @@ MeshPanel::MeshPanel(QWidget* aParent, GUIResources& aResources)
     , mParam()
     , mTypeGroup()
 {
-    this->setTitle(tr("MeshCreating"));
+    this->setTitle(tr("Mesh Editing"));
     createMode();
 }
 
 void MeshPanel::createMode()
 {
+    if(mResources.getTheme().contains("high_dpi")){
+        kButtonSize = 36;
+        kButtonSpace = kButtonSize;
+    }
     // type
     mTypeGroup.reset(new SingleOutItem(3, QSize(kButtonSpace, kButtonSpace), this));
     mTypeGroup->setChoice(mParam.mode);

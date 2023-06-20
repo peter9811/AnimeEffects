@@ -4,6 +4,7 @@
 #include <QRect>
 #include <QVector>
 #include <QScopedPointer>
+#include "gui/obj/obj_Item.h"
 #include "util/Range.h"
 #include "util/LinkPointer.h"
 #include "util/PlacePointer.h"
@@ -56,8 +57,11 @@ public:
     QPoint currentTimeCursorPos() const;
     bool checkContactWithKeyFocus(core::TimeLineEvent& aEvent, const QPoint& aPos);
     bool retrieveFocusTargets(core::TimeLineEvent& aEvent);
+    QString pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Pointee<core::Project> project, bool isFolder);
+    QList<core::TimeKey*> getTypesFromCb(util::LifeLink::Pointee<core::Project> project);
     bool pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& aWorldPos);
     void deleteCheckedKeys(core::TimeLineEvent& aEvent);
+    util::LinkPointer<core::Project> mProject;
 
 private:
     enum State
@@ -75,7 +79,6 @@ private:
     bool beginMoveKeys(const QPoint& aWorldPos);
     bool modifyMoveKeys(const QPoint& aWorldPos);
 
-    util::LinkPointer<core::Project> mProject;
     QVector<TimeLineRow> mRows;
     const core::ObjectNode* mSelectingRow;
     int mTimeMax;

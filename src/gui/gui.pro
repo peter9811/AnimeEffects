@@ -66,6 +66,7 @@ SOURCES += \
     TimeLineWidget.cpp \
     ToolWidget.cpp \
     TargetWidget.cpp \
+    exportdiag.cpp \
     prop/prop_Panel.cpp \
     prop/prop_KeyGroup.cpp \
     prop/prop_Items.cpp \
@@ -133,6 +134,7 @@ HEADERS += \
     TimeLineWidget.h \
     ToolWidget.h \
     TargetWidget.h \
+    exportdiag.h \
     prop/prop_Panel.h \
     prop/prop_KeyGroup.h \
     prop/prop_Items.h \

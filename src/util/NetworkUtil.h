@@ -19,6 +19,7 @@ namespace util
             bool libExists(QString aLib, QString versionType = "-V");
             QList<QString> libArgs(QList<QString> anArgument, QString aType);
             QFileInfo downloadGithubFile(QString aURL, QString aFile, int aID, QWidget* aParent);
+            void checkForUpdate(QString url, NetworkUtil networking, QWidget* aParent, bool showWithoutUpdate = true);
 
             // This isn't necessarily a network utility, but since I'm using them here anyway I might as well
             // make them accessible.

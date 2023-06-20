@@ -218,7 +218,6 @@ void KeyAccessor::assignScaleEasing(util::Easing::Param aNext)
     const int frame = getFrame();
     auto newData = getScaleKeyData(*mTarget, frame);
     newData.easing() = aNext;
-
     ctrl::TimeLineUtil::assignScaleKeyData(*mProject, *mTarget, frame, newData);
 }
 
@@ -279,6 +278,9 @@ void KeyAccessor::assignHSV(int aValue, QString aType)
     else if (aType == "val"){
         newData.setValue(aValue);
     }
+    else if (aType == "abs"){
+        newData.setAbsolute(aValue);
+    }
 
     ctrl::TimeLineUtil::assignHSVKeyData(*mProject, *mTarget, frame, newData);
 }
@@ -338,13 +340,25 @@ void KeyAccessor::assignImageCellSize(int aNext)
 }
 
 //-------------------------------------------------------------------------------------------------
+
+template <typename T>
+void assignParam(T * key){
+    QSettings settings;
+    util::Easing::Param aNext;
+    aNext.type = util::Easing::easingToEnum(QString());
+    aNext.range = util::Easing::rangeToEnum(QString());
+    key->data().easing() = aNext;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void KeyAccessor::knockNewMove()
 {
     ASSERT_AND_RETURN_INVALID_TARGET();
     auto newKey = new core::MoveKey();
     newKey->setPos(currline().current().srt().pos());
     newKey->setCentroid(currline().current().srt().centroid());
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewMoveKey(*mProject, *mTarget, getFrame(), newKey);
 }
 void KeyAccessor::knockNewRotate()
@@ -352,7 +366,7 @@ void KeyAccessor::knockNewRotate()
     ASSERT_AND_RETURN_INVALID_TARGET();
     auto newKey = new core::RotateKey();
     newKey->setRotate(currline().current().srt().rotate());
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewRotateKey(*mProject, *mTarget, getFrame(), newKey);
 }
 void KeyAccessor::knockNewScale()
@@ -360,7 +374,7 @@ void KeyAccessor::knockNewScale()
     ASSERT_AND_RETURN_INVALID_TARGET();
     auto newKey = new core::ScaleKey();
     newKey->setScale(currline().current().srt().scale());
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewScaleKey(*mProject, *mTarget, getFrame(), newKey);
 }
 
@@ -369,7 +383,7 @@ void KeyAccessor::knockNewDepth()
     ASSERT_AND_RETURN_INVALID_TARGET();
     auto newKey = new core::DepthKey();
     newKey->setDepth(currline().current().depth());
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewDepthKey(*mProject, *mTarget, getFrame(), newKey);
 }
 
@@ -378,7 +392,7 @@ void KeyAccessor::knockNewOpacity()
     ASSERT_AND_RETURN_INVALID_TARGET();
     auto newKey = new core::OpaKey();
     newKey->data() = currline().current().opa();
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewOpaKey(*mProject, *mTarget, getFrame(), newKey);
 }
 
@@ -387,7 +401,7 @@ void KeyAccessor::knockNewHSV()
     ASSERT_AND_RETURN_INVALID_TARGET();
     auto newKey = new core::HSVKey();
     newKey->data() = currline().current().hsv();
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewHSVKey(*mProject, *mTarget, getFrame(), newKey);
 }
 
@@ -405,7 +419,7 @@ void KeyAccessor::knockNewPose()
     {
         newKey->data().createBonesBy(*parentKey);
     }
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewPoseKey(*mProject, *mTarget, getFrame(), newKey, parentKey);
 }
 
@@ -415,7 +429,7 @@ void KeyAccessor::knockNewFFD()
     auto newKey = new core::FFDKey();
     newKey->data() = currline().current().ffd();
     core::TimeKey* parentKey = currline().current().ffdMeshParent();
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewFFDKey(*mProject, *mTarget, getFrame(), newKey, parentKey);
 }
 
@@ -426,7 +440,7 @@ void KeyAccessor::knockNewImage(const img::ResourceHandle& aHandle)
     newKey->setImage(aHandle);
     newKey->resetGridMesh();
     newKey->setImageOffsetByCenter();
-
+    assignParam(newKey);
     ctrl::TimeLineUtil::pushNewImageKey(*mProject, *mTarget, getFrame(), newKey);
 }
 

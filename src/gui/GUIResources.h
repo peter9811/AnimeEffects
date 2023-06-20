@@ -32,9 +32,10 @@ public:
     void setTheme(const QString& aThemeId);
 
 public:
+    QString getThemeLocation(){return mTheme.path();};
+    QString getTheme(){return mTheme.id();};
     // signals
     util::Signaler<void(theme::Theme&)> onThemeChanged;
-
     void triggerOnThemeChanged();
 
 private:

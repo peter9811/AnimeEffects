@@ -13,7 +13,7 @@
 namespace
 {
 
-static const int kLanguageTypeCount = 3;
+static const int kLanguageTypeCount = 4;
 static const int kTimeFormatTypeCount = 6;
 static const int kEasingTypeCount = 12;
 static const int kRangeTypeCount = 3;
@@ -23,6 +23,7 @@ int languageToIndex(const QString& aLanguage)
     if (aLanguage == "Auto") return 0;
     else if (aLanguage == "English") return 1;
     else if (aLanguage == "Japanese") return 2;
+    else if (aLanguage == "Chinese") return 3;
     else return 0;
 }
 
@@ -112,6 +113,7 @@ QString indexToLanguage(int aIndex, bool translated = true)
         case 0: return QCoreApplication::translate("GeneralSettingsDialog", "Auto");
         case 1: return  QCoreApplication::translate("GeneralSettingsDialog", "English");;
         case 2: return  QCoreApplication::translate("GeneralSettingsDialog", "Japanese");;
+        case 3: return QCoreApplication::translate("GeneralSettingsDialog", "Chinese");;
         default: return  QCoreApplication::translate("GeneralSettingsDialog", "Auto");;
         }
     }
@@ -120,6 +122,7 @@ QString indexToLanguage(int aIndex, bool translated = true)
         case 0: return QString("Auto");
         case 1: return QString("Enslish");
         case 2: return QString("Japanese");
+        case 3: return QString("Chinese");
         default: return QString("Auto");
         }
     }
@@ -189,15 +192,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
         auto isAutoSaveDelay = settings.value("generalsettings/projects/autosaveDelay");
         mAutoSaveDelay = isAutoSaveDelay.isValid()? isAutoSaveDelay.toInt() : 5;
 
-        auto isBlendColor = settings.value("generalsettings/keys/hsvSetColor");
-        bHSVBlendColor = isBlendColor.isValid()? isBlendColor.toBool() : true;
-
-        // Index 0 is "Render indefinetely"
-        auto isHSVBehaviour = settings.value("generalsettings/keys/hsvBehaviour");
-        mInitialHSVBehaviour = isHSVBehaviour.isValid()? isHSVBehaviour.toInt() : 0;
-
-        auto isHSVFolder = settings.value("generalsettings/keys/hsvFolder");
-        bHSVFolder = isHSVFolder.isValid()? isHSVFolder.toBool() : false;
+        auto isAutoCbCopy = settings.value("generalsettings/keys/autocb");
+        bAutoCbCopy = isAutoCbCopy.isValid()? isAutoCbCopy.toBool() : true;
 
         auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
         mKeyDelay = isKeyDelay.isValid()? isKeyDelay.toInt() : 125;
@@ -282,19 +278,25 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
 
     auto keysettings = new QFormLayout();
     {
+        mAutoCbCopy = new QCheckBox();
+        mAutoCbCopy->setChecked(bAutoCbCopy);
+        keysettings->addRow(tr("Automatically copy keys to the clipboard"), mAutoCbCopy);
+
+        /*
         mHSVBlendColor = new QCheckBox();
         mHSVBlendColor->setChecked(bHSVBlendColor);
         keysettings->addRow(tr("HSV | Blend color : "), mHSVBlendColor);
 
         mHSVFolder = new QCheckBox();
         mHSVFolder->setChecked(bHSVFolder);
-        keysettings->addRow(tr("HSV | Enable folder support (not recommended)"), mHSVFolder);
+        keysettings->addRow(tr("HSV | Enable folder support (beta)"), mHSVFolder);
 
         mHSVBehaviour = new QComboBox();
         mHSVBehaviour->addItem(tr("Render indefinitely"));
         mHSVBehaviour->addItem(tr("Only render between keys"));
         mHSVBehaviour->setCurrentIndex(mInitialHSVBehaviour);
-        keysettings->addRow(tr("HSV | Key rendering : "), mHSVBehaviour);
+        keysettings->addRow(tr("HSV | Key rendering (Needs reboot) : "), mHSVBehaviour);
+        */
     }
 
     auto keybindingSettings = new QFormLayout();
@@ -399,7 +401,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources &aGUIResources, QWidget*
 
         selectFromExe = new QPushButton(tr("Select from executable and automatically setup"));
         selectFromExe->setToolTip(tr("This will remove previous instances of FFmpeg from your tools directory"
-                                     " and replace them with your custom executable."));
+                                     " and replace them with your custom executable, please make sure this is a valid FFmpeg executable."));
         connect(selectFromExe, &QPushButton::clicked, [=](){
             util::NetworkUtil net;
             QDir dir = QDir("./tools");
@@ -563,19 +565,8 @@ bool GeneralSettingDialog::autoSaveDelayHasChanged()
     return (mAutoSaveDelay != mAutoSaveDelayBox->value());
 }
 
-bool GeneralSettingDialog::HSVBehaviourHasChanged()
-{
-    return (mInitialHSVBehaviour != mHSVBehaviour->currentIndex());
-}
-
-bool GeneralSettingDialog::HSVSetColorHasChanged()
-{
-    return (bHSVBlendColor != mHSVBlendColor->isChecked());
-}
-
-bool GeneralSettingDialog::HSVFolderHasChanged()
-{
-    return (bHSVFolder!= mHSVFolder->isChecked());
+bool GeneralSettingDialog::cbCopyHasChanged(){
+    return (bAutoCbCopy != mAutoCbCopy->isChecked());
 }
 
 QString GeneralSettingDialog::theme()
@@ -612,6 +603,10 @@ void GeneralSettingDialog::saveSettings()
     if(autoSaveDelayHasChanged()){
         settings.setValue("generalsettings/projects/autosaveDelay", mAutoSaveDelayBox->value());
     }
+    if(cbCopyHasChanged()){
+        settings.setValue("generalsettings/keys/autocb", mAutoCbCopy->isChecked());
+    }
+    /*
     if (HSVBehaviourHasChanged()){
         settings.setValue("generalsettings/keys/hsvBehaviour", mHSVBehaviour->currentIndex());
     }
@@ -621,6 +616,7 @@ void GeneralSettingDialog::saveSettings()
     if (HSVFolderHasChanged()){
         settings.setValue("generalsettings/keys/hsvFolder", mHSVFolder->isChecked());
     }
+    */
     if (keyDelayHasChanged()){
         settings.setValue("generalsettings/keybindings/keyDelay", mKeyDelayBox->value());
     }

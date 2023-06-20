@@ -29,9 +29,7 @@ public:
     bool autoSaveHasChanged();
     bool autoSaveDelayHasChanged();
     bool themeHasChanged();
-    bool HSVBehaviourHasChanged();
-    bool HSVSetColorHasChanged();
-    bool HSVFolderHasChanged();
+    bool cbCopyHasChanged();
     bool keyDelayHasChanged();
     QString theme();
 private:
@@ -60,14 +58,8 @@ private:
     int mAutoSaveDelay;
     QSpinBox* mAutoSaveDelayBox;
 
-    bool bHSVBlendColor;
-    QCheckBox* mHSVBlendColor;
-
-    bool bHSVFolder;
-    QCheckBox* mHSVFolder;
-
-    int mInitialHSVBehaviour;
-    QComboBox* mHSVBehaviour;
+    bool bAutoCbCopy;
+    QCheckBox* mAutoCbCopy;
 
     int mInitialTimeFormatIndex;
     QComboBox* mTimeFormatBox;

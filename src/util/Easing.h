@@ -39,8 +39,14 @@ public:
     struct Param
     {
         Param()
+            // Deprecated due to poor performance
+            /*
             : type(Easing::easingToEnum())
             , range(Easing::rangeToEnum())
+            */
+
+            : type(Type_Linear)
+            , range(Range_InOut)
             , weight(1.0f)
         {}
         bool isValidParam() const;
@@ -52,6 +58,7 @@ public:
     };
 
     static QString getTypeName(Type aType);
+    static QString getRangeName(Range aRange);
     static QStringList getTypeNameList();
 
     static float calculate(Type, Range, float t, float b, float c, float d);
@@ -97,8 +104,8 @@ public:
     static float bounceOut(float t, float b, float c, float d);
     static float bounceInOut(float t, float b, float c, float d);
 
-    static Easing::Type easingToEnum();
-    static Easing::Range rangeToEnum();
+    static Easing::Type easingToEnum(QString easing);
+    static Easing::Range rangeToEnum(QString range);
 
 private:
     Easing() {}

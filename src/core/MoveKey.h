@@ -45,6 +45,27 @@ public:
         const QVector2D& centroid() const { return mCentroid; }
     };
 
+
+    static QString getSplineName(SplineType spline){
+        switch (spline) {
+        case SplineType_Linear:
+            return QString("Linear");
+        case SplineType_CatmullRom:
+            return QString("Catmull");
+        default:
+            return "";
+        }
+    }
+
+    static int getSplineFromName(QString spline){
+        if (spline == "Catmull"){
+            return SplineType_CatmullRom;
+        }
+        else{
+            return SplineType_Linear;
+        }
+    }
+
     static std::array<QVector2D, 2> getCatmullRomVels(
             const MoveKey* aKey0, const MoveKey* aKey1,
             const MoveKey* aKey2, const MoveKey* aKey3);

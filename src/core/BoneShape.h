@@ -34,8 +34,11 @@ public:
 
     float influence(const QVector2D& aPos) const;
 
+
     // serialize
     bool serialize(Serializer& aOut) const;
+    QJsonObject serializeToJson() const;
+    void deserializeFromJson(QJsonObject json);
     bool deserialize(Deserializer& aIn);
 
 private:

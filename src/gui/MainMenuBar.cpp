@@ -147,6 +147,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         QAction* saveProject    = new QAction(tr("Save Project"), this);
         QAction* saveProjectAs  = new QAction(tr("Save Project As..."), this);
         QAction* closeProject   = new QAction(tr("Close Project"), this);
+        QAction* exportWindow = new QAction(tr("New Export..."), this);
         QMenu* exportAs = new QMenu(tr("Export As"), this);
         {
             ctrl::VideoFormat gifFormat;
@@ -175,6 +176,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         mProjectActions.push_back(saveProject);
         mProjectActions.push_back(saveProjectAs);
         mProjectActions.push_back(closeProject);
+        mProjectActions.push_back(exportWindow);
         mProjectActions.push_back(exportAs->menuAction());
 
         connect(newProject, &QAction::triggered, mainWindow, &MainWindow::onNewProjectTriggered);
@@ -182,6 +184,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         connect(saveProject, &QAction::triggered, mainWindow, &MainWindow::onSaveProjectTriggered);
         connect(saveProjectAs, &QAction::triggered, mainWindow, &MainWindow::onSaveProjectAsTriggered);
         connect(closeProject, &QAction::triggered, mainWindow, &MainWindow::onCloseProjectTriggered);
+        connect(exportWindow, &QAction::triggered, mainWindow, &MainWindow::onExportTriggered);
 
         fileMenu->addAction(newProject);
         fileMenu->addAction(openProject);
@@ -189,6 +192,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         fileMenu->addSeparator();
         fileMenu->addAction(saveProject);
         fileMenu->addAction(saveProjectAs);
+        // fileMenu->addAction(exportWindow);
         fileMenu->addAction(exportAs->menuAction());
         fileMenu->addSeparator();
         fileMenu->addAction(closeProject);
@@ -324,85 +328,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         {
             util::NetworkUtil networking;
             QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
-            qDebug("--------");
-            qInfo() << "Checking for updates on : " << url;
-            QJsonDocument jsonResponse = networking.getJsonFrom(url);
-            QString currentVersion = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." + QString::number(AE_MICRO_VERSION);
-            /*
-            qDebug()<< "Response : " << jsonResponse.toJson().data();
-            qDebug()<< "Current version: " << currentVersion << "\n" << "Latest stable: " << jsonResponse[0]["name"].toString().replace("v", "");;
-            */
-            QString latestVersion = !jsonResponse.isEmpty()? jsonResponse[0]["name"].toString().replace("v", "") : "null";
-            if (latestVersion != ""){
-                QMessageBox updateBox;
-                bool onLatest = false; bool onPreview = false; bool failed = false;
-
-                // Failed
-                if (latestVersion == "null"){
-                    qDebug() << "Failed to get version";
-                    updateBox.setWindowTitle(tr("Failed"));
-                    updateBox.setText(tr("<center>Unable to get latest version. <br>Please check your internet "
-                                         "connection and if you have curl or wget installed.</center>"));
-                    failed = true;
-                }
-                // Latest version
-                if (latestVersion == currentVersion){
-                    qDebug() << "On latest version :" << latestVersion;
-                    updateBox.setWindowTitle(tr("On latest"));
-                    updateBox.setText(tr("<center>You already have the latest stable release available. <br>Version: ")
-                                      + currentVersion + "</center>");
-                    onLatest = true;
-                }
-                // Preview version
-                else if (latestVersion < currentVersion){
-                    qDebug() << "On preview version :" << currentVersion;
-
-                    updateBox.setWindowTitle(tr("On preview"));
-                    updateBox.setText(tr("<center>Your current version is higher than the latest stable release. "
-                                         "<br>Version: ") + currentVersion + "</center>");
-                    onPreview = true;
-                }
-                // Old version
-                else{
-                    qDebug() << "On version :" << currentVersion;
-                    updateBox.setWindowTitle(tr("New release available"));
-                    updateBox.setText(tr("<center>A new stable release is available, version: ") + latestVersion +
-                                      tr(".<br>Do you wish to download it or to go to the GitHub page?</center>"));
-                }
-
-                if (onLatest || onPreview || failed){
-                    updateBox.setStandardButtons(QMessageBox::Ok);
-                    updateBox.setDefaultButton(QMessageBox::Ok);
-                }
-                else{
-                     QAbstractButton* downloadButton = updateBox.addButton(tr("Download"), QMessageBox::AcceptRole);
-                     QAbstractButton* gotoButton = updateBox.addButton(tr("Go to page"), QMessageBox::AcceptRole);
-                     updateBox.addButton(QMessageBox::Cancel);
-                     updateBox.exec();
-
-                     if(updateBox.clickedButton() == gotoButton){
-                       QDesktopServices::openUrl(QUrl("https://github.com/AnimeEffectsDevs/AnimeEffects/releases/latest"));
-                     }
-                     else if(updateBox.clickedButton() == downloadButton){
-                         QString os = networking.os();
-                         QString arch = networking.arch();
-                         QString file;
-                         if (os == "win"){
-                             if (arch == "x86"){ file = "AnimeEffects-Windows-x86.zip"; }
-                             else{ file = "AnimeEffects-Windows-x64.zip"; }
-                         }
-                         else if (os == "linux"){ file = "AnimeEffects-Linux.zip"; }
-                         else if (os == "mac"){ file = "AnimeEffects-MacOS.zip"; }
-                         QFileInfo aeUpdate = networking.downloadGithubFile("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/releases/latest", file, 0, this);
-                         QDesktopServices::openUrl(QUrl::fromLocalFile(aeUpdate.absoluteFilePath()));
-                     }
-                     qDebug("--------");
-                     return;
-                }
-                updateBox.exec();
-                qDebug("--------");
-                return;
-            }
+            networking.checkForUpdate(url, networking, this);
         });
 
         helpMenu->addAction(aboutMe);

@@ -91,10 +91,8 @@ double TimeLineWidget::getOneFrameTime() const
 
 QPoint TimeLineWidget::viewportTransform() const
 {
-    // @note bug? Sometimes, the value of vertical scroll bar is different from the set value.
-
-    //return QPoint(-this->horizontalScrollBar()->value(), -this->verticalScrollBar()->value());
-    return QPoint(-this->horizontalScrollBar()->value(), -mVerticalScrollValue);
+    // @note bug? Sometimes, the value of vertical scroll bar is different from the set value.-
+    return QPoint(-this->horizontalScrollBar()->value(), -this->verticalScrollBar()->value());
 }
 
 void TimeLineWidget::setScrollBarValue(const QPoint& aViewportTransform)
@@ -249,15 +247,15 @@ void TimeLineWidget::mouseDoubleClickEvent(QMouseEvent* aEvent)
 
 void TimeLineWidget::wheelEvent(QWheelEvent* aEvent)
 {
+    aEvent->ignore();
     QPoint viewTrans = viewportTransform();
     const QPoint cursor = aEvent->position().toPoint();
-    const QRect rectPrev = mInner->rect();
 
     mInner->updateWheel(aEvent);
 
     const QRect rectNext = mInner->rect();
-    const double scale = static_cast<double>(rectNext.width() / rectPrev.width());
-    viewTrans.setX(static_cast<int>(cursor.x() + scale * (viewTrans.x() - cursor.x())));
+    viewTrans.setX(cursor.x() * rectNext.width() / mInner->parentWidget()->size().width());
+    //viewTrans.setX(static_cast<int>(cursor.x() + scale * (viewTrans.x() - cursor.x())));
     setScrollBarValue(viewTrans);
     updateCamera();
 }

@@ -17,6 +17,7 @@ public:
         int mHue;
         int mSaturation;
         int mValue;
+        int mAbsolute;
         QList<int> mHSV;
         void clamp(QString type);
     public:
@@ -28,8 +29,9 @@ public:
         void setHue(int aHue) { mHue = aHue; clamp("hue"); }
         void setSaturation(int aSaturation) {mSaturation = aSaturation; clamp("sat");}
         void setValue(int aValue) {mValue = aValue; clamp("val");}
-        void setHSV(QList<int> aHSV) {mHue = aHSV[0]; mSaturation = aHSV[1]; mValue = aHSV[2]; clamp("hsv");}
-        void updateHSV() {mHSV.clear(); mHSV = {mHue, mSaturation, mValue};}
+        void setAbsolute(int aAbsolute) {mAbsolute = aAbsolute; clamp("keep");}
+        void setHSV(QList<int> aHSV) {mHue = aHSV[0]; mSaturation = aHSV[1]; mValue = aHSV[2]; mAbsolute = aHSV[3]; clamp("hsv");}
+        void updateHSV() {mHSV.clear(); mHSV = {mHue, mSaturation, mValue, mAbsolute};}
 
         const QList<int>& hsv() const { return mHSV; }
 
@@ -44,7 +46,8 @@ public:
     void setHue(int aHue) { mData.setHue(aHue);}
     void setSaturation(int aSaturation) {mData.setSaturation(aSaturation);}
     void setValue(int aValue) {mData.setValue(aValue);}
-    void setHSV (QList<int> aHSV) {mData.setHue(aHSV[0]); mData.setSaturation(aHSV[1]), mData.setValue(aHSV[2]);}
+    void setAbsolute(int aAbsolute) {mData.setAbsolute(aAbsolute);}
+    void setHSV (QList<int> aHSV) {mData.setHue(aHSV[0]); mData.setSaturation(aHSV[1]), mData.setValue(aHSV[2]), mData.setAbsolute(aHSV[3]);}
     void updateHSV() {mData.updateHSV();}
 
     const QList<int>& hsv() const { return mData.hsv(); }

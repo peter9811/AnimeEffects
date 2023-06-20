@@ -75,13 +75,13 @@ make
 ```
 
 ## Windows
-* It is recommended that you use QtCreator for compilation:
-```
-If you're not using QtCreator, it is adviced that you add the bin folder of your compiler of choice and of its tooling to your path, and then check out the powershell scripts available for building and deploying (MSVC 2019 is recommended) 
-Clone the project and open "AnimeEffects.pro" using QtCreator
-Compile the project on the release profile 
-Open your console of preference
-Run "windeployqt.exe --dir "AnimeEffectsWin" "path_to_the_executable" and then copy the "Data" folder and the AnimeEffects executable to AnimeEffectsWin
+* If you're not using QtCreator, it is adviced that you add the bin folder of your compiler of choice and of its tooling to your path, and then check out the powershell scripts available for building and deploying (MSVC 2019 is recommended) 
+```markdown
+- Clone the project and open "AnimeEffects.pro" using QtCreator
+- Compile the project on the release profile 
+- Open your console of preference
+- Run "windeployqt.exe --dir "AnimeEffectsWin" "path_to_the_executable"
+- Copy the "Data" folder and the AnimeEffects executable to AnimeEffectsWin
 ```
 
 * When deployment is done, you may just run AnimeEffects.exe

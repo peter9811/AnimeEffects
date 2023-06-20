@@ -21,8 +21,11 @@ Note: For the present there may be incompatible changes made, these will be made
 ## Requirements
 * Windows/Linux/Mac
   * See compatible versions bellow.
-* OpenGl 3.3 or higher
-  * On linux, you can check whether your graphics card supports OpenGL3.3 CoreProfile or not, run `glxinfo | grep "OpenGL core profile version"` on your terminal.
+* Processor: Intel Celeron/AMD Athlon or similar
+* RAM: 4GB
+* Hard disk: 500MB free (AnimeEffects itself only needs around 100mb, this is to have space for instalation, projects and to ensure stability)
+* Graphics card: Intel UHD Graphics/AMD Vega Graphics or any card that supports OpenGL 4.0
+* Display: 1360x720 (The GUI has been made for displays with this resolution or higher)
 * [FFmpeg](https://ffmpeg.org/download.html) (Necessary for video exporting, you can place it on your path or copy it to the "/tools" folder.)
 
 ## OS Targets
@@ -30,12 +33,12 @@ Note: For the present there may be incompatible changes made, these will be made
 * Windows 10 or newer.
 * Ubuntu LTS or newer.
   * The provided AppImage will *not* work on older versions due to glibc.
-* macOS Big Sur or newer.
+* MacOS Big Sur or newer.
   * None of our contributors actually has a Mac to test AnimeEffects on, but we do keep track of compilation errors and artifacts.
 
 ## Development requirements
 * Qt 5.14 or later.
-* MSVC2015/MinGW/GCC/Clang (32-bit or 64-bit)
+* MSVC2019/MinGW/Make (32-bit or 64-bit)
 
 ## Linux
 ### Installing Dependencies
@@ -61,7 +64,7 @@ sudo pacman -S git gcc glib2 qt5 make
 * Clone AnimeEffects git repo and go to the "src" folder:  
 
 ```
-git clone https://github.com/herace/AnimeEffects  
+git clone https://github.com/AnimeEffectsDevs/AnimeEffects
 cd AnimeEffects/src
 qmake AnimeEffects.pro
 make
@@ -74,11 +77,11 @@ make
 ## Windows
 * It is recommended that you use QtCreator for compilation:
 ```
-If you're not using QtCreator, it is adviced that you add the bin folder of your compiler of choice and of its tooling to your path, and then check out the powershell scripts available for building and deploying (MinGW is recommended) 
+If you're not using QtCreator, it is adviced that you add the bin folder of your compiler of choice and of its tooling to your path, and then check out the powershell scripts available for building and deploying (MSVC 2019 is recommended) 
 Clone the project and open "AnimeEffects.pro" using QtCreator
 Compile the project on the release profile 
 Open your console of preference
-Run "windeployqt.exe --release "path_to_the_executable""
+Run "windeployqt.exe --dir "AnimeEffectsWin" "path_to_the_executable"" and then copy the "Data" folder and the AnimeEffects executable to AnimeEffectsWin
 ```
 
 * When deployment is done, you may just run AnimeEffects.exe

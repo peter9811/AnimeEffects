@@ -168,16 +168,20 @@ img::ResourceNode* returnMatch(img::ResourceNode* image, QString match){
             return current;
         }
         if(!current->children().empty()){
-            auto recMatch = returnMatch(current->children().begin()._Ptr->_Myval, match);
-            if (recMatch != nullptr){return recMatch;};
+            for(auto child: current->children()){
+                auto recMatch = returnMatch(child, match);
+                if (recMatch != nullptr){return recMatch;};
+            }
         }
         current = current->nextSib();
     }
     // Get last sibling
     if(current->data().identifier() == match){return current;}
     if(!current->children().empty()){
-        auto recMatch = returnMatch(current->children().begin()._Ptr->_Myval, match);
-        if (recMatch != nullptr){return recMatch;};
+        for(auto child: current->children()){
+            auto recMatch = returnMatch(child, match);
+            if (recMatch != nullptr){return recMatch;};
+        }
     }
     // Get children
     for (auto child: image->children()){
@@ -187,8 +191,10 @@ img::ResourceNode* returnMatch(img::ResourceNode* image, QString match){
                 return current;
             }
             if(!current->children().empty()){
-                auto recMatch = returnMatch(current->children().begin()._Ptr->_Myval, match);
-                if (recMatch != nullptr){return recMatch;};
+                for(auto child: current->children()){
+                    auto recMatch = returnMatch(child, match);
+                    if (recMatch != nullptr){return recMatch;};
+                }
             }
             current = current->nextSib();
         }
@@ -196,8 +202,10 @@ img::ResourceNode* returnMatch(img::ResourceNode* image, QString match){
     // Get last child
     if(current->data().identifier() == match){return current;}
     if(!current->children().empty()){
-        auto recMatch = returnMatch(current->children().begin()._Ptr->_Myval, match);
-        if (recMatch != nullptr){return recMatch;};
+        for(auto child: current->children()){
+            auto recMatch = returnMatch(child, match);
+            if (recMatch != nullptr){return recMatch;};
+        }
     }
     return nullptr;
 }

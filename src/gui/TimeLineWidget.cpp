@@ -92,14 +92,19 @@ double TimeLineWidget::getOneFrameTime() const
 QPoint TimeLineWidget::viewportTransform() const
 {
     // @note bug? Sometimes, the value of vertical scroll bar is different from the set value.-
-    return QPoint(-this->horizontalScrollBar()->value(), -this->verticalScrollBar()->value());
+    QPoint point = {-this->horizontalScrollBar()->value(), -this->verticalScrollBar()->value()};
+    // @note by yukusai: Fixed by the heresy you see below you, Qt is atrocious I swear...
+    if(mVerticalScrollValue!=this->verticalScrollBar()->value()){
+        point.setY(mVerticalScrollValue > this->verticalScrollBar()->value()? -mVerticalScrollValue: -this->verticalScrollBar()->value());
+    }
+    return point;
 }
 
 void TimeLineWidget::setScrollBarValue(const QPoint& aViewportTransform)
 {
-    this->horizontalScrollBar()->setValue(-aViewportTransform.x());
-    this->verticalScrollBar()->setValue(-aViewportTransform.y());
-    mVerticalScrollValue = -aViewportTransform.y();
+    this->horizontalScrollBar()->setValue(aViewportTransform.x());
+    this->verticalScrollBar()->setValue(aViewportTransform.y());
+    mVerticalScrollValue = aViewportTransform.y();
 }
 
 void TimeLineWidget::updateCamera()

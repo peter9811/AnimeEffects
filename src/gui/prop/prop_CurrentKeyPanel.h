@@ -128,6 +128,7 @@ private:
     IntegerItem* mHue;
     IntegerItem* mSaturation;
     IntegerItem* mValue;
+    CheckItem* mAbsolute;
     bool mKeyExists;
 };
 

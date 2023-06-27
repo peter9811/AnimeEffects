@@ -1,10 +1,9 @@
 #include "gui/tool/tool_SRTPanel.h"
-#include "gui/tool/tool_ItemTable.h"
 
 namespace
 {
-static const int kButtonSize = 23;
-static const int kButtonSpace = kButtonSize;
+int kButtonSize = 23;
+int kButtonSpace = kButtonSize;
 }
 
 namespace gui {
@@ -27,6 +26,10 @@ SRTPanel::SRTPanel(QWidget* aParent, GUIResources& aResources)
 
 void SRTPanel::createMode()
 {
+    if(mResources.getTheme().contains("high_dpi")){
+        kButtonSize = 36;
+        kButtonSpace = kButtonSize;
+    }
     // mode
     mTypeGroup.reset(new SingleOutItem(2, QSize(kButtonSpace, kButtonSpace), this));
     mTypeGroup->setChoice(mParam.mode);

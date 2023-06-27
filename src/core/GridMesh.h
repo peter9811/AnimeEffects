@@ -92,6 +92,8 @@ public:
     const QRect& vertexRect() const { return mVertexRect; }
 
     bool serialize(Serializer& aOut) const;
+    QJsonObject serializeToJson() const;
+    bool deserializeFromJson(QJsonObject json);
     bool deserialize(Deserializer& aIn);
 
 private:

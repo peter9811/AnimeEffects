@@ -1,8 +1,15 @@
 #include <QMenu>
 #include <QMessageBox>
+#include "core/TimeKeyExpans.h"
 #include "gui/TimeLineEditorWidget.h"
 #include "gui/MouseSetting.h"
 #include "gui/obj/obj_Item.h"
+#include "qapplication.h"
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QClipboard>
+#include <QMimeData>
 
 namespace gui
 {
@@ -104,6 +111,9 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
 
         mDeleteKey = new QAction(tr("Delete key"), this);
         mDeleteKey->connect(mDeleteKey, &QAction::triggered, this, &TimeLineEditorWidget::onDeleteKeyTriggered);
+
+        mCopyToClipboard = new QAction(tr("Copy key to clipboard"), this);
+        mCopyToClipboard->connect(mCopyToClipboard, &QAction::triggered, this, &TimeLineEditorWidget::onCopyCBTriggered);
     }
     this->update();
     {
@@ -225,6 +235,7 @@ void TimeLineEditorWidget::updateLinesRecursive(QTreeWidgetItem* aItem)
     {
         updateLinesRecursive(aItem->child(i));
     }
+    updateSize();
 }
 
 void TimeLineEditorWidget::updateLineSelection(core::ObjectNode* aRepresent)
@@ -319,6 +330,7 @@ void TimeLineEditorWidget::onContextMenuRequested(const QPoint& aPos)
     if (mEditor->checkContactWithKeyFocus(mTargets, aPos))
     {
         menu.addAction(mCopyKey);
+        menu.addAction(mCopyToClipboard);
         menu.addSeparator();
         menu.addAction(mDeleteKey);
     }
@@ -332,9 +344,203 @@ void TimeLineEditorWidget::onContextMenuRequested(const QPoint& aPos)
     this->update();
 }
 
+// Type, frame, easing type, easing range, easing weight.
+void addVecToJson(QJsonObject* json, QString title, QVector2D vec){
+    json->insert(title + "X", vec.x()); json->insert(title + "Y", vec.y());
+}
+
+// Tf means Type & Frame in case you're wondering.
+void addTfToObj(QJsonObject* json, int keyType, core::TimeKey* timeKey){
+    json->insert("Type", core::TimeLine::getTimeKeyName((core::TimeKeyType)keyType));
+    json->insert("Frame", timeKey->frame());
+}
+template <typename keyData>
+void addStandardToObj(QJsonObject* json, keyData data, int keyType, core::TimeKey* timeKey){
+    addTfToObj(json, keyType, timeKey);
+    json->insert("eType", util::Easing::getTypeName(data.easing().type));
+    json->insert("eRange", util::Easing::getRangeName(data.easing().range));
+    json->insert("eWeight", data.easing().weight);
+}
+
+QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::ObjectNode* node){
+    switch(keyType){
+    // General data for all keys: Type, Frame and Easing {type, range & weight}
+    case core::TimeKeyType_Move:{
+        core::MoveKey::Data data = ((const core::MoveKey*)timeKey)->data();
+        // Data types: pos(Vec2D), centroid(Vec2D), spline(int) //
+        QJsonObject move;
+        addStandardToObj(&move, data, keyType, timeKey);
+        addVecToJson(&move, "Pos", data.pos());
+        addVecToJson(&move, "Centre", data.centroid());
+        move["Spline"] = core::MoveKey::getSplineName(data.spline());
+        return move;
+        }
+    case core::TimeKeyType_Rotate:{
+        auto data = ((const core::RotateKey*)timeKey)->data();
+        // Data types: Rotate (float) //
+        QJsonObject rotate;
+        addStandardToObj(&rotate, data, keyType, timeKey);
+        rotate["Rotate"] = data.rotate();
+        return rotate;
+        }
+        break;
+    case core::TimeKeyType_Scale:{
+        auto data = ((const core::ScaleKey*)timeKey)->data();
+        // Data types: Scale (vec2d) //
+        QJsonObject scale;
+        addStandardToObj(&scale, data, keyType, timeKey);
+        addVecToJson(&scale, "Scale", data.scale());
+        return scale;
+        }
+    case core::TimeKeyType_Depth:{
+        auto data = ((const core::DepthKey*)timeKey)->data();
+        // Data types: Depth (float) //
+        QJsonObject depth;
+        addStandardToObj(&depth, data, keyType, timeKey);
+        depth["Depth"] = data.depth();
+        return depth;
+        }
+    case core::TimeKeyType_Opa:{
+        auto data = ((const core::OpaKey*)timeKey)->data();
+        // Data types: Opacity (float) //
+        QJsonObject opa;
+        addStandardToObj(&opa, data, keyType, timeKey);
+        opa["Opacity"] = data.opacity();
+        return opa;
+        }
+    case core::TimeKeyType_Bone:{
+        auto data = ((const core::BoneKey*)timeKey)->data();
+        /* Data types:
+        LocalPos(vec2d), LocalAngle(float), Range(vec2d * 2),
+        ---
+        Shape[Valid(bool), SegmentStart(vec2d), SegmentDir(vec2d), Unit(vec2d),
+        DirAngle(float), Length(float), Radius (vec2d * 2), RootBendAngle(float *2),
+        TailBendAngle(float * 2), Bounding(vec2d), Polygon{PolyCount(int), Vertices(vec2d)}],
+        ---
+        WorldPos(vec2d), WorldAngle(float), Rotate(float),
+        Children(Bones with same data type as previously described minus children of their own)
+        */
+        QJsonObject bones;
+        addTfToObj(&bones, keyType, timeKey);
+        QJsonArray boneArray;
+        for(auto bone: data.topBones()){
+            QJsonObject topBone;
+            topBone["Bone"] = bone->serializeToJson(false);
+            boneArray.append(topBone);
+        }
+        bones["Bones"] = boneArray;
+        return bones;
+        }
+    case core::TimeKeyType_Pose:{
+        auto data = ((const core::PoseKey*)timeKey)->data();
+        // Data types: Same as the bone key.
+        QJsonObject pose;
+        addTfToObj(&pose, keyType, timeKey);
+        QJsonArray boneArray;
+        for(auto bone: data.topBones()){
+            QJsonObject topBone;
+            topBone["Bone"] = bone->serializeToJson(false);
+            boneArray.append(topBone);
+        }
+        pose["Poses"] = boneArray;
+        return pose;
+        }
+    case core::TimeKeyType_Mesh:{
+        auto data = ((const core::MeshKey*)timeKey)->data();
+        // Data for MeshKey: Origin Offset (vec2d), Vertex count (int), Vertices (vec2d), Edge count (int),
+        // Edges (ints), Face count (int), Faces (ints)
+        QJsonObject mesh;
+        addTfToObj(&mesh, keyType, timeKey);
+        mesh["Mesh"] = data.serializeToJson();
+        return mesh;
+        }
+        break;
+    case core::TimeKeyType_FFD:{
+        auto data = ((const core::FFDKey*)timeKey)->data();
+        // Data for FFDKey: Vertex count (int), Vertex positions (vec3)
+        QJsonObject ffd;
+        addStandardToObj(&ffd, data, keyType, timeKey);
+        ffd["FFD"] = ((const core::FFDKey*)timeKey)->serializeToJson();
+        // ⚠ IF THE IMAGE'S GRIDMESH DOESN'T MATCH THE TARGET'S THE DEFORMATION WON'T OCCUR ⚠ //
+        /* We need the cell size to keep consistency with the vertex data, as the same image will
+        always generate the same mesh for any given cell size, we also need to check if there is an
+        image key close to our target to get the correct cellsize for the image being deformed. */
+        if (node->timeLine()->map(core::TimeKeyType_Image).size() != 0){
+            int dataFrame = timeKey->frame(); int closest = 0; int index = 0;
+            for (auto nodeM: node->timeLine()->map(core::TimeKeyType_Image)){
+                if(nodeM->frame() == dataFrame || nodeM->frame() - dataFrame <= closest - dataFrame){
+                    closest=index;
+                }
+                index++;
+            }
+            ffd["cellSize"] = ((const core::ImageKey*)node->timeLine()->
+                               timeKey(core::TimeKeyType_Image, closest))->data().gridMesh().cellSize();
+        }
+        else{ ffd["cellSize"] = node->timeLine()->current().areaImageKey()->data().gridMesh().cellSize(); }
+        return ffd;
+        }
+    case core::TimeKeyType_Image:{
+        auto data = ((const core::ImageKey*)timeKey)->data();
+        /* Data for ImageKey: Identifier(QString), BlendMode(QString), Offset(vec2d), GridMesh[Size(qsize),
+        OriginOffset(vec2d), CellPx(int), IndexCount(int), Indices(uint32 * indexcount),
+        VertexCount(int), Positions(vec3d), Offsets(vec3d), TexCoords(vec2d), Normals (vec3d),
+        ConnectSize(size_t), XCMemSize(uint64), XCMemData (char*)]
+        ---
+        Regarding the correct identification of image resources, it is entirely possible for this method as currently
+        implemented to not get the correct image because there is more than one resource with the same identifier.
+        If this happens to you all I can say is git gud lmao.
+        */
+        QJsonObject img;
+        addStandardToObj(&img, data, keyType, timeKey);
+        img["Image"] = ((const core::ImageKey*)timeKey)->serializeToJson();
+        // qDebug() << QJsonDocument(img).toJson(QJsonDocument::Indented).toStdString().c_str();
+        return img;
+        }
+        break;
+    case core::TimeKeyType_HSV:{
+        auto data = ((const core::HSVKey*)timeKey)->data();
+        // Data types: HSV (List<int>) //
+        QJsonObject hsv;
+        addStandardToObj(&hsv, data, keyType, timeKey);
+        hsv["Hue"] = data.hsv()[0];
+        hsv["Saturation"] = data.hsv()[1];
+        hsv["Value"] = data.hsv()[2];
+        hsv["Absolute"] = data.hsv()[3];
+        return hsv;
+        }
+    }
+    // Returns empty object if no case is found
+    return QJsonObject();
+}
+
 void TimeLineEditorWidget::onCopyKeyTriggered(bool)
 {
     mCopyTargets = mTargets;
+    QSettings settings;
+    auto cbCopy = settings.value("generalsettings/keys/autocb");
+    bool copyToCb = cbCopy.isValid()? cbCopy.toBool() : true;
+    if(copyToCb){
+        onCopyCBTriggered(true);
+    }
+}
+
+void TimeLineEditorWidget::onCopyCBTriggered(bool){
+    if(!mCopyTargets.hasAnyTargets()){
+        mCopyTargets = mTargets;
+    }
+    QJsonObject targets;
+    QJsonArray keys;
+    targets["TargetsSize"] = mCopyTargets.targets().size();
+    for (auto targets: mCopyTargets.targets()){
+        core::TimeKeyType keyType = targets.pos.key()->type();
+        core::TimeKey* timeKey =  targets.node->timeLine()->timeKey(keyType, targets.pos.key()->frame());
+        keys.append(getKeyTypeSerialized(keyType, timeKey, targets.node));
+    }
+    targets["Keys"] = keys;
+    // There be IO dragons here
+    //qDebug() << QJsonDocument(targets).toJson(QJsonDocument::Indented).toStdString().c_str();
+    QClipboard *cb = QGuiApplication::clipboard();
+    cb->setText(QJsonDocument(targets).toJson(QJsonDocument::Indented).toStdString().c_str());
 }
 
 void TimeLineEditorWidget::onPasteKeyTriggered(bool)

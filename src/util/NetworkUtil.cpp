@@ -3,9 +3,13 @@
 #include "qdir.h"
 #include "qjsonarray.h"
 #include "gui/menu/menu_ProgressReporter.h"
+#include "qmessagebox.h"
+#include "qpushbutton.h"
 #include <QEventLoop>
 #include <QJsonObject>
 #include <QRegularExpression>
+#include <QDesktopServices>
+#include <QAbstractButton>
 
 namespace util
 {
@@ -52,8 +56,7 @@ NetworkUtil::NetworkUtil()
         QProcess process;
         process.start(aLib, {versionType}, QProcess::ReadWrite);
         process.waitForFinished();
-        if(process.exitStatus() == 0)
-        {
+        if(process.exitStatus() == 0){
             return true;
         }
         else{
@@ -172,11 +175,99 @@ NetworkUtil::NetworkUtil()
         mProcess->start(program, args);
         if (mProcess->waitForReadyRead(15000)){
             // Max time for this is five minutes.
-            mProcess->waitForFinished(60000*5);
+            mProcess->waitForFinished(60000 * 5);
         }
         if(QFile(downloadPath).exists()){
             return QFileInfo(QFile(downloadPath));
         }
         return QFileInfo();
     }
+
+    void NetworkUtil::checkForUpdate(QString url, NetworkUtil networking, QWidget *aParent, bool showWithoutUpdate){
+        qDebug("--------");
+        qInfo() << "Checking for updates on : " << url;
+        QJsonDocument jsonResponse = networking.getJsonFrom(url);
+        QString currentVersion = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." + QString::number(AE_MICRO_VERSION);
+        /*
+            qDebug()<< "Response : " << jsonResponse.toJson().data();
+            qDebug()<< "Current version: " << currentVersion << "\n" << "Latest stable: " << jsonResponse[0]["name"].toString().replace("v", "");;
+        */
+        QString latestVersion = !jsonResponse.isEmpty()? jsonResponse[0]["name"].toString().replace("v", "") : "null";
+        if (latestVersion != ""){
+            QMessageBox updateBox;
+            bool onLatest = false; bool onPreview = false; bool failed = false;
+
+            // Failed
+            if (latestVersion == "null"){
+                qDebug() << "Failed to get version";
+                updateBox.setWindowTitle(QApplication::translate("NetworkCheckForUpdate", "Failed"));
+                updateBox.setText(QApplication::translate("NetworkCheckForUpdate", "<center>Unable to get latest version. <br>Please check your internet "
+                                                                                   "connection and if you have curl or wget installed.</center>"));
+                failed = true;
+            }
+            // Latest version
+            if (latestVersion == currentVersion){
+                qDebug() << "On latest version :" << latestVersion;
+                updateBox.setWindowTitle(QApplication::translate("NetworkCheckForUpdate", "On latest"));
+                updateBox.setText(QApplication::translate("NetworkCheckForUpdate", "<center>You already have the latest stable release available. <br>Version: ")
+                                  + currentVersion + "</center>");
+                onLatest = true;
+            }
+            // Preview version
+            else if (latestVersion < currentVersion){
+                qDebug() << "On preview version :" << currentVersion;
+
+                updateBox.setWindowTitle(QApplication::translate("NetworkCheckForUpdate", "On preview"));
+                updateBox.setText(QApplication::translate("NetworkCheckForUpdate", "<center>Your current version is higher than the latest stable release. "
+                                                                                   "<br>Version: ") + currentVersion + "</center>");
+                onPreview = true;
+            }
+            // Old version
+            else{
+                qDebug() << "On version :" << currentVersion;
+                updateBox.setWindowTitle(QApplication::translate("NetworkCheckForUpdate", "New release available"));
+                updateBox.setText(QApplication::translate("NetworkCheckForUpdate", "<center>A new stable release is available, version: ") + latestVersion +
+                                  QApplication::translate("NetworkCheckForUpdate", ".<br>Do you wish to download it or to go to the GitHub page?</center>"));
+            }
+
+            if (onLatest || onPreview || failed){
+                updateBox.setStandardButtons(QMessageBox::Ok);
+                updateBox.setDefaultButton(QMessageBox::Ok);
+            }
+            else{
+                // Boilerplate go brr
+                QPushButton download(QApplication::translate("NetworkCheckForUpdate", "Download")); QAbstractButton* downloadButton = &download;
+                QPushButton goTo(QApplication::translate("NetworkCheckForUpdate", "Go to page")); QAbstractButton* gotoButton = &goTo;
+                updateBox.addButton(downloadButton, QMessageBox::AcceptRole);
+                updateBox.addButton(gotoButton, QMessageBox::AcceptRole);
+                updateBox.addButton(QMessageBox::Cancel);
+                updateBox.exec();
+
+                if(updateBox.clickedButton() == gotoButton){
+                    QDesktopServices::openUrl(QUrl("https://github.com/AnimeEffectsDevs/AnimeEffects/releases/latest"));
+                }
+                else if(updateBox.clickedButton() == downloadButton){
+                    QString os = networking.os();
+                    QString arch = networking.arch();
+                    QString file;
+                    if (os == "win"){
+                        if (arch == "x86"){ file = "AnimeEffects-Windows-x86.zip"; }
+                        else{ file = "AnimeEffects-Windows-x64.zip"; }
+                    }
+                    else if (os == "linux"){ file = "AnimeEffects-Linux.zip"; }
+                    else if (os == "mac"){ file = "AnimeEffects-MacOS.zip"; }
+                    QFileInfo aeUpdate = networking.downloadGithubFile("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/releases/latest", file, 0, aParent);
+                    QDesktopServices::openUrl(QUrl::fromLocalFile(aeUpdate.absoluteFilePath()));
+                }
+                qDebug("--------");
+                return;
+            }
+            if(showWithoutUpdate){
+                updateBox.exec();
+            }
+            qDebug("--------");
+            return;
+        };
+    }
+
 } // namespace util

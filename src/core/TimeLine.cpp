@@ -514,6 +514,9 @@ bool TimeLine::deserializeTimeKey(Deserializer& aIn, TimeKeyType aType, int aInd
             TimeKey* child = static_cast<TimeKey*>(aPtr);
             key->children().pushBack(child);
         };
+        if(key->type() == TimeKeyType_HSV){
+            return true;
+        }
         if (!aIn.orderIDData(solver))
         {
             return aIn.errored("invalid child reference id");

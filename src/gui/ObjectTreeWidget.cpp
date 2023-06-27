@@ -5,6 +5,8 @@
 #include <QModelIndexList>
 #include <QStyle>
 #include <QProxyStyle>
+#include "ctrl/TimeLineEditor.h"
+#include "qmessagebox.h"
 #include "util/TreeUtil.h"
 #include "util/LinkPointer.h"
 #include "cmnd/ScopedMacro.h"
@@ -21,6 +23,9 @@
 #include "gui/obj/obj_RemoveItem.h"
 #include "gui/obj/obj_Notifiers.h"
 #include "gui/obj/obj_Util.h"
+#include "ctrl/ffd/ffd_Target.h"
+#include <iostream>
+#include <sstream>
 
 namespace
 {
@@ -89,6 +94,9 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
 
         mRenameAction = new QAction(tr("Rename"), this);
         mRenameAction->connect(mRenameAction, &QAction::triggered, this, &ObjectTreeWidget::onRenameActionTriggered);
+
+        mPasteAction = new QAction(tr("Paste from clipboard"), this);
+        mPasteAction->connect(mPasteAction, &QAction::triggered, this, &ObjectTreeWidget::onPasteActionTriggered);
 
         mObjectAction = new QAction(tr("Create layer"), this);
         mObjectAction->connect(mObjectAction, &QAction::triggered, this, &ObjectTreeWidget::onObjectActionTriggered);
@@ -478,6 +486,8 @@ void ObjectTreeWidget::onContextMenuRequested(const QPoint& aPos)
             if (objItem && objItem->node().parent())
             {
                 menu.addSeparator();
+                menu.addAction(mPasteAction);
+                menu.addSeparator();
                 menu.addAction(mDeleteAction);
             }
         }
@@ -513,6 +523,75 @@ void ObjectTreeWidget::onRenameActionTriggered(bool)
             this->editItem(mActionItem, kItemColumn);
         }
     }
+}
+
+int extractIntFromStr(QString str){
+    QRegExp regex = QRegExp("-?\\b\\d+(?:\\.\\d+)?\\b");
+    regex.indexIn(str);
+    return regex.capturedTexts()[0].toInt();
+}
+
+void ObjectTreeWidget::onPasteActionTriggered(bool){
+    if(!mActionItem){ return; }
+    if (!obj::Item::cast(mActionItem)){ return; }
+    obj::Item* objItem = obj::Item::cast(mActionItem);
+    bool objIsFolder = !bool(objItem->childCount() == 0);
+    auto pasteReturnVal = mEditor->pasteCbKeys(objItem, mProject->pointee(), objIsFolder);
+    // Result handler
+    QStringList returnVal = pasteReturnVal.split("\n");
+    int successNum = extractIntFromStr(returnVal.first());
+    bool aKeyErrored = returnVal.size() > 1;
+    QStringList errors = returnVal.filter("Error");
+    QStringList nullLogs = returnVal.filter(QRegExp("^(?!.*[\\d:])[^\\n]*$"));
+    auto keyTypeErrors = returnVal.filter("Key types errored");
+    auto keys = mEditor->getTypesFromCb(mProject->pointee());
+
+    QMessageBox box;
+    if(successNum != 0){
+        if(!aKeyErrored){
+            box.setText(tr("Successfully pasted ") + QString::number(successNum) + tr(" keys."));
+        }
+        else{
+            box.setText(tr("Successfully pasted ") + QString::number(successNum) +
+                        tr(" keys.\n") + QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available bellow."));
+        }
+    }
+    else{
+        box.setText(tr("Failed to paste key(s)"));
+        if(!aKeyErrored){
+            box.setDetailedText(tr("Clipboard does not contain valid JSON information or timeline already has a key in the same frame."));
+        }
+    }
+    if(aKeyErrored && errors.size() != 0 && nullLogs.size() != 0 && keyTypeErrors.size() != 0){
+        QString errorLog;
+        errorLog.append("--- Error log ---\n");
+        errorLog.append(errors.begin().i->t());
+        errorLog.append("\n-----\n");
+        errorLog.append(nullLogs.begin().i->t());
+        errorLog.append("\n-----\n");
+        errorLog.append(keyTypeErrors.begin().i->t());
+        errorLog.append("\n-----\n");
+        box.setDetailedText(errorLog);
+    }
+
+
+    if(successNum != 0){
+        // It doesn't work without this for some godforsaken reason.
+        for (int x = 0; x < keys.size(); x++){
+                if(objItem->node().timeLine()->hasTimeKey(core::TimeKeyType_Image, keys[x]->frame())){
+                    auto key = ((const core::ImageKey*)&keys[x]);
+                    ctrl::TimeLineUtil::assignImageKeyCellSize(*mProject, objItem->node(), keys[x]->frame(),
+                                                               key->data().gridMesh().cellSize());
+                }
+            }
+    }
+    if(box.text().isNull()){
+        box.setText(tr("Failed to paste key(s)"));
+    }
+    if(box.detailedText().isNull() && successNum == 0){
+        box.setDetailedText(tr("Timeline has a key in the same frame."));
+    }
+    box.exec();
 }
 
 void ObjectTreeWidget::onObjectActionTriggered(bool)

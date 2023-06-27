@@ -388,7 +388,7 @@ HSVKeyGroup::HSVKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth)
 
         // saturation
         mSaturation = new IntegerItem(this);
-        mSaturation->setRange(0, 100);
+        mSaturation->setRange(-100, 100);
         mSaturation->box().setSingleStep(1);
         mSaturation->onValueUpdated = [=] (int, int aNext){
             this->mAccessor.assignHSV(aNext, "sat");
@@ -396,15 +396,23 @@ HSVKeyGroup::HSVKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth)
 
         // value
         mValue = new IntegerItem(this);
-        mValue->setRange(0, 100);
+        mValue->setRange(-100, 100);
         mValue->box().setSingleStep(1);
         mValue->onValueUpdated = [=] (int, int aNext){
             this->mAccessor.assignHSV(aNext, "val");
         };
 
+        // absolute
+        mAbsolute = new CheckItem(this);
+        mAbsolute->onValueUpdated = [=](bool aNext)
+        {
+            this->mAccessor.assignHSV(int(aNext), "abs");
+        };
+
         this->addItem(tr("Hue :"), mHue);
         this->addItem(tr("Saturation :"), mSaturation);
         this->addItem(tr("Value : "), mValue);
+        this->addItem(tr("Absolute color: "), mAbsolute);
     }
     setKeyEnabled(false);
     setKeyExists(false);
@@ -431,6 +439,7 @@ void HSVKeyGroup::setKeyValue(const core::TimeKey* aKey)
     mHue->setValue(data.hsv()[0]);
     mSaturation->setValue(data.hsv()[1]);
     mValue->setValue(data.hsv()[2]);
+    mAbsolute->box().setChecked(bool(data.hsv()[3]));
 }
 
 bool HSVKeyGroup::keyExists() const

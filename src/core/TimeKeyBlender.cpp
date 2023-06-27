@@ -657,6 +657,7 @@ void TimeKeyBlender::blendHSVKey(PositionType aPos, const TimeInfo& aTime)
                     break;
             case 2: expans.hsv().setValue(k0->hsv().at(2) * (1.0f - time) + k1->hsv().at(2) * time);
                     break;
+            case 3: break;
             }
         }
     }

@@ -3,8 +3,8 @@
 
 namespace
 {
-static const int kButtonSize = 23;
-static const int kButtonSpace = kButtonSize;
+int kButtonSize = 23;
+int kButtonSpace = kButtonSize;
 }
 
 namespace gui {
@@ -20,13 +20,18 @@ BonePanel::BonePanel(QWidget* aParent, GUIResources& aResources)
     , mEIRadius()
     , mEIPressure()
 {
-    this->setTitle(tr("BoneBuilding"));
+    this->setTitle(tr("Bone Building"));
     createMode();
     updateTypeParam(mParam.mode);
 }
 
 void BonePanel::createMode()
 {
+    if(mResources.getTheme().contains("high_dpi")){
+        kButtonSize = 36;
+        kButtonSpace = kButtonSize;
+    }
+
     // type
     mTypeGroup.reset(new SingleOutItem(ctrl::BoneEditMode_TERM, QSize(kButtonSpace, kButtonSpace), this));
     mTypeGroup->setChoice(mParam.mode);

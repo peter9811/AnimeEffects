@@ -1,4 +1,6 @@
 #include "core/FFDKey.h"
+#include "qjsonarray.h"
+#include "qjsonobject.h"
 
 namespace core
 {
@@ -112,6 +114,44 @@ TimeKey* FFDKey::createClone()
     return newKey;
 }
 
+QJsonObject FFDKey::serializeToJson() const{
+    QJsonObject ffd;
+    ffd["VertexCount"] = mData.count();
+    QJsonArray pos;
+    if (mData.count() > 0){
+        for (int i = 0; i < mData.count(); ++i){
+            QJsonObject gl3;
+            gl3["X"] = ((float32)mData.positions()[i].x);
+            gl3["Y"] = ((float32)mData.positions()[i].y);
+            gl3["Z"] = ((float32)mData.positions()[i].z);
+            pos.append(gl3);
+        }
+        ffd["Positions"] = pos;
+    }
+    return ffd;
+}
+
+void FFDKey::deserializeFromJson(QJsonObject json){
+    // Vertices
+    json = json["FFD"].toObject();
+    int vtxCount = json["VertexCount"].toInt();
+    if (vtxCount > 0){
+        // allocate
+        mData.alloc(vtxCount);
+        // positions
+        QJsonArray vtx = json["Positions"].toArray();
+        for (int i = 0; i < vtxCount; i++){
+            QJsonObject vtxObj = vtx[i].toObject();
+            mData.positions()[i].x = vtxObj["X"].toDouble();
+            mData.positions()[i].y = vtxObj["Y"].toDouble();
+            mData.positions()[i].z = vtxObj["Z"].toDouble();
+        }
+    }
+    else{
+        mData.clear();
+    }
+}
+
 bool FFDKey::serialize(Serializer& aOut) const
 {
     // easing
@@ -127,6 +167,8 @@ bool FFDKey::serialize(Serializer& aOut) const
 
     return aOut.checkStream();
 }
+
+
 
 bool FFDKey::deserialize(Deserializer& aIn)
 {

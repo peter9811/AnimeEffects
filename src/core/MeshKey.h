@@ -154,6 +154,9 @@ public:
         Data& operator=(const Data& aRhs);
         ~Data();
 
+        QJsonObject serializeToJson() const;
+        bool deserializeFromJson(QJsonObject json);
+
         const VtxList& vertices() const { return mVertices; }
         const EdgeList& edges() const { return mEdges; }
         const FaceList& faces() const { return mFaces; }

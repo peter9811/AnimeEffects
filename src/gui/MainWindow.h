@@ -59,6 +59,7 @@ public:
     void onSaveProjectTriggered();
     void onSaveProjectAsTriggered();
     void onCloseProjectTriggered();
+    void onExportTriggered();
     void onExportImageSeqTriggered(const QString& aSuffix);
     void onExportVideoTriggered(const ctrl::VideoFormat& aFormat);
     void onPlayPauseTriggered();

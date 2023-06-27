@@ -67,6 +67,8 @@ public:
 
     // serialize
     bool serialize(Serializer& aOut) const;
+    void deserializeFromJson(QJsonObject json, bool isChild);
+    QJsonObject serializeToJson(bool isChild) const;
     bool deserialize(Deserializer& aIn);
 
 private:

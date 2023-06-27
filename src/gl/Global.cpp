@@ -80,4 +80,4 @@ void Global::doneCurrent()
 
 } // namespace gl
 
-const QPair<int, int> gl::Global::kVersion{ 3, 3 };
+const QPair<int, int> gl::Global::kVersion{ 4, 0 };

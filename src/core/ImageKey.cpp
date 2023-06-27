@@ -1,7 +1,10 @@
+#include "Project.h"
 #include "img/ResourceNode.h"
 #include "img/BlendMode.h"
 #include "core/ImageKey.h"
 #include "core/Constant.h"
+#include "qjsonobject.h"
+#include "util/LinkPointer.h"
 
 namespace core
 {
@@ -143,6 +146,103 @@ void ImageKey::awake()
     {
         mData.resource().setOriginKeeping(true);
     }
+}
+
+QJsonObject ImageKey::serializeToJson() const{
+    QJsonObject image;
+    image["Identifier"] = mData.resource()->serialAddress()->handle()->identifier();
+    image["BlendMode"] = getBlendNameFromBlendMode(mData.blendMode());
+    image["OffsetX"] = mData.imageOffset().x();
+    image["OffsetY"] = mData.imageOffset().y();
+    image["GridMesh"] = mData.gridMesh().serializeToJson();
+    return image;
+}
+
+img::ResourceNode* returnMatch(img::ResourceNode* image, QString match){
+    // Get main
+    if(image->data().identifier() == match){return image;}
+    // Get siblings
+    img::ResourceNode* current = image;
+    while(current->nextSib()){
+        if(current->data().identifier() == match) {
+            return current;
+        }
+        if(!current->children().empty()){
+            for(auto child: current->children()){
+                auto recMatch = returnMatch(child, match);
+                if (recMatch != nullptr){return recMatch;};
+            }
+        }
+        current = current->nextSib();
+    }
+    // Get last sibling
+    if(current->data().identifier() == match){return current;}
+    if(!current->children().empty()){
+        for(auto child: current->children()){
+            auto recMatch = returnMatch(child, match);
+            if (recMatch != nullptr){return recMatch;};
+        }
+    }
+    // Get children
+    for (auto child: image->children()){
+        current = child;
+        while(current->nextSib()){
+            if(current->data().identifier() == match) {
+                return current;
+            }
+            if(!current->children().empty()){
+                for(auto child: current->children()){
+                    auto recMatch = returnMatch(child, match);
+                    if (recMatch != nullptr){return recMatch;};
+                }
+            }
+            current = current->nextSib();
+        }
+    }
+    // Get last child
+    if(current->data().identifier() == match){return current;}
+    if(!current->children().empty()){
+        for(auto child: current->children()){
+            auto recMatch = returnMatch(child, match);
+            if (recMatch != nullptr){return recMatch;};
+        }
+    }
+    return nullptr;
+}
+
+bool ImageKey::deserializeFromJson(QJsonObject json, util::LifeLink::Pointee<Project> project){
+    mData.resource().reset();
+    // image id
+    json = json["Image"].toObject();
+    QString identifier = json["Identifier"].toString();
+    img::ResourceNode* nodePtr = nullptr;
+    for(const ResourceHolder::ImageTree &image : project.address->resourceHolder().imageTrees()){
+        auto match = returnMatch(image.topNode, identifier);
+        // qDebug("-------");
+        if(match != nullptr){
+            // qDebug() << match->data().identifier();
+            nodePtr = match;
+        }
+        // qDebug("-------");
+    }
+    if (nodePtr == nullptr){
+        return false;
+    }
+    this->mData.resource() = nodePtr->handle();
+    this->resetTextureCache();
+
+    // image offset
+    QVector2D offset{static_cast<float>(json["OffsetX"].toDouble()), static_cast<float>(json["OffsetY"].toDouble())};
+    mData.setImageOffset(offset);
+    // grid mesh
+    if (!mData.gridMesh().deserializeFromJson(json)){
+        return false;
+    }
+    // blend mode
+    QString bname = json["BlendMode"].toString();
+    auto bmode = img::getBlendModeFromQuadId(bname);
+    if (!(bmode == img::BlendMode_TERM)){mData.setBlendMode(bmode);}
+    return true;
 }
 
 bool ImageKey::serialize(Serializer& aOut) const

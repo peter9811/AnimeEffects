@@ -14,6 +14,9 @@
 #include "ctrl/Exporter.h"
 #include "gui/MainWindow.h"
 #include "gui/ExportDialog.h"
+// New Exporter
+#include "gui/exportdiag.h"
+//---//
 #include "gui/NewProjectDialog.h"
 #include "gui/ResourceDialog.h"
 #include "gui/ProjectHook.h"
@@ -984,6 +987,32 @@ void MainWindow::onCloseProjectTriggered()
             resetProjectRefs(mProjectTabBar->currentProject());
         }
     }
+}
+
+void MainWindow::onExportTriggered(){
+    if (!mCurrent) return;
+    // stop animation and main display rendering
+    EventSuspender suspender(*mMainDisplay, *mTarget);
+    // TODO , remember to insert the ffmpeg check here
+
+    qDebug() << "Exporting";
+
+    QString aSuffix = "Testing";
+
+    // export param
+    ctrl::Exporter::CommonParam cparam;
+    ctrl::Exporter::ImageParam iparam;
+    {
+        QScopedPointer<ExportClasses> dialog(
+                    new ExportClasses(*mCurrent, aSuffix, this));
+
+        dialog->exec();
+        if (dialog->result() != QDialog::Accepted) return;
+
+        cparam = dialog->commonParam();
+        iparam = dialog->imageParam();
+    }
+
 }
 
 void MainWindow::onExportImageSeqTriggered(const QString& aSuffix)

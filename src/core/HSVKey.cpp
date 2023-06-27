@@ -8,13 +8,14 @@ HSVKey::Data::Data()
     , mHue(0)
     , mSaturation(100)
     , mValue(100)
-    , mHSV{0, 100, 100}
+    , mAbsolute(0)
+    , mHSV{0, 100, 100, 0}
 {
 }
 
 bool HSVKey::Data::isZero() const
 {
-    return mHSV == QList<int>{0, 0, 0};
+    return mHSV == QList<int>{0, 0, 0, 0};
 }
 
 void HSVKey::Data::clamp(QString type)
@@ -24,17 +25,20 @@ void HSVKey::Data::clamp(QString type)
         updateHSV();
     }
     else if (type == "sat"){
-        mSaturation = util::MathUtil::getClamp(mSaturation, 0, 100);
+        mSaturation = util::MathUtil::getClamp(mSaturation, -100, 100);
         updateHSV();
     }
     else if (type == "val"){
-        mValue = util::MathUtil::getClamp(mValue, 0, 100);
+        mValue = util::MathUtil::getClamp(mValue, -100, 100);
+        updateHSV();
+    }
+    else if (type == "keep"){
         updateHSV();
     }
     else if (type == "hsv") {
         mHue = util::MathUtil::getClamp(mHue, 0, 360);
-        mSaturation = util::MathUtil::getClamp(mSaturation, 0, 100);
-        mValue = util::MathUtil::getClamp(mValue, 0, 100);
+        mSaturation = util::MathUtil::getClamp(mSaturation, -100, 100);
+        mValue = util::MathUtil::getClamp(mValue, -100, 100);
         updateHSV();
     }
 }

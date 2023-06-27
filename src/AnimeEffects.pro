@@ -11,7 +11,8 @@ SUBDIRS     = util thr cmnd gl img core ctrl gui
 
 CONFIG += ordered
 
-TRANSLATIONS = ../data/locale/translation_ja.ts
+TRANSLATIONS += ../data/locale/translation_ja.ts
+TRANSLATIONS += ../data/locale/translation_zh.ts
 
 # copy directory
 win32 {

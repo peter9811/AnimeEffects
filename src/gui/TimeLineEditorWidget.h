@@ -99,6 +99,7 @@ private:
     void onProjectAttributeModified(core::ProjectEvent& aEvent, bool aUndo);
     void onContextMenuRequested(const QPoint& aPos);
     void onCopyKeyTriggered(bool);
+    void onCopyCBTriggered(bool);
     void onPasteKeyTriggered(bool);
     void onDeleteKeyTriggered(bool);
 
@@ -111,9 +112,13 @@ private:
     const core::CameraInfo* mCamera;
     TimeCursor mTimeCursor;
 
+    //@todo Implement deserializer to put timeevent data into a bytebuffer or plain text
+
     KeyCommandMap& mKeyCommandMap;
     QAction* mCopyKey;
+    QAction* mCopyToClipboard;
     QAction* mPasteKey;
+    QAction* mPasteFromClipboard;
     QAction* mDeleteKey;
     core::TimeLineEvent mTargets;
     core::TimeLineEvent mCopyTargets;

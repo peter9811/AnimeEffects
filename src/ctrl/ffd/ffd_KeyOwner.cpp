@@ -53,6 +53,10 @@ void KeyOwner::createKey(
         key = new FFDKey();
         ownsKey = true;
         key->data().allocAndWrite(aLine.current().ffd().positions(), vtxCount);
+        util::Easing::Param aParam;
+        aParam.range = util::Easing::rangeToEnum(QString());
+        aParam.type = util::Easing::easingToEnum(QString());
+        key->data().easing() = aParam;
         parentKey = aAreaKey;
     }
 }

@@ -33,6 +33,7 @@ public:
         void pushBackVtx(const gl::Vector3& aPos);
         gl::Vector3 removeVtx(int aIndex);
         gl::Vector3 popBackVtx();
+
     };
 
     FFDKey();
@@ -45,6 +46,8 @@ public:
     virtual TimeKeyType type() const { return TimeKeyType_FFD; }
     virtual TimeKey* createClone();
     virtual bool serialize(Serializer& aOut) const;
+    QJsonObject serializeToJson() const;
+    void deserializeFromJson(QJsonObject json);
     virtual bool deserialize(Deserializer& aIn);
 
 private:

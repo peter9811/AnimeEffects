@@ -7,6 +7,7 @@
 #include "img/BlendMode.h"
 #include "core/GridMesh.h"
 #include "core/TimeKey.h"
+#include "gui/obj/obj_Item.h"
 
 namespace core
 {
@@ -62,7 +63,8 @@ public:
     void setImageOffsetByCenter();
     bool hasImage() const { return mData.resource() && mData.resource()->hasImage(); }
     void resetGridMesh(int CellSize = kDefaultMeshCellSize);
-
+    QJsonObject serializeToJson() const;
+    bool deserializeFromJson(QJsonObject json, util::LifeLink::Pointee<Project> project);
     virtual TimeKeyType type() const { return TimeKeyType_Image; }
     virtual bool canHoldChild() const { return true; }
     virtual TimeKey* createClone();

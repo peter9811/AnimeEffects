@@ -67,7 +67,7 @@ ResourceTreeWidget::ResourceTreeWidget(ViaPoint& aViaPoint, bool aUseCustomConte
         mRenameAction->connect(mRenameAction, &QAction::triggered,
                                this, &ResourceTreeWidget::onRenameActionTriggered);
 
-        mReloadAction = new QAction(tr("Reload images"), this);
+        mReloadAction = new QAction(tr("Reload images from file"), this);
         mReloadAction->connect(mReloadAction, &QAction::triggered,
                                this, &ResourceTreeWidget::onReloadActionTriggered);
 

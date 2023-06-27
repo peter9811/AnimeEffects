@@ -19,6 +19,8 @@ public:
         SortUnit() : renderer(), depth() {}
         Renderer* renderer;
         float depth;
+        TimeLine* timeline;
+
     };
 
     virtual ~Renderer() {}

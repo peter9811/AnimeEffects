@@ -81,7 +81,6 @@ private:
     void renderShape(const RenderInfo& aInfo, const TimeCacheAccessor&);
     void renderClippees(const RenderInfo& aInfo, const TimeCacheAccessor&);
     bool isClipper() const;
-
     QString mName;
     bool mIsVisible;
     bool mIsSlimmedDown;

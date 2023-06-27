@@ -74,7 +74,7 @@ private:
     bool mIsClipped;
 
     std::vector<Renderer::SortUnit> mClippees; // a cache for performance
-
+    std::vector<Renderer::SortUnit> mRenders;
 };
 
 } // namespace core

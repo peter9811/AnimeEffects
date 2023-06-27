@@ -6,7 +6,7 @@
 
 namespace
 {
-static const int kButtonSize = 28;
+int kButtonSize = 28;
 static const int kButtonCount = 5;
 }
 
@@ -18,6 +18,9 @@ PlayBackWidget::PlayBackWidget(GUIResources& aResources, QWidget* aParent)
     , mGUIResources(aResources)
     , mButtons()
 {
+    if(mGUIResources.getTheme().contains("high_dpi")){
+        kButtonSize = 36;
+    }
     this->setGeometry(0, 0, kButtonSize, kButtonSize * kButtonCount);
 
     mButtons.push_back(createButton("rewind",   false, 0, tr("Return to initial frame")));

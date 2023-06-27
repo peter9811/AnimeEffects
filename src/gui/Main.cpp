@@ -12,6 +12,7 @@
 #include "gui/GUIResources.h"
 #include "gui/MSVCBackTracer.h"
 #include "gui/LocaleDecider.h"
+#include "util/NetworkUtil.h"
 
 
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
@@ -98,10 +99,10 @@ int main(int argc, char *argv[])
 int entryPoint(int argc, char *argv[])
 {
     int result = 0;
-
     // create qt application
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
+    app.setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Round);
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     // app.setAttribute(Qt::AA_DontUseNativeDialogs);
     XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
@@ -117,6 +118,7 @@ int entryPoint(int argc, char *argv[])
     const QString stdCacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     const QString cacheDir = !stdCacheDir.isEmpty() ? stdCacheDir : (appDir + "/cache");
 
+
     // initialize current
     QDir::setCurrent(appDir);
 
@@ -127,6 +129,7 @@ int entryPoint(int argc, char *argv[])
     // set organization and application name for the application setting
     QCoreApplication::setOrganizationName("AnimeEffectsProject");
     QCoreApplication::setApplicationName("AnimeEffects");
+
 
     // language
     QScopedPointer<gui::LocaleDecider> locale(new gui::LocaleDecider());
@@ -151,6 +154,12 @@ int entryPoint(int argc, char *argv[])
         qDebug() << "show main window";
         // show main window
         mainWindow->showWithSettings();
+
+        // checkForUpdates
+        util::NetworkUtil networking;
+        QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
+        networking.checkForUpdate(url, networking, mainWindow->window(), false);
+
 
 #if !defined(QT_NO_DEBUG)
         qDebug() << "test new project";

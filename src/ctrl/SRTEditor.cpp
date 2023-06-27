@@ -39,6 +39,10 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage)
     if (mKeyOwner.ownsMoveKey)
     {
         mKeyOwner.moveKey = new MoveKey();
+        util::Easing::Param aParam;
+        aParam.range = util::Easing::rangeToEnum(QString());
+        aParam.type = util::Easing::easingToEnum(QString());
+        mKeyOwner.moveKey->data().easing() = aParam;
         mKeyOwner.moveKey->setPos(current.srt().pos());
         mKeyOwner.moveKey->setCentroid(current.srt().centroid());
     }
@@ -52,6 +56,10 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage)
     if (mKeyOwner.ownsRotateKey)
     {
         mKeyOwner.rotateKey = new RotateKey();
+        util::Easing::Param aParam;
+        aParam.range = util::Easing::rangeToEnum(QString());
+        aParam.type = util::Easing::easingToEnum(QString());
+        mKeyOwner.rotateKey->data().easing() = aParam;
         mKeyOwner.rotateKey->setRotate(current.srt().rotate());
     }
     else
@@ -64,6 +72,10 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage)
     if (mKeyOwner.ownsScaleKey)
     {
         mKeyOwner.scaleKey = new ScaleKey();
+        util::Easing::Param aParam;
+        aParam.range = util::Easing::rangeToEnum(QString());
+        aParam.type = util::Easing::easingToEnum(QString());
+        mKeyOwner.scaleKey->data().easing() = aParam;
         mKeyOwner.scaleKey->setScale(current.srt().scale());
     }
     else

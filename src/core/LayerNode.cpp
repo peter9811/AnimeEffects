@@ -171,6 +171,7 @@ void LayerNode::prerender(const RenderInfo& aInfo, const TimeCacheAccessor& aAcc
     transformShape(aInfo, aAccessor);
 }
 
+
 void LayerNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor)
 {
     if (!mIsVisible) return;
@@ -182,26 +183,15 @@ void LayerNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAccess
 
     if (aInfo.isGrid) return;
 
+    // render hsv
+    if (!mTimeLine.isEmpty(TimeKeyType_HSV)){
+        if(aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()){
+                renderHSV(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
+        }
+    }
+
     // render clippees
     renderClippees(aInfo, aAccessor);
-
-
-    // render hsv
-    QSettings settings;
-    auto behaviour = settings.value("generalsettings/keys/hsvBehaviour");
-    if (behaviour.isValid() && behaviour.toInt() == 1){
-        // HSV only between two keys
-        if(!mTimeLine.isEmpty(TimeKeyType_HSV) && aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()
-                && aInfo.time.frame.get() <= mTimeLine.map(TimeKeyType_HSV).values().last()->frame()){
-            renderHSV(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
-        }
-    }
-    else{
-        // Default
-        if(!mTimeLine.isEmpty(TimeKeyType_HSV) && aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()){
-            renderHSV(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
-        }
-    }
 }
 
 void LayerNode::renderClippees(
@@ -520,6 +510,10 @@ void LayerNode::renderHSV(
         shader.setUniformValue("uTexCoordOffset", texCoordOffset);
         shader.setUniformValue("uDestTexture", 1);
 
+        shader.setUniformValue("setColor", bool(HSVData[3]));
+
+        //qDebug() << bool(HSVData[3]);
+        /*
         QSettings settings;
         auto setColor = settings.value("generalsettings/keys/hsvSetColor");
         if (setColor.isValid()){
@@ -528,10 +522,12 @@ void LayerNode::renderHSV(
         else{
             shader.setUniformValue("setColor", false);
         }
+        */
 
         float hue = (float)HSVData[0] / 360.0;
-        float saturation = (float)HSVData[1] / 100.0;
-        float value = (float)HSVData[2] / 100.0;
+
+        float saturation = (float)(HSVData[1] + 100.0) / 200.0;
+        float value = (float)(HSVData[2] + 100.0) / 200.0;
 
         shader.setUniformValue("hue", hue);
         shader.setUniformValue("saturation", saturation);

@@ -1,24 +1,27 @@
 #ifndef CORE_TIMELINE_H
 #define CORE_TIMELINE_H
 
-#include <array>
-#include <QMap>
-#include <QScopedPointer>
 #include "cmnd/Vector.h"
+#include "core/Deserializer.h"
+#include "core/Serializer.h"
 #include "core/TimeKey.h"
 #include "core/TimeKeyType.h"
-#include "core/Serializer.h"
-#include "core/Deserializer.h"
-namespace core { class Project; }
-namespace core { class ObjectNode; }
-namespace core { class TimeKeyExpans; }
+#include <QMap>
+#include <QScopedPointer>
+#include <array>
+namespace core {
+class Project;
+}
+namespace core {
+class ObjectNode;
+}
+namespace core {
+class TimeKeyExpans;
+}
 
+namespace core {
 
-namespace core
-{
-
-class TimeLine
-{
+class TimeLine {
 public:
     enum { kDefaultKeyIndex = -1 };
 
@@ -46,11 +49,19 @@ public:
     TimeKey* defaultKey(TimeKeyType aType);
     const TimeKey* defaultKey(TimeKeyType aType) const;
 
-    TimeKeyExpans& current() { return *mCurrent; }
-    const TimeKeyExpans& current() const { return *mCurrent; }
+    TimeKeyExpans& current() {
+        return *mCurrent;
+    }
+    const TimeKeyExpans& current() const {
+        return *mCurrent;
+    }
 
-    TimeKeyExpans& working() { return *mWorking; }
-    const TimeKeyExpans& working() const { return *mWorking; }
+    TimeKeyExpans& working() {
+        return *mWorking;
+    }
+    const TimeKeyExpans& working() const {
+        return *mWorking;
+    }
 
     bool move(TimeKeyType aType, int aFrom, int aTo);
     cmnd::Base* createPusher(TimeKeyType aType, int aFrame, TimeKey* aTimeKey);
@@ -62,8 +73,7 @@ public:
 private:
     void clear();
     int serializeTypeCount() const;
-    void pushRemoveCommands(
-            TimeKeyType aType, int aFrame, cmnd::Vector& aCommands);
+    void pushRemoveCommands(TimeKeyType aType, int aFrame, cmnd::Vector& aCommands);
     bool serializeTimeKey(Serializer& aOut, const TimeKey& aTimeKey) const;
     bool deserializeTimeKey(Deserializer& aIn, TimeKeyType aType, int aIndex);
 

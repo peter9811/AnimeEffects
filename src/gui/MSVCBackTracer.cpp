@@ -1,41 +1,33 @@
 #include "gui/MSVCBackTracer.h"
 
 #if defined(USE_MSVC_BACKTRACE)
-#include <QDebug>
-#include <Windows.h>
-#include <stdlib.h>
-#include <imagehlp.h>
-#include <excpt.h>
+    #include <QDebug>
+    #include <Windows.h>
+    #include <excpt.h>
+    #include <imagehlp.h>
+    #include <stdlib.h>
 
-#pragma comment(lib, "imagehlp.lib")
+    #pragma comment(lib, "imagehlp.lib")
 
 BackTracer gBackTracer;
 
-BackTracer::BackTracer()
-    : mProcess()
-    , mReady()
-{
+BackTracer::BackTracer(): mProcess(), mReady() {
     mProcess = ::GetCurrentProcess();
     SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES | SYMOPT_UNDNAME);
-    if (SymInitialize((HANDLE)mProcess, NULL, TRUE))
-    {
+    if (SymInitialize((HANDLE)mProcess, NULL, TRUE)) {
         mReady = true;
     }
 }
 
-BackTracer::~BackTracer()
-{
-    if (mReady)
-    {
+BackTracer::~BackTracer() {
+    if (mReady) {
         mReady = false;
         SymCleanup((HANDLE)mProcess);
     }
 }
 
-void BackTracer::dumpCurrent() const
-{
-    if (!mReady)
-    {
+void BackTracer::dumpCurrent() const {
+    if (!mReady) {
         qDebug("BackTracer::dumpCurrent : BackTracer is not initialized.");
         return;
     }
@@ -47,34 +39,31 @@ void BackTracer::dumpCurrent() const
     auto count = CaptureStackBackTrace(0, kMaxStack, stack, NULL);
     char text[kMaxText];
 
-    for(int i = 0; i < count; i++)
-    {
+    for (int i = 0; i < count; i++) {
         getSymbolText(stack[i], text, kMaxText);
         qDebug("%d : %018p @ %s", i, stack[i], text);
     }
 }
 
-void BackTracer::getSymbolText(void* aAddress, char* aOutBuffer, int aLength) const
-{
-    if (!mReady) return;
+void BackTracer::getSymbolText(void* aAddress, char* aOutBuffer, int aLength) const {
+    if (!mReady)
+        return;
 
-#ifdef _WIN64
+    #ifdef _WIN64
     typedef DWORD64 XDWord;
-#else
+    #else
     typedef DWORD XDWord;
-#endif
+    #endif
 
     // image module
-    IMAGEHLP_MODULE imageModule = { sizeof(IMAGEHLP_MODULE) };
-    if (!SymGetModuleInfo((HANDLE)mProcess, (XDWord)aAddress, &imageModule))
-    {
+    IMAGEHLP_MODULE imageModule = {sizeof(IMAGEHLP_MODULE)};
+    if (!SymGetModuleInfo((HANDLE)mProcess, (XDWord)aAddress, &imageModule)) {
         _snprintf_s(aOutBuffer, aLength, _TRUNCATE, "??? @ ??? @ ???");
         return;
     }
 
     // image symbol
-    struct SymbolBuffer
-    {
+    struct SymbolBuffer {
         IMAGEHLP_SYMBOL symbol;
         BYTE buffer[MAX_PATH];
     };
@@ -85,25 +74,22 @@ void BackTracer::getSymbolText(void* aAddress, char* aOutBuffer, int aLength) co
     IMAGEHLP_SYMBOL& imageSymbol = symBuffer.symbol;
 
     XDWord displacement = 0;
-    if (!SymGetSymFromAddr((HANDLE)mProcess, (XDWord)aAddress, &displacement, &imageSymbol))
-    {
+    if (!SymGetSymFromAddr((HANDLE)mProcess, (XDWord)aAddress, &displacement, &imageSymbol)) {
         _snprintf_s(aOutBuffer, aLength, _TRUNCATE, "%s @ ??? @ ???", imageModule.ModuleName);
         return;
     }
 
     // image line
-    IMAGEHLP_LINE imageLine = { sizeof(IMAGEHLP_LINE) };
+    IMAGEHLP_LINE imageLine = {sizeof(IMAGEHLP_LINE)};
     DWORD disp32 = (DWORD)displacement;
-    if (!SymGetLineFromAddr((HANDLE)mProcess, (XDWord)aAddress, &disp32, &imageLine))
-    {
-        _snprintf_s(aOutBuffer, aLength, _TRUNCATE, "%s @ %s @ %s+%d",
-                    imageModule.ModuleName, imageSymbol.Name, imageSymbol.Name,
-                    (int)((char*)aAddress - (char*)imageLine.Address));
+    if (!SymGetLineFromAddr((HANDLE)mProcess, (XDWord)aAddress, &disp32, &imageLine)) {
+        _snprintf_s(aOutBuffer, aLength, _TRUNCATE, "%s @ %s @ %s+%d", imageModule.ModuleName, imageSymbol.Name,
+            imageSymbol.Name, (int)((char*)aAddress - (char*)imageLine.Address));
         return;
     }
 
-    _snprintf_s(aOutBuffer, aLength, _TRUNCATE, "%s @ %s @ %s:%d",
-                imageModule.ModuleName, imageSymbol.Name, imageLine.FileName, imageLine.LineNumber);
+    _snprintf_s(aOutBuffer, aLength, _TRUNCATE, "%s @ %s @ %s:%d", imageModule.ModuleName, imageSymbol.Name,
+        imageLine.FileName, imageLine.LineNumber);
 }
 
 #endif // USE_MSVC_BACKTRACE

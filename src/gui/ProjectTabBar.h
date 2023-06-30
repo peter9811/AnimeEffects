@@ -1,19 +1,17 @@
 #ifndef GUI_PROJECTTABBAR_H
 #define GUI_PROJECTTABBAR_H
 
-#include <QVector>
-#include <QTabBar>
 #include "core/Project.h"
+#include <QTabBar>
+#include <QVector>
 
 #include "gui/GUIResources.h"
 
-namespace gui
-{
+namespace gui {
 
-class ProjectTabBar : public QTabBar
-{
+class ProjectTabBar: public QTabBar {
 public:
-    ProjectTabBar(QWidget* aParent, GUIResources &aResources);
+    ProjectTabBar(QWidget* aParent, GUIResources& aResources);
     void updateTabPosition(const QSize& aDisplaySize);
     bool pushProject(core::Project& aProject);
     void removeProject(core::Project& aProject);
@@ -34,7 +32,6 @@ private:
     GUIResources& mGUIResources;
     void onThemeUpdated(theme::Theme&);
 };
-
 
 } // namespace gui
 

@@ -1,11 +1,9 @@
 #ifndef CTRL_BONEEDITMODE
 #define CTRL_BONEEDITMODE
 
-namespace ctrl
-{
+namespace ctrl {
 
-enum BoneEditMode
-{
+enum BoneEditMode {
     BoneEditMode_Create,
     BoneEditMode_Delete,
     BoneEditMode_MoveJoint,
@@ -19,4 +17,3 @@ enum BoneEditMode
 } // namespace ctrl
 
 #endif // CTRL_BONEEDITMODE
-

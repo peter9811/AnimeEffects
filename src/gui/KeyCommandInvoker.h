@@ -1,14 +1,12 @@
 #ifndef GUI_KEYCOMMANDINVOKER_H
 #define GUI_KEYCOMMANDINVOKER_H
 
-#include <QKeyEvent>
 #include "gui/KeyCommandMap.h"
+#include <QKeyEvent>
 
-namespace gui
-{
+namespace gui {
 
-class KeyCommandInvoker
-{
+class KeyCommandInvoker {
 public:
     KeyCommandInvoker(KeyCommandMap& aMap);
 

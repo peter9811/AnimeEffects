@@ -1,11 +1,9 @@
 #ifndef GUI_MAINDISPLAYMODE_H
 #define GUI_MAINDISPLAYMODE_H
 
-namespace gui
-{
+namespace gui {
 
-enum MainDisplayMode
-{
+enum MainDisplayMode {
     MainDisplayMode_Modeling,
     MainDisplayMode_Animation,
 };

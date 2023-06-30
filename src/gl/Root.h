@@ -3,19 +3,17 @@
 
 #include "gl/Global.h"
 
-namespace gl
-{
+namespace gl {
 
-class ContextAccessor
-{
+class ContextAccessor {
 public:
-    virtual ~ContextAccessor() {}
+    virtual ~ContextAccessor() {
+    }
     virtual void makeCurrent() = 0;
     virtual void doneCurrent() = 0;
 };
 
-class Root
-{
+class Root {
 public:
     Root();
 

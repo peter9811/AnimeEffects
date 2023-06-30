@@ -1,14 +1,12 @@
 #ifndef GL_TASK_H
 #define GL_TASK_H
 
-#include <QGL>
 #include "util/NonCopyable.h"
+#include <QGL>
 
-namespace gl
-{
+namespace gl {
 
-class Task : private util::NonCopyable
-{
+class Task: private util::NonCopyable {
 public:
     Task();
     virtual ~Task();

@@ -1,16 +1,20 @@
 #ifndef DRIVERRESOURCES_H
 #define DRIVERRESOURCES_H
 
-#include <QScopedPointer>
 #include "util/NonCopyable.h"
-namespace core { class MeshTransformerResource; }
-namespace ctrl { namespace ffd { class TaskResource; } }
+#include <QScopedPointer>
+namespace core {
+class MeshTransformerResource;
+}
+namespace ctrl {
+namespace ffd {
+    class TaskResource;
+}
+} // namespace ctrl
 
-namespace ctrl
-{
+namespace ctrl {
 
-class DriverResources : public util::NonCopyable
-{
+class DriverResources: public util::NonCopyable {
 public:
     DriverResources();
     ~DriverResources();

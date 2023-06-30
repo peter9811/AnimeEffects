@@ -1,22 +1,19 @@
 #ifndef GUI_INFOLABELWIDGET_H
 #define GUI_INFOLABELWIDGET_H
 
-#include <QLabel>
-#include <QSettings>
+#include "core/Animator.h"
+#include "core/Project.h"
+#include "core/TimeFormat.h"
+#include "core/TimeInfo.h"
 #include "gui/GUIResources.h"
 #include "gui/ViaPoint.h"
-#include "core/Project.h"
-#include "core/TimeInfo.h"
-#include "core/TimeFormat.h"
-#include "core/Animator.h"
 #include "util/Range.h"
+#include <QLabel>
+#include <QSettings>
 
-namespace gui
-{
+namespace gui {
 
-class TimeLineInfoWidget
-        : public QLabel
-{
+class TimeLineInfoWidget: public QLabel {
 public:
     TimeLineInfoWidget(GUIResources& aResources, QWidget* aParent);
     void setProject(core::Project* aProject);

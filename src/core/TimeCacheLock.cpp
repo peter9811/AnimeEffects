@@ -1,12 +1,8 @@
 #include "core/TimeCacheLock.h"
 
-namespace core
-{
+namespace core {
 
-TimeCacheLock::TimeCacheLock()
-    : working()
-    , current()
-{
+TimeCacheLock::TimeCacheLock(): working(), current() {
 }
 
 } // namespace core

@@ -1,32 +1,30 @@
 #ifndef GUI_TIMELINEWIDGET_H
 #define GUI_TIMELINEWIDGET_H
 
-#include <QScrollArea>
-#include <QTreeWidgetItem>
-#include <QTimer>
-#include <QTime>
-#include <QScopedPointer>
-#include "util/Signaler.h"
-#include "core/Project.h"
-#include "core/CameraInfo.h"
 #include "core/AbstractCursor.h"
 #include "core/Animator.h"
+#include "core/CameraInfo.h"
+#include "core/Project.h"
 #include "core/TimeLineEvent.h"
 #include "ctrl/TimeLineEditor.h"
-#include "gui/theme/TimeLine.h"
+#include "gui/GUIResources.h"
 #include "gui/TimeLineEditorWidget.h"
 #include "gui/ViaPoint.h"
-#include "gui/GUIResources.h"
+#include "gui/theme/TimeLine.h"
+#include "util/Signaler.h"
+#include <QScopedPointer>
+#include <QScrollArea>
+#include <QTime>
+#include <QTimer>
+#include <QTreeWidgetItem>
 
-namespace gui
-{
+namespace gui {
 
-class TimeLineWidget : public QScrollArea
-{
+class TimeLineWidget: public QScrollArea {
     Q_OBJECT
 
 public:
-    //typedef std::function<void(const core::TimeInfo&)> PlayBackFunc;
+    // typedef std::function<void(const core::TimeInfo&)> PlayBackFunc;
 
     TimeLineWidget(GUIResources& aResources, ViaPoint& aViaPoint, core::Animator& aAnimator, QWidget* aParent);
 
@@ -41,7 +39,6 @@ public:
     util::Signaler<void()> onFrameUpdated;
     util::Signaler<void()> onTimeFormatChanged;
     util::Signaler<void(bool)> onPlayBackStateChanged;
-
 
 public:
     void onTreeViewUpdated(QTreeWidgetItem* aTopNode);
@@ -82,7 +79,6 @@ private:
     core::Frame mBeginFrame;
     core::Frame mLastFrame;
     bool mDoesLoop;
-
 };
 
 } // namespace gui

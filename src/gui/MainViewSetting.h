@@ -3,16 +3,9 @@
 
 namespace gui {
 
-class MainViewSetting
-{
+class MainViewSetting {
 public:
-    MainViewSetting()
-        : showLayerMesh()
-        , cutImagesByTheFrame()
-        , rotateViewACW()
-        , resetRotateView()
-        , rotateViewCW()
-    {
+    MainViewSetting(): showLayerMesh(), cutImagesByTheFrame(), rotateViewACW(), resetRotateView(), rotateViewCW() {
     }
 
     bool showLayerMesh;
@@ -25,4 +18,3 @@ public:
 } // namespace gui
 
 #endif // GUI_MAINVIEWSETTING
-

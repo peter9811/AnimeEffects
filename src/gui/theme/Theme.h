@@ -1,16 +1,14 @@
 #ifndef GUI_THEME_INFO_H
 #define GUI_THEME_INFO_H
 
-#include <QString>
 #include <QFileInfo>
+#include <QString>
 
 #include <QPalette>
 
-namespace theme
-{
+namespace theme {
 
-class Theme
-{
+class Theme {
 
 public:
     Theme();

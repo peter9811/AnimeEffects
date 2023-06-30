@@ -3,29 +3,19 @@
 
 #include <QMap>
 
-namespace util
-{
+namespace util {
 
-template<typename tData>
-class IDAssigner
-{
+template<typename tData> class IDAssigner {
 public:
     typedef int IdType;
 
-    IDAssigner()
-        : mMap()
-        , mCurrent(0)
-    {
+    IDAssigner(): mMap(), mCurrent(0) {
     }
 
-    IdType getId(tData aData)
-    {
-        if (mMap.contains(aData))
-        {
+    IdType getId(tData aData) {
+        if (mMap.contains(aData)) {
             return mMap[aData];
-        }
-        else
-        {
+        } else {
             auto id = mCurrent;
             ++mCurrent;
             mMap[aData] = id;
@@ -33,8 +23,7 @@ public:
         }
     }
 
-    void clear()
-    {
+    void clear() {
         mMap.clear();
         mCurrent = 0;
     }
@@ -47,4 +36,3 @@ private:
 } // namespace util
 
 #endif // UTIL_IDASSIGNER
-

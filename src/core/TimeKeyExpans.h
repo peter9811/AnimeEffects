@@ -1,27 +1,25 @@
 #ifndef CORE_TIMEKEYEXPANS_H
 #define CORE_TIMEKEYEXPANS_H
 
-#include "gl/Texture.h"
-#include "core/SRTExpans.h"
-#include "core/MoveKey.h"
-#include "core/RotateKey.h"
-#include "core/ScaleKey.h"
-#include "core/OpaKey.h"
-#include "core/HsvKey.h"
-#include "core/BoneKey.h"
-#include "core/PoseKey.h"
-#include "core/MeshKey.h"
-#include "core/FFDKey.h"
-#include "core/ImageKey.h"
-#include "core/TimeKeyType.h"
-#include "core/PosePalette.h"
 #include "core/BoneExpans.h"
+#include "core/BoneKey.h"
+#include "core/FFDKey.h"
+#include "core/HsvKey.h"
+#include "core/ImageKey.h"
+#include "core/MeshKey.h"
+#include "core/MoveKey.h"
+#include "core/OpaKey.h"
+#include "core/PoseKey.h"
+#include "core/PosePalette.h"
+#include "core/RotateKey.h"
+#include "core/SRTExpans.h"
+#include "core/ScaleKey.h"
+#include "core/TimeKeyType.h"
+#include "gl/Texture.h"
 
-namespace core
-{
+namespace core {
 
-class TimeKeyExpans
-{
+class TimeKeyExpans {
 public:
     TimeKeyExpans();
 
@@ -35,52 +33,122 @@ public:
 
     void clearCaches();
 
-    SRTExpans& srt() { return mSRT; }
-    const SRTExpans& srt() const { return mSRT; }
+    SRTExpans& srt() {
+        return mSRT;
+    }
+    const SRTExpans& srt() const {
+        return mSRT;
+    }
 
-    OpaKey::Data& opa() { return mOpa; }
-    const OpaKey::Data& opa() const { return mOpa; }
+    OpaKey::Data& opa() {
+        return mOpa;
+    }
+    const OpaKey::Data& opa() const {
+        return mOpa;
+    }
 
-    HSVKey::Data& hsv() {return mHSV;}
-    const HSVKey::Data& hsv() const {return mHSV;}
+    HSVKey::Data& hsv() {
+        return mHSV;
+    }
+    const HSVKey::Data& hsv() const {
+        return mHSV;
+    }
 
-    void setWorldOpacity(float aValue) { mWorldOpacity = aValue; }
-    float worldOpacity() const { return mWorldOpacity; }
+    void setWorldOpacity(float aValue) {
+        mWorldOpacity = aValue;
+    }
+    float worldOpacity() const {
+        return mWorldOpacity;
+    }
 
-    void setDepth(float aValue) { mDepth = aValue; }
-    float depth() const { return mDepth; }
-    void setWorldDepth(float aValue) { mWorldDepth = aValue; }
-    float worldDepth() const { return mWorldDepth; }
+    void setDepth(float aValue) {
+        mDepth = aValue;
+    }
+    float depth() const {
+        return mDepth;
+    }
+    void setWorldDepth(float aValue) {
+        mWorldDepth = aValue;
+    }
+    float worldDepth() const {
+        return mWorldDepth;
+    }
 
-    BoneExpans& bone() { return mBone; }
-    const BoneExpans& bone() const { return mBone; }
+    BoneExpans& bone() {
+        return mBone;
+    }
+    const BoneExpans& bone() const {
+        return mBone;
+    }
 
-    PoseKey::Data& pose() { return mPose; }
-    const PoseKey::Data& pose() const { return mPose; }
-    void setPoseParent(BoneKey* aKey) { mPoseParent = aKey; }
-    BoneKey* poseParent() { return mPoseParent; }
-    const BoneKey* poseParent() const { return mPoseParent; }
-    PosePalette& posePalette() { return mPosePalette; }
-    const PosePalette& posePalette() const { return mPosePalette; }
+    PoseKey::Data& pose() {
+        return mPose;
+    }
+    const PoseKey::Data& pose() const {
+        return mPose;
+    }
+    void setPoseParent(BoneKey* aKey) {
+        mPoseParent = aKey;
+    }
+    BoneKey* poseParent() {
+        return mPoseParent;
+    }
+    const BoneKey* poseParent() const {
+        return mPoseParent;
+    }
+    PosePalette& posePalette() {
+        return mPosePalette;
+    }
+    const PosePalette& posePalette() const {
+        return mPosePalette;
+    }
 
-    void setAreaMeshKey(MeshKey* aKey) { mAreaMeshKey = aKey; }
-    MeshKey* areaMeshKey() { return mAreaMeshKey; }
-    const MeshKey* areaMeshKey() const { return mAreaMeshKey; }
+    void setAreaMeshKey(MeshKey* aKey) {
+        mAreaMeshKey = aKey;
+    }
+    MeshKey* areaMeshKey() {
+        return mAreaMeshKey;
+    }
+    const MeshKey* areaMeshKey() const {
+        return mAreaMeshKey;
+    }
 
-    FFDKey::Data& ffd() { return mFFD; }
-    const FFDKey::Data& ffd() const { return mFFD; }
-    void setFFDMesh(LayerMesh* aMesh) { mFFDMesh = aMesh; }
-    LayerMesh* ffdMesh() { return mFFDMesh; }
-    void setFFDMeshParent(TimeKey* aKey) { mFFDMeshParent = aKey; }
-    TimeKey* ffdMeshParent() { return mFFDMeshParent; }
+    FFDKey::Data& ffd() {
+        return mFFD;
+    }
+    const FFDKey::Data& ffd() const {
+        return mFFD;
+    }
+    void setFFDMesh(LayerMesh* aMesh) {
+        mFFDMesh = aMesh;
+    }
+    LayerMesh* ffdMesh() {
+        return mFFDMesh;
+    }
+    void setFFDMeshParent(TimeKey* aKey) {
+        mFFDMeshParent = aKey;
+    }
+    TimeKey* ffdMeshParent() {
+        return mFFDMeshParent;
+    }
 
-    void setAreaImageKey(ImageKey* aKey) { mAreaImageKey = aKey; }
-    ImageKey* areaImageKey() { return mAreaImageKey; }
-    const ImageKey* areaImageKey() const { return mAreaImageKey; }
+    void setAreaImageKey(ImageKey* aKey) {
+        mAreaImageKey = aKey;
+    }
+    ImageKey* areaImageKey() {
+        return mAreaImageKey;
+    }
+    const ImageKey* areaImageKey() const {
+        return mAreaImageKey;
+    }
     const gl::Texture* areaTexture() const;
     img::BlendMode blendMode() const;
-    void setImageOffset(const QVector2D& aOffset) { mImageOffset = aOffset; }
-    QVector2D imageOffset() const { return mImageOffset; }
+    void setImageOffset(const QVector2D& aOffset) {
+        mImageOffset = aOffset;
+    }
+    QVector2D imageOffset() const {
+        return mImageOffset;
+    }
 
 private:
     Frame mMasterCache;

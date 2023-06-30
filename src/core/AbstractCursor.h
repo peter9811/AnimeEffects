@@ -1,32 +1,18 @@
 #ifndef CORE_ABSTRACTCURSOR_H
 #define CORE_ABSTRACTCURSOR_H
 
-#include <functional>
+#include "core/CameraInfo.h"
 #include <QMouseEvent>
 #include <QPoint>
-#include "core/CameraInfo.h"
+#include <functional>
 
-namespace core
-{
+namespace core {
 
-class AbstractCursor
-{
+class AbstractCursor {
 public:
-    enum Event
-    {
-        Event_Press,
-        Event_Move,
-        Event_Release,
-        Event_TERM
-    };
+    enum Event { Event_Press, Event_Move, Event_Release, Event_TERM };
 
-    enum Button
-    {
-        Button_Left,
-        Button_Middle,
-        Button_Right,
-        Button_TERM
-    };
+    enum Button { Button_Left, Button_Middle, Button_Right, Button_TERM };
 
     AbstractCursor();
 
@@ -51,20 +37,46 @@ public:
     void suspendEvent(const std::function<void()>& aEventReflector);
     void resumeEvent();
 
-    inline Button eventButton() const { return mEventButton; }
-    inline Event eventType() const { return mEventType; }
-    inline QPoint screenPoint() const { return mScreenPoint; }
-    inline QVector2D screenPos() const { return mScreenPos; }
-    inline QVector2D screenVel() const { return mScreenVel; }
-    inline QPoint worldPoint() const { return mWorldPos.toPoint(); }
-    inline QVector2D worldPos() const { return mWorldPos; }
-    inline QVector2D worldVel() const { return mWorldVel; }
-    inline float pressure() const { return mPressure; }
+    inline Button eventButton() const {
+        return mEventButton;
+    }
+    inline Event eventType() const {
+        return mEventType;
+    }
+    inline QPoint screenPoint() const {
+        return mScreenPoint;
+    }
+    inline QVector2D screenPos() const {
+        return mScreenPos;
+    }
+    inline QVector2D screenVel() const {
+        return mScreenVel;
+    }
+    inline QPoint worldPoint() const {
+        return mWorldPos.toPoint();
+    }
+    inline QVector2D worldPos() const {
+        return mWorldPos;
+    }
+    inline QVector2D worldVel() const {
+        return mWorldVel;
+    }
+    inline float pressure() const {
+        return mPressure;
+    }
 
-    inline bool isPressed(Button aButton) const { return mIsPressed.at(aButton); }
-    inline bool isPressedLeft() const { return mIsPressed[Button_Left]; }
-    inline bool isPressedMiddle() const { return mIsPressed[Button_Middle]; }
-    inline bool isPressedRight() const { return mIsPressed[Button_Right]; }
+    inline bool isPressed(Button aButton) const {
+        return mIsPressed.at(aButton);
+    }
+    inline bool isPressedLeft() const {
+        return mIsPressed[Button_Left];
+    }
+    inline bool isPressedMiddle() const {
+        return mIsPressed[Button_Middle];
+    }
+    inline bool isPressedRight() const {
+        return mIsPressed[Button_Right];
+    }
 
     bool emitsLeftPressedEvent() const;
     bool emitsLeftDraggedEvent() const;

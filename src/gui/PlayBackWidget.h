@@ -1,21 +1,18 @@
 #ifndef GUI_PLAYBACKWIDGET_H
 #define GUI_PLAYBACKWIDGET_H
 
-#include <vector>
-#include <functional>
-#include <QWidget>
-#include <QPushButton>
 #include "gui/GUIResources.h"
+#include <QPushButton>
+#include <QWidget>
+#include <functional>
+#include <vector>
 
-namespace gui
-{
+namespace gui {
 
-class PlayBackWidget : public QWidget
-{
+class PlayBackWidget: public QWidget {
     Q_OBJECT
 public:
-    enum PushType
-    {
+    enum PushType {
         PushType_Play,
         PushType_Pause,
         PushType_Step,
@@ -37,9 +34,7 @@ public:
     void pushPauseButton();
 
 private:
-    QPushButton* createButton(
-            const QString& aName, bool aIsCheckable,
-            int aColumn, const QString& aToolTip);
+    QPushButton* createButton(const QString& aName, bool aIsCheckable, int aColumn, const QString& aToolTip);
     GUIResources& mGUIResources;
     std::vector<QPushButton*> mButtons;
     PushDelegate mPushDelegate;

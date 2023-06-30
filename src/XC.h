@@ -1,8 +1,8 @@
 #ifndef XC_H
 #define XC_H
 
-#include "XCType.h"
-#include "XCReport.h"
 #include "XCAssert.h"
+#include "XCReport.h"
+#include "XCType.h"
 
 #endif // XC_H

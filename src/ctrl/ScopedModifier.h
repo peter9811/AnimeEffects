@@ -2,24 +2,18 @@
 #define CTRL_SCOPEDMODIFIER
 
 #include "cmnd/ScopedUndoSuspender.h"
-#include "core/Project.h"
 #include "core/Animator.h"
+#include "core/Project.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class ScopedModifier
-{
+class ScopedModifier {
 public:
-    ScopedModifier(core::Project& aProject)
-        : mUndoSuspend(aProject.commandStack())
-        , mAnimator(aProject.animator())
-    {
+    ScopedModifier(core::Project& aProject): mUndoSuspend(aProject.commandStack()), mAnimator(aProject.animator()) {
         mAnimator.suspend();
     }
 
-    ~ScopedModifier()
-    {
+    ~ScopedModifier() {
         mAnimator.resume();
     }
 
@@ -31,4 +25,3 @@ private:
 } // namespace ctrl
 
 #endif // CTRL_SCOPEDMODIFIER
-

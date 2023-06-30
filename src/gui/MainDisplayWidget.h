@@ -1,34 +1,36 @@
 #ifndef GUI_MAINDISPLAYWIDGET_H
 #define GUI_MAINDISPLAYWIDGET_H
 
-#include <QOpenGLWidget>
-#include <QOpenGLFramebufferObject>
-#include <QScopedPointer>
-#include <QTabBar>
-#include <QReadWriteLock>
-#include <QtMath>
-#include "util/LinkPointer.h"
+#include "core/AbstractCursor.h"
+#include "core/ClippingFrame.h"
+#include "core/DestinationTexturizer.h"
+#include "core/Project.h"
+#include "core/TimeInfo.h"
+#include "ctrl/Driver.h"
+#include "ctrl/Painter.h"
+#include "gl/EasyTextureDrawer.h"
 #include "gl/Global.h"
 #include "gl/Root.h"
 #include "gl/VertexArrayObject.h"
-#include "gl/EasyTextureDrawer.h"
-#include "core/Project.h"
-#include "core/AbstractCursor.h"
-#include "core/TimeInfo.h"
-#include "core/ClippingFrame.h"
-#include "core/DestinationTexturizer.h"
-#include "ctrl/Driver.h"
-#include "ctrl/Painter.h"
-#include "gui/MainViewSetting.h"
 #include "gui/CanvasMover.h"
-namespace gui { class ProjectTabBar; }
-namespace gui { class ViaPoint; }
+#include "gui/MainViewSetting.h"
+#include "util/LinkPointer.h"
+#include <QOpenGLFramebufferObject>
+#include <QOpenGLWidget>
+#include <QReadWriteLock>
+#include <QScopedPointer>
+#include <QTabBar>
+#include <QtMath>
+namespace gui {
+class ProjectTabBar;
+}
+namespace gui {
+class ViaPoint;
+}
 
-namespace gui
-{
+namespace gui {
 
-class MainDisplayWidget : public QOpenGLWidget
-{
+class MainDisplayWidget: public QOpenGLWidget {
     Q_OBJECT
 public:
     MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent);
@@ -40,9 +42,12 @@ public:
     void updateRender();
     void resetCamera();
 
-    QReadWriteLock& renderingLock() { return mRenderingLock; }
-    const QReadWriteLock& renderingLock() const { return mRenderingLock; }
-
+    QReadWriteLock& renderingLock() {
+        return mRenderingLock;
+    }
+    const QReadWriteLock& renderingLock() const {
+        return mRenderingLock;
+    }
 
     // boostlike signals
 public:
@@ -53,13 +58,18 @@ public:
     void onProjectAttributeUpdated();
 
 private:
-    class GLContextAccessor : public gl::ContextAccessor
-    {
+    class GLContextAccessor: public gl::ContextAccessor {
         MainDisplayWidget* mOwner;
+
     public:
-        GLContextAccessor(MainDisplayWidget* aOwner) : mOwner(aOwner) {}
-        virtual void makeCurrent() { mOwner->makeCurrent(); }
-        virtual void doneCurrent() { mOwner->doneCurrent(); }
+        GLContextAccessor(MainDisplayWidget* aOwner): mOwner(aOwner) {
+        }
+        virtual void makeCurrent() {
+            mOwner->makeCurrent();
+        }
+        virtual void doneCurrent() {
+            mOwner->doneCurrent();
+        }
     };
 
     // from QOpenGLWidget
@@ -74,7 +84,9 @@ private:
     virtual void tabletEvent(QTabletEvent* event);
 
     void updateCursor();
-    QSize deviceSize() const { return this->size() * mDevicePixelRatio; }
+    QSize deviceSize() const {
+        return this->size() * mDevicePixelRatio;
+    }
 
     ViaPoint& mViaPoint;
     gl::DeviceInfo mGLDeviceInfo;

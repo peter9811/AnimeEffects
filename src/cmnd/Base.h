@@ -3,19 +3,29 @@
 
 #include <QString>
 
-namespace cmnd
-{
+namespace cmnd {
 
-class Base
-{
+class Base {
 public:
-    Base() {}
-    virtual ~Base() {}
-    virtual QString name() const { return QString(); }
-    virtual bool isUseless() const { return false; }
-    virtual bool tryExec() { return true; }
-    virtual bool tryRedo() { return true; }
-    virtual bool tryUndo() { return true; }
+    Base() {
+    }
+    virtual ~Base() {
+    }
+    virtual QString name() const {
+        return QString();
+    }
+    virtual bool isUseless() const {
+        return false;
+    }
+    virtual bool tryExec() {
+        return true;
+    }
+    virtual bool tryRedo() {
+        return true;
+    }
+    virtual bool tryUndo() {
+        return true;
+    }
 
 private:
     Base(const Base&);

@@ -1,29 +1,27 @@
 #ifndef GUI_OBJECTTREEWIDGET_H
 #define GUI_OBJECTTREEWIDGET_H
 
-#include <QTreeWidget>
-#include <QDropEvent>
-#include <QHeaderView>
-#include <QAction>
-#include "ctrl/TimeLineEditor.h"
-#include "util/PlacePointer.h"
-#include "util/LinkPointer.h"
-#include "util/TreePos.h"
-#include "util/Signaler.h"
 #include "cmnd/ScopedMacro.h"
-#include "core/Project.h"
 #include "core/ObjectTree.h"
 #include "core/ObjectTreeNotifier.h"
+#include "core/Project.h"
+#include "ctrl/TimeLineEditor.h"
 #include "gui/GUIResources.h"
 #include "gui/ViaPoint.h"
 #include "gui/obj/obj_Item.h"
+#include "util/LinkPointer.h"
+#include "util/PlacePointer.h"
+#include "util/Signaler.h"
+#include "util/TreePos.h"
+#include <QAction>
+#include <QDropEvent>
+#include <QHeaderView>
+#include <QTreeWidget>
 
-namespace gui
-{
+namespace gui {
 
 //-------------------------------------------------------------------------------------------------
-class ObjectTreeWidget : public QTreeWidget
-{
+class ObjectTreeWidget: public QTreeWidget {
     Q_OBJECT
 public:
     enum { kItemColumn = 0 };
@@ -46,12 +44,11 @@ public:
     void notifyRestructure();
 
 private:
-    struct ItemInfo
-    {
-        ItemInfo()
-            : ptr(nullptr), pos() {}
-        ItemInfo(QTreeWidgetItem* aPtr, const util::TreePos& aPos)
-            : ptr(aPtr), pos(aPos) {}
+    struct ItemInfo {
+        ItemInfo(): ptr(nullptr), pos() {
+        }
+        ItemInfo(QTreeWidgetItem* aPtr, const util::TreePos& aPos): ptr(aPtr), pos(aPos) {
+        }
         QTreeWidgetItem* ptr;
         util::TreePos pos;
     };
@@ -73,7 +70,9 @@ private:
     obj::Item* createFileItem(core::ObjectNode& aNode);
     QModelIndex cheatDragDropPos(QPoint& aPos);
     QPoint treeTopLeftPosition() const;
-    int scrollHeight() const { return -treeTopLeftPosition().y(); }
+    int scrollHeight() const {
+        return -treeTopLeftPosition().y();
+    }
     void endRenameEditor();
     int itemHeight(const core::ObjectNode& aNode) const;
     bool updateItemHeights(QTreeWidgetItem* aItem);
@@ -81,7 +80,7 @@ private:
     void onTimeLineModified(core::TimeLineEvent&, bool);
     void onItemChanged(QTreeWidgetItem* aItem, int aColumn);
     void onItemClicked(QTreeWidgetItem* aItem, int aColumn);
-    void onItemCollapsed(QTreeWidgetItem * aItem);
+    void onItemCollapsed(QTreeWidgetItem* aItem);
     void onItemExpanded(QTreeWidgetItem* aItem);
     void onItemSelectionChanged();
     void onContextMenuRequested(const QPoint& aPos);

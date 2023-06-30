@@ -1,29 +1,25 @@
 #ifndef CMND_VECTOR
 #define CMND_VECTOR
 
-#include <vector>
 #include "cmnd/Base.h"
+#include <vector>
 
-namespace cmnd
-{
+namespace cmnd {
 
-class Vector : public std::vector<Base*>
-{
+class Vector: public std::vector<Base*> {
 public:
-    Vector() {}
-    virtual ~Vector() {}
+    Vector() {
+    }
+    virtual ~Vector() {
+    }
 
-    void push(Base* aCommand)
-    {
-        if (aCommand)
-        {
+    void push(Base* aCommand) {
+        if (aCommand) {
             this->push_back(aCommand);
         }
     }
-    void push(const Vector& aCommands)
-    {
-        if (!aCommands.empty())
-        {
+    void push(const Vector& aCommands) {
+        if (!aCommands.empty()) {
             this->insert(this->end(), aCommands.begin(), aCommands.end());
         }
     }
@@ -32,4 +28,3 @@ public:
 } // namespace cmnd
 
 #endif // CMND_VECTOR
-

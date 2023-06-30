@@ -1,30 +1,25 @@
 #include "gl/Global.h"
 #include "XC.h"
 
-namespace
-{
+namespace {
 gl::Global::Functions* gGLGlobalFunctions = nullptr;
-//QOpenGLContext* gGLGlobalContext = nullptr;
-//QSurface* gGlobalSurface = nullptr;
+// QOpenGLContext* gGLGlobalContext = nullptr;
+// QSurface* gGlobalSurface = nullptr;
 QOpenGLWidget* gGLGlobalWidget = nullptr;
-}
+} // namespace
 
-namespace gl
-{
+namespace gl {
 
-void Global::setFunctions(Functions& aFunctions)
-{
+void Global::setFunctions(Functions& aFunctions) {
     XC_ASSERT(!gGLGlobalFunctions);
     gGLGlobalFunctions = &aFunctions;
 }
 
-void Global::clearFunctions()
-{
+void Global::clearFunctions() {
     gGLGlobalFunctions = nullptr;
 }
 
-Global::Functions& Global::functions()
-{
+Global::Functions& Global::functions() {
     XC_PTR_ASSERT(gGLGlobalFunctions);
     return *gGLGlobalFunctions;
 }
@@ -54,25 +49,21 @@ void Global::doneCurrent()
     gGLGlobalContext->doneCurrent();
 }
 #else
-void Global::setContext(QOpenGLWidget& aWidget)
-{
+void Global::setContext(QOpenGLWidget& aWidget) {
     XC_ASSERT(!gGLGlobalWidget);
     gGLGlobalWidget = &aWidget;
 }
 
-void Global::clearContext()
-{
+void Global::clearContext() {
     gGLGlobalWidget = nullptr;
 }
 
-void Global::makeCurrent()
-{
+void Global::makeCurrent() {
     XC_PTR_ASSERT(gGLGlobalWidget);
     gGLGlobalWidget->makeCurrent();
 }
 
-void Global::doneCurrent()
-{
+void Global::doneCurrent() {
     XC_PTR_ASSERT(gGLGlobalWidget);
     gGLGlobalWidget->doneCurrent();
 }
@@ -80,4 +71,4 @@ void Global::doneCurrent()
 
 } // namespace gl
 
-const QPair<int, int> gl::Global::kVersion{ 4, 0 };
+const QPair<int, int> gl::Global::kVersion{4, 0};

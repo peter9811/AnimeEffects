@@ -1,6 +1,12 @@
-#include <QPainter>
+#include "ctrl/TimeLineEditor.h"
+#include "cmnd/BasicCommands.h"
+#include "cmnd/ScopedMacro.h"
+#include "core/FFDKeyUpdater.h"
+#include "core/ImageKeyUpdater.h"
 #include "core/ResourceUpdatingWorkspace.h"
 #include "core/TimeKeyExpans.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/time/time_Renderer.h"
 #include "ffd/ffd_Target.h"
 #include "qapplication.h"
 #include "qclipboard.h"
@@ -8,18 +14,11 @@
 #include "qjsondocument.h"
 #include "qjsonobject.h"
 #include "util/TreeIterator.h"
-#include "cmnd/ScopedMacro.h"
-#include "cmnd/BasicCommands.h"
-#include "ctrl/TimeLineEditor.h"
-#include "ctrl/CmndName.h"
-#include "ctrl/time/time_Renderer.h"
-#include "core/FFDKeyUpdater.h"
-#include "core/ImageKeyUpdater.h"
+#include <QPainter>
 
 using namespace core;
 
-namespace
-{
+namespace {
 
 static const int kTimeLineFpsA = 60;
 static const int kTimeLineFpsB = 30;
@@ -28,72 +27,49 @@ static const int kTimeLineMargin = 14;
 static const int kHeaderHeight = 22;
 static const int kDefaultMaxFrame = 600;
 
-}
+} // namespace
 
-namespace ctrl
-{
+namespace ctrl {
 
 //-------------------------------------------------------------------------------------------------
-TimeLineEditor::TimeLineEditor()
-    : mProject()
-    , mRows()
-    , mSelectingRow()
-    , mTimeMax()
-    , mState(State_Standby)
-    , mTimeCurrent(kTimeLineMargin)
-    , mTimeScale()
-    , mFocus(mRows, mTimeScale, kTimeLineMargin)
-    , mMoveRef()
-    , mMoveFrame()
-    , mOnUpdatingKey(false)
-    , mShowSelectionRange(false)
-{
+TimeLineEditor::TimeLineEditor():
+    mProject(), mRows(), mSelectingRow(), mTimeMax(), mState(State_Standby), mTimeCurrent(kTimeLineMargin),
+    mTimeScale(), mFocus(mRows, mTimeScale, kTimeLineMargin), mMoveRef(), mMoveFrame(), mOnUpdatingKey(false),
+    mShowSelectionRange(false) {
     mRows.reserve(64);
 
-    const std::array<int, 3> kFrameList =
-    {
-        kTimeLineFpsA,
-        kTimeLineFpsB,
-        kTimeLineFpsC
-    };
+    const std::array<int, 3> kFrameList = {kTimeLineFpsA, kTimeLineFpsB, kTimeLineFpsC};
     mTimeScale.setFrameList(kFrameList);
 
     // reset max frame
     setMaxFrame(kDefaultMaxFrame);
 }
 
-void TimeLineEditor::setMaxFrame(int aValue)
-{
+void TimeLineEditor::setMaxFrame(int aValue) {
     mTimeMax = aValue;
     mTimeScale.setMaxFrame(mTimeMax);
     mTimeCurrent.setMaxFrame(mTimeMax);
     mTimeCurrent.setFrame(mTimeScale, core::Frame(0));
 }
 
-void TimeLineEditor::setProject(Project* aProject)
-{
+void TimeLineEditor::setProject(Project* aProject) {
     clearRows();
     mProject.reset();
 
-    if (aProject)
-    {
+    if (aProject) {
         mProject = aProject->pointee();
         setMaxFrame(mProject->attribute().maxFrame());
-    }
-    else
-    {
+    } else {
         setMaxFrame(kDefaultMaxFrame);
     }
 }
 
-void TimeLineEditor::clearRows()
-{
+void TimeLineEditor::clearRows() {
     mRows.clear();
     clearState();
 }
 
-void TimeLineEditor::clearState()
-{
+void TimeLineEditor::clearState() {
     mFocus.clear();
     mState = State_Standby;
     mMoveRef = nullptr;
@@ -101,73 +77,57 @@ void TimeLineEditor::clearState()
     mShowSelectionRange = false;
 }
 
-void TimeLineEditor::pushRow(ObjectNode* aNode, util::Range aWorldTB, bool aClosedFolder)
-{
+void TimeLineEditor::pushRow(ObjectNode* aNode, util::Range aWorldTB, bool aClosedFolder) {
     const int left = kTimeLineMargin;
     const int right = left + mTimeScale.maxPixelWidth();
     const QRect rect(QPoint(left, aWorldTB.min()), QPoint(right, aWorldTB.max()));
     mRows.push_back(TimeLineRow(aNode, rect, aClosedFolder, aNode == mSelectingRow));
 }
 
-void TimeLineEditor::updateRowSelection(const core::ObjectNode* aRepresent)
-{
+void TimeLineEditor::updateRowSelection(const core::ObjectNode* aRepresent) {
     mSelectingRow = aRepresent;
-    for (auto& row : mRows)
-    {
+    for (auto& row : mRows) {
         row.selecting = (row.node && row.node == aRepresent);
     }
 }
 
-void TimeLineEditor::updateKey()
-{
-    if (!mOnUpdatingKey)
-    {
+void TimeLineEditor::updateKey() {
+    if (!mOnUpdatingKey) {
         clearState();
     }
 }
 
-void TimeLineEditor::updateProjectAttribute()
-{
+void TimeLineEditor::updateProjectAttribute() {
     clearState();
-    if (mProject)
-    {
+    if (mProject) {
         const int newMaxFrame = mProject->attribute().maxFrame();
-        if (mTimeMax != newMaxFrame)
-        {
+        if (mTimeMax != newMaxFrame) {
             setMaxFrame(newMaxFrame);
 
             const int newRowRight = kTimeLineMargin + mTimeScale.maxPixelWidth();
-            for (auto& row : mRows)
-            {
+            for (auto& row : mRows) {
                 row.rect.setRight(newRowRight);
             }
         }
     }
 }
 
-TimeLineEditor::UpdateFlags TimeLineEditor::updateCursor(const AbstractCursor& aCursor)
-{
+TimeLineEditor::UpdateFlags TimeLineEditor::updateCursor(const AbstractCursor& aCursor) {
     TimeLineEditor::UpdateFlags flags = 0;
 
-    if (!mProject)
-    {
+    if (!mProject) {
         return flags;
     }
 
     const QPoint worldPoint = aCursor.worldPoint();
 
-    if (aCursor.emitsLeftPressedEvent())
-    {
+    if (aCursor.emitsLeftPressedEvent()) {
         // a selection range is exists.
-        if (mState == State_EncloseKeys)
-        {
-            if (mFocus.isInRange(worldPoint) && beginMoveKeys(worldPoint))
-            {
+        if (mState == State_EncloseKeys) {
+            if (mFocus.isInRange(worldPoint) && beginMoveKeys(worldPoint)) {
                 mState = State_MoveKeys;
                 flags |= UpdateFlag_ModView;
-            }
-            else
-            {
+            } else {
                 mShowSelectionRange = false;
                 mState = State_Standby;
                 flags |= UpdateFlag_ModView;
@@ -175,99 +135,74 @@ TimeLineEditor::UpdateFlags TimeLineEditor::updateCursor(const AbstractCursor& a
         }
 
         // idle state
-        if (mState == State_Standby)
-        {
+        if (mState == State_Standby) {
             const auto target = mFocus.reset(worldPoint);
 
             const QVector2D handlePos(mTimeCurrent.handlePos());
 
-            if ((aCursor.screenPos() - handlePos).length() < mTimeCurrent.handleRange())
-            {
+            if ((aCursor.screenPos() - handlePos).length() < mTimeCurrent.handleRange()) {
                 mState = State_MoveCurrent;
                 flags |= UpdateFlag_ModView;
-            }
-            else if (aCursor.screenPos().y() < kHeaderHeight)
-            {
+            } else if (aCursor.screenPos().y() < kHeaderHeight) {
                 mTimeCurrent.setHandlePos(mTimeScale, aCursor.worldPos().toPoint());
                 mState = State_MoveCurrent;
                 flags |= UpdateFlag_ModView;
                 flags |= UpdateFlag_ModFrame;
-            }
-            else if (target.isValid())
-            {
+            } else if (target.isValid()) {
                 beginMoveKey(target);
                 mState = State_MoveKeys;
                 flags |= UpdateFlag_ModView;
-            }
-            else
-            {
+            } else {
                 mShowSelectionRange = true;
                 mState = State_EncloseKeys;
                 flags |= UpdateFlag_ModView;
             }
         }
-    }
-    else if (aCursor.emitsLeftDraggedEvent())
-    {
-        if (mState == State_MoveCurrent)
-        {
+    } else if (aCursor.emitsLeftDraggedEvent()) {
+        if (mState == State_MoveCurrent) {
             mTimeCurrent.setHandlePos(mTimeScale, aCursor.worldPos().toPoint());
             flags |= UpdateFlag_ModView;
             flags |= UpdateFlag_ModFrame;
-        }
-        else if (mState == State_MoveKeys)
-        {
-            if (!modifyMoveKeys(aCursor.worldPoint()))
-            {
+        } else if (mState == State_MoveKeys) {
+            if (!modifyMoveKeys(aCursor.worldPoint())) {
                 mState = State_Standby;
                 mMoveRef = nullptr;
                 mFocus.clear();
             }
             flags |= UpdateFlag_ModView;
             flags |= UpdateFlag_ModFrame;
-        }
-        else if (mState == State_EncloseKeys)
-        {
+        } else if (mState == State_EncloseKeys) {
             mFocus.update(aCursor.worldPoint());
             flags |= UpdateFlag_ModView;
         }
-    }
-    else if (aCursor.emitsLeftReleasedEvent())
-    {
-        if (mState != State_EncloseKeys || !mFocus.hasRange())
-        {
+    } else if (aCursor.emitsLeftReleasedEvent()) {
+        if (mState != State_EncloseKeys || !mFocus.hasRange()) {
             mMoveRef = nullptr;
             mState = State_Standby;
             mShowSelectionRange = false;
             flags |= UpdateFlag_ModView;
         }
-    }
-    else
-    {
-        if (mState != State_EncloseKeys)
-        {
+    } else {
+        if (mState != State_EncloseKeys) {
             mFocus.reset(aCursor.worldPoint());
         }
     }
 
-    if (mFocus.viewIsChanged())
-    {
+    if (mFocus.viewIsChanged()) {
         flags |= UpdateFlag_ModView;
     }
 
     return flags;
 }
 
-void TimeLineEditor::beginMoveKey(const time::Focuser::SingleFocus& aTarget)
-{
+void TimeLineEditor::beginMoveKey(const time::Focuser::SingleFocus& aTarget) {
     XC_ASSERT(aTarget.isValid());
 
     mOnUpdatingKey = true;
     {
         cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Move key"));
 
-        auto notifier = TimeLineUtil::createMoveNotifier(
-                            *mProject, *aTarget.node, aTarget.pos);
+        auto notifier = TimeLineUtil::createMoveNotifier(*mProject, *aTarget.node, aTarget.pos);
         macro.grabListener(notifier);
 
         mMoveRef = new TimeLineUtil::MoveFrameOfKey(notifier->event());
@@ -277,16 +212,14 @@ void TimeLineEditor::beginMoveKey(const time::Focuser::SingleFocus& aTarget)
     mOnUpdatingKey = false;
 }
 
-bool TimeLineEditor::beginMoveKeys(const QPoint& aWorldPos)
-{
+bool TimeLineEditor::beginMoveKeys(const QPoint& aWorldPos) {
     bool success = false;
     mOnUpdatingKey = true;
     {
         auto notifier = new TimeLineUtil::Notifier(*mProject);
         notifier->event().setType(TimeLineEvent::Type_MoveKey);
 
-        if (mFocus.select(notifier->event()))
-        {
+        if (mFocus.select(notifier->event())) {
             cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Move keys"));
 
             macro.grabListener(notifier);
@@ -294,9 +227,7 @@ bool TimeLineEditor::beginMoveKeys(const QPoint& aWorldPos)
             mProject->commandStack().push(mMoveRef);
             mMoveFrame = mTimeScale.frame(aWorldPos.x() - kTimeLineMargin);
             success = true;
-        }
-        else
-        {
+        } else {
             delete notifier;
             mMoveRef = nullptr;
         }
@@ -305,18 +236,15 @@ bool TimeLineEditor::beginMoveKeys(const QPoint& aWorldPos)
     return success;
 }
 
-bool TimeLineEditor::modifyMoveKeys(const QPoint& aWorldPos)
-{
-    if (mProject->commandStack().isModifiable(mMoveRef))
-    {
+bool TimeLineEditor::modifyMoveKeys(const QPoint& aWorldPos) {
+    if (mProject->commandStack().isModifiable(mMoveRef)) {
         const int newFrame = mTimeScale.frame(aWorldPos.x() - kTimeLineMargin);
         const int addFrame = newFrame - mMoveFrame;
         TimeLineEvent modEvent;
 
         mOnUpdatingKey = true;
         int clampedAdd = addFrame;
-        if (mMoveRef->modifyMove(modEvent, addFrame, util::Range(0, mTimeMax), &clampedAdd))
-        {
+        if (mMoveRef->modifyMove(modEvent, addFrame, util::Range(0, mTimeMax), &clampedAdd)) {
             mMoveFrame = newFrame;
             mFocus.moveBoundingRect(clampedAdd);
             mProject->onTimeLineModified(modEvent, false);
@@ -327,35 +255,33 @@ bool TimeLineEditor::modifyMoveKeys(const QPoint& aWorldPos)
     return false;
 }
 
-bool TimeLineEditor::checkContactWithKeyFocus(core::TimeLineEvent& aEvent, const QPoint& aPos)
-{
-    if (mFocus.hasRange() && !mFocus.isInRange(aPos))
-    {
+bool TimeLineEditor::checkContactWithKeyFocus(core::TimeLineEvent& aEvent, const QPoint& aPos) {
+    if (mFocus.hasRange() && !mFocus.isInRange(aPos)) {
         return false;
     }
     return mFocus.select(aEvent);
 }
 
-bool TimeLineEditor::retrieveFocusTargets(core::TimeLineEvent& aEvent){
-    if(mFocus.hasRange()){
+bool TimeLineEditor::retrieveFocusTargets(core::TimeLineEvent& aEvent) {
+    if (mFocus.hasRange()) {
         return mFocus.select(aEvent);
     }
     return false;
 }
 
-bool isKeyJsonValid(QJsonObject json){
-    if(json.contains("TargetsSize") && json["TargetsSize"] != 0 &&
-       json.contains("Keys") && json.value("Keys").toArray().size() != 0){
+bool isKeyJsonValid(QJsonObject json) {
+    if (json.contains("TargetsSize") && json["TargetsSize"] != 0 && json.contains("Keys") &&
+        json.value("Keys").toArray().size() != 0) {
         return true;
     }
     return false;
 }
 
-QVector2D objToVec(QJsonObject obj, QString varName){
+QVector2D objToVec(QJsonObject obj, QString varName) {
     return QVector2D(obj[varName + "X"].toDouble(), obj[varName + "Y"].toDouble());
 }
 
-util::Easing::Param objToEasing(QJsonObject obj){
+util::Easing::Param objToEasing(QJsonObject obj) {
     util::Easing::Param easing;
     easing.range = util::Easing::rangeToEnum(obj["aRange"].toString());
     easing.type = util::Easing::easingToEnum(obj["eType"].toString());
@@ -364,172 +290,176 @@ util::Easing::Param objToEasing(QJsonObject obj){
     return easing;
 }
 
-TimeKey* getKeyFromObj(QJsonObject obj, util::LifeLink::Pointee<Project> project, bool isFolder){
+TimeKey* getKeyFromObj(QJsonObject obj, util::LifeLink::Pointee<Project> project, bool isFolder) {
     TimeKeyType type = TimeLine::getTimeKeyType(obj["Type"].toString());
     // We're losing precision for float casts from json strings because
     // the cast rounds at the third decimal for some godforasken reason.
-    switch(type){
-        case TimeKeyType_Move:{
-            MoveKey* moveKey = new MoveKey;
-            QVector2D pos = objToVec(obj, "Pos");
-            QVector2D centre = objToVec(obj, "Centre");
-            MoveKey::SplineType spline = obj["Spline"].toString() == "Catmull"?
-            MoveKey::SplineType_CatmullRom: MoveKey::SplineType_Linear;
-            moveKey->data().setPos(pos);
-            moveKey->data().setCentroid(centre);
-            moveKey->data().setSpline(spline);
-            moveKey->data().easing() = objToEasing(obj);
-            moveKey->setFrame(obj["Frame"].toInt());
-            return moveKey;
+    switch (type) {
+    case TimeKeyType_Move: {
+        MoveKey* moveKey = new MoveKey;
+        QVector2D pos = objToVec(obj, "Pos");
+        QVector2D centre = objToVec(obj, "Centre");
+        MoveKey::SplineType spline =
+            obj["Spline"].toString() == "Catmull" ? MoveKey::SplineType_CatmullRom : MoveKey::SplineType_Linear;
+        moveKey->data().setPos(pos);
+        moveKey->data().setCentroid(centre);
+        moveKey->data().setSpline(spline);
+        moveKey->data().easing() = objToEasing(obj);
+        moveKey->setFrame(obj["Frame"].toInt());
+        return moveKey;
+    }
+    case TimeKeyType_Rotate: {
+        RotateKey* rotateKey = new RotateKey;
+        rotateKey->setRotate(obj["Rotate"].toDouble());
+        rotateKey->data().easing() = objToEasing(obj);
+        rotateKey->setFrame(obj["Frame"].toInt());
+        return rotateKey;
+    }
+    case TimeKeyType_Scale: {
+        ScaleKey* scaleKey = new ScaleKey;
+        scaleKey->setScale(objToVec(obj, "Scale"));
+        scaleKey->data().easing() = objToEasing(obj);
+        scaleKey->setFrame(obj["Frame"].toInt());
+        return scaleKey;
+    }
+    case TimeKeyType_Depth: {
+        DepthKey* depthKey = new DepthKey;
+        depthKey->setDepth(obj["Depth"].toDouble());
+        depthKey->data().easing() = objToEasing(obj);
+        depthKey->setFrame(obj["Frame"].toInt());
+        return depthKey;
+    }
+    case TimeKeyType_Opa: {
+        OpaKey* opaKey = new OpaKey;
+        opaKey->setOpacity(obj["Opacity"].toDouble());
+        opaKey->data().easing() = objToEasing(obj);
+        opaKey->setFrame(obj["Frame"].toInt());
+        return opaKey;
+    }
+    case TimeKeyType_Bone: {
+        BoneKey* boneKey = new BoneKey;
+        QJsonArray boneArray = obj["Bones"].toArray();
+        QList<core::Bone2*> bones;
+        for (QJsonValue bone : boneArray) {
+            QJsonObject boneObj = bone.toObject();
+            core::Bone2* newBone = new core::Bone2;
+            newBone->deserializeFromJson(boneObj, false);
+            bones.append(newBone);
         }
-        case TimeKeyType_Rotate:{
-            RotateKey* rotateKey = new RotateKey;
-            rotateKey->setRotate(obj["Rotate"].toDouble());
-            rotateKey->data().easing() = objToEasing(obj);
-            rotateKey->setFrame(obj["Frame"].toInt());
-            return rotateKey;
+        boneKey->data().topBones().append(bones);
+        boneKey->setFrame(obj["Frame"].toInt());
+        return boneKey;
+    }
+    case TimeKeyType_Pose: {
+        PoseKey* poseKey = new PoseKey;
+        QJsonArray boneArray = obj["Bone"].toArray();
+        QList<core::Bone2*> bones;
+        for (QJsonValue bone : boneArray) {
+            QJsonObject boneObj = bone.toObject();
+            core::Bone2* newBone = new core::Bone2;
+            newBone->deserializeFromJson(boneObj, false);
+            bones.append(newBone);
         }
-        case TimeKeyType_Scale:{
-            ScaleKey* scaleKey = new ScaleKey;
-            scaleKey->setScale(objToVec(obj, "Scale"));
-            scaleKey->data().easing() = objToEasing(obj);
-            scaleKey->setFrame(obj["Frame"].toInt());
-            return scaleKey;
-        }
-        case TimeKeyType_Depth:{
-            DepthKey* depthKey = new DepthKey;
-            depthKey->setDepth(obj["Depth"].toDouble());
-            depthKey->data().easing() = objToEasing(obj);
-            depthKey->setFrame(obj["Frame"].toInt());
-            return depthKey;
-        }
-        case TimeKeyType_Opa:{
-            OpaKey* opaKey = new OpaKey;
-            opaKey->setOpacity(obj["Opacity"].toDouble());
-            opaKey->data().easing() = objToEasing(obj);
-            opaKey->setFrame(obj["Frame"].toInt());
-            return opaKey;
-        }
-        case TimeKeyType_Bone:{
-            BoneKey* boneKey = new BoneKey;
-            QJsonArray boneArray = obj["Bones"].toArray();
-            QList<core::Bone2*> bones;
-            for (QJsonValue bone: boneArray){
-                QJsonObject boneObj = bone.toObject();
-                core::Bone2* newBone = new core::Bone2;
-                newBone->deserializeFromJson(boneObj, false);
-                bones.append(newBone);
-            }
-            boneKey->data().topBones().append(bones);
-            boneKey->setFrame(obj["Frame"].toInt());
-            return boneKey;
-        }
-        case TimeKeyType_Pose:{
-            PoseKey* poseKey = new PoseKey;
-            QJsonArray boneArray = obj["Bone"].toArray();
-            QList<core::Bone2*> bones;
-            for (QJsonValue bone: boneArray){
-                QJsonObject boneObj = bone.toObject();
-                core::Bone2* newBone = new core::Bone2;
-                newBone->deserializeFromJson(boneObj, false);
-                bones.append(newBone);
-            }
-            poseKey->data().topBones() = bones;
-            poseKey->setFrame(obj["Frame"].toInt());
-            return poseKey;
-        }
-        case TimeKeyType_Mesh:{
-            // Key type not acknowledged by folders
-            if (isFolder){return nullptr;}
-            MeshKey* meshKey = new MeshKey;
-            QJsonObject mesh = obj["Mesh"].toObject();
-            meshKey->data().deserializeFromJson(mesh);
-            meshKey->setFrame(obj["Frame"].toInt());
-            return meshKey;
-        }
-        case TimeKeyType_FFD:{
-            /*
-            FFDKey* ffdKey = new FFDKey;
-            ffdKey->data().easing() = objToEasing(obj);
-            ffdKey->deserializeFromJson(obj);
-            ffdKey->setFrame(obj["Frame"].toInt());
-            */
-
-            // Why not? You may be asking yourself.
-            // To that I answer a web of virtual functions and gl shenanigans
+        poseKey->data().topBones() = bones;
+        poseKey->setFrame(obj["Frame"].toInt());
+        return poseKey;
+    }
+    case TimeKeyType_Mesh: {
+        // Key type not acknowledged by folders
+        if (isFolder) {
             return nullptr;
         }
-        case TimeKeyType_Image:{
-            // Key type not acknowledged by folders
-            if (isFolder){return nullptr;}
-            ImageKey* imageKey = new ImageKey;
-            imageKey->data().easing() = objToEasing(obj);
-            if(imageKey->deserializeFromJson(obj, project)){
-                return imageKey;
-            }
-            else{
-                return nullptr;
-            }
+        MeshKey* meshKey = new MeshKey;
+        QJsonObject mesh = obj["Mesh"].toObject();
+        meshKey->data().deserializeFromJson(mesh);
+        meshKey->setFrame(obj["Frame"].toInt());
+        return meshKey;
+    }
+    case TimeKeyType_FFD: {
+        /*
+        FFDKey* ffdKey = new FFDKey;
+        ffdKey->data().easing() = objToEasing(obj);
+        ffdKey->deserializeFromJson(obj);
+        ffdKey->setFrame(obj["Frame"].toInt());
+        */
+
+        // Why not? You may be asking yourself.
+        // To that I answer a web of virtual functions and gl shenanigans
+        return nullptr;
+    }
+    case TimeKeyType_Image: {
+        // Key type not acknowledged by folders
+        if (isFolder) {
+            return nullptr;
         }
-        case TimeKeyType_HSV:{
-            HSVKey* hsvKey = new HSVKey;
-            hsvKey->data().easing() = objToEasing(obj);
-            QList<int> hsv{obj["Hue"].toInt(), obj["Saturation"].toInt(), obj["Value"].toInt(), obj["Absolute"].toInt()};
-            hsvKey->setHSV(hsv);
-            hsvKey->setFrame(obj["Frame"].toInt());
-            return hsvKey;
-        }
-        // If you end up here you done goofed.
-        case TimeKeyType_TERM:{
+        ImageKey* imageKey = new ImageKey;
+        imageKey->data().easing() = objToEasing(obj);
+        if (imageKey->deserializeFromJson(obj, project)) {
+            return imageKey;
+        } else {
             return nullptr;
         }
     }
+    case TimeKeyType_HSV: {
+        HSVKey* hsvKey = new HSVKey;
+        hsvKey->data().easing() = objToEasing(obj);
+        QList<int> hsv{obj["Hue"].toInt(), obj["Saturation"].toInt(), obj["Value"].toInt(), obj["Absolute"].toInt()};
+        hsvKey->setHSV(hsv);
+        hsvKey->setFrame(obj["Frame"].toInt());
+        return hsvKey;
+    }
+    // If you end up here you done goofed.
+    case TimeKeyType_TERM: {
+        return nullptr;
+    }
+    }
 }
 
-QList<TimeKey*> TimeLineEditor::getTypesFromCb(util::LifeLink::Pointee<Project> project){
+QList<TimeKey*> TimeLineEditor::getTypesFromCb(util::LifeLink::Pointee<Project> project) {
     QClipboard* qcb = QGuiApplication::clipboard(); // qDebug() << qcb->text();
     QJsonObject keyJson = QJsonDocument::fromJson(QByteArray::fromStdString(qcb->text().toStdString())).object();
-    if (!isKeyJsonValid(keyJson)) {return QList<TimeKey*>();};
+    if (!isKeyJsonValid(keyJson)) {
+        return QList<TimeKey*>();
+    };
     QJsonArray keys = keyJson["Keys"].toArray(); // qDebug() << keys;
     QList<TimeKey*> keyList;
-    for(QJsonValue key: keys){
-            auto keyObj = key.toObject();
-            // To get all keys isFolder is set to false.
-            TimeKey* pastedKey = getKeyFromObj(keyObj, project, false);
-            if (!(pastedKey == nullptr)){
-                keyList.append(pastedKey);
-            }
+    for (QJsonValue key : keys) {
+        auto keyObj = key.toObject();
+        // To get all keys isFolder is set to false.
+        TimeKey* pastedKey = getKeyFromObj(keyObj, project, false);
+        if (!(pastedKey == nullptr)) {
+            keyList.append(pastedKey);
+        }
     }
     return keyList;
 }
 
-QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Pointee<Project> project, bool isFolder){
+QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Pointee<Project> project, bool isFolder) {
     XC_ASSERT(!objItem->isTopNode());
     QClipboard* qcb = QGuiApplication::clipboard(); // qDebug() << qcb->text();
     QJsonObject keyJson = QJsonDocument::fromJson(QByteArray::fromStdString(qcb->text().toStdString())).object();
-    if (!isKeyJsonValid(keyJson)) return "Invalid Json";
+    if (!isKeyJsonValid(keyJson))
+        return "Invalid Json";
     QJsonArray keys = keyJson["Keys"].toArray(); // qDebug() << keys;
     QList<TimeKey*> keyList;
     int nullLog = 0;
     QStringList keyTypeIgnore{"Mesh", "Image", "FFD"};
     QStringList keyErrored;
-    for(QJsonValue key: keys){
+    for (QJsonValue key : keys) {
         auto keyObj = key.toObject();
         TimeKey* pastedKey = getKeyFromObj(keyObj, project, isFolder);
-        if (!(pastedKey == nullptr)){
+        if (!(pastedKey == nullptr)) {
             keyList.append(pastedKey);
-        }
-        else{
+        } else {
             auto keyType = TimeLine::getTimeKeyType(keyObj["Type"].toString());
             keyErrored.append(TimeLine::getTimeKeyName(keyType));
             nullLog++;
         }
     }
     QString returnString;
-    if (keyErrored.contains("FFD")){
+    if (keyErrored.contains("FFD")) {
         returnString = "FFD pasting is unsuported.";
-    }
-    else if (keyList.size() == 0){
+    } else if (keyList.size() == 0) {
         returnString = "No keys to copy.";
     }
     // qDebug() << project.address->fileName();
@@ -537,17 +467,19 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
     int timelineHasKey = 0;
     int pastedKeys = 0;
 
-    if (keyList.size() != 0){
-        for (int x = 0; x < keyList.size(); x++){
+    if (keyList.size() != 0) {
+        for (int x = 0; x < keyList.size(); x++) {
             TimeKey* keyframe = keyList[x];
             int newFrame = keyframe->frame();
             TimeKeyType type = keyframe->type();
             TimeLine* timeLine = objItem->node().timeLine();
             // invalid frame
-            if (newFrame < 0){frameLessThanZero++;}
-            else{
-                if (timeLine->hasTimeKey(type, newFrame)){timelineHasKey++;}
-                else{
+            if (newFrame < 0) {
+                frameLessThanZero++;
+            } else {
+                if (timeLine->hasTimeKey(type, newFrame)) {
+                    timelineHasKey++;
+                } else {
                     // a key already exists.
                     // @todo something more fancy
                     cmnd::Stack& stack = project.address->commandStack();
@@ -564,7 +496,10 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
                     macro.grabListener(notifier);
 
                     QHash<const TimeKey*, TimeKey*> parentHash;
-                    struct ChildInfo { TimeKey* key; TimeKey* parent; };
+                    struct ChildInfo {
+                        TimeKey* key;
+                        TimeKey* parent;
+                    };
                     QList<ChildInfo> childList;
                     auto line = timeLine;
                     XC_PTR_ASSERT(line);
@@ -580,21 +515,22 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
                     stack.push(new cmnd::GrabNewObject<TimeKey>(newKey));
                     stack.push(line->createPusher(type, newFrame, newKey));
 
-                    if (newKey->canHoldChild()){
-                            parentHash[copiedKey] = newKey;
+                    if (newKey->canHoldChild()) {
+                        parentHash[copiedKey] = newKey;
                     }
-                    if (parentKey){
-                            ChildInfo info = { newKey, parentKey };
-                            childList.push_back(info);
+                    if (parentKey) {
+                        ChildInfo info = {newKey, parentKey};
+                        childList.push_back(info);
                     }
 
                     // connect to parents
-                    for (auto child : childList){
-                            auto parent = child.parent;
-                            // if the parent was also copied, connect to a new parent key.
-                            auto it = parentHash.find(parent);
-                            if (it != parentHash.end()) parent = it.value();
-                            stack.push(new cmnd::PushBackTree<TimeKey>(&parent->children(), child.key));
+                    for (auto child : childList) {
+                        auto parent = child.parent;
+                        // if the parent was also copied, connect to a new parent key.
+                        auto it = parentHash.find(parent);
+                        if (it != parentHash.end())
+                            parent = it.value();
+                        stack.push(new cmnd::PushBackTree<TimeKey>(&parent->children(), child.key));
                     }
                     pastedKeys++;
                 }
@@ -602,66 +538,66 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
         }
         returnString = "Successfully pasted [" + QString::number(pastedKeys) + "] key(s).";
     }
-    if(!(frameLessThanZero == 0) || !(timelineHasKey == 0) || !(nullLog == 0)){
-        returnString.append("\nNumber of errors is [" + QString::number(frameLessThanZero + timelineHasKey + nullLog) + "]");
+    if (!(frameLessThanZero == 0) || !(timelineHasKey == 0) || !(nullLog == 0)) {
+        returnString.append(
+            "\nNumber of errors is [" + QString::number(frameLessThanZero + timelineHasKey + nullLog) + "]");
         // Error logging
-        if (frameLessThanZero != 0){
+        if (frameLessThanZero != 0) {
             returnString.append("\nError: Frame is less than zero [" + QString::number(frameLessThanZero) + "]");
         }
-        if (timelineHasKey != 0){
+        if (timelineHasKey != 0) {
             returnString.append("\nError: Timeline already has a key [" + QString::number(timelineHasKey) + "]");
         }
 
-        if (nullLog != 0){
+        if (nullLog != 0) {
             returnString.append("\nError: Null key(s) detected [" + QString::number(nullLog) + "]");
             returnString.append("\nNull Log:");
             bool folderError = false;
             int folderErrorCount = 0;
-            if(keyErrored.contains("Image") && !isFolder){
+            if (keyErrored.contains("Image") && !isFolder) {
                 returnString.append("\nImage identifier could not be found in the resource holder.");
-            }
-            else if (keyErrored.contains("Image")){
+            } else if (keyErrored.contains("Image")) {
                 folderError = true;
                 folderErrorCount++;
             }
-            if(keyErrored.contains("FFD") && !isFolder){
+            if (keyErrored.contains("FFD") && !isFolder) {
                 returnString.append("\nFFD key pasting is unsupported");
-            }
-            else if(keyErrored.contains("FFD")){
+            } else if (keyErrored.contains("FFD")) {
                 folderError = true;
                 folderErrorCount++;
             }
-            if(keyErrored.contains("Mesh") && isFolder){
+            if (keyErrored.contains("Mesh") && isFolder) {
                 folderError = true;
                 folderErrorCount++;
             }
             QStringList keys{"Move", "Rotate", "Scale", "Depth", "Opa", "Bone", "Pose", "HSV"};
             bool containsOtherKeys = false;
             int containsCount = 0;
-            for(QString key: keys){
-                if(keyErrored.contains(key)){
+            for (QString key : keys) {
+                if (keyErrored.contains(key)) {
                     containsOtherKeys = true;
                     containsCount++;
                 }
             }
-            if(folderError){
+            if (folderError) {
                 returnString.append("\nKey cannot be used on a folder");
                 returnString.append("\nNumber of types with a folder error: " + QString::number(folderErrorCount));
             }
-            if(containsOtherKeys){
+            if (containsOtherKeys) {
                 returnString.append("\nKey parameters are incorrect.");
                 returnString.append("\nNumber of types with a param error: " + QString::number(containsCount));
             }
             QString keysErrored = "\nKey types errored: ";
-            for(QString key: keyErrored){keysErrored.append(key + ";");}
-            returnString.append(keysErrored);
+            for (QString key : keyErrored) {
+                keysErrored.append(key + ";");
             }
+            returnString.append(keysErrored);
         }
+    }
     return returnString;
 }
 
-bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& aWorldPos)
-{
+bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& aWorldPos) {
     XC_ASSERT(!aEvent.targets().isEmpty());
 
     // a minimum frame for key pasting
@@ -669,28 +605,24 @@ bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& 
 
     // a minimum frame in copied keys
     int copiedFrame = mTimeMax;
-    for (auto target : aEvent.targets())
-    {
+    for (auto target : aEvent.targets()) {
         copiedFrame = std::min(copiedFrame, target.pos.index());
     }
 
     const int frameOffset = pasteFrame - copiedFrame;
 
     // check validity
-    for (auto target : aEvent.targets())
-    {
+    for (auto target : aEvent.targets()) {
         auto newFrame = target.pos.index() + frameOffset;
 
         // invalid frame
-        if (newFrame < 0 || mTimeMax < newFrame)
-        {
+        if (newFrame < 0 || mTimeMax < newFrame) {
             return false;
         }
 
         // a key already exists.
         auto type = target.pos.type();
-        if (target.pos.line()->hasTimeKey(type, newFrame))
-        {
+        if (target.pos.line()->hasTimeKey(type, newFrame)) {
             return false;
         }
     }
@@ -709,11 +641,13 @@ bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& 
         macro.grabListener(notifier);
 
         QMap<const TimeKey*, TimeKey*> parentMap;
-        struct ChildInfo { TimeKey* key; TimeKey* parent; };
+        struct ChildInfo {
+            TimeKey* key;
+            TimeKey* parent;
+        };
         QList<ChildInfo> childList;
 
-        for (auto target : aEvent.targets())
-        {
+        for (auto target : aEvent.targets()) {
             auto type = target.pos.type();
             auto line = target.pos.line();
             XC_PTR_ASSERT(line);
@@ -730,23 +664,21 @@ bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& 
             stack.push(new cmnd::GrabNewObject<TimeKey>(newKey));
             stack.push(line->createPusher(type, newFrame, newKey));
 
-            if (newKey->canHoldChild())
-            {
+            if (newKey->canHoldChild()) {
                 parentMap[copiedKey] = newKey;
             }
-            if (parentKey)
-            {
-                ChildInfo info = { newKey, parentKey };
+            if (parentKey) {
+                ChildInfo info = {newKey, parentKey};
                 childList.push_back(info);
             }
         }
         // connect to parents
-        for (auto child : childList)
-        {
+        for (auto child : childList) {
             auto parent = child.parent;
             // if the parent was also copied, connect to a new parent key.
             auto it = parentMap.find(parent);
-            if (it != parentMap.end()) parent = it.value();
+            if (it != parentMap.end())
+                parent = it.value();
             stack.push(new cmnd::PushBackTree<TimeKey>(&parent->children(), child.key));
         }
     }
@@ -756,8 +688,7 @@ bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& 
     return true;
 }
 
-void TimeLineEditor::deleteCheckedKeys(core::TimeLineEvent& aEvent)
-{
+void TimeLineEditor::deleteCheckedKeys(core::TimeLineEvent& aEvent) {
     XC_ASSERT(!aEvent.targets().isEmpty());
 
     mOnUpdatingKey = true;
@@ -773,8 +704,7 @@ void TimeLineEditor::deleteCheckedKeys(core::TimeLineEvent& aEvent)
         cmnd::ScopedMacro macro(stack, CmndName::tr("Delete keys"));
         macro.grabListener(notifier);
 
-        for (auto target : aEvent.targets())
-        {
+        for (auto target : aEvent.targets()) {
             core::TimeLine* line = target.pos.line();
             XC_PTR_ASSERT(line);
             stack.push(line->createRemover(target.pos.type(), target.pos.index(), true));
@@ -785,35 +715,29 @@ void TimeLineEditor::deleteCheckedKeys(core::TimeLineEvent& aEvent)
     clearState();
 }
 
-void TimeLineEditor::updateWheel(int aDelta, bool aInvertScaling)
-{
+void TimeLineEditor::updateWheel(int aDelta, bool aInvertScaling) {
     mTimeScale.update(aInvertScaling ? -aDelta : aDelta);
     mTimeCurrent.update(mTimeScale);
 
     const int lineWidth = mTimeScale.maxPixelWidth();
 
-    for (TimeLineRow& row : mRows)
-    {
+    for (TimeLineRow& row : mRows) {
         row.rect.setWidth(lineWidth);
     }
 }
 
-void TimeLineEditor::setFrame(core::Frame aFrame)
-{
+void TimeLineEditor::setFrame(core::Frame aFrame) {
     mTimeCurrent.setFrame(mTimeScale, aFrame);
 }
 
-core::Frame TimeLineEditor::currentFrame() const
-{
+core::Frame TimeLineEditor::currentFrame() const {
     return mTimeCurrent.frame();
 }
 
-QSize TimeLineEditor::modelSpaceSize() const
-{
+QSize TimeLineEditor::modelSpaceSize() const {
     int height = kHeaderHeight;
 
-    if (!mRows.empty())
-    {
+    if (!mRows.empty()) {
         height += mRows.back().rect.bottom() - mRows.front().rect.top();
     }
 
@@ -822,14 +746,14 @@ QSize TimeLineEditor::modelSpaceSize() const
     return QSize(width, height);
 }
 
-QPoint TimeLineEditor::currentTimeCursorPos() const
-{
+QPoint TimeLineEditor::currentTimeCursorPos() const {
     return mTimeCurrent.handlePos();
 }
 
-void TimeLineEditor::render(QPainter& aPainter, const CameraInfo& aCamera, theme::TimeLine &aTheme, const QRect& aCullRect)
-{
-    if (aCamera.screenWidth() < 2 * kTimeLineMargin) return;
+void TimeLineEditor::render(
+    QPainter& aPainter, const CameraInfo& aCamera, theme::TimeLine& aTheme, const QRect& aCullRect) {
+    if (aCamera.screenWidth() < 2 * kTimeLineMargin)
+        return;
 
     const QRect camRect(-aCamera.leftTopPos().toPoint(), aCamera.screenSize());
     const QRect cullRect(aCullRect.marginsAdded(QMargins(2, 2, 2, 2))); // use culling
@@ -845,10 +769,9 @@ void TimeLineEditor::render(QPainter& aPainter, const CameraInfo& aCamera, theme
 
     renderer.renderLines(mRows, camRect, cullRect);
     renderer.renderHeader(kHeaderHeight, kTimeLineFpsA);
-    //renderer.renderHandle(mTimeCurrent.handlePos(), mTimeCurrent.handleRange());
+    // renderer.renderHandle(mTimeCurrent.handlePos(), mTimeCurrent.handleRange());
 
-    if (mShowSelectionRange)
-    {
+    if (mShowSelectionRange) {
         renderer.renderSelectionRange(mFocus.visualRect());
     }
 }

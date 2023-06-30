@@ -3,13 +3,12 @@
 
 #include <QString>
 
-namespace util
-{
+namespace util {
 
-class IProgressReporter
-{
+class IProgressReporter {
 public:
-    virtual ~IProgressReporter() {}
+    virtual ~IProgressReporter() {
+    }
 
     virtual void setSection(const QString& aSection) = 0;
     virtual void setMaximum(int aMax) = 0;
@@ -20,4 +19,3 @@ public:
 } // namespace util
 
 #endif // UTIL_IPROGRESSREPORTER
-

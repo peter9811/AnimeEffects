@@ -1,15 +1,13 @@
 #ifndef GL_FRAMEBUFFER_H
 #define GL_FRAMEBUFFER_H
 
-#include <array>
-#include <QGL>
 #include "util/NonCopyable.h"
+#include <QGL>
+#include <array>
 
-namespace gl
-{
+namespace gl {
 
-class Framebuffer : private util::NonCopyable
-{
+class Framebuffer: private util::NonCopyable {
 public:
     Framebuffer();
     ~Framebuffer();
@@ -20,8 +18,12 @@ public:
     void bind();
     void release();
 
-    explicit operator bool() const { return mId != 0; }
-    GLuint id() const { return mId; }
+    explicit operator bool() const {
+        return mId != 0;
+    }
+    GLuint id() const {
+        return mId;
+    }
     GLuint colorAttachment(int aAttachIndex) const;
 
 private:

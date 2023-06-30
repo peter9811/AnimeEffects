@@ -3,16 +3,12 @@
 
 #include <QString>
 
-namespace gui
-{
+namespace gui {
 
-class LocaleParam
-{
+class LocaleParam {
 public:
-    LocaleParam()
-        : fontFamily()
-        , fontSize()
-    {}
+    LocaleParam(): fontFamily(), fontSize() {
+    }
 
     QString fontFamily;
     QString fontSize;

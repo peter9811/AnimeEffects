@@ -1,21 +1,20 @@
 #ifndef GUI_RESOURCETREEWIDGET_H
 #define GUI_RESOURCETREEWIDGET_H
 
-#include <QTreeWidget>
-#include <QAction>
-#include "util/Signaler.h"
-#include "util/LinkPointer.h"
 #include "cmnd/Stack.h"
-#include "img/PSDFormat.h"
-#include "core/ResourceHolder.h"
 #include "core/Project.h"
+#include "core/ResourceHolder.h"
 #include "gui/ViaPoint.h"
 #include "gui/res/res_Notifier.h"
+#include "img/PSDFormat.h"
+#include "util/LinkPointer.h"
+#include "util/Signaler.h"
+#include <QAction>
+#include <QTreeWidget>
 
 namespace gui {
 
-class ResourceTreeWidget : public QTreeWidget
-{
+class ResourceTreeWidget: public QTreeWidget {
     Q_OBJECT
 public:
     enum { kItemColumn = 0 };
@@ -32,6 +31,7 @@ public:
     void onWatchRemoveTriggered(bool aIsTriggered);
 
     util::Signaler<void(const NodeList&)> onNodeSelectionChanged;
+
 private:
     void resetTreeView(core::ResourceHolder& aHolder);
     QTreeWidgetItem* findItem(const util::TreePos& aPos);

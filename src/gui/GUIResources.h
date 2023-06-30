@@ -1,26 +1,24 @@
 #ifndef GUI_GUIRESOURCES_H
 #define GUI_GUIRESOURCES_H
 
-#include <QString>
-#include <QIcon>
-#include <QFileInfo>
-#include <QPixmap>
-#include <QHash>
-#include <QSettings>
-#include <QPainter>
-#include <QColor>
-#include <QDirIterator>
-#include <QStringList>
 #include "XC.h"
+#include "theme/Theme.h"
 #include "util/NonCopyable.h"
 #include "util/Signaler.h"
-#include "theme/Theme.h"
+#include <QColor>
+#include <QDirIterator>
+#include <QFileInfo>
+#include <QHash>
+#include <QIcon>
+#include <QPainter>
+#include <QPixmap>
+#include <QSettings>
+#include <QString>
+#include <QStringList>
 
-namespace gui
-{
+namespace gui {
 
-class GUIResources : private util::NonCopyable
-{
+class GUIResources: private util::NonCopyable {
 public:
     GUIResources(const QString& aResourceDir);
     ~GUIResources();
@@ -32,8 +30,12 @@ public:
     void setTheme(const QString& aThemeId);
 
 public:
-    QString getThemeLocation(){return mTheme.path();};
-    QString getTheme(){return mTheme.id();};
+    QString getThemeLocation() {
+        return mTheme.path();
+    };
+    QString getTheme() {
+        return mTheme.id();
+    };
     // signals
     util::Signaler<void(theme::Theme&)> onThemeChanged;
     void triggerOnThemeChanged();

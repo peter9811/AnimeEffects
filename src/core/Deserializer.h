@@ -1,49 +1,43 @@
 #ifndef CORE_DESERIALIZER
 #define CORE_DESERIALIZER
 
-#include <QStringList>
-#include <QVector>
+#include "XC.h"
+#include "core/Frame.h"
+#include "gl/DeviceInfo.h"
+#include "gl/Vector2.h"
+#include "gl/Vector3.h"
+#include "util/Easing.h"
+#include "util/IDSolver.h"
+#include "util/IProgressReporter.h"
+#include "util/IndexTable.h"
+#include "util/Segment2D.h"
+#include "util/StreamReader.h"
+#include <QGL>
+#include <QMatrix4x4>
 #include <QPoint>
+#include <QPolygonF>
+#include <QRect>
+#include <QRectF>
+#include <QStringList>
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
-#include <QRect>
-#include <QRectF>
-#include <QMatrix4x4>
-#include <QPolygonF>
-#include <QGL>
+#include <QVector>
 #include <QVersionNumber>
-#include "XC.h"
-#include "util/Segment2D.h"
-#include "util/Easing.h"
-#include "util/IndexTable.h"
-#include "util/StreamReader.h"
-#include "util/IDSolver.h"
-#include "util/IProgressReporter.h"
-#include "gl/Vector2.h"
-#include "gl/Vector3.h"
-#include "gl/DeviceInfo.h"
-#include "core/Frame.h"
 
-namespace core
-{
+namespace core {
 
-class Deserializer
-{
+class Deserializer {
 public:
     typedef std::istream::pos_type PosType;
     typedef util::IDSolver<void*> IDSolverType;
 
-    Deserializer(
-            util::LEStreamReader& aIn,
-            IDSolverType& aSolver,
-            size_t aMaxFileSize,
-            QVersionNumber aVersion,
-            const gl::DeviceInfo& aGLDeviceInfo,
-            util::IProgressReporter& aRepoter,
-            int aRShiftCount);
+    Deserializer(util::LEStreamReader& aIn, IDSolverType& aSolver, size_t aMaxFileSize, QVersionNumber aVersion,
+        const gl::DeviceInfo& aGLDeviceInfo, util::IProgressReporter& aRepoter, int aRShiftCount);
 
-    QVersionNumber version() const { return mVersion; }
+    QVersionNumber version() const {
+        return mVersion;
+    }
 
     void read(bool& aValue);
     void read(int& aValue);
@@ -78,8 +72,11 @@ public:
     bool readImage(XCMemBlock& aEmptyValue);
     void readFixedString(QString& aValue, int aSize);
 
-    template<typename tValue>
-    tValue getRead() { tValue value = tValue(); read(value); return value; }
+    template<typename tValue> tValue getRead() {
+        tValue value = tValue();
+        read(value);
+        return value;
+    }
 
     bool beginBlock(const std::string& aSignature);
     bool endBlock();
@@ -90,26 +87,22 @@ public:
     void popLogScope();
     void setLog(const QString& aLog);
     const QVector<QString>& logScopes() const;
-    const QStringList& log() const { return mLog; }
+    const QStringList& log() const {
+        return mLog;
+    }
 
-    bool errored(const QString& aLog)
-    {
-        if (!mValue.isEmpty())
-        {
+    bool errored(const QString& aLog) {
+        if (!mValue.isEmpty()) {
             setLog(aLog + "(" + mValue + ")");
             mValue.clear();
-        }
-        else
-        {
+        } else {
             setLog(aLog);
         }
         return false;
     }
 
-    bool checkStream()
-    {
-        if (failure())
-        {
+    bool checkStream() {
+        if (failure()) {
             setLog("stream error");
             return false;
         }
@@ -139,4 +132,3 @@ private:
 } // namespace core
 
 #endif // CORE_DESERIALIZER
-

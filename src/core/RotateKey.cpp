@@ -1,47 +1,36 @@
 #include "core/RotateKey.h"
 #include "core/Constant.h"
 
-namespace core
-{
+namespace core {
 //-------------------------------------------------------------------------------------------------
-RotateKey::Data::Data()
-    : mEasing()
-    , mRotate(0.0f)
-{
+RotateKey::Data::Data(): mEasing(), mRotate(0.0f) {
 }
 
-void RotateKey::Data::clamp()
-{
+void RotateKey::Data::clamp() {
     mRotate = xc_clamp(mRotate, Constant::rotateMin(), Constant::rotateMax());
 }
 
 //-------------------------------------------------------------------------------------------------
-RotateKey::RotateKey()
-    : mData()
-{
+RotateKey::RotateKey(): mData() {
 }
 
-TimeKey* RotateKey::createClone()
-{
+TimeKey* RotateKey::createClone() {
     auto newKey = new RotateKey();
     newKey->mData = this->mData;
     return newKey;
 }
 
-bool RotateKey::serialize(Serializer& aOut) const
-{
+bool RotateKey::serialize(Serializer& aOut) const {
     aOut.write(mData.easing());
     aOut.write(mData.rotate());
     return aOut.checkStream();
 }
 
-bool RotateKey::deserialize(Deserializer &aIn)
-{
+bool RotateKey::deserialize(Deserializer& aIn) {
     aIn.pushLogScope("RotateKey");
 
     // easing
-    if (!aIn.read(mData.easing()))
-    {
+    if (!aIn.read(mData.easing())) {
         return aIn.errored("invalid easing param");
     }
 

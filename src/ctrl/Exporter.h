@@ -1,35 +1,32 @@
 #ifndef CTRL_EXPORTER_H
 #define CTRL_EXPORTER_H
 
-#include <list>
-#include <memory>
-#include <functional>
-#include <QString>
-#include <QSize>
-#include <QFileInfo>
-#include <QProcess>
-#include <QOpenGLFramebufferObject>
-#include "util/Range.h"
-#include "util/IProgressReporter.h"
-#include "ctrl/UILogger.h"
-#include "gl/EasyTextureDrawer.h"
+#include "core/ClippingFrame.h"
+#include "core/DestinationTexturizer.h"
 #include "core/Project.h"
 #include "core/TimeInfo.h"
 #include "core/TimeKeyBlender.h"
-#include "core/ClippingFrame.h"
-#include "core/DestinationTexturizer.h"
+#include "ctrl/UILogger.h"
 #include "ctrl/VideoFormat.h"
+#include "gl/EasyTextureDrawer.h"
+#include "util/IProgressReporter.h"
+#include "util/Range.h"
+#include <QFileInfo>
+#include <QOpenGLFramebufferObject>
+#include <QProcess>
+#include <QSize>
+#include <QString>
+#include <functional>
+#include <list>
+#include <memory>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class Exporter
-{
+class Exporter {
 public:
     typedef std::function<bool(const QString&)> OverwriteConfirmer;
 
-    enum ResultCode
-    {
+    enum ResultCode {
         ResultCode_Success,
         ResultCode_Canceled,
         ResultCode_InvalidOperation,
@@ -39,17 +36,17 @@ public:
         ResultCode_TERM
     };
 
-    struct Result
-    {
+    struct Result {
         Result();
         Result(ResultCode aCode, const QString& aMessage);
-        explicit operator bool() const { return code == ResultCode_Success; }
+        explicit operator bool() const {
+            return code == ResultCode_Success;
+        }
         ResultCode code;
         QString message;
     };
 
-    struct CommonParam
-    {
+    struct CommonParam {
         CommonParam();
         QString path;
         QSize size;
@@ -58,8 +55,7 @@ public:
         bool isValid() const;
     };
 
-    struct VideoParam
-    {
+    struct VideoParam {
         VideoParam();
         VideoFormat format;
         int codecIndex;
@@ -68,15 +64,13 @@ public:
         QString pixfmt;
     };
 
-    struct GifParam
-    {
+    struct GifParam {
         GifParam();
         bool optimizePalette;
         int intermediateBps;
     };
 
-    struct ImageParam
-    {
+    struct ImageParam {
         ImageParam();
         QString name;
         QString suffix;
@@ -94,26 +88,35 @@ public:
     Result execute(const CommonParam& aCommon, const GifParam& aGif);
     Result execute(const CommonParam& aCommon, const VideoParam& aVideo);
 
-    const QString& log() const { return mLog; }
-    bool isCanceled() const { return mIsCanceled; }
+    const QString& log() const {
+        return mLog;
+    }
+    bool isCanceled() const {
+        return mIsCanceled;
+    }
 
 private:
     typedef std::unique_ptr<QOpenGLFramebufferObject> FramebufferPtr;
     typedef std::list<FramebufferPtr> FramebufferList;
 
-    class FFMpeg
-    {
+    class FFMpeg {
     public:
         FFMpeg();
         bool start(const QString& aArgments);
         void write(const QByteArray& aBytes);
         bool finish(const std::function<bool()>& aWaiter);
-        bool execute(const QString& aArgments,
-                     const std::function<bool()>& aWaiter);
-        bool errorOccurred() const { return mErrorOccurred; }
-        QString errorString() const { return mErrorString; }
-        QProcess::ProcessError errorCode() const { return mErrorCode; }
+        bool execute(const QString& aArgments, const std::function<bool()>& aWaiter);
+        bool errorOccurred() const {
+            return mErrorOccurred;
+        }
+        QString errorString() const {
+            return mErrorString;
+        }
+        QProcess::ProcessError errorCode() const {
+            return mErrorCode;
+        }
         QString popLog();
+
     private:
         QScopedPointer<QProcess> mProcess;
         bool mFinished;

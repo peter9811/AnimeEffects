@@ -1,28 +1,22 @@
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QMenuBar>
-#include <QFileDialog>
-#include <QMessageBox>
-#include "img/PSDReader.h"
-#include "img/PSDUtil.h"
-#include "img/Util.h"
 #include "gui/ResourceDialog.h"
 #include "gui/MainMenuBar.h"
 #include "gui/res/res_ResourceUpdater.h"
+#include "img/PSDReader.h"
+#include "img/PSDUtil.h"
+#include "img/Util.h"
+#include <QFileDialog>
+#include <QHBoxLayout>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 
-namespace gui
-{
+namespace gui {
 
-ResourceDialog::ResourceDialog(ViaPoint& aViaPoint, bool aModal, QWidget* aParent)
-    : EasyDialog(tr("Resource Window"), aParent, aModal)
-    , mViaPoint(aViaPoint)
-    , mProject()
-    , mTree()
-{
+ResourceDialog::ResourceDialog(ViaPoint& aViaPoint, bool aModal, QWidget* aParent):
+    EasyDialog(tr("Resource Window"), aParent, aModal), mViaPoint(aViaPoint), mProject(), mTree() {
     // menu bar
-    if (!aModal)
-    {
+    if (!aModal) {
         // Remove redundant menu
         auto menuBar = new QMenuBar(this);
         // auto fileMenu = new QMenu(tr("File"), menuBar);
@@ -35,10 +29,8 @@ ResourceDialog::ResourceDialog(ViaPoint& aViaPoint, bool aModal, QWidget* aParen
         menuBar->show();
         this->setMenuBar(menuBar);
 
-        connect(this, &QDialog::finished, [&](int)
-        {
-            if (aViaPoint.mainMenuBar())
-            {
+        connect(this, &QDialog::finished, [&](int) {
+            if (aViaPoint.mainMenuBar()) {
                 aViaPoint.mainMenuBar()->setShowResourceWindow(false);
             }
         });
@@ -51,20 +43,16 @@ ResourceDialog::ResourceDialog(ViaPoint& aViaPoint, bool aModal, QWidget* aParen
     this->setMainWidget(mTree, false);
 
     // modal only
-    if (aModal)
-    {
+    if (aModal) {
         // button box
         this->setOkCancel();
         this->setOkEnable(false);
 
         // updater
-        mTree->onNodeSelectionChanged.connect([=](const NodeList& aNodes)
-        {
+        mTree->onNodeSelectionChanged.connect([=](const NodeList& aNodes) {
             this->mNodeList.clear();
-            for (auto node : aNodes)
-            {
-                if (node->data().hasImage())
-                {
+            for (auto node : aNodes) {
+                if (node->data().hasImage()) {
                     this->mNodeList.push_back(node);
                 }
             }
@@ -74,64 +62,53 @@ ResourceDialog::ResourceDialog(ViaPoint& aViaPoint, bool aModal, QWidget* aParen
     }
 }
 
-void ResourceDialog::setProject(core::Project* aProject)
-{
-    if (aProject)
-    {
+void ResourceDialog::setProject(core::Project* aProject) {
+    if (aProject) {
         mProject = aProject->pointee();
-    }
-    else
-    {
+    } else {
         mProject.reset();
     }
     mTree->setProject(aProject);
 }
 
-void ResourceDialog::updateResourcePath()
-{
-    if (mProject)
-    {
+void ResourceDialog::updateResourcePath() {
+    if (mProject) {
         mTree->updateTreeRootName(mProject->resourceHolder());
     }
 }
 
-bool ResourceDialog::hasValidNode() const
-{
+bool ResourceDialog::hasValidNode() const {
     return this->result() == QDialog::Accepted && !mNodeList.isEmpty();
 }
 
-void ResourceDialog::onAddResourceTriggered(bool)
-{
-    if (!mProject) return;
+void ResourceDialog::onAddResourceTriggered(bool) {
+    if (!mProject)
+        return;
 
     const QStringList fileName = QFileDialog::getOpenFileNames(
-                this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
-    if (fileName.isEmpty()) return;
+        this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
+    if (fileName.isEmpty())
+        return;
 
-    for(int i = 0; i < fileName.count();i++){
-       mTree->load(fileName[i]);
+    for (int i = 0; i < fileName.count(); i++) {
+        mTree->load(fileName[i]);
     }
 }
 
-void ResourceDialog::keyPressEvent(QKeyEvent* aEvent)
-{
+void ResourceDialog::keyPressEvent(QKeyEvent* aEvent) {
     EasyDialog::keyPressEvent(aEvent);
 
-    if (!this->isModal())
-    {
+    if (!this->isModal()) {
         mViaPoint.throwKeyPressingToKeyCommandInvoker(aEvent);
     }
 }
 
-void ResourceDialog::keyReleaseEvent(QKeyEvent* aEvent)
-{
+void ResourceDialog::keyReleaseEvent(QKeyEvent* aEvent) {
     EasyDialog::keyReleaseEvent(aEvent);
 
-    if (!this->isModal())
-    {
+    if (!this->isModal()) {
         mViaPoint.throwKeyReleasingToKeyCommandInvoker(aEvent);
     }
 }
 
 } // namespace gui
-

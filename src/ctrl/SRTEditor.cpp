@@ -1,43 +1,32 @@
-#include "core/TimeKeyExpans.h"
-#include "core/ObjectNodeUtil.h"
 #include "ctrl/SRTEditor.h"
-#include "ctrl/srt/srt_MoveMode.h"
+#include "core/ObjectNodeUtil.h"
+#include "core/TimeKeyExpans.h"
 #include "ctrl/srt/srt_CentroidMode.h"
+#include "ctrl/srt/srt_MoveMode.h"
 
 using namespace core;
 
-namespace ctrl
-{
-
+namespace ctrl {
 
 //-----------------------------------------------------------------------------------
-SRTEditor::SRTEditor(Project& aProject, UILogger& aUILogger)
-    : mProject(aProject)
-    , mLifeLink()
-    , mUILogger(aUILogger)
-    , mParam()
-    , mTarget()
-    , mKeyOwner()
-{
+SRTEditor::SRTEditor(Project& aProject, UILogger& aUILogger):
+    mProject(aProject), mLifeLink(), mUILogger(aUILogger), mParam(), mTarget(), mKeyOwner() {
 }
 
-SRTEditor::~SRTEditor()
-{
+SRTEditor::~SRTEditor() {
     finalize();
 }
 
-bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage)
-{
-    const TimeLine::MapType& moveMap   = aLine.map(TimeKeyType_Move);
+bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage) {
+    const TimeLine::MapType& moveMap = aLine.map(TimeKeyType_Move);
     const TimeLine::MapType& rotateMap = aLine.map(TimeKeyType_Rotate);
-    const TimeLine::MapType& scaleMap  = aLine.map(TimeKeyType_Scale);
+    const TimeLine::MapType& scaleMap = aLine.map(TimeKeyType_Scale);
     TimeKeyExpans& current = aLine.current();
     const int frame = mProject.animator().currentFrame().get();
 
     // moveKey
     mKeyOwner.ownsMoveKey = !moveMap.contains(frame);
-    if (mKeyOwner.ownsMoveKey)
-    {
+    if (mKeyOwner.ownsMoveKey) {
         mKeyOwner.moveKey = new MoveKey();
         util::Easing::Param aParam;
         aParam.range = util::Easing::rangeToEnum(QString());
@@ -45,41 +34,33 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage)
         mKeyOwner.moveKey->data().easing() = aParam;
         mKeyOwner.moveKey->setPos(current.srt().pos());
         mKeyOwner.moveKey->setCentroid(current.srt().centroid());
-    }
-    else
-    {
+    } else {
         mKeyOwner.moveKey = static_cast<MoveKey*>(moveMap.value(frame));
     }
 
     // rotateKey
     mKeyOwner.ownsRotateKey = !rotateMap.contains(frame);
-    if (mKeyOwner.ownsRotateKey)
-    {
+    if (mKeyOwner.ownsRotateKey) {
         mKeyOwner.rotateKey = new RotateKey();
         util::Easing::Param aParam;
         aParam.range = util::Easing::rangeToEnum(QString());
         aParam.type = util::Easing::easingToEnum(QString());
         mKeyOwner.rotateKey->data().easing() = aParam;
         mKeyOwner.rotateKey->setRotate(current.srt().rotate());
-    }
-    else
-    {
+    } else {
         mKeyOwner.rotateKey = static_cast<RotateKey*>(rotateMap.value(frame));
     }
 
     // scaleKey
     mKeyOwner.ownsScaleKey = !scaleMap.contains(frame);
-    if (mKeyOwner.ownsScaleKey)
-    {
+    if (mKeyOwner.ownsScaleKey) {
         mKeyOwner.scaleKey = new ScaleKey();
         util::Easing::Param aParam;
         aParam.range = util::Easing::rangeToEnum(QString());
         aParam.type = util::Easing::easingToEnum(QString());
         mKeyOwner.scaleKey->data().easing() = aParam;
         mKeyOwner.scaleKey->setScale(current.srt().scale());
-    }
-    else
-    {
+    } else {
         mKeyOwner.scaleKey = static_cast<ScaleKey*>(scaleMap.value(frame));
     }
 
@@ -87,11 +68,9 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage)
     XC_ASSERT(mKeyOwner);
 
     // setup matrix
-    if (!mKeyOwner.updatePosture(current))
-    {
+    if (!mKeyOwner.updatePosture(current)) {
         mKeyOwner.deleteOwningKeys();
-        if (aMessage)
-        {
+        if (aMessage) {
             *aMessage = UILog::tr("An object with invalid posture was given.");
         }
         return false;
@@ -100,20 +79,18 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage)
     return true;
 }
 
-void SRTEditor::finalize()
-{
+void SRTEditor::finalize() {
     mCurrent.reset();
     mKeyOwner.deleteOwningKeys();
 }
 
-void SRTEditor::createMode()
-{
+void SRTEditor::createMode() {
     mCurrent.reset();
 
-    if (!mTarget || !mKeyOwner) return;
+    if (!mTarget || !mKeyOwner)
+        return;
 
-    switch (mParam.mode)
-    {
+    switch (mParam.mode) {
     case 0:
         mCurrent.reset(new srt::MoveMode(mProject, *mTarget, mKeyOwner));
         break;
@@ -125,31 +102,24 @@ void SRTEditor::createMode()
         break;
     }
 
-    if (mCurrent)
-    {
+    if (mCurrent) {
         mCurrent->updateParam(mParam);
     }
 }
 
-bool SRTEditor::setTarget(ObjectNode* aTarget)
-{
+bool SRTEditor::setTarget(ObjectNode* aTarget) {
     finalize();
 
     mTarget = nullptr;
 
-    if (aTarget && aTarget->timeLine())
-    {
+    if (aTarget && aTarget->timeLine()) {
         mTarget = aTarget;
         QString message;
-        if (initializeKey(*mTarget->timeLine(), &message))
-        {
+        if (initializeKey(*mTarget->timeLine(), &message)) {
             createMode();
-        }
-        else
-        {
+        } else {
             mTarget = nullptr;
-            if (!message.isEmpty())
-            {
+            if (!message.isEmpty()) {
                 mUILogger.pushLog(UILog::tr("SRT Editor : ") + message, UILogType_Warn);
             }
         }
@@ -157,54 +127,43 @@ bool SRTEditor::setTarget(ObjectNode* aTarget)
     return mTarget && mKeyOwner;
 }
 
-void SRTEditor::updateParam(const SRTParam& aParam)
-{
+void SRTEditor::updateParam(const SRTParam& aParam) {
     const SRTParam prev = mParam;
     mParam = aParam;
 
-    if (prev.mode != mParam.mode)
-    {
+    if (prev.mode != mParam.mode) {
         resetCurrentTarget();
     }
 
-    if (mCurrent)
-    {
+    if (mCurrent) {
         mCurrent->updateParam(mParam);
     }
 }
 
-bool SRTEditor::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aCursor)
-{
-    if (mCurrent)
-    {
+bool SRTEditor::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aCursor) {
+    if (mCurrent) {
         return mCurrent->updateCursor(aCamera, aCursor);
     }
     return false;
 }
 
-void SRTEditor::updateEvent(EventType)
-{
+void SRTEditor::updateEvent(EventType) {
     resetCurrentTarget();
 }
 
-void SRTEditor::resetCurrentTarget()
-{
+void SRTEditor::resetCurrentTarget() {
     finalize();
 
-    if (mTarget)
-    {
+    if (mTarget) {
         initializeKey(*mTarget->timeLine());
         createMode();
     }
 }
 
-void SRTEditor::renderQt(const RenderInfo& aInfo, QPainter& aPainter)
-{
-    if (mCurrent)
-    {
+void SRTEditor::renderQt(const RenderInfo& aInfo, QPainter& aPainter) {
+    if (mCurrent) {
         return mCurrent->renderQt(aInfo, aPainter);
     }
 }
 
-} // namespace core
-
+} // namespace ctrl

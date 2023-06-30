@@ -4,11 +4,9 @@
 #include <QString>
 #include <QVariant>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class KeyBinding
-{
+class KeyBinding {
     int mKeyCode;
     int mSubKeyCode;
     Qt::KeyboardModifiers mModifiers;
@@ -18,12 +16,18 @@ public:
     KeyBinding();
     KeyBinding(int aKeyCode, Qt::KeyboardModifiers aModifiers = Qt::NoModifier, int aSubKeyCode = -1);
 
-    int keyCode() const { return mKeyCode; }
+    int keyCode() const {
+        return mKeyCode;
+    }
     void setSubKeyCode(int aSubKeyCode);
-    int subKeyCode() const { return mSubKeyCode; }
-    bool hasSubKeyCode() const { return mSubKeyCode != -1; }
+    int subKeyCode() const {
+        return mSubKeyCode;
+    }
+    bool hasSubKeyCode() const {
+        return mSubKeyCode != -1;
+    }
     bool isValidBinding() const;
-	bool hasKeypadModifier() const;
+    bool hasKeypadModifier() const;
     bool hasControlModifier() const;
     bool hasShiftModifier() const;
     bool hasAltModifier() const;

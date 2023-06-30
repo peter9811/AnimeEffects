@@ -1,22 +1,22 @@
 #ifndef CORE_BONE2_H
 #define CORE_BONE2_H
 
-#include <array>
-#include <QVector2D>
-#include <QMatrix4x4>
-#include "util/LifeLink.h"
-#include "util/TreeNodeBase.h"
-#include "util/TreeIterator.h"
 #include "core/BoneShape.h"
-#include "core/Serializer.h"
 #include "core/Deserializer.h"
-namespace core { class ObjectNode; }
+#include "core/Serializer.h"
+#include "util/LifeLink.h"
+#include "util/TreeIterator.h"
+#include "util/TreeNodeBase.h"
+#include <QMatrix4x4>
+#include <QVector2D>
+#include <array>
+namespace core {
+class ObjectNode;
+}
 
-namespace core
-{
+namespace core {
 
-class Bone2 : public util::TreeNodeBase<Bone2>
-{
+class Bone2: public util::TreeNodeBase<Bone2> {
 public:
     typedef util::TreeNodeBase<Bone2>::Children ChildrenType;
     typedef util::TreeIterator<Bone2, ChildrenType::Iterator> Iterator;
@@ -58,12 +58,20 @@ public:
     QMatrix4x4 transformationMatrix(const QMatrix4x4& aToMtx) const;
 
     // focus
-    bool isFocused() const { return mFocus.isLinking(); }
-    void setFocus(util::LifeLink& aLink) { mFocus = aLink; }
+    bool isFocused() const {
+        return mFocus.isLinking();
+    }
+    void setFocus(util::LifeLink& aLink) {
+        mFocus = aLink;
+    }
 
     // select
-    bool isSelected() const { return mSelect.isLinking(); }
-    void setSelect(util::LifeLink& aLink) { mSelect = aLink; }
+    bool isSelected() const {
+        return mSelect.isLinking();
+    }
+    void setSelect(util::LifeLink& aLink) {
+        mSelect = aLink;
+    }
 
     // serialize
     bool serialize(Serializer& aOut) const;

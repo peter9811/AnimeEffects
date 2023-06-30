@@ -1,29 +1,20 @@
-#include <QSettings>
-#include <QApplication>
 #include "gui/MouseSetting.h"
+#include <QApplication>
+#include <QSettings>
 
-namespace gui
-{
+namespace gui {
 
-MouseSetting::MouseSetting()
-    : invertMainViewScaling()
-    , invertTimeLineScaling()
-    , middleMouseMoveCanvas()
-{
+MouseSetting::MouseSetting(): invertMainViewScaling(), invertTimeLineScaling(), middleMouseMoveCanvas() {
 }
 
-bool MouseSetting::operator==(const MouseSetting& aRhs) const
-{
-    return invertMainViewScaling == aRhs.invertMainViewScaling &&
-            invertTimeLineScaling == aRhs.invertTimeLineScaling &&
-            middleMouseMoveCanvas == aRhs.middleMouseMoveCanvas;
+bool MouseSetting::operator==(const MouseSetting& aRhs) const {
+    return invertMainViewScaling == aRhs.invertMainViewScaling && invertTimeLineScaling == aRhs.invertTimeLineScaling &&
+        middleMouseMoveCanvas == aRhs.middleMouseMoveCanvas;
 }
 
-void MouseSetting::load()
-{
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                       QApplication::organizationName(),
-                       QApplication::applicationName());
+void MouseSetting::load() {
+    QSettings settings(
+        QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
     settings.beginGroup("mousesettings");
 
     auto invMVScale = settings.value("InvertMainViewScaling");
@@ -35,11 +26,9 @@ void MouseSetting::load()
     middleMouseMoveCanvas = mmMoveCanvas.isValid() ? mmMoveCanvas.toBool() : true;
 }
 
-void MouseSetting::save()
-{
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                       QApplication::organizationName(),
-                       QApplication::applicationName());
+void MouseSetting::save() {
+    QSettings settings(
+        QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
     settings.beginGroup("mousesettings");
 
     settings.setValue("InvertMainViewScaling", invertMainViewScaling);

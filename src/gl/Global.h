@@ -1,16 +1,14 @@
 #ifndef GL_GLOBAL_H
 #define GL_GLOBAL_H
 
-#include <QOpenGLFunctions_4_0_Core>
-#include <QOpenGLContext>
-#include <QOpenGLWidget>
 #include <QGLFormat>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions_4_0_Core>
+#include <QOpenGLWidget>
 
-namespace gl
-{
+namespace gl {
 
-class Global
-{
+class Global {
 public:
     typedef QOpenGLFunctions_4_0_Core Functions;
     static const QPair<int, int> kVersion;
@@ -19,29 +17,28 @@ public:
     static void clearFunctions();
     static Functions& functions();
 
-    //static void setContext(QOpenGLContext& aContext, QSurface& aSurface);
+    // static void setContext(QOpenGLContext& aContext, QSurface& aSurface);
     static void setContext(QOpenGLWidget& aWidget);
     static void clearContext();
     static void makeCurrent();
     static void doneCurrent();
 
 private:
-    Global() {}
+    Global() {
+    }
 };
 
 } // namespace gl
 
-
 #include "XCAssert.h"
 
-#define GL_CHECK_ERROR()                                  \
-    do {                                                  \
-        GLuint e = gl::Global::functions().glGetError();  \
-        if (e != GL_NO_ERROR) {                           \
+#define GL_CHECK_ERROR() \
+    do { \
+        GLuint e = gl::Global::functions().glGetError(); \
+        if (e != GL_NO_ERROR) { \
             XC_DEBUG_REPORT("OpenGL Error (code:%u)", e); \
-            Q_ASSERT(0);                                  \
-        }                                                 \
+            Q_ASSERT(0); \
+        } \
     } while (0)
-
 
 #endif // GL_GLOBAL_H

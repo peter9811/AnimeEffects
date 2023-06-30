@@ -1,20 +1,18 @@
 #ifndef GUI_PROPERTYWIDGET_H
 #define GUI_PROPERTYWIDGET_H
 
-#include <QScrollArea>
-#include "util/SlotId.h"
-#include "util/LinkPointer.h"
-#include "core/Project.h"
 #include "core/ObjectNode.h"
+#include "core/Project.h"
 #include "core/TimeLineEvent.h"
 #include "gui/ViaPoint.h"
 #include "gui/prop/prop_Backboard.h"
+#include "util/LinkPointer.h"
+#include "util/SlotId.h"
+#include <QScrollArea>
 
-namespace gui
-{
+namespace gui {
 
-class PropertyWidget : public QScrollArea
-{
+class PropertyWidget: public QScrollArea {
 public:
     PropertyWidget(ViaPoint& aViaPoint, QWidget* aParent);
     ~PropertyWidget();

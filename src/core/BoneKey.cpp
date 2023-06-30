@@ -1,146 +1,113 @@
-#include "util/TreeUtil.h"
-#include "util/MathUtil.h"
 #include "core/BoneKey.h"
+#include "core/ObjectNodeUtil.h"
 #include "core/Project.h"
 #include "core/TimeKeyBlender.h"
-#include "core/ObjectNodeUtil.h"
+#include "util/MathUtil.h"
+#include "util/TreeUtil.h"
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-BoneKey::Data::Data()
-    : mTopBones()
-{
+BoneKey::Data::Data(): mTopBones() {
 }
 
-BoneKey::Data::Data(const Data& aRhs)
-{
-    for (const Bone2* bone : aRhs.topBones())
-    {
+BoneKey::Data::Data(const Data& aRhs) {
+    for (const Bone2* bone : aRhs.topBones()) {
         mTopBones.push_back(util::TreeUtil::createClone(bone));
     }
 }
 
-BoneKey::Data& BoneKey::Data::operator=(const Data& aRhs)
-{
+BoneKey::Data& BoneKey::Data::operator=(const Data& aRhs) {
     deleteAll();
 
-    for (const Bone2* bone : aRhs.topBones())
-    {
+    for (const Bone2* bone : aRhs.topBones()) {
         mTopBones.push_back(util::TreeUtil::createClone(bone));
     }
     return *this;
 }
 
-BoneKey::Data::~Data()
-{
+BoneKey::Data::~Data() {
     deleteAll();
 }
 
-QList<Bone2*>& BoneKey::Data::topBones()
-{
+QList<Bone2*>& BoneKey::Data::topBones() {
     return mTopBones;
 }
 
-const QList<Bone2*>& BoneKey::Data::topBones() const
-{
+const QList<Bone2*>& BoneKey::Data::topBones() const {
     return mTopBones;
 }
 
-void BoneKey::Data::deleteAll()
-{
+void BoneKey::Data::deleteAll() {
     qDeleteAll(mTopBones);
     mTopBones.clear();
 }
 
-bool BoneKey::Data::isBinding(const ObjectNode& aNode) const
-{
-    for (auto topBone : mTopBones)
-    {
+bool BoneKey::Data::isBinding(const ObjectNode& aNode) const {
+    for (auto topBone : mTopBones) {
         Bone2::ConstIterator itr(topBone);
-        while (itr.hasNext())
-        {
-            if (itr.next()->isBinding(aNode)) return true;
+        while (itr.hasNext()) {
+            if (itr.next()->isBinding(aNode))
+                return true;
         }
     }
     return false;
 }
 
-Bone2* BoneKey::Data::findBinderBone(const ObjectNode& aNode)
-{
-    for (auto topBone : mTopBones)
-    {
+Bone2* BoneKey::Data::findBinderBone(const ObjectNode& aNode) {
+    for (auto topBone : mTopBones) {
         Bone2::Iterator itr(topBone);
-        while (itr.hasNext())
-        {
+        while (itr.hasNext()) {
             auto bone = itr.next();
-            if (bone->isBinding(aNode)) return bone;
+            if (bone->isBinding(aNode))
+                return bone;
         }
     }
     return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
-BoneKey::Cache::Cache()
-    : mInfluence()
-    , mNode()
-    , mInnerMtx()
-    , mFrameSign()
-{
+BoneKey::Cache::Cache(): mInfluence(), mNode(), mInnerMtx(), mFrameSign() {
     static const int kMaxBoneCount = 32;
     mInfluence.setMaxBoneCount(kMaxBoneCount);
 }
 
-void BoneKey::Cache::setNode(ObjectNode& aNode)
-{
+void BoneKey::Cache::setNode(ObjectNode& aNode) {
     mNode = aNode.pointee();
 }
 
 //-------------------------------------------------------------------------------------------------
-BoneKey::BindingCache::BindingCache()
-    : node()
-    , boneIndex()
-    , innerMtx()
-{
+BoneKey::BindingCache::BindingCache(): node(), boneIndex(), innerMtx() {
 }
 
 //-------------------------------------------------------------------------------------------------
-BoneKey::BoneKey()
-    : mData()
-    , mCaches()
-    , mCacheOwner()
-    , mBindingCaches()
-{
+BoneKey::BoneKey(): mData(), mCaches(), mCacheOwner(), mBindingCaches() {
 }
 
-BoneKey::~BoneKey()
-{
+BoneKey::~BoneKey() {
     destroyCaches();
 }
 
-void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets)
-{
+void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets) {
     auto time = aProject.currentTimeInfo();
     time.frame.set(this->frame());
 
     auto owner = mCacheOwner.get();
     XC_PTR_ASSERT(owner);
 
-    if (!aTargets.isEmpty())
-    {
+    if (!aTargets.isEmpty()) {
         QWriteLocker lock(&aProject.objectTree().timeCacheLock().working);
 
         // update bone influence map
-        for (auto cache : aTargets)
-        {
+        for (auto cache : aTargets) {
             XC_PTR_ASSERT(cache->node());
             auto& node = *cache->node();
 
             const LayerMesh* mesh = TimeKeyBlender::getAreaMesh(node, time);
             cache->setFrameSign(mesh->frameSign());
 
-            if (!mesh || mesh->vertexCount() <= 0) continue;
+            if (!mesh || mesh->vertexCount() <= 0)
+                continue;
 
             // set world matrix
             cache->setInnerMatrix(TimeKeyBlender::getRelativeMatrix(node, time, owner));
@@ -163,18 +130,14 @@ void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets)
 #endif
     }
 
-
     // update binding caches
     {
         mBindingCaches.clear();
-        for (auto topBone : mData.topBones())
-        {
+        for (auto topBone : mData.topBones()) {
             Bone2::Iterator itr(topBone);
-            while (itr.hasNext())
-            {
+            while (itr.hasNext()) {
                 auto bone = itr.next();
-                for (auto node : bone->bindingNodes())
-                {
+                for (auto node : bone->bindingNodes()) {
                     BindingCache bc;
                     bc.node = node;
                     bc.boneIndex = PosePalette::getBoneIndex(mData, *bone);
@@ -188,27 +151,22 @@ void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets)
     }
 }
 
-void BoneKey::updateCaches(Project& aProject, ObjectNode& aOwner, const QVector<ObjectNode*>& aUniqueRoots)
-{
+void BoneKey::updateCaches(Project& aProject, ObjectNode& aOwner, const QVector<ObjectNode*>& aUniqueRoots) {
     QList<Cache*> caches;
 
-    for (auto root : aUniqueRoots)
-    {
+    for (auto root : aUniqueRoots) {
         XC_PTR_ASSERT(root);
-        if (!util::TreeUtil::leftContainsRight(aOwner, *root))
-        {
+        if (!util::TreeUtil::leftContainsRight(aOwner, *root)) {
             continue;
         }
 
-        for (ObjectNode::Iterator itr(root); itr.hasNext();)
-        {
+        for (ObjectNode::Iterator itr(root); itr.hasNext();) {
             ObjectNode* node = itr.next();
             XC_PTR_ASSERT(node);
 
             Cache* cache = findCache(*node);
 
-            if (cache && !caches.contains(cache))
-            {
+            if (cache && !caches.contains(cache)) {
                 caches.push_back(cache);
             }
         }
@@ -220,34 +178,34 @@ void BoneKey::updateCaches(Project& aProject, ObjectNode& aOwner, const QVector<
     updateCaches(aProject, caches);
 }
 
-void BoneKey::resetCacheListRecursive(const TimeInfo& aTime, ObjectNode& aNode, CacheList& aNewList)
-{
+void BoneKey::resetCacheListRecursive(const TimeInfo& aTime, ObjectNode& aNode, CacheList& aNewList) {
     bool useMe = true;
 
     /// @todo The node which has zero vertex mesh should contain to cache list,
     /// otherwise the timeline modifier should call resetCaches instead of updateCaches.
     {
         const LayerMesh* mesh = TimeKeyBlender::getAreaMesh(aNode, aTime);
-        if (!mesh || mesh->vertexCount() <= 0) useMe = false;
+        if (!mesh || mesh->vertexCount() <= 0)
+            useMe = false;
     }
 
     // ignore
     {
         const BoneKey* areaBone = TimeKeyBlender::getAreaBone(aNode, aTime);
         // there are more local bone keys.
-        if (areaBone && areaBone != this) return;
+        if (areaBone && areaBone != this)
+            return;
     }
     // ignore
-    if (mData.isBinding(aNode)) return;
+    if (mData.isBinding(aNode))
+        return;
 
-    if (useMe)
-    {
+    if (useMe) {
         // find a cache from old list
         Cache* cache = popCache(aNode);
 
         // create new cache
-        if (!cache)
-        {
+        if (!cache) {
             cache = new Cache();
             // set node
             cache->setNode(aNode);
@@ -256,14 +214,12 @@ void BoneKey::resetCacheListRecursive(const TimeInfo& aTime, ObjectNode& aNode, 
         aNewList.push_back(cache);
     }
 
-    for (auto child : aNode.children())
-    {
+    for (auto child : aNode.children()) {
         resetCacheListRecursive(aTime, *child, aNewList);
     }
 }
 
-void BoneKey::resetCaches(Project& aProject, ObjectNode& aOwner)
-{
+void BoneKey::resetCaches(Project& aProject, ObjectNode& aOwner) {
 #if 0
     // temp list
     CacheList newCaches;
@@ -311,8 +267,7 @@ void BoneKey::resetCaches(Project& aProject, ObjectNode& aOwner)
     destroyCaches();
 
     // update list
-    for (auto cache : newCaches)
-    {
+    for (auto cache : newCaches) {
         mCaches.push_back(cache);
     }
 
@@ -322,13 +277,10 @@ void BoneKey::resetCaches(Project& aProject, ObjectNode& aOwner)
     updateCaches(aProject, mCaches);
 }
 
-BoneKey::Cache* BoneKey::popCache(ObjectNode& aNode)
-{
-    for (auto itr = mCaches.begin(); itr != mCaches.end(); ++itr)
-    {
+BoneKey::Cache* BoneKey::popCache(ObjectNode& aNode) {
+    for (auto itr = mCaches.begin(); itr != mCaches.end(); ++itr) {
         Cache* cache = *itr;
-        if (cache->node() && cache->node() == &aNode)
-        {
+        if (cache->node() && cache->node() == &aNode) {
             mCaches.erase(itr);
             return cache;
         }
@@ -336,44 +288,36 @@ BoneKey::Cache* BoneKey::popCache(ObjectNode& aNode)
     return nullptr;
 }
 
-BoneKey::Cache* BoneKey::findCache(const ObjectNode& aNode) const
-{
-    for (auto itr = mCaches.begin(); itr != mCaches.end(); ++itr)
-    {
+BoneKey::Cache* BoneKey::findCache(const ObjectNode& aNode) const {
+    for (auto itr = mCaches.begin(); itr != mCaches.end(); ++itr) {
         Cache* cache = *itr;
-        if (cache->node() && cache->node() == &aNode)
-        {
+        if (cache->node() && cache->node() == &aNode) {
             return cache;
         }
     }
     return nullptr;
 }
 
-void BoneKey::destroyCaches()
-{
+void BoneKey::destroyCaches() {
     qDeleteAll(mCaches);
     mCaches.clear();
     mCacheOwner.reset();
 }
 
-TimeKey* BoneKey::createClone()
-{
+TimeKey* BoneKey::createClone() {
     auto newKey = new BoneKey();
     newKey->mData = this->mData;
     return newKey;
 }
 
-bool BoneKey::serialize(Serializer& aOut) const
-{
+bool BoneKey::serialize(Serializer& aOut) const {
     // top bone count
     aOut.write(mData.topBones().count());
 
     // serialize all bones
-    for (auto topBone : mData.topBones())
-    {
+    for (auto topBone : mData.topBones()) {
         XC_PTR_ASSERT(topBone);
-        if (!serializeBone(aOut, topBone))
-        {
+        if (!serializeBone(aOut, topBone)) {
             return false;
         }
     }
@@ -385,15 +329,13 @@ bool BoneKey::serialize(Serializer& aOut) const
     aOut.write(mCaches.count());
 
     // each caches
-    for (auto cache : mCaches)
-    {
+    for (auto cache : mCaches) {
         aOut.writeID(cache->node());
         aOut.write(cache->innerMatrix());
         aOut.write(QVector2D()); // obsolete: origin offset
         aOut.write(cache->frameSign());
 
-        if (!cache->influence().serialize(aOut))
-        {
+        if (!cache->influence().serialize(aOut)) {
             return false;
         }
     }
@@ -402,8 +344,7 @@ bool BoneKey::serialize(Serializer& aOut) const
     aOut.write(mBindingCaches.count());
 
     // each binding caches
-    for (auto& cache : mBindingCaches)
-    {
+    for (auto& cache : mBindingCaches) {
         aOut.writeID(cache.node);
         aOut.write(cache.boneIndex);
         aOut.write(cache.innerMtx);
@@ -412,24 +353,21 @@ bool BoneKey::serialize(Serializer& aOut) const
     return aOut.checkStream();
 }
 
-bool BoneKey::serializeBone(Serializer& aOut, const Bone2* aBone) const
-{
-    if (!aBone) return true;
+bool BoneKey::serializeBone(Serializer& aOut, const Bone2* aBone) const {
+    if (!aBone)
+        return true;
 
     // child count
     aOut.write((int)aBone->children().size());
 
     // serialize bone
-    if (!aBone->serialize(aOut))
-    {
+    if (!aBone->serialize(aOut)) {
         return false;
     }
 
     // iterate children
-    for (auto child : aBone->children())
-    {
-        if (!serializeBone(aOut, child))
-        {
+    for (auto child : aBone->children()) {
+        if (!serializeBone(aOut, child)) {
             return false;
         }
     }
@@ -437,8 +375,7 @@ bool BoneKey::serializeBone(Serializer& aOut, const Bone2* aBone) const
     return aOut.checkStream();
 }
 
-bool BoneKey::deserialize(Deserializer& aIn)
-{
+bool BoneKey::deserialize(Deserializer& aIn) {
     mData.deleteAll();
     destroyCaches();
     mBindingCaches.clear();
@@ -448,19 +385,16 @@ bool BoneKey::deserialize(Deserializer& aIn)
     // top bone count
     int topBoneCount = 0;
     aIn.read(topBoneCount);
-    if (topBoneCount < 0)
-    {
+    if (topBoneCount < 0) {
         return aIn.errored("invalid top bone count");
     }
 
     // deserialize all bones
-    for (int i = 0; i < topBoneCount; ++i)
-    {
+    for (int i = 0; i < topBoneCount; ++i) {
         Bone2* topBone = new Bone2();
         mData.topBones().push_back(topBone);
 
-        if (!deserializeBone(aIn, topBone))
-        {
+        if (!deserializeBone(aIn, topBone)) {
             return false;
         }
     }
@@ -469,10 +403,10 @@ bool BoneKey::deserialize(Deserializer& aIn)
     {
         auto solver = [=](void* aPtr) {
             ObjectNode* node = (ObjectNode*)aPtr;
-            if (node) this->mCacheOwner = node->pointee();
+            if (node)
+                this->mCacheOwner = node->pointee();
         };
-        if (!aIn.orderIDData(solver))
-        {
+        if (!aIn.orderIDData(solver)) {
             return aIn.errored("invalid cache owner reference id");
         }
     }
@@ -480,14 +414,12 @@ bool BoneKey::deserialize(Deserializer& aIn)
     // cache count
     int cacheCount = 0;
     aIn.read(cacheCount);
-    if (cacheCount < 0)
-    {
+    if (cacheCount < 0) {
         return aIn.errored("invalid cache count");
     }
 
     // each caches
-    for (int i = 0; i < cacheCount; ++i)
-    {
+    for (int i = 0; i < cacheCount; ++i) {
         Cache* cache = new Cache();
         mCaches.push_back(cache);
 
@@ -495,10 +427,10 @@ bool BoneKey::deserialize(Deserializer& aIn)
         {
             auto solver = [=](void* aPtr) {
                 ObjectNode* node = (ObjectNode*)aPtr;
-                if (node) cache->setNode(*node);
+                if (node)
+                    cache->setNode(*node);
             };
-            if (!aIn.orderIDData(solver))
-            {
+            if (!aIn.orderIDData(solver)) {
                 return aIn.errored("invalid cache reference id");
             }
         }
@@ -513,22 +445,19 @@ bool BoneKey::deserialize(Deserializer& aIn)
         cache->setFrameSign(aIn.getRead<Frame>());
 
         // influence
-        if (!cache->influence().deserialize(aIn))
-        {
+        if (!cache->influence().deserialize(aIn)) {
             return false;
         }
     }
 
     // binding cache count
     const int bindingCacheCount = aIn.getRead<int>();
-    if (bindingCacheCount < 0)
-    {
+    if (bindingCacheCount < 0) {
         return aIn.errored("invalid binding cache count");
     }
 
     // each binding caches
-    for (int i = 0; i < bindingCacheCount; ++i)
-    {
+    for (int i = 0; i < bindingCacheCount; ++i) {
         mBindingCaches.push_back(BindingCache());
         BindingCache* cache = &(mBindingCaches.back());
 
@@ -536,10 +465,10 @@ bool BoneKey::deserialize(Deserializer& aIn)
         {
             auto solver = [=](void* aPtr) {
                 ObjectNode* node = (ObjectNode*)aPtr;
-                if (node) cache->node = node;
+                if (node)
+                    cache->node = node;
             };
-            if (!aIn.orderIDData(solver))
-            {
+            if (!aIn.orderIDData(solver)) {
                 return aIn.errored("invalid binding cache reference id");
             }
         }
@@ -550,8 +479,7 @@ bool BoneKey::deserialize(Deserializer& aIn)
         // inner matrix
         aIn.read(cache->innerMtx);
 
-        if (aIn.failure())
-        {
+        if (aIn.failure()) {
             return aIn.errored("stream error");
         }
     }
@@ -560,31 +488,27 @@ bool BoneKey::deserialize(Deserializer& aIn)
     return aIn.checkStream();
 }
 
-bool BoneKey::deserializeBone(Deserializer& aIn, Bone2* aBone)
-{
-    if (!aBone) return true;
+bool BoneKey::deserializeBone(Deserializer& aIn, Bone2* aBone) {
+    if (!aBone)
+        return true;
 
     // child count
     const int childCount = aIn.getRead<int>();
-    if (childCount < 0)
-    {
+    if (childCount < 0) {
         return aIn.errored("invalid child count");
     }
 
     // deserialize bone
-    if (!aBone->deserialize(aIn))
-    {
+    if (!aBone->deserialize(aIn)) {
         return false;
     }
 
     // iterate children
-    for (int i = 0; i < childCount; ++i)
-    {
+    for (int i = 0; i < childCount; ++i) {
         Bone2* child = new Bone2();
         aBone->children().pushBack(child);
 
-        if (!deserializeBone(aIn, child))
-        {
+        if (!deserializeBone(aIn, child)) {
             return false;
         }
     }

@@ -1,36 +1,24 @@
-#include "Project.h"
-#include "img/ResourceNode.h"
-#include "img/BlendMode.h"
 #include "core/ImageKey.h"
+#include "Project.h"
 #include "core/Constant.h"
+#include "img/BlendMode.h"
+#include "img/ResourceNode.h"
 #include "qjsonobject.h"
 #include "util/LinkPointer.h"
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-ImageKey::Data::Data()
-    : mEasing()
-    , mResHandle()
-    , mBlendMode(img::BlendMode_Normal)
-    , mImageOffset()
-    , mGridMesh()
-{
+ImageKey::Data::Data(): mEasing(), mResHandle(), mBlendMode(img::BlendMode_Normal), mImageOffset(), mGridMesh() {
 }
 
-ImageKey::Data::Data(const Data& aRhs)
-    : mEasing(aRhs.mEasing)
-    , mResHandle(aRhs.mResHandle)
-    , mBlendMode(aRhs.mBlendMode)
-    , mImageOffset()
-{
+ImageKey::Data::Data(const Data& aRhs):
+    mEasing(aRhs.mEasing), mResHandle(aRhs.mResHandle), mBlendMode(aRhs.mBlendMode), mImageOffset() {
     setImageOffset(aRhs.mImageOffset);
     mGridMesh = aRhs.mGridMesh;
 }
 
-ImageKey::Data& ImageKey::Data::operator=(const Data& aRhs)
-{
+ImageKey::Data& ImageKey::Data::operator=(const Data& aRhs) {
     mEasing = aRhs.mEasing;
     mResHandle = aRhs.mResHandle;
     mBlendMode = aRhs.mBlendMode;
@@ -39,75 +27,58 @@ ImageKey::Data& ImageKey::Data::operator=(const Data& aRhs)
     return *this;
 }
 
-void ImageKey::Data::setImageOffset(const QVector2D& aOffset)
-{
-    const QVector2D offset(
-                xc_clamp(aOffset.x(), Constant::transMin(), Constant::transMax()),
-                xc_clamp(aOffset.y(), Constant::transMin(), Constant::transMax()));
+void ImageKey::Data::setImageOffset(const QVector2D& aOffset) {
+    const QVector2D offset(xc_clamp(aOffset.x(), Constant::transMin(), Constant::transMax()),
+        xc_clamp(aOffset.y(), Constant::transMin(), Constant::transMax()));
     mImageOffset = offset;
     mGridMesh.setOriginOffset(offset);
 }
 
 //-------------------------------------------------------------------------------------------------
-ImageKey::Cache::Cache()
-    : mTexture()
-{
+ImageKey::Cache::Cache(): mTexture() {
 }
 
 //-------------------------------------------------------------------------------------------------
-ImageKey::ImageKey()
-    : mData()
-    , mCache()
-    , mSleepCount(0)
-{
+ImageKey::ImageKey(): mData(), mCache(), mSleepCount(0) {
     mData.resource().setOriginKeeping(true);
 }
 
-TimeKey* ImageKey::createClone()
-{
+TimeKey* ImageKey::createClone() {
     auto newKey = new ImageKey();
     newKey->mData = this->mData;
     newKey->resetTextureCache();
     return newKey;
 }
 
-void ImageKey::setImage(const img::ResourceHandle& aResource, img::BlendMode aMode)
-{
+void ImageKey::setImage(const img::ResourceHandle& aResource, img::BlendMode aMode) {
     mData.setBlendMode(aMode);
     setImage(aResource);
 }
 
-void ImageKey::setImage(const img::ResourceHandle& aResource)
-{
+void ImageKey::setImage(const img::ResourceHandle& aResource) {
     mData.resource() = aResource;
     resetTextureCache();
 }
 
-void ImageKey::setImageOffset(const QVector2D& aOffset)
-{
+void ImageKey::setImageOffset(const QVector2D& aOffset) {
     mData.setImageOffset(aOffset);
 }
 
-void ImageKey::setImageOffsetByCenter()
-{
-    if (hasImage())
-    {
+void ImageKey::setImageOffsetByCenter() {
+    if (hasImage()) {
         auto size = mData.resource()->image().pixelSize();
         mData.setImageOffset(QVector2D(-size.width() * 0.5f, -size.height() * 0.5f));
     }
 }
 
-void ImageKey::resetGridMesh(int aCellSize)
-{
-    if (mData.resource()->hasImage())
-    {
+void ImageKey::resetGridMesh(int aCellSize) {
+    if (mData.resource()->hasImage()) {
         auto data = mData.resource()->image().data();
         auto size = mData.resource()->image().pixelSize();
 
-        //const int cellPx = std::max(std::min(8, pixelSize.width() / 4), 2);
+        // const int cellPx = std::max(std::min(8, pixelSize.width() / 4), 2);
         auto cell = std::max(aCellSize, Constant::imageCellSizeMin());
-        while (img::GridMeshCreator::getCellTableCount(size, cell) > Constant::imageCellCountMax())
-        {
+        while (img::GridMeshCreator::getCellTableCount(size, cell) > Constant::imageCellCountMax()) {
             ++cell;
         }
         cell = std::min(cell, Constant::imageCellSizeMax());
@@ -115,10 +86,8 @@ void ImageKey::resetGridMesh(int aCellSize)
     }
 }
 
-void ImageKey::resetTextureCache()
-{
-    if (mData.resource()->hasImage())
-    {
+void ImageKey::resetTextureCache() {
+    if (mData.resource()->hasImage()) {
         auto imageData = mData.resource()->image().data();
         auto pixelSize = mData.resource()->image().pixelSize();
 
@@ -129,26 +98,22 @@ void ImageKey::resetTextureCache()
     }
 }
 
-void ImageKey::sleep()
-{
+void ImageKey::sleep() {
     ++mSleepCount;
-    if (mSleepCount == 1)
-    {
+    if (mSleepCount == 1) {
         mData.resource().setOriginKeeping(false);
     }
 }
 
-void ImageKey::awake()
-{
+void ImageKey::awake() {
     XC_ASSERT(mSleepCount > 0);
     --mSleepCount;
-    if (mSleepCount == 0)
-    {
+    if (mSleepCount == 0) {
         mData.resource().setOriginKeeping(true);
     }
 }
 
-QJsonObject ImageKey::serializeToJson() const{
+QJsonObject ImageKey::serializeToJson() const {
     QJsonObject image;
     image["Identifier"] = mData.resource()->serialAddress()->handle()->identifier();
     image["BlendMode"] = getBlendNameFromBlendMode(mData.blendMode());
@@ -158,74 +123,88 @@ QJsonObject ImageKey::serializeToJson() const{
     return image;
 }
 
-img::ResourceNode* returnMatch(img::ResourceNode* image, QString match){
+img::ResourceNode* returnMatch(img::ResourceNode* image, QString match) {
     // Get main
-    if(image->data().identifier() == match){return image;}
+    if (image->data().identifier() == match) {
+        return image;
+    }
     // Get siblings
     img::ResourceNode* current = image;
-    while(current->nextSib()){
-        if(current->data().identifier() == match) {
+    while (current->nextSib()) {
+        if (current->data().identifier() == match) {
             return current;
         }
-        if(!current->children().empty()){
-            for(auto child: current->children()){
+        if (!current->children().empty()) {
+            for (auto child : current->children()) {
                 auto recMatch = returnMatch(child, match);
-                if (recMatch != nullptr){return recMatch;};
+                if (recMatch != nullptr) {
+                    return recMatch;
+                };
             }
         }
         current = current->nextSib();
     }
     // Get last sibling
-    if(current->data().identifier() == match){return current;}
-    if(!current->children().empty()){
-        for(auto child: current->children()){
+    if (current->data().identifier() == match) {
+        return current;
+    }
+    if (!current->children().empty()) {
+        for (auto child : current->children()) {
             auto recMatch = returnMatch(child, match);
-            if (recMatch != nullptr){return recMatch;};
+            if (recMatch != nullptr) {
+                return recMatch;
+            };
         }
     }
     // Get children
-    for (auto child: image->children()){
+    for (auto child : image->children()) {
         current = child;
-        while(current->nextSib()){
-            if(current->data().identifier() == match) {
+        while (current->nextSib()) {
+            if (current->data().identifier() == match) {
                 return current;
             }
-            if(!current->children().empty()){
-                for(auto child: current->children()){
+            if (!current->children().empty()) {
+                for (auto child : current->children()) {
                     auto recMatch = returnMatch(child, match);
-                    if (recMatch != nullptr){return recMatch;};
+                    if (recMatch != nullptr) {
+                        return recMatch;
+                    };
                 }
             }
             current = current->nextSib();
         }
     }
     // Get last child
-    if(current->data().identifier() == match){return current;}
-    if(!current->children().empty()){
-        for(auto child: current->children()){
+    if (current->data().identifier() == match) {
+        return current;
+    }
+    if (!current->children().empty()) {
+        for (auto child : current->children()) {
             auto recMatch = returnMatch(child, match);
-            if (recMatch != nullptr){return recMatch;};
+            if (recMatch != nullptr) {
+                return recMatch;
+            };
         }
     }
     return nullptr;
 }
 
-bool ImageKey::deserializeFromJson(QJsonObject json, util::LifeLink::Pointee<Project> project){
+bool ImageKey::deserializeFromJson(QJsonObject json, util::LifeLink::Pointee<Project> project) {
     mData.resource().reset();
     // image id
     json = json["Image"].toObject();
     QString identifier = json["Identifier"].toString();
     img::ResourceNode* nodePtr = nullptr;
-    for(const ResourceHolder::ImageTree &image : project.address->resourceHolder().imageTrees()){
+    for (const ResourceHolder::ImageTree& image : project.address->resourceHolder().imageTrees()) {
         auto match = returnMatch(image.topNode, identifier);
         // qDebug("-------");
-        if(match != nullptr){
+        if (match != nullptr) {
             // qDebug() << match->data().identifier();
             nodePtr = match;
         }
         // qDebug("-------");
     }
-    if (nodePtr == nullptr){
+    if (nodePtr == nullptr) {
         return false;
     }
     this->mData.resource() = nodePtr->handle();
@@ -235,18 +214,19 @@ bool ImageKey::deserializeFromJson(QJsonObject json, util::LifeLink::Pointee<Pro
     QVector2D offset{static_cast<float>(json["OffsetX"].toDouble()), static_cast<float>(json["OffsetY"].toDouble())};
     mData.setImageOffset(offset);
     // grid mesh
-    if (!mData.gridMesh().deserializeFromJson(json)){
+    if (!mData.gridMesh().deserializeFromJson(json)) {
         return false;
     }
     // blend mode
     QString bname = json["BlendMode"].toString();
     auto bmode = img::getBlendModeFromQuadId(bname);
-    if (!(bmode == img::BlendMode_TERM)){mData.setBlendMode(bmode);}
+    if (!(bmode == img::BlendMode_TERM)) {
+        mData.setBlendMode(bmode);
+    }
     return true;
 }
 
-bool ImageKey::serialize(Serializer& aOut) const
-{
+bool ImageKey::serialize(Serializer& aOut) const {
     // easing
     aOut.write(mData.easing());
     // image id
@@ -256,34 +236,29 @@ bool ImageKey::serialize(Serializer& aOut) const
     // image offset
     aOut.write(mData.imageOffset());
     // grid mesh
-    if (!mData.gridMesh().serialize(aOut))
-    {
+    if (!mData.gridMesh().serialize(aOut)) {
         return false;
     }
 
     return aOut.checkStream();
 }
 
-bool ImageKey::deserialize(Deserializer& aIn)
-{
+bool ImageKey::deserialize(Deserializer& aIn) {
     mData.resource().reset();
 
     aIn.pushLogScope("ImageKey");
 
     // easing
-    if (!aIn.read(mData.easing()))
-    {
+    if (!aIn.read(mData.easing())) {
         return aIn.errored("invalid easing param");
     }
     // image id
     {
-        auto solver = [=](void* aPtr)
-        {
+        auto solver = [=](void* aPtr) {
             this->mData.resource() = ((img::ResourceNode*)aPtr)->handle();
             this->resetTextureCache();
         };
-        if (!aIn.orderIDData(solver))
-        {
+        if (!aIn.orderIDData(solver)) {
             return aIn.errored("invalid image reference id");
         }
     }
@@ -292,8 +267,7 @@ bool ImageKey::deserialize(Deserializer& aIn)
         QString bname;
         aIn.readFixedString(bname, 4);
         auto bmode = img::getBlendModeFromQuadId(bname);
-        if (bmode == img::BlendMode_TERM)
-        {
+        if (bmode == img::BlendMode_TERM) {
             return aIn.errored("invalid image blending mode");
         }
         mData.setBlendMode(bmode);
@@ -305,8 +279,7 @@ bool ImageKey::deserialize(Deserializer& aIn)
         mData.setImageOffset(offset);
     }
     // grid mesh
-    if (!mData.gridMesh().deserialize(aIn))
-    {
+    if (!mData.gridMesh().deserialize(aIn)) {
         return aIn.errored("failed to deserialize grid mesh");
     }
 
@@ -315,4 +288,3 @@ bool ImageKey::deserialize(Deserializer& aIn)
 }
 
 } // namespace core
-

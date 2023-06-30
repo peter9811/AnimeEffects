@@ -1,44 +1,31 @@
-#include "gl/Global.h"
-#include "core/MeshTransformerResource.h"
 #include "ctrl/FFDEditor.h"
+#include "core/MeshTransformerResource.h"
 #include "ctrl/ffd/ffd_BrushMode.h"
 #include "ctrl/ffd/ffd_DragMode.h"
-#include "gl/Util.h"
 #include "gl/ComputeTexture1D.h"
+#include "gl/Global.h"
+#include "gl/Util.h"
 
 using namespace core;
 
-namespace ctrl
-{
+namespace ctrl {
 
 //-------------------------------------------------------------------------------------------------
-FFDEditor::FFDEditor(Project& aProject,
-                     DriverResources& aDriverResources,
-                     UILogger& aUILogger)
-    : mProject(aProject)
-    , mDriverResources(aDriverResources)
-    , mUILogger(aUILogger)
-    , mParam()
-    , mCurrent()
-    , mRootTarget()
-    , mTargets()
-{
+FFDEditor::FFDEditor(Project& aProject, DriverResources& aDriverResources, UILogger& aUILogger):
+    mProject(aProject), mDriverResources(aDriverResources), mUILogger(aUILogger), mParam(), mCurrent(), mRootTarget(),
+    mTargets() {
     // setup shader
-    if (!mDriverResources.meshTransformerResource())
-    {
+    if (!mDriverResources.meshTransformerResource()) {
         gl::Global::makeCurrent();
         mDriverResources.grabMeshTransformerResoure(new core::MeshTransformerResource());
         mDriverResources.meshTransformerResource()->setup("./data/shader/MeshTransformVert.glsl");
     }
-    if (!mDriverResources.ffdTaskResource())
-    {
+    if (!mDriverResources.ffdTaskResource()) {
         gl::Global::makeCurrent();
         mDriverResources.grabFFDTaskResource(new ffd::TaskResource());
-        mDriverResources.ffdTaskResource()->setup(
-                    "./data/shader/FreeFormDeformVert.glsl",
-                    "./data/shader/FFDEraseVert.glsl",
-                    "./data/shader/FFDFocusVertexVert.glsl",
-                    "./data/shader/FFDBlurVert.glsl");
+        mDriverResources.ffdTaskResource()->setup("./data/shader/FreeFormDeformVert.glsl",
+            "./data/shader/FFDEraseVert.glsl", "./data/shader/FFDFocusVertexVert.glsl",
+            "./data/shader/FFDBlurVert.glsl");
     }
 
 #if 0
@@ -171,32 +158,26 @@ FFDEditor::FFDEditor(Project& aProject,
 #endif
 }
 
-FFDEditor::~FFDEditor()
-{
+FFDEditor::~FFDEditor() {
     finalize();
 }
 
-void FFDEditor::finalize()
-{
+void FFDEditor::finalize() {
     mCurrent.reset();
     qDeleteAll(mTargets);
     mTargets.clear();
     mRootTarget = nullptr;
 }
 
-bool FFDEditor::setTarget(ObjectNode* aTarget)
-{
+bool FFDEditor::setTarget(ObjectNode* aTarget) {
     finalize();
 
     mRootTarget = aTarget;
-    if (mRootTarget)
-    {
+    if (mRootTarget) {
         QString message;
-        if (!resetCurrentTarget(&message))
-        {
+        if (!resetCurrentTarget(&message)) {
             mRootTarget = nullptr;
-            if (!message.isEmpty())
-            {
+            if (!message.isEmpty()) {
                 mUILogger.pushLog(UILog::tr("FFD Editor : ") + message, UILogType_Warn);
             }
         }
@@ -204,46 +185,39 @@ bool FFDEditor::setTarget(ObjectNode* aTarget)
     return mRootTarget;
 }
 
-void FFDEditor::updateParam(const FFDParam& aParam)
-{
+void FFDEditor::updateParam(const FFDParam& aParam) {
     auto prevType = mParam.type;
     mParam = aParam;
 
-    if (prevType != mParam.type)
-    {
+    if (prevType != mParam.type) {
         resetCurrentTarget();
     }
-    if (mCurrent)
-    {
+    if (mCurrent) {
         mCurrent->updateParam(aParam);
     }
 }
 
-bool FFDEditor::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aCursor)
-{
-    if (!mRootTarget) return false;
+bool FFDEditor::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aCursor) {
+    if (!mRootTarget)
+        return false;
 
-    if (mCurrent)
-    {
+    if (mCurrent) {
         return mCurrent->updateCursor(aCamera, aCursor);
     }
     return false;
-
 }
 
-void FFDEditor::updateEvent(EventType)
-{
+void FFDEditor::updateEvent(EventType) {
     resetCurrentTarget();
 }
 
-core::LayerMesh* FFDEditor::getCurrentAreaMesh(core::ObjectNode& aNode) const
-{
-    if (!aNode.timeLine()) return nullptr;
+core::LayerMesh* FFDEditor::getCurrentAreaMesh(core::ObjectNode& aNode) const {
+    if (!aNode.timeLine())
+        return nullptr;
     return aNode.timeLine()->current().ffdMesh();
 }
 
-bool FFDEditor::resetCurrentTarget(QString* aMessage)
-{
+bool FFDEditor::resetCurrentTarget(QString* aMessage) {
     mCurrent.reset();
     QVector<ffd::Target*> prevTargets = mTargets;
     mTargets.clear();
@@ -251,34 +225,27 @@ bool FFDEditor::resetCurrentTarget(QString* aMessage)
     gl::Global::makeCurrent();
 
     // reset targets
-    for (ObjectNode::Iterator itr(mRootTarget); itr.hasNext();)
-    {
+    for (ObjectNode::Iterator itr(mRootTarget); itr.hasNext();) {
         ObjectNode* node = itr.next();
         XC_PTR_ASSERT(node);
         LayerMesh* areaMesh = getCurrentAreaMesh(*node);
 
-        if (node->timeLine() && areaMesh && areaMesh->vertexCount() > 0)
-        {
+        if (node->timeLine() && areaMesh && areaMesh->vertexCount() > 0) {
             bool found = false;
-            for (auto prev : prevTargets)
-            {
-                if (prev->node == node)
-                {
+            for (auto prev : prevTargets) {
+                if (prev->node == node) {
                     prevTargets.removeOne(prev);
                     mTargets.push_back(prev);
                     found = true;
                     break;
                 }
             }
-            if (!found)
-            {
+            if (!found) {
                 // push target
                 mTargets.push_back(new ffd::Target(node));
                 // create task
                 mTargets.back()->task.reset(
-                            new ffd::Task(
-                                *mDriverResources.ffdTaskResource(),
-                                *mDriverResources.meshTransformerResource()));
+                    new ffd::Task(*mDriverResources.ffdTaskResource(), *mDriverResources.meshTransformerResource()));
             }
             mTargets.back()->task->resetDst(areaMesh->vertexCount());
         }
@@ -287,23 +254,18 @@ bool FFDEditor::resetCurrentTarget(QString* aMessage)
     updateTargetsKeys();
     qDeleteAll(prevTargets);
 
-    if (mTargets.hasValidTarget())
-    {
+    if (mTargets.hasValidTarget()) {
         createMode();
-    }
-    else if (aMessage)
-    {
+    } else if (aMessage) {
         *aMessage = UILog::tr("There are no object with meshes.");
     }
 
     return !mTargets.isEmpty();
 }
 
-void FFDEditor::updateTargetsKeys()
-{
+void FFDEditor::updateTargetsKeys() {
     // initialize each target
-    for (int i = 0; i < mTargets.size(); ++i)
-    {
+    for (int i = 0; i < mTargets.size(); ++i) {
         ObjectNode* node = mTargets[i]->node;
         TimeLine* line = node->timeLine();
         XC_PTR_ASSERT(line);
@@ -319,14 +281,13 @@ void FFDEditor::updateTargetsKeys()
     }
 }
 
-void FFDEditor::createMode()
-{
+void FFDEditor::createMode() {
     mCurrent.reset();
 
-    if (!mTargets.hasValidTarget()) return;
+    if (!mTargets.hasValidTarget())
+        return;
 
-    switch (mParam.type)
-    {
+    switch (mParam.type) {
     case FFDParam::Type_Drag:
         mCurrent.reset(new ffd::DragMode(mProject, mTargets));
         break;
@@ -338,16 +299,13 @@ void FFDEditor::createMode()
         break;
     }
 
-    if (mCurrent)
-    {
+    if (mCurrent) {
         mCurrent->updateParam(mParam);
     }
 }
 
-void FFDEditor::renderQt(const RenderInfo& aInfo, QPainter& aPainter)
-{
-    if (mCurrent)
-    {
+void FFDEditor::renderQt(const RenderInfo& aInfo, QPainter& aPainter) {
+    if (mCurrent) {
         mCurrent->renderQt(aInfo, aPainter);
     }
 }

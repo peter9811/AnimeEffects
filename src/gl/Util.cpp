@@ -1,26 +1,22 @@
-#include "XC.h"
 #include "gl/Util.h"
-#include "gl/Global.h"
+#include "XC.h"
 #include "gl/BufferObject.h"
+#include "gl/Global.h"
 
-namespace gl
-{
+namespace gl {
 
-void Util::clearColorBuffer(GLclampf r, GLclampf g, GLclampf b, GLclampf a)
-{
+void Util::clearColorBuffer(GLclampf r, GLclampf g, GLclampf b, GLclampf a) {
     Global::Functions& ggl = Global::functions();
     ggl.glClearColor(r, g, b, a);
     ggl.glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Util::setViewportAsActualPixels(const QSize& aSize)
-{
+void Util::setViewportAsActualPixels(const QSize& aSize) {
     Global::Functions& ggl = Global::functions();
     ggl.glViewport(0, 0, aSize.width(), aSize.height());
 }
 
-void Util::resetRenderState()
-{
+void Util::resetRenderState() {
     Global::Functions& ggl = Global::functions();
 
     ggl.glDisable(GL_BLEND);
@@ -52,45 +48,36 @@ void Util::resetRenderState()
 #endif
     GL_CHECK_ERROR();
 
-    //ggl.glColor4f(1.0, 1.0, 1.0, 1.0);
+    // ggl.glColor4f(1.0, 1.0, 1.0, 1.0);
 
-    //ggl.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    //ggl.glDisableClientState(GL_COLOR_ARRAY);
+    // ggl.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    // ggl.glDisableClientState(GL_COLOR_ARRAY);
 }
 
-void Util::setAbility(GLenum aState, bool aIsEnable)
-{
-    if (aIsEnable)
-    {
+void Util::setAbility(GLenum aState, bool aIsEnable) {
+    if (aIsEnable) {
         Global::functions().glEnable(aState);
-    }
-    else
-    {
+    } else {
         Global::functions().glDisable(aState);
     }
 }
 
-GLuint Util::findTextureFromColorAttachment0()
-{
+GLuint Util::findTextureFromColorAttachment0() {
     static const GLenum kTarget = GL_FRAMEBUFFER;
     static const GLenum kAttach = GL_COLOR_ATTACHMENT0;
     gl::Global::Functions& ggl = gl::Global::functions();
 
     GLint value = 0;
-    ggl.glGetFramebufferAttachmentParameteriv(
-                kTarget, kAttach, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &value);
+    ggl.glGetFramebufferAttachmentParameteriv(kTarget, kAttach, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &value);
 
-    if ((GLenum)value == GL_TEXTURE)
-    {
-        ggl.glGetFramebufferAttachmentParameteriv(
-                    kTarget, kAttach, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &value);
+    if ((GLenum)value == GL_TEXTURE) {
+        ggl.glGetFramebufferAttachmentParameteriv(kTarget, kAttach, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &value);
         return (GLuint)value;
     }
     return 0;
 }
 
-void Util::drawElements(GLenum aPrimitive, GLenum aType, gl::BufferObject& aIndices)
-{
+void Util::drawElements(GLenum aPrimitive, GLenum aType, gl::BufferObject& aIndices) {
     aIndices.bind();
     gl::Global::functions().glDrawElements(aPrimitive, aIndices.dataCount(), aType, nullptr);
     aIndices.release();

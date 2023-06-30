@@ -20,43 +20,33 @@ typedef double float64;
 #define XC_TO_BIG_ENDIAN(x) qToBigEndian(x)
 #define XC_TO_LITTLE_ENDIAN(x) qToLittleEndian(x)
 
-struct XCMemBlock
-{
-    XCMemBlock() : data(), size() {}
-    XCMemBlock(uint8* aData, size_t aSize) : data(aData), size(aSize) {}
+struct XCMemBlock {
+    XCMemBlock(): data(), size() {
+    }
+    XCMemBlock(uint8* aData, size_t aSize): data(aData), size(aSize) {
+    }
     uint8* data;
     size_t size;
 };
 
-template<typename tValue>
-tValue xc_clamp(tValue aValue, tValue aMin, tValue aMax)
-{
+template<typename tValue> tValue xc_clamp(tValue aValue, tValue aMin, tValue aMax) {
     return (aValue > aMax) ? aMax : ((aValue < aMin) ? aMin : aValue);
 }
 
-template<typename tValue>
-tValue xc_divide(tValue aNum, tValue aDenom, tValue aDenomMin, tValue aDefault)
-{
+template<typename tValue> tValue xc_divide(tValue aNum, tValue aDenom, tValue aDenomMin, tValue aDefault) {
     const tValue absDenom = (aDenom >= 0.0f) ? aDenom : -aDenom;
     return (absDenom >= aDenomMin) ? (aNum / aDenom) : aDefault;
 }
 
-template<typename tValue>
-bool xc_contains(tValue aValue, tValue aMin, tValue aMax)
-{
+template<typename tValue> bool xc_contains(tValue aValue, tValue aMin, tValue aMax) {
     return aMin <= aValue && aValue <= aMax;
 }
 
-template<typename tValue>
-tValue xc_decrease(tValue aValue, tValue aDec)
-{
-    if (aValue >= 0.0f)
-    {
+template<typename tValue> tValue xc_decrease(tValue aValue, tValue aDec) {
+    if (aValue >= 0.0f) {
         tValue v = aValue - aDec;
         return v > 0.0f ? v : 0.0f;
-    }
-    else
-    {
+    } else {
         tValue v = aValue + aDec;
         return v < 0.0f ? v : 0.0f;
     }

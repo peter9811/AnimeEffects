@@ -1,198 +1,155 @@
-#include "XC.h"
 #include "gui/tool/tool_Items.h"
+#include "XC.h"
 #include "gui/tool/tool_ItemTable.h"
 
 namespace gui {
 namespace tool {
 
-//-------------------------------------------------------------------------------------------------
-SingleOutItem::SingleOutItem(int aButtonCount, const QSize& aButtonSize, QWidget* aParent)
-    : mGroup()
-    , mButtons()
-    , mButtonSize(aButtonSize)
-    , mButtonNum(aButtonCount)
-{
-    XC_PTR_ASSERT(aParent);
-    mGroup = new QButtonGroup(aParent);
-    mGroup->setExclusive(true);
+    //-------------------------------------------------------------------------------------------------
+    SingleOutItem::SingleOutItem(int aButtonCount, const QSize& aButtonSize, QWidget* aParent):
+        mGroup(), mButtons(), mButtonSize(aButtonSize), mButtonNum(aButtonCount) {
+        XC_PTR_ASSERT(aParent);
+        mGroup = new QButtonGroup(aParent);
+        mGroup->setExclusive(true);
 
-    mButtons.resize(mButtonNum);
+        mButtons.resize(mButtonNum);
 
-    for (int i = 0; i < mButtonNum; ++i)
-    {
-        mButtons[i] = new QPushButton(aParent);
-        mButtons[i]->setCheckable(true);
-        mButtons[i]->setFocusPolicy(Qt::NoFocus);
-        mGroup->addButton(mButtons[i]);
-    }
-}
-
-void SingleOutItem::setToolTips(const QStringList& aTips)
-{
-    int i = 0;
-    for (auto tip : aTips)
-    {
-        if (i < mButtons.size())
-        {
-            mButtons.at(i)->setToolTip(tip);
-            ++i;
-        }
-        else
-        {
-            break;
+        for (int i = 0; i < mButtonNum; ++i) {
+            mButtons[i] = new QPushButton(aParent);
+            mButtons[i]->setCheckable(true);
+            mButtons[i]->setFocusPolicy(Qt::NoFocus);
+            mGroup->addButton(mButtons[i]);
         }
     }
-}
 
-void SingleOutItem::setIcons(const QVector<QIcon*> &aIcons)
-{
-    int i = 0;
-    for (auto icon : aIcons)
-    {
-        if (i < mButtons.size())
-        {
-            mButtons.at(i)->setIcon(*icon);
-            mButtons.at(i)->setIconSize(mButtonSize);
-            ++i;
-        }
-        else
-        {
-            break;
+    void SingleOutItem::setToolTips(const QStringList& aTips) {
+        int i = 0;
+        for (auto tip : aTips) {
+            if (i < mButtons.size()) {
+                mButtons.at(i)->setToolTip(tip);
+                ++i;
+            } else {
+                break;
+            }
         }
     }
-}
 
-void SingleOutItem::setIcons(const QVector<QIcon> &aIcons)
-{
-    int i = 0;
-    for (auto icon : aIcons)
-    {
-        if (i < mButtons.size())
-        {
-            mButtons.at(i)->setIcon(icon);
-            mButtons.at(i)->setIconSize(mButtonSize);
-            ++i;
-        }
-        else
-        {
-            break;
+    void SingleOutItem::setIcons(const QVector<QIcon*>& aIcons) {
+        int i = 0;
+        for (auto icon : aIcons) {
+            if (i < mButtons.size()) {
+                mButtons.at(i)->setIcon(*icon);
+                mButtons.at(i)->setIconSize(mButtonSize);
+                ++i;
+            } else {
+                break;
+            }
         }
     }
-}
 
-void SingleOutItem::setChoice(int aButtonIndex)
-{
-    mButtons.at(aButtonIndex)->setChecked(true);
-}
-
-void SingleOutItem::connect(const std::function<void(int)>& aPressed)
-{
-    for (int i = 0; i < mButtonNum; ++i)
-    {
-        mGroup->connect(mButtons[i], &QPushButton::pressed, [=](){ aPressed(i); });
+    void SingleOutItem::setIcons(const QVector<QIcon>& aIcons) {
+        int i = 0;
+        for (auto icon : aIcons) {
+            if (i < mButtons.size()) {
+                mButtons.at(i)->setIcon(icon);
+                mButtons.at(i)->setIconSize(mButtonSize);
+                ++i;
+            } else {
+                break;
+            }
+        }
     }
-}
 
-int SingleOutItem::updateGeometry(const QPoint& aPos, int aWidth)
-{
-    // type
-    ItemTable table(aPos, aWidth, mButtonSize);
-    for (auto button : mButtons)
-    {
-        table.pushGeometry(*button);
+    void SingleOutItem::setChoice(int aButtonIndex) {
+        mButtons.at(aButtonIndex)->setChecked(true);
     }
-    return table.height();
-}
 
-//-------------------------------------------------------------------------------------------------
-SliderItem::SliderItem(const QString& aLabel, const QPalette& aPalette, QWidget* aParent)
-    : mLabel()
-    , mSlider()
-    , mText(aLabel)
-{
-    XC_PTR_ASSERT(aParent);
+    void SingleOutItem::connect(const std::function<void(int)>& aPressed) {
+        for (int i = 0; i < mButtonNum; ++i) {
+            mGroup->connect(mButtons[i], &QPushButton::pressed, [=]() { aPressed(i); });
+        }
+    }
 
-    mLabel = new QLabel(aParent);
-    mLabel->setPalette(aPalette);
-    mLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    int SingleOutItem::updateGeometry(const QPoint& aPos, int aWidth) {
+        // type
+        ItemTable table(aPos, aWidth, mButtonSize);
+        for (auto button : mButtons) {
+            table.pushGeometry(*button);
+        }
+        return table.height();
+    }
 
-    mSlider = new QSlider(Qt::Horizontal, aParent);
-    mSlider->setFocusPolicy(Qt::NoFocus);
-    mSlider->connect(mSlider, &QSlider::valueChanged, [=](int aValue)
-    {
-        this->updateText(aValue);
-    });
-}
+    //-------------------------------------------------------------------------------------------------
+    SliderItem::SliderItem(const QString& aLabel, const QPalette& aPalette, QWidget* aParent):
+        mLabel(), mSlider(), mText(aLabel) {
+        XC_PTR_ASSERT(aParent);
 
-void SliderItem::setAttribute(const util::Range& aRange, int aValue, int aPageStep, int aStep)
-{
-    mSlider->setRange(aRange.min(), aRange.max());
-    mSlider->setSingleStep(aStep);
-    mSlider->setPageStep(aPageStep);
-    mSlider->setValue(aValue);
-    updateText(aValue);
-}
+        mLabel = new QLabel(aParent);
+        mLabel->setPalette(aPalette);
+        mLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
-void SliderItem::connectOnChanged(const std::function<void(int)>& aValueChanged)
-{
-    mSlider->connect(mSlider, &QSlider::valueChanged, aValueChanged);
-}
+        mSlider = new QSlider(Qt::Horizontal, aParent);
+        mSlider->setFocusPolicy(Qt::NoFocus);
+        mSlider->connect(mSlider, &QSlider::valueChanged, [=](int aValue) { this->updateText(aValue); });
+    }
 
-void SliderItem::connectOnMoved(const std::function<void(int)>& aSliderMoved)
-{
-    mSlider->connect(mSlider, &QSlider::sliderMoved, aSliderMoved);
-}
+    void SliderItem::setAttribute(const util::Range& aRange, int aValue, int aPageStep, int aStep) {
+        mSlider->setRange(aRange.min(), aRange.max());
+        mSlider->setSingleStep(aStep);
+        mSlider->setPageStep(aPageStep);
+        mSlider->setValue(aValue);
+        updateText(aValue);
+    }
 
-int SliderItem::updateGeometry(const QPoint& aPos, int aWidth)
-{
-    static const int kLabelHeight = 16;
-    static const int kSliderHeight = 16;
-    mLabel->setGeometry(aPos.x(), aPos.y(), aWidth, kLabelHeight);
-    mSlider->setGeometry(aPos.x(), aPos.y() + kLabelHeight, aWidth, kSliderHeight);
-    return kLabelHeight + kSliderHeight;
-}
+    void SliderItem::connectOnChanged(const std::function<void(int)>& aValueChanged) {
+        mSlider->connect(mSlider, &QSlider::valueChanged, aValueChanged);
+    }
 
-void SliderItem::updateText(int aValue)
-{
-    mLabel->setText(mText + ":  " + QString::number(aValue));
-}
+    void SliderItem::connectOnMoved(const std::function<void(int)>& aSliderMoved) {
+        mSlider->connect(mSlider, &QSlider::sliderMoved, aSliderMoved);
+    }
 
-//-------------------------------------------------------------------------------------------------
-CheckBoxItem::CheckBoxItem(const QString& aLabel, QWidget* aParent)
-    : mCheckBox()
-{
-    XC_PTR_ASSERT(aParent);
+    int SliderItem::updateGeometry(const QPoint& aPos, int aWidth) {
+        static const int kLabelHeight = 16;
+        static const int kSliderHeight = 16;
+        mLabel->setGeometry(aPos.x(), aPos.y(), aWidth, kLabelHeight);
+        mSlider->setGeometry(aPos.x(), aPos.y() + kLabelHeight, aWidth, kSliderHeight);
+        return kLabelHeight + kSliderHeight;
+    }
 
-    mCheckBox = new QCheckBox(aLabel, aParent);
-    mCheckBox->setObjectName("checkItem");
-    mCheckBox->setFocusPolicy(Qt::NoFocus);
-}
+    void SliderItem::updateText(int aValue) {
+        mLabel->setText(mText + ":  " + QString::number(aValue));
+    }
 
-void CheckBoxItem::setToolTip(const QString& aTip)
-{
-    mCheckBox->setToolTip(aTip);
-}
+    //-------------------------------------------------------------------------------------------------
+    CheckBoxItem::CheckBoxItem(const QString& aLabel, QWidget* aParent): mCheckBox() {
+        XC_PTR_ASSERT(aParent);
 
-void CheckBoxItem::setChecked(bool aChecked)
-{
-    mCheckBox->setChecked(aChecked);
-}
+        mCheckBox = new QCheckBox(aLabel, aParent);
+        mCheckBox->setObjectName("checkItem");
+        mCheckBox->setFocusPolicy(Qt::NoFocus);
+    }
 
-void CheckBoxItem::connect(const std::function<void(bool)>& aValueChanged)
-{
-    mCheckBox->connect(mCheckBox, &QCheckBox::clicked, aValueChanged);
-}
+    void CheckBoxItem::setToolTip(const QString& aTip) {
+        mCheckBox->setToolTip(aTip);
+    }
 
-int CheckBoxItem::updateGeometry(const QPoint& aPos, int aWidth)
-{
-    //qDebug() << mCheckBox->width() << mCheckBox->height() << mCheckBox->sizeHint();
-    //const int height = mCheckBox->height();
-    const int height = mCheckBox->sizeHint().height();
-    //const int height = 16;
-    mCheckBox->setGeometry(aPos.x(), aPos.y(), aWidth, height);
-    return height;
-}
+    void CheckBoxItem::setChecked(bool aChecked) {
+        mCheckBox->setChecked(aChecked);
+    }
+
+    void CheckBoxItem::connect(const std::function<void(bool)>& aValueChanged) {
+        mCheckBox->connect(mCheckBox, &QCheckBox::clicked, aValueChanged);
+    }
+
+    int CheckBoxItem::updateGeometry(const QPoint& aPos, int aWidth) {
+        // qDebug() << mCheckBox->width() << mCheckBox->height() << mCheckBox->sizeHint();
+        // const int height = mCheckBox->height();
+        const int height = mCheckBox->sizeHint().height();
+        // const int height = 16;
+        mCheckBox->setGeometry(aPos.x(), aPos.y(), aWidth, height);
+        return height;
+    }
 
 } // namespace tool
 } // namespace gui
-

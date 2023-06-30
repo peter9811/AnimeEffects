@@ -1,28 +1,26 @@
 #ifndef IMG_UTIL_H
 #define IMG_UTIL_H
 
-#include <QSize>
-#include <QRect>
-#include <QColor>
-#include <QImage>
 #include "XC.h"
-#include "util/TextUtil.h"
 #include "img/PSDFormat.h"
 #include "img/ResourceNode.h"
+#include "util/TextUtil.h"
+#include <QColor>
+#include <QImage>
+#include <QRect>
+#include <QSize>
 
-namespace img
-{
+namespace img {
 
-class Util
-{
+class Util {
 public:
     static bool isShiftJisCode(const img::PSDFormat& aFormat);
 
-    class TextFilter
-    {
+    class TextFilter {
     public:
         TextFilter(const img::PSDFormat& aFormat);
         QString get(const std::string& aText) const;
+
     private:
         util::TextUtil::ShiftJisDecoder mShiftJisDecoder;
         bool mIsShiftJis;
@@ -33,16 +31,13 @@ public:
     /// @note each width and height increase 2 pixel
     static XCMemBlock recreateForBiLinearSampling(XCMemBlock& aGrabbedImage, const QSize& aSize);
 
-    static void setEdgeColor(
-            uint8* aImage, const QSize& aSize, const QColor& aColor);
+    static void setEdgeColor(uint8* aImage, const QSize& aSize, const QColor& aColor);
 
     static void copyImage(
-            uint8* aDst, const QSize& aDstSize, const QPoint& aTopLeft,
-            const uint8* aSrc, const QSize& aSrcSize);
+        uint8* aDst, const QSize& aDstSize, const QPoint& aTopLeft, const uint8* aSrc, const QSize& aSrcSize);
 
     static std::pair<XCMemBlock, QRect> createTextureImage(
-            const PSDFormat::Header& aHeader,
-            const PSDFormat::Layer& aLayer);
+        const PSDFormat::Header& aHeader, const PSDFormat::Layer& aLayer);
     static std::pair<XCMemBlock, QRect> createTextureImage(const QImage& aImage);
 
     static ResourceNode* createResourceNodes(PSDFormat& aFormat, bool aLoadImage);

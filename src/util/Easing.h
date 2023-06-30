@@ -1,18 +1,15 @@
 #ifndef UTIL_EASING
 #define UTIL_EASING
 
+#include <QSettings>
 #include <QString>
 #include <QStringList>
-#include <QSettings>
 
-namespace util
-{
+namespace util {
 
-class Easing
-{
+class Easing {
 public:
-    enum Type
-    {
+    enum Type {
         Type_None,
         Type_Linear,
         Type_Sine,
@@ -28,16 +25,9 @@ public:
         Type_TERM
     };
 
-    enum Range
-    {
-        Range_In,
-        Range_Out,
-        Range_InOut,
-        Range_TERM
-    };
+    enum Range { Range_In, Range_Out, Range_InOut, Range_TERM };
 
-    struct Param
-    {
+    struct Param {
         Param()
             // Deprecated due to poor performance
             /*
@@ -45,13 +35,15 @@ public:
             , range(Easing::rangeToEnum())
             */
 
-            : type(Type_Linear)
-            , range(Range_InOut)
-            , weight(1.0f)
-        {}
+            :
+            type(Type_Linear),
+            range(Range_InOut), weight(1.0f) {
+        }
         bool isValidParam() const;
         bool operator==(const Param& aRhs) const;
-        inline bool operator!=(const Param& aRhs) const { return !(*this == aRhs); }
+        inline bool operator!=(const Param& aRhs) const {
+            return !(*this == aRhs);
+        }
         Type type;
         Range range;
         float weight;
@@ -88,7 +80,7 @@ public:
     static float expoOut(float t, float b, float c, float d);
     static float expoInOut(float t, float b, float c, float d);
 
-    static float circIn(float t, float b , float c, float d);
+    static float circIn(float t, float b, float c, float d);
     static float circOut(float t, float b, float c, float d);
     static float circInOut(float t, float b, float c, float d);
 
@@ -108,10 +100,10 @@ public:
     static Easing::Range rangeToEnum(QString range);
 
 private:
-    Easing() {}
+    Easing() {
+    }
 };
 
 } // namespace util
 
 #endif // UTIL_EASING
-

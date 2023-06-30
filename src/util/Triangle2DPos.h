@@ -1,21 +1,21 @@
 #ifndef UTIL_TRIANGLE2DPOS_H
 #define UTIL_TRIANGLE2DPOS_H
 
-#include <array>
 #include "util/Triangle2D.h"
+#include <array>
 
-namespace util
-{
+namespace util {
 
-class Triangle2DPos
-{
+class Triangle2DPos {
 public:
     static Triangle2DPos make(const Triangle2D& aTriangle, const QVector2D& aPoint);
 
     Triangle2DPos();
     Triangle2DPos(int aIndex, float aFirst, float aSecond);
 
-    bool isValid() const { return mIndex >= 0; }
+    bool isValid() const {
+        return mIndex >= 0;
+    }
     QVector2D get(const Triangle2D& aTriangle) const;
     QVector2D get(const std::array<QVector2D, 3>& aTriangle) const;
 

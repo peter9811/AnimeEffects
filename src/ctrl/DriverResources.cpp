@@ -1,37 +1,28 @@
-#include "core/MeshTransformerResource.h"
 #include "ctrl/DriverResources.h"
+#include "core/MeshTransformerResource.h"
 #include "ctrl/ffd/ffd_TaskResource.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-DriverResources::DriverResources()
-    : mMeshTransformerResource()
-    , mFFDTaskResource()
-{
+DriverResources::DriverResources(): mMeshTransformerResource(), mFFDTaskResource() {
 }
 
-DriverResources::~DriverResources()
-{
+DriverResources::~DriverResources() {
 }
 
-void DriverResources::grabMeshTransformerResoure(core::MeshTransformerResource* aResource)
-{
+void DriverResources::grabMeshTransformerResoure(core::MeshTransformerResource* aResource) {
     mMeshTransformerResource.reset(aResource);
 }
 
-core::MeshTransformerResource* DriverResources::meshTransformerResource() const
-{
+core::MeshTransformerResource* DriverResources::meshTransformerResource() const {
     return mMeshTransformerResource.data();
 }
 
-void DriverResources::grabFFDTaskResource(ffd::TaskResource* aResource)
-{
+void DriverResources::grabFFDTaskResource(ffd::TaskResource* aResource) {
     mFFDTaskResource.reset(aResource);
 }
 
-ffd::TaskResource* DriverResources::ffdTaskResource() const
-{
+ffd::TaskResource* DriverResources::ffdTaskResource() const {
     return mFFDTaskResource.data();
 }
 

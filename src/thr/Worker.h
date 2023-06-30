@@ -1,25 +1,22 @@
 #ifndef THR_WORKER_H
 #define THR_WORKER_H
 
-#include <QThread>
+#include "thr/TaskQueue.h"
+#include "util/NonCopyable.h"
 #include <QMutex>
 #include <QReadWriteLock>
+#include <QThread>
 #include <QWaitCondition>
-#include "util/NonCopyable.h"
-#include "thr/TaskQueue.h"
 
-namespace thr
-{
+namespace thr {
 
-class Worker : private util::NonCopyable
-{
+class Worker: private util::NonCopyable {
 public:
     Worker(TaskQueue& aQueue);
     void start(QThread::Priority aPriority = QThread::InheritPriority);
 
 private:
-    class Thread : public QThread
-    {
+    class Thread: public QThread {
     public:
         Thread(TaskQueue& aQueue);
         ~Thread();

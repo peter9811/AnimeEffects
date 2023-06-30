@@ -1,20 +1,18 @@
 #ifndef GUI_TIMELINEINNERWIDGET_H
 #define GUI_TIMELINEINNERWIDGET_H
 
-#include <QWidget>
-#include <QAction>
-#include <QTreeWidgetItem>
+#include "KeyCommandMap.h"
 #include "core/TimeLineEvent.h"
 #include "ctrl/TimeLineEditor.h"
-#include "gui/ViaPoint.h"
 #include "gui/GUIResources.h"
-#include "KeyCommandMap.h"
+#include "gui/ViaPoint.h"
+#include <QAction>
+#include <QTreeWidgetItem>
+#include <QWidget>
 
-namespace gui
-{
+namespace gui {
 
-class TimeCursor : public QWidget
-{
+class TimeCursor: public QWidget {
     Q_OBJECT
 
     Q_PROPERTY(QColor bodyColor READ bodyColor WRITE setBodyColor DESIGNABLE true)
@@ -25,18 +23,17 @@ public:
     virtual void paintEvent(QPaintEvent* aEvent);
 
     QColor bodyColor() const;
-    void setBodyColor(const QColor &bodyColor);
+    void setBodyColor(const QColor& bodyColor);
 
     QColor edgeColor() const;
-    void setEdgeColor(const QColor &edgeColor);
+    void setEdgeColor(const QColor& edgeColor);
 
 private:
     QColor mBodyColor;
     QColor mEdgeColor;
 };
 
-class TimeLineEditorWidget : public QWidget
-{
+class TimeLineEditorWidget: public QWidget {
     Q_OBJECT
 
     // Properties introduced to let users theme the custom rendered parts of the widget.
@@ -68,26 +65,25 @@ public:
     int maxFrame() const;
 
     QColor headerContentColor() const;
-    void setHeaderContentColor(const QColor &headerContentColor);
+    void setHeaderContentColor(const QColor& headerContentColor);
 
     QColor headerBackgroundColor() const;
-    void setHeaderBackgroundColor(const QColor &headerBackgroundColor);
+    void setHeaderBackgroundColor(const QColor& headerBackgroundColor);
 
     QColor trackColor() const;
-    void setTrackColor(const QColor &trackColor);
+    void setTrackColor(const QColor& trackColor);
 
     QColor trackEdgeColor() const;
-    void setTrackEdgeColor(const QColor &trackEdgeColor);
+    void setTrackEdgeColor(const QColor& trackEdgeColor);
 
     QColor trackTextColor() const;
-    void setTrackTextColor(const QColor &trackTextColor);
+    void setTrackTextColor(const QColor& trackTextColor);
 
     QColor trackSelectColor() const;
-    void setTrackSelectColor(const QColor &trackSelectColor);
+    void setTrackSelectColor(const QColor& trackSelectColor);
 
     QColor trackSeperatorColor() const;
-    void setTrackSeperatorColor(const QColor &trackSeperatorColor);
-
+    void setTrackSeperatorColor(const QColor& trackSeperatorColor);
 
 private:
     void updateTimeCursorPos();

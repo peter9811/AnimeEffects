@@ -2,12 +2,11 @@
 #define GUI_MSVCBACKTRACER_H
 
 #if !defined(QT_NO_DEBUG) && defined(_MSC_VER)
-#define USE_MSVC_BACKTRACE
+    #define USE_MSVC_BACKTRACE
 #endif
 
 #if defined(USE_MSVC_BACKTRACE)
-class BackTracer
-{
+class BackTracer {
 public:
     BackTracer();
     ~BackTracer();

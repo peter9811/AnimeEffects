@@ -1,63 +1,46 @@
-#include <QMenu>
-#include <QPainter>
-#include <QScrollBar>
-#include <QDragMoveEvent>
-#include <QModelIndexList>
-#include <QStyle>
-#include <QProxyStyle>
-#include "ctrl/TimeLineEditor.h"
-#include "qmessagebox.h"
-#include "util/TreeUtil.h"
-#include "util/LinkPointer.h"
-#include "cmnd/ScopedMacro.h"
-#include "cmnd/BasicCommands.h"
-#include "core/LayerNode.h"
-#include "core/FolderNode.h"
-#include "ctrl/TimeLineRow.h"
-#include "ctrl/CmndName.h"
 #include "gui/ObjectTreeWidget.h"
-#include "gui/ResourceDialog.h"
-#include "gui/ProjectHook.h"
-#include "gui/obj/obj_MoveItem.h"
-#include "gui/obj/obj_InsertItem.h"
-#include "gui/obj/obj_RemoveItem.h"
-#include "gui/obj/obj_Notifiers.h"
-#include "gui/obj/obj_Util.h"
+#include "cmnd/BasicCommands.h"
+#include "cmnd/ScopedMacro.h"
+#include "core/FolderNode.h"
+#include "core/LayerNode.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/TimeLineEditor.h"
+#include "ctrl/TimeLineRow.h"
 #include "ctrl/ffd/ffd_Target.h"
+#include "gui/ProjectHook.h"
+#include "gui/ResourceDialog.h"
+#include "gui/obj/obj_InsertItem.h"
+#include "gui/obj/obj_MoveItem.h"
+#include "gui/obj/obj_Notifiers.h"
+#include "gui/obj/obj_RemoveItem.h"
+#include "gui/obj/obj_Util.h"
+#include "qmessagebox.h"
+#include "util/LinkPointer.h"
+#include "util/TreeUtil.h"
+#include <QDragMoveEvent>
+#include <QMenu>
+#include <QModelIndexList>
+#include <QPainter>
+#include <QProxyStyle>
+#include <QScrollBar>
+#include <QStyle>
 #include <iostream>
 #include <sstream>
 
-namespace
-{
+namespace {
 static const int kTopItemSize = 22;
 static const int kItemSize = ctrl::TimeLineRow::kHeight;
 static const int kItemSizeInc = ctrl::TimeLineRow::kIncrease;
-}
+} // namespace
 
-namespace gui
-{
+namespace gui {
 
 //-------------------------------------------------------------------------------------------------
-ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources, QWidget* aParent)
-    : QTreeWidget(aParent)
-    , mViaPoint(aViaPoint)
-    , mGUIResources(aResources)
-    , mProject()
-    , mTimeLineSlot()
-    , mStoreInsert(false)
-    , mRemovedPositions()
-	, mInsertedPositions()
-    , mMacroScope()
-    , mObjTreeNotifier()
-    , mDragIndex()
-    , mDropIndicatorPos()
-    , mActionItem()
-    , mSlimAction()
-    , mRenameAction()
-    , mObjectAction()
-    , mFolderAction()
-    , mDeleteAction()
-{
+ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources, QWidget* aParent):
+    QTreeWidget(aParent), mViaPoint(aViaPoint), mGUIResources(aResources), mProject(), mTimeLineSlot(),
+    mStoreInsert(false), mRemovedPositions(), mInsertedPositions(), mMacroScope(), mObjTreeNotifier(), mDragIndex(),
+    mDropIndicatorPos(), mActionItem(), mSlimAction(), mRenameAction(), mObjectAction(), mFolderAction(),
+    mDeleteAction() {
     this->setObjectName("objectTree");
     this->setFocusPolicy(Qt::NoFocus);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -67,16 +50,15 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
     this->setUniformRowHeights(false);
     this->setDragDropMode(DragDropMode::InternalMove);
     this->setDefaultDropAction(Qt::TargetMoveAction);
-    //this->setAlternatingRowColors(true);
+    // this->setAlternatingRowColors(true);
     this->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     this->setHorizontalScrollMode(QAbstractItemView::ScrollPerItem);
-    //this->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    //this->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    // this->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    // this->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     this->setColumnCount(kColumnCount);
 
-    if (this->invisibleRootItem())
-    {
+    if (this->invisibleRootItem()) {
         this->invisibleRootItem()->setFlags(Qt::NoItemFlags);
     }
     this->connect(this, &QWidget::customContextMenuRequested, this, &ObjectTreeWidget::onContextMenuRequested);
@@ -109,24 +91,19 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
     }
 }
 
-void ObjectTreeWidget::setProject(core::Project* aProject)
-{
+void ObjectTreeWidget::setProject(core::Project* aProject) {
     // finalize
-    if (mProject)
-    {
+    if (mProject) {
         mProject->onTimeLineModified.disconnect(mTimeLineSlot);
 
         auto treeCount = this->topLevelItemCount();
-        if (treeCount > 0)
-        {
-            QScopedPointer<QVector<QTreeWidgetItem*>> trees(
-                        new QVector<QTreeWidgetItem*>());
-            for (int i = 0; i < treeCount; ++i)
-            {
+        if (treeCount > 0) {
+            QScopedPointer<QVector<QTreeWidgetItem*>> trees(new QVector<QTreeWidgetItem*>());
+            for (int i = 0; i < treeCount; ++i) {
                 trees->push_back(this->takeTopLevelItem(0));
             }
             // save
-			auto hook = static_cast<ProjectHook*>(mProject->hook());
+            auto hook = static_cast<ProjectHook*>(mProject->hook());
             hook->grabObjectTrees(trees.take());
         }
     }
@@ -134,81 +111,64 @@ void ObjectTreeWidget::setProject(core::Project* aProject)
     this->clear(); // fail safe code
 
     // update reference
-    if (aProject)
-    {
+    if (aProject) {
         mProject = aProject->pointee();
-    }
-    else
-    {
+    } else {
         mProject.reset();
     }
 
     // setup
-    if (mProject)
-    {
+    if (mProject) {
 
-        mTimeLineSlot = mProject->onTimeLineModified.connect(
-                    this, &ObjectTreeWidget::onTimeLineModified);
+        mTimeLineSlot = mProject->onTimeLineModified.connect(this, &ObjectTreeWidget::onTimeLineModified);
 
-		auto hook = static_cast<ProjectHook*>(mProject->hook());
+        auto hook = static_cast<ProjectHook*>(mProject->hook());
         // load trees
-        if (hook && hook->hasObjectTrees())
-        {
-            QScopedPointer<QVector<QTreeWidgetItem*>> trees(
-                        hook->releaseObjectTrees());
-            for (auto tree : *trees)
-            {
+        if (hook && hook->hasObjectTrees()) {
+            QScopedPointer<QVector<QTreeWidgetItem*>> trees(hook->releaseObjectTrees());
+            for (auto tree : *trees) {
                 this->addTopLevelItem(tree);
             }
             trees.reset();
-        }
-        else
-        {
+        } else {
             createTree(&(mProject->objectTree()));
         }
     }
     notifyViewUpdated();
 }
 
-core::ObjectNode* ObjectTreeWidget::findSelectingRepresentNode()
-{
+core::ObjectNode* ObjectTreeWidget::findSelectingRepresentNode() {
     QList<QTreeWidgetItem*> items = selectedItems();
     core::ObjectNode* node = nullptr;
 
-    for (auto item : items)
-    {
+    for (auto item : items) {
         obj::Item* objItem = obj::Item::cast(item);
-        if (objItem && !objItem->isTopNode())
-        {
-            if (node) return nullptr;
+        if (objItem && !objItem->isTopNode()) {
+            if (node)
+                return nullptr;
             node = &objItem->node();
         }
     }
     return node;
 }
 
-void ObjectTreeWidget::notifyViewUpdated()
-{
+void ObjectTreeWidget::notifyViewUpdated() {
     onTreeViewUpdated(this->topLevelItem(0));
     onScrollUpdated(scrollHeight());
 }
 
-void ObjectTreeWidget::notifyRestructure()
-{
+void ObjectTreeWidget::notifyRestructure() {
     onTreeViewUpdated(this->topLevelItem(0));
     onScrollUpdated(scrollHeight());
 }
 
 //-------------------------------------------------------------------------------------------------
-void ObjectTreeWidget::createTree(core::ObjectTree* aTree)
-{
+void ObjectTreeWidget::createTree(core::ObjectTree* aTree) {
     this->clear();
 
-    if (aTree)
-    {
+    if (aTree) {
         core::ObjectNode* node = aTree->topNode();
-        if (node)
-        {
+        if (node) {
             obj::Item* item = new obj::Item(*this, *node);
             item->setSizeHint(kItemColumn, QSize(kTopItemSize, kTopItemSize));
             this->addTopLevelItem(item);
@@ -218,43 +178,35 @@ void ObjectTreeWidget::createTree(core::ObjectTree* aTree)
     notifyViewUpdated();
 }
 
-void ObjectTreeWidget::addItemRecursive(QTreeWidgetItem* aItem, core::ObjectNode* aNode)
-{
+void ObjectTreeWidget::addItemRecursive(QTreeWidgetItem* aItem, core::ObjectNode* aNode) {
     const core::ObjectNode::Children& children = aNode->children();
-    for (auto childNode : children)
-    {
-        if (childNode->canHoldChild())
-        {
+    for (auto childNode : children) {
+        if (childNode->canHoldChild()) {
             auto childItem = createFolderItem(*childNode);
             aItem->addChild(childItem);
             addItemRecursive(childItem, childNode);
-        }
-        else
-        {
+        } else {
             aItem->addChild(createFileItem(*childNode));
         }
     }
 }
 
-int ObjectTreeWidget::itemHeight(const core::ObjectNode& aNode) const
-{
+int ObjectTreeWidget::itemHeight(const core::ObjectNode& aNode) const {
     return ctrl::TimeLineRow::calculateHeight(aNode);
 }
 
-obj::Item* ObjectTreeWidget::createFolderItem(core::ObjectNode& aNode)
-{
+obj::Item* ObjectTreeWidget::createFolderItem(core::ObjectNode& aNode) {
 
     obj::Item* item = new obj::Item(*this, aNode);
     item->setSizeHint(kItemColumn, QSize(kItemSize, itemHeight(aNode)));
-    //item->setBackgroundColor(kItemColumn, QColor(235, 235, 235, 255));
+    // item->setBackgroundColor(kItemColumn, QColor(235, 235, 235, 255));
     item->setIcon(kItemColumn, mGUIResources.icon("folder"));
     item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
     item->setCheckState(kItemColumn, aNode.isVisible() ? Qt::Checked : Qt::Unchecked);
     return item;
 }
 
-obj::Item* ObjectTreeWidget::createFileItem(core::ObjectNode& aNode)
-{
+obj::Item* ObjectTreeWidget::createFileItem(core::ObjectNode& aNode) {
     obj::Item* item = new obj::Item(*this, aNode);
     item->setSizeHint(kItemColumn, QSize(kItemSize, itemHeight(aNode)));
     item->setIcon(kItemColumn, mGUIResources.icon("filew"));
@@ -264,87 +216,69 @@ obj::Item* ObjectTreeWidget::createFileItem(core::ObjectNode& aNode)
     return item;
 }
 
-QModelIndex ObjectTreeWidget::cheatDragDropPos(QPoint& aPos)
-{
+QModelIndex ObjectTreeWidget::cheatDragDropPos(QPoint& aPos) {
     static const int kMargin = 5;
 
     QModelIndex index = this->indexAt(aPos);
-    if (index.isValid())
-    {
+    if (index.isValid()) {
         QRect rect = this->visualRect(index);
-        if (aPos.y() - rect.top() < kMargin)
-        {
+        if (aPos.y() - rect.top() < kMargin) {
             aPos.setY(rect.top() + 1);
         }
-        if (rect.bottom() - aPos.y() < kMargin)
-        {
+        if (rect.bottom() - aPos.y() < kMargin) {
             aPos.setY(rect.bottom() - 1);
         }
     }
     return index;
 }
 
-QPoint ObjectTreeWidget::treeTopLeftPosition() const
-{
-    if (topLevelItemCount())
-    {
+QPoint ObjectTreeWidget::treeTopLeftPosition() const {
+    if (topLevelItemCount()) {
         return visualItemRect(topLevelItem(0)).topLeft();
     }
     return QPoint();
 }
 
-void ObjectTreeWidget::endRenameEditor()
-{
-    class NameChanger : public cmnd::Stable
-    {
+void ObjectTreeWidget::endRenameEditor() {
+    class NameChanger: public cmnd::Stable {
         core::ObjectNode& mNode;
         QTreeWidgetItem& mItem;
         QString mPrevName;
         QString mNextName;
+
     public:
-        NameChanger(core::ObjectNode& aNode, QTreeWidgetItem& aItem, const QString& aName)
-            : mNode(aNode)
-            , mItem(aItem)
-            , mPrevName()
-            , mNextName(aName)
-        {
+        NameChanger(core::ObjectNode& aNode, QTreeWidgetItem& aItem, const QString& aName):
+            mNode(aNode), mItem(aItem), mPrevName(), mNextName(aName) {
         }
 
-        virtual QString name() const
-        {
+        virtual QString name() const {
             return CmndName::tr("Rename object");
         }
 
-        virtual void exec()
-        {
+        virtual void exec() {
             mPrevName = mNode.name();
             redo();
         }
 
-        virtual void redo()
-        {
+        virtual void redo() {
             mNode.setName(mNextName);
             mItem.setText(kItemColumn, mNextName);
         }
 
-        virtual void undo()
-        {
+        virtual void undo() {
             mNode.setName(mPrevName);
             mItem.setText(kItemColumn, mPrevName);
         }
     };
 
-    if (mActionItem)
-    {
+    if (mActionItem) {
         this->closePersistentEditor(mActionItem, kItemColumn);
 
         obj::Item* objItem = obj::Item::cast(mActionItem);
-        if (objItem)
-        {
+        if (objItem) {
             core::ObjectNode& node = objItem->node();
             const QString newName = objItem->text(kItemColumn);
-            if (node.name() != newName)
-            {
+            if (node.name() != newName) {
                 mProject->commandStack().push(new NameChanger(node, *mActionItem, newName));
             }
         }
@@ -352,20 +286,18 @@ void ObjectTreeWidget::endRenameEditor()
     }
 }
 
-bool ObjectTreeWidget::updateItemHeights(QTreeWidgetItem* aItem)
-{
-    if (!aItem) return false;
+bool ObjectTreeWidget::updateItemHeights(QTreeWidgetItem* aItem) {
+    if (!aItem)
+        return false;
 
     // cast to a objectnode's item
     obj::Item* objItem = obj::Item::cast(aItem);
     bool changed = false;
 
-    if (objItem && !objItem->isTopNode())
-    {
+    if (objItem && !objItem->isTopNode()) {
         const int height = itemHeight(objItem->node());
         // update
-        if (objItem->sizeHint(kItemColumn).height() != height)
-        {
+        if (objItem->sizeHint(kItemColumn).height() != height) {
             objItem->setSizeHint(kItemColumn, QSize(kItemSize, height));
             changed = true;
         }
@@ -373,41 +305,33 @@ bool ObjectTreeWidget::updateItemHeights(QTreeWidgetItem* aItem)
 
     // recursive call
     const int childCount = aItem->childCount();
-    for (int i = 0; i < childCount; ++i)
-    {
+    for (int i = 0; i < childCount; ++i) {
         changed |= updateItemHeights(aItem->child(i));
     }
     return changed;
 }
 
-void ObjectTreeWidget::onThemeUpdated(theme::Theme& aTheme)
-{
-    QFile stylesheet(aTheme.path()+"/stylesheet/standard.ssa");
-    if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+void ObjectTreeWidget::onThemeUpdated(theme::Theme& aTheme) {
+    QFile stylesheet(aTheme.path() + "/stylesheet/standard.ssa");
+    if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {
         this->setStyleSheet(QTextStream(&stylesheet).readAll());
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-void ObjectTreeWidget::onTimeLineModified(core::TimeLineEvent& aEvent, bool)
-{
+void ObjectTreeWidget::onTimeLineModified(core::TimeLineEvent& aEvent, bool) {
     auto type = aEvent.type();
-    if (type != core::TimeLineEvent::Type_PushKey &&
-        type != core::TimeLineEvent::Type_RemoveKey)
-    {
+    if (type != core::TimeLineEvent::Type_PushKey && type != core::TimeLineEvent::Type_RemoveKey) {
         return;
     }
 
     // update height of items in proportion to the key type count
-    if (updateItemHeights(this->topLevelItem(0)))
-    {
+    if (updateItemHeights(this->topLevelItem(0))) {
         notifyViewUpdated();
     }
 }
 
-void ObjectTreeWidget::onItemChanged(QTreeWidgetItem* aItem, int aColumn)
-{
+void ObjectTreeWidget::onItemChanged(QTreeWidgetItem* aItem, int aColumn) {
 #if 0
     if (aColumn == kItemColumn)
     {
@@ -421,15 +345,12 @@ void ObjectTreeWidget::onItemChanged(QTreeWidgetItem* aItem, int aColumn)
 #endif
 }
 
-void ObjectTreeWidget::onItemClicked(QTreeWidgetItem* aItem, int aColumn)
-{
+void ObjectTreeWidget::onItemClicked(QTreeWidgetItem* aItem, int aColumn) {
     endRenameEditor();
 
     obj::Item* objItem = obj::Item::cast(aItem);
-    if (aColumn == kItemColumn && objItem && !objItem->isTopNode())
-    {
-        if (mProject)
-        {
+    if (aColumn == kItemColumn && objItem && !objItem->isTopNode()) {
+        if (mProject) {
             const bool isVisible = objItem->checkState(kItemColumn) == Qt::Checked;
             objItem->node().setVisibility(isVisible);
             onVisibilityUpdated();
@@ -437,43 +358,35 @@ void ObjectTreeWidget::onItemClicked(QTreeWidgetItem* aItem, int aColumn)
     }
 }
 
-void ObjectTreeWidget::onItemCollapsed(QTreeWidgetItem* aItem)
-{
+void ObjectTreeWidget::onItemCollapsed(QTreeWidgetItem* aItem) {
     (void)aItem;
     endRenameEditor();
 
     notifyViewUpdated();
 }
 
-void ObjectTreeWidget::onItemExpanded(QTreeWidgetItem* aItem)
-{
+void ObjectTreeWidget::onItemExpanded(QTreeWidgetItem* aItem) {
     (void)aItem;
     endRenameEditor();
 
     notifyViewUpdated();
 }
 
-void ObjectTreeWidget::onItemSelectionChanged()
-{
+void ObjectTreeWidget::onItemSelectionChanged() {
     core::ObjectNode* representNode = findSelectingRepresentNode();
     onSelectionChanged(representNode);
 }
 
-void ObjectTreeWidget::onContextMenuRequested(const QPoint& aPos)
-{
+void ObjectTreeWidget::onContextMenuRequested(const QPoint& aPos) {
     endRenameEditor();
 
     mActionItem = this->itemAt(aPos);
-    if (mActionItem)
-    {
+    if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
         QMenu menu(this);
 
-        if (objItem && !objItem->isTopNode())
-        {
-            mSlimAction->setText(
-                        objItem->node().isSlimmedDown() ?
-                            tr("Enlarge") : tr("Contract"));
+        if (objItem && !objItem->isTopNode()) {
+            mSlimAction->setText(objItem->node().isSlimmedDown() ? tr("Enlarge") : tr("Contract"));
             menu.addAction(mSlimAction);
             menu.addSeparator();
         }
@@ -483,8 +396,7 @@ void ObjectTreeWidget::onContextMenuRequested(const QPoint& aPos)
         menu.addAction(mFolderAction);
 
         {
-            if (objItem && objItem->node().parent())
-            {
+            if (objItem && objItem->node().parent()) {
                 menu.addSeparator();
                 menu.addAction(mPasteAction);
                 menu.addSeparator();
@@ -496,44 +408,41 @@ void ObjectTreeWidget::onContextMenuRequested(const QPoint& aPos)
     }
 }
 
-void ObjectTreeWidget::onSlimActionTriggered(bool)
-{
-    if (mActionItem)
-    {
+void ObjectTreeWidget::onSlimActionTriggered(bool) {
+    if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
-        if (objItem && !objItem->isTopNode())
-        {
+        if (objItem && !objItem->isTopNode()) {
             objItem->node().setSlimDown(!objItem->node().isSlimmedDown());
 
-            if (updateItemHeights(this->topLevelItem(0)))
-            {
+            if (updateItemHeights(this->topLevelItem(0))) {
                 notifyViewUpdated();
             }
         }
     }
 }
 
-void ObjectTreeWidget::onRenameActionTriggered(bool)
-{
-    if (mActionItem)
-    {
-        if (obj::Item::cast(mActionItem))
-        {
+void ObjectTreeWidget::onRenameActionTriggered(bool) {
+    if (mActionItem) {
+        if (obj::Item::cast(mActionItem)) {
             this->openPersistentEditor(mActionItem, kItemColumn);
             this->editItem(mActionItem, kItemColumn);
         }
     }
 }
 
-int extractIntFromStr(QString str){
+int extractIntFromStr(QString str) {
     QRegExp regex = QRegExp("-?\\b\\d+(?:\\.\\d+)?\\b");
     regex.indexIn(str);
     return regex.capturedTexts()[0].toInt();
 }
 
-void ObjectTreeWidget::onPasteActionTriggered(bool){
-    if(!mActionItem){ return; }
-    if (!obj::Item::cast(mActionItem)){ return; }
+void ObjectTreeWidget::onPasteActionTriggered(bool) {
+    if (!mActionItem) {
+        return;
+    }
+    if (!obj::Item::cast(mActionItem)) {
+        return;
+    }
     obj::Item* objItem = obj::Item::cast(mActionItem);
     bool objIsFolder = !bool(objItem->childCount() == 0);
     auto pasteReturnVal = mEditor->pasteCbKeys(objItem, mProject->pointee(), objIsFolder);
@@ -547,22 +456,21 @@ void ObjectTreeWidget::onPasteActionTriggered(bool){
     auto keys = mEditor->getTypesFromCb(mProject->pointee());
 
     QMessageBox box;
-    if(successNum != 0){
-        if(!aKeyErrored){
+    if (successNum != 0) {
+        if (!aKeyErrored) {
             box.setText(tr("Successfully pasted ") + QString::number(successNum) + tr(" keys."));
+        } else {
+            box.setText(tr("Successfully pasted ") + QString::number(successNum) + tr(" keys.\n") +
+                QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available bellow."));
         }
-        else{
-            box.setText(tr("Successfully pasted ") + QString::number(successNum) +
-                        tr(" keys.\n") + QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available bellow."));
-        }
-    }
-    else{
+    } else {
         box.setText(tr("Failed to paste key(s)"));
-        if(!aKeyErrored){
-            box.setDetailedText(tr("Clipboard does not contain valid JSON information or timeline already has a key in the same frame."));
+        if (!aKeyErrored) {
+            box.setDetailedText(tr(
+                "Clipboard does not contain valid JSON information or timeline already has a key in the same frame."));
         }
     }
-    if(aKeyErrored && errors.size() != 0 && nullLogs.size() != 0 && keyTypeErrors.size() != 0){
+    if (aKeyErrored && errors.size() != 0 && nullLogs.size() != 0 && keyTypeErrors.size() != 0) {
         QString errorLog;
         errorLog.append("--- Error log ---\n");
         errorLog.append(errors.begin().i->t());
@@ -574,30 +482,27 @@ void ObjectTreeWidget::onPasteActionTriggered(bool){
         box.setDetailedText(errorLog);
     }
 
-
-    if(successNum != 0){
+    if (successNum != 0) {
         // It doesn't work without this for some godforsaken reason.
-        for (int x = 0; x < keys.size(); x++){
-                if(objItem->node().timeLine()->hasTimeKey(core::TimeKeyType_Image, keys[x]->frame())){
-                    auto key = ((const core::ImageKey*)&keys[x]);
-                    ctrl::TimeLineUtil::assignImageKeyCellSize(*mProject, objItem->node(), keys[x]->frame(),
-                                                               key->data().gridMesh().cellSize());
-                }
+        for (int x = 0; x < keys.size(); x++) {
+            if (objItem->node().timeLine()->hasTimeKey(core::TimeKeyType_Image, keys[x]->frame())) {
+                auto key = ((const core::ImageKey*)&keys[x]);
+                ctrl::TimeLineUtil::assignImageKeyCellSize(
+                    *mProject, objItem->node(), keys[x]->frame(), key->data().gridMesh().cellSize());
             }
+        }
     }
-    if(box.text().isNull()){
+    if (box.text().isNull()) {
         box.setText(tr("Failed to paste key(s)"));
     }
-    if(box.detailedText().isNull() && successNum == 0){
+    if (box.detailedText().isNull() && successNum == 0) {
         box.setDetailedText(tr("Timeline has a key in the same frame."));
     }
     box.exec();
 }
 
-void ObjectTreeWidget::onObjectActionTriggered(bool)
-{
-    if (mActionItem)
-    {
+void ObjectTreeWidget::onObjectActionTriggered(bool) {
+    if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
 
         core::ObjectNode* parent = nullptr;
@@ -608,93 +513,89 @@ void ObjectTreeWidget::onObjectActionTriggered(bool)
         int itemIndex = -1;
 
         // top node
-        if (!objItem || objItem->isTopNode())
-        {
+        if (!objItem || objItem->isTopNode()) {
             parent = mProject->objectTree().topNode();
             XC_PTR_ASSERT(parent);
 
-			index = static_cast<int>(parent->children().size());
-            if (index > 0)
-            {
+            index = static_cast<int>(parent->children().size());
+            if (index > 0) {
                 auto prevNode = parent->children().back();
                 depth = prevNode->initialDepth() - 1.0f;
             }
             parentItem = mActionItem;
             itemIndex = parentItem->childCount();
-        }
-        else // sub node
+        } else // sub node
         {
             auto prevNode = &(objItem->node());
             depth = prevNode->initialDepth() + 1.0f;
 
             parent = prevNode->parent();
-            if (!parent) return;
+            if (!parent)
+                return;
 
             index = parent->children().indexOf(prevNode);
-            if (index < 0) return;
+            if (index < 0)
+                return;
 
             parentItem = mActionItem->parent();
-            if (!parentItem) return;
+            if (!parentItem)
+                return;
 
             itemIndex = parentItem->indexOfChild(objItem);
-            if (itemIndex < 0) return;
+            if (itemIndex < 0)
+                return;
         }
 
         // show resource dialog
-        QScopedPointer<ResourceDialog> dialog(
-                    new ResourceDialog(mViaPoint, true, this));
+        QScopedPointer<ResourceDialog> dialog(new ResourceDialog(mViaPoint, true, this));
         dialog->setProject(mProject.get());
         dialog->exec();
 
         // create command
-        if (dialog->hasValidNode())
-        {
-			int node_count = dialog->nodeList().count();
-			for(int i = 0; i < node_count; i++){
-				// get resource
-				auto resNode = dialog->nodeList().at(i);
-				if (!resNode) return;
-				XC_ASSERT(resNode->data().hasImage());
-	
-				// create node
-				core::LayerNode* ptr = new core::LayerNode(
-							resNode->data().identifier(),
-							mProject->objectTree().shaderHolder());
-				ptr->setVisibility(true);
-				ptr->setDefaultImage(resNode->handle());
-				ptr->setDefaultPosture(QVector2D());
-				ptr->setDefaultDepth(depth);
-				ptr->setDefaultOpacity(1.0f); // @todo support default opacity
-	
-	
-				cmnd::ScopedMacro macro(mProject->commandStack(),
-                                        CmndName::tr("Create a layer"));
-				// notifier
-				{
-					auto coreNotifier = new core::ObjectTreeNotifier(*mProject);
-					coreNotifier->event().setType(core::ObjectTreeEvent::Type_Add);
-					coreNotifier->event().pushTarget(parent, *ptr);
-					macro.grabListener(coreNotifier);
-				}
-				macro.grabListener(new obj::RestructureNotifier(*this));
-	
-				// create commands
-				mProject->commandStack().push(new cmnd::GrabNewObject<core::LayerNode>(ptr));
-				mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&(parent->children()), index, ptr));
-	
-				// create gui commands
-				auto itemPtr = createFileItem(*ptr);
-				mProject->commandStack().push(new cmnd::GrabNewObject<obj::Item>(itemPtr));
-				mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
-			}
+        if (dialog->hasValidNode()) {
+            int node_count = dialog->nodeList().count();
+            for (int i = 0; i < node_count; i++) {
+                // get resource
+                auto resNode = dialog->nodeList().at(i);
+                if (!resNode)
+                    return;
+                XC_ASSERT(resNode->data().hasImage());
+
+                // create node
+                core::LayerNode* ptr =
+                    new core::LayerNode(resNode->data().identifier(), mProject->objectTree().shaderHolder());
+                ptr->setVisibility(true);
+                ptr->setDefaultImage(resNode->handle());
+                ptr->setDefaultPosture(QVector2D());
+                ptr->setDefaultDepth(depth);
+                ptr->setDefaultOpacity(1.0f); // @todo support default opacity
+
+                cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Create a layer"));
+                // notifier
+                {
+                    auto coreNotifier = new core::ObjectTreeNotifier(*mProject);
+                    coreNotifier->event().setType(core::ObjectTreeEvent::Type_Add);
+                    coreNotifier->event().pushTarget(parent, *ptr);
+                    macro.grabListener(coreNotifier);
+                }
+                macro.grabListener(new obj::RestructureNotifier(*this));
+
+                // create commands
+                mProject->commandStack().push(new cmnd::GrabNewObject<core::LayerNode>(ptr));
+                mProject->commandStack().push(
+                    new cmnd::InsertTree<core::ObjectNode>(&(parent->children()), index, ptr));
+
+                // create gui commands
+                auto itemPtr = createFileItem(*ptr);
+                mProject->commandStack().push(new cmnd::GrabNewObject<obj::Item>(itemPtr));
+                mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
+            }
         }
     }
 }
 
-void ObjectTreeWidget::onFolderActionTriggered(bool)
-{
-    if (mActionItem)
-    {
+void ObjectTreeWidget::onFolderActionTriggered(bool) {
+    if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
 
         core::ObjectNode* parent = nullptr;
@@ -705,42 +606,42 @@ void ObjectTreeWidget::onFolderActionTriggered(bool)
         int itemIndex = -1;
 
         // top node
-        if (!objItem || objItem->isTopNode())
-        {
+        if (!objItem || objItem->isTopNode()) {
             parent = mProject->objectTree().topNode();
             XC_PTR_ASSERT(parent);
 
-			index = static_cast<int>(parent->children().size());
-            if (index > 0)
-            {
+            index = static_cast<int>(parent->children().size());
+            if (index > 0) {
                 auto prevNode = parent->children().back();
                 depth = prevNode->initialDepth() - 1.0f;
             }
             parentItem = mActionItem;
             itemIndex = parentItem->childCount();
-        }
-        else // sub node
+        } else // sub node
         {
             auto prevNode = &(objItem->node());
             depth = prevNode->initialDepth() + 1.0f;
 
             parent = prevNode->parent();
-            if (!parent) return;
+            if (!parent)
+                return;
 
             index = parent->children().indexOf(prevNode);
-            if (index < 0) return;
+            if (index < 0)
+                return;
 
             parentItem = mActionItem->parent();
-            if (!parentItem) return;
+            if (!parentItem)
+                return;
 
             itemIndex = parentItem->indexOfChild(objItem);
-            if (itemIndex < 0) return;
+            if (itemIndex < 0)
+                return;
         }
 
         // create command
         {
-            cmnd::ScopedMacro macro(mProject->commandStack(),
-                                    CmndName::tr("create a folder object"));
+            cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("create a folder object"));
 
             // create node
             core::FolderNode* ptr = new core::FolderNode("folder0");
@@ -769,23 +670,25 @@ void ObjectTreeWidget::onFolderActionTriggered(bool)
     }
 }
 
-void ObjectTreeWidget::onDeleteActionTriggered(bool)
-{
-    if (mActionItem)
-    {
+void ObjectTreeWidget::onDeleteActionTriggered(bool) {
+    if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
-        if (!objItem || objItem->isTopNode()) return;
+        if (!objItem || objItem->isTopNode())
+            return;
 
         core::ObjectNode& node = objItem->node();
 
         core::ObjectNode* parent = node.parent();
-        if (!parent) return;
+        if (!parent)
+            return;
 
         QTreeWidgetItem* parentItem = mActionItem->parent();
-        if (!parentItem) return;
+        if (!parentItem)
+            return;
 
         const int itemIndex = parentItem->indexOfChild(objItem);
-        if (itemIndex < 0) return;
+        if (itemIndex < 0)
+            return;
 
         // delete command
         {
@@ -809,12 +712,10 @@ void ObjectTreeWidget::onDeleteActionTriggered(bool)
 }
 
 //-------------------------------------------------------------------------------------------------
-void ObjectTreeWidget::paintEvent(QPaintEvent* aEvent)
-{
+void ObjectTreeWidget::paintEvent(QPaintEvent* aEvent) {
     QTreeWidget::paintEvent(aEvent);
 
-    if (mDragIndex.isValid())
-    {
+    if (mDragIndex.isValid()) {
         QPainter painter(this->viewport());
 
         const QTreeWidgetItem* item = this->itemFromIndex(mDragIndex);
@@ -826,18 +727,13 @@ void ObjectTreeWidget::paintEvent(QPaintEvent* aEvent)
         painter.setPen(QPen(kPenBrush, 1));
 
         QPoint pos;
-        if (mDropIndicatorPos == QAbstractItemView::AboveItem)
-        {
+        if (mDropIndicatorPos == QAbstractItemView::AboveItem) {
             pos = itemRect.topLeft();
             painter.drawLine(pos, pos + QPoint(itemRect.width(), 0));
-        }
-        else if (mDropIndicatorPos == QAbstractItemView::OnItem)
-        {
+        } else if (mDropIndicatorPos == QAbstractItemView::OnItem) {
             pos = QPoint(itemRect.left(), itemRect.center().y());
             painter.drawRect(itemRect);
-        }
-        else if (mDropIndicatorPos == QAbstractItemView::BelowItem)
-        {
+        } else if (mDropIndicatorPos == QAbstractItemView::BelowItem) {
             pos = QPoint(itemRect.left(), itemRect.bottom() + 1);
             painter.drawLine(pos, pos + QPoint(itemRect.width(), 0));
         }
@@ -851,47 +747,41 @@ void ObjectTreeWidget::paintEvent(QPaintEvent* aEvent)
     }
 }
 
-void ObjectTreeWidget::showEvent(QShowEvent* aEvent)
-{
+void ObjectTreeWidget::showEvent(QShowEvent* aEvent) {
     QTreeWidget::showEvent(aEvent);
 
-    if (this->horizontalScrollBar())
-    {
+    if (this->horizontalScrollBar()) {
         this->setViewportMargins(0, 0, 0, this->horizontalScrollBar()->sizeHint().height());
     }
 }
 
-void ObjectTreeWidget::dragMoveEvent(QDragMoveEvent* aEvent)
-{
+void ObjectTreeWidget::dragMoveEvent(QDragMoveEvent* aEvent) {
     QPoint cheatPos = aEvent->pos();
     mDragIndex = cheatDragDropPos(cheatPos);
 
-    QDragMoveEvent dummyEvent(cheatPos, aEvent->dropAction(), aEvent->mimeData(), aEvent->mouseButtons(), aEvent->keyboardModifiers(), aEvent->type());
+    QDragMoveEvent dummyEvent(cheatPos, aEvent->dropAction(), aEvent->mimeData(), aEvent->mouseButtons(),
+        aEvent->keyboardModifiers(), aEvent->type());
     QTreeWidget::dragMoveEvent(&dummyEvent);
 
-    if (!dummyEvent.isAccepted())
-    {
+    if (!dummyEvent.isAccepted()) {
         mDragIndex = QModelIndex();
         mDropIndicatorPos = QTreeWidget::DropIndicatorPosition();
         aEvent->ignore();
-    }
-    else
-    {
+    } else {
         aEvent->accept();
         mDropIndicatorPos = this->dropIndicatorPosition();
     }
 }
 
-void ObjectTreeWidget::dropEvent(QDropEvent* aEvent)
-{
+void ObjectTreeWidget::dropEvent(QDropEvent* aEvent) {
     mDragIndex = QModelIndex();
     QPoint cheatPos = aEvent->pos();
     cheatDragDropPos(cheatPos);
-    QDropEvent dummyEvent(cheatPos, aEvent->dropAction(), aEvent->mimeData(), aEvent->mouseButtons(), aEvent->keyboardModifiers(), aEvent->type());
+    QDropEvent dummyEvent(cheatPos, aEvent->dropAction(), aEvent->mimeData(), aEvent->mouseButtons(),
+        aEvent->keyboardModifiers(), aEvent->type());
     QModelIndex cursorIndex = this->indexAt(aEvent->pos());
 
-    if (this->visualRect(cursorIndex).contains(aEvent->pos()))
-    {
+    if (this->visualRect(cursorIndex).contains(aEvent->pos())) {
         mRemovedPositions.clear();
         mInsertedPositions.clear();
 
@@ -901,43 +791,34 @@ void ObjectTreeWidget::dropEvent(QDropEvent* aEvent)
         mStoreInsert = false;
 
         // finalize move command
-        if (mMacroScope)
-        {
+        if (mMacroScope) {
             // item mover
-            mProject->commandStack().push(
-                        new obj::MoveItems(
-                            *this, mRemovedPositions, mInsertedPositions));
+            mProject->commandStack().push(new obj::MoveItems(*this, mRemovedPositions, mInsertedPositions));
 
             // node mover
             mProject->commandStack().push(
-                        mProject->objectTree().createNodesMover(
-                            mRemovedPositions, mInsertedPositions));
+                mProject->objectTree().createNodesMover(mRemovedPositions, mInsertedPositions));
 
             mMacroScope->grabListener(new obj::RestructureNotifier(*this));
             mMacroScope.destruct();
         }
-    }
-    else
-    {
+    } else {
         aEvent->ignore();
     }
 }
 
-void ObjectTreeWidget::rowsAboutToBeRemoved(const QModelIndex& aParent, int aStart, int aEnd)
-{
-    if (mStoreInsert)
-    {
+void ObjectTreeWidget::rowsAboutToBeRemoved(const QModelIndex& aParent, int aStart, int aEnd) {
+    if (mStoreInsert) {
         XC_ASSERT(aStart == aEnd);
         QTreeWidgetItem* item = this->itemFromIndex(aParent.model()->index(aStart, kItemColumn, aParent));
         util::TreePos removePos(this->indexFromItem(item));
         XC_ASSERT(removePos.isValid());
-        //qDebug() << "remove"; removePos.dump();
+        // qDebug() << "remove"; removePos.dump();
 
         mRemovedPositions.push_back(removePos);
 
         // firstly, create macro
-        if (mProject && !mMacroScope)
-        {
+        if (mProject && !mMacroScope) {
             mObjTreeNotifier = new core::ObjectTreeNotifier(*mProject);
             mObjTreeNotifier->event().setType(core::ObjectTreeEvent::Type_Move);
 
@@ -945,56 +826,47 @@ void ObjectTreeWidget::rowsAboutToBeRemoved(const QModelIndex& aParent, int aSta
             mMacroScope->grabListener(mObjTreeNotifier);
         }
         // record target
-        if (mMacroScope)
-        {
+        if (mMacroScope) {
             auto objItem = obj::Item::cast(item);
-            if (objItem)
-            {
+            if (objItem) {
                 core::ObjectNode& node = objItem->node();
                 mObjTreeNotifier->event().pushTarget(node.parent(), node);
-                //qDebug() << "node" << node.name() << (node.parent() ? node.parent()->name() : "");
+                // qDebug() << "node" << node.name() << (node.parent() ? node.parent()->name() : "");
             }
         }
     }
     QTreeWidget::rowsAboutToBeRemoved(aParent, aStart, aEnd);
 }
 
-void ObjectTreeWidget::rowsInserted(const QModelIndex& aParent, int aStart, int aEnd)
-{
-    if (mStoreInsert)
-    {
+void ObjectTreeWidget::rowsInserted(const QModelIndex& aParent, int aStart, int aEnd) {
+    if (mStoreInsert) {
         XC_ASSERT(aStart == aEnd);
         QTreeWidgetItem* item = this->itemFromIndex(aParent.model()->index(aStart, kItemColumn, aParent));
         util::TreePos insertPos(this->indexFromItem(item));
         XC_ASSERT(insertPos.isValid());
-        //qDebug() << "insert"; insertPos.dump();
+        // qDebug() << "insert"; insertPos.dump();
 
         mInsertedPositions.push_back(insertPos);
     }
     QTreeWidget::rowsInserted(aParent, aStart, aEnd);
 }
 
-void ObjectTreeWidget::scrollContentsBy(int aDx, int aDy)
-{
+void ObjectTreeWidget::scrollContentsBy(int aDx, int aDy) {
     QTreeWidget::scrollContentsBy(aDx, aDy);
     onScrollUpdated(scrollHeight());
 }
 
-void ObjectTreeWidget::resizeEvent(QResizeEvent* aEvent)
-{
+void ObjectTreeWidget::resizeEvent(QResizeEvent* aEvent) {
     QTreeWidget::resizeEvent(aEvent);
     onScrollUpdated(scrollHeight());
 }
 
-void ObjectTreeWidget::scrollTo(const QModelIndex& aIndex, ScrollHint aHint)
-{
+void ObjectTreeWidget::scrollTo(const QModelIndex& aIndex, ScrollHint aHint) {
     // Avoided qt bug that QTreeView scroll incorrectly (in scrollTo, EnsureVisible).
-    if (aHint == ScrollHint::EnsureVisible)
-    {
+    if (aHint == ScrollHint::EnsureVisible) {
         auto view = this->viewport()->rect();
         auto rect = this->visualRect(aIndex);
-        if (view.top() <= rect.top() && rect.bottom() <= view.bottom())
-        {
+        if (view.top() <= rect.top() && rect.bottom() <= view.bottom()) {
             return; // nothing to do
         }
     }

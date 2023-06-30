@@ -1,32 +1,30 @@
 #ifndef CORE_LAYERNODE_H
 #define CORE_LAYERNODE_H
 
-#include <QVector>
 #include "XC.h"
+#include "core/BoneInfluenceMap.h"
+#include "core/GridMesh.h"
+#include "core/HeightMap.h"
+#include "core/MeshTransformer.h"
+#include "core/ObjectNode.h"
+#include "core/Renderer.h"
+#include "core/ShaderHolder.h"
+#include "core/TimeLine.h"
 #include "gl/EasyShaderProgram.h"
 #include "gl/Texture.h"
 #include "img/Buffer.h"
 #include "img/ResourceHandle.h"
-#include "core/ObjectNode.h"
-#include "core/Renderer.h"
-#include "core/GridMesh.h"
-#include "core/HeightMap.h"
-#include "core/TimeLine.h"
-#include "core/BoneInfluenceMap.h"
-#include "core/MeshTransformer.h"
-#include "core/ShaderHolder.h"
+#include <QVector>
 
-namespace core
-{
+namespace core {
 
-class LayerNode
-        : public ObjectNode
-        , public Renderer
-{
+class LayerNode: public ObjectNode, public Renderer {
 public:
     LayerNode(const QString& aName, ShaderHolder& aShaderHolder);
 
-    util::LifeLink::Pointee<LayerNode> pointee() { return lifeLink().pointee<LayerNode>(this); }
+    util::LifeLink::Pointee<LayerNode> pointee() {
+        return lifeLink().pointee<LayerNode>(this);
+    }
 
     // default image
     void setDefaultImage(const img::ResourceHandle& aHandle);
@@ -41,23 +39,55 @@ public:
     void setDefaultHSV(QList<int> aValue);
 
     // from ObjectNode
-    virtual ObjectType type() const { return ObjectType_Layer; }
-    virtual void setName(const QString& aName) { mName = aName; }
-    virtual const QString& name() const { return mName; }
+    virtual ObjectType type() const {
+        return ObjectType_Layer;
+    }
+    virtual void setName(const QString& aName) {
+        mName = aName;
+    }
+    virtual const QString& name() const {
+        return mName;
+    }
     virtual float initialDepth() const;
-    virtual void setVisibility(bool aIsVisible) { mIsVisible = aIsVisible; }
-    virtual bool isVisible() const { return mIsVisible; }
-    virtual void setSlimDown(bool aIsSlimmed) { mIsSlimmedDown = aIsSlimmed; }
-    virtual bool isSlimmedDown() const { return mIsSlimmedDown; }
-    virtual bool canHoldChild() const { return false; }
-    virtual void setInitialRect(const QRect& aRect) { mInitialRect = aRect; }
-    virtual QRect initialRect() const { return mInitialRect; }
-    virtual Renderer* renderer() { return this; }
-    virtual const Renderer* renderer() const { return this; }
-    virtual TimeLine* timeLine() { return &mTimeLine; }
-    virtual const TimeLine* timeLine() const { return &mTimeLine; }
-    virtual bool hasAnyMesh() const { return true; }
-    virtual bool hasAnyImage() const { return true; }
+    virtual void setVisibility(bool aIsVisible) {
+        mIsVisible = aIsVisible;
+    }
+    virtual bool isVisible() const {
+        return mIsVisible;
+    }
+    virtual void setSlimDown(bool aIsSlimmed) {
+        mIsSlimmedDown = aIsSlimmed;
+    }
+    virtual bool isSlimmedDown() const {
+        return mIsSlimmedDown;
+    }
+    virtual bool canHoldChild() const {
+        return false;
+    }
+    virtual void setInitialRect(const QRect& aRect) {
+        mInitialRect = aRect;
+    }
+    virtual QRect initialRect() const {
+        return mInitialRect;
+    }
+    virtual Renderer* renderer() {
+        return this;
+    }
+    virtual const Renderer* renderer() const {
+        return this;
+    }
+    virtual TimeLine* timeLine() {
+        return &mTimeLine;
+    }
+    virtual const TimeLine* timeLine() const {
+        return &mTimeLine;
+    }
+    virtual bool hasAnyMesh() const {
+        return true;
+    }
+    virtual bool hasAnyImage() const {
+        return true;
+    }
 
     virtual cmnd::Vector createResourceUpdater(const ResourceEvent& aEvent);
 
@@ -67,12 +97,15 @@ public:
     // from Renderer
     virtual void prerender(const RenderInfo&, const TimeCacheAccessor&);
     virtual void render(const RenderInfo&, const TimeCacheAccessor&);
-    virtual void renderClipper(
-            const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
+    virtual void renderClipper(const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
     virtual void setClipped(bool aIsClipped);
-    virtual bool isClipped() const { return mIsClipped; }
+    virtual bool isClipped() const {
+        return mIsClipped;
+    }
     virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData);
-    virtual bool hasBlendMode() const { return true; }
+    virtual bool hasBlendMode() const {
+        return true;
+    }
     virtual img::BlendMode blendMode() const;
     virtual void setBlendMode(img::BlendMode);
 

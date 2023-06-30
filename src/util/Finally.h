@@ -3,22 +3,17 @@
 
 #include <functional>
 
-namespace util
-{
+namespace util {
 
-class Finally
-{
+class Finally {
     typedef std::function<void()> FunctionType;
     FunctionType mDest;
 
 public:
-    Finally(FunctionType aDest)
-        : mDest(aDest)
-    {
+    Finally(FunctionType aDest): mDest(aDest) {
     }
 
-    ~Finally()
-    {
+    ~Finally() {
         mDest();
     }
 };

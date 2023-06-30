@@ -1,47 +1,36 @@
 #include "core/DepthKey.h"
 #include "core/Constant.h"
 
-namespace core
-{
+namespace core {
 //-------------------------------------------------------------------------------------------------
-DepthKey::Data::Data()
-    : mEasing()
-    , mDepth(0.0f)
-{
+DepthKey::Data::Data(): mEasing(), mDepth(0.0f) {
 }
 
-void DepthKey::Data::clamp()
-{
+void DepthKey::Data::clamp() {
     mDepth = xc_clamp(mDepth, Constant::transMin(), Constant::transMax());
 }
 
 //-------------------------------------------------------------------------------------------------
-DepthKey::DepthKey()
-    : mData()
-{
+DepthKey::DepthKey(): mData() {
 }
 
-TimeKey* DepthKey::createClone()
-{
+TimeKey* DepthKey::createClone() {
     auto newKey = new DepthKey();
     newKey->mData = this->mData;
     return newKey;
 }
 
-bool DepthKey::serialize(Serializer& aOut) const
-{
+bool DepthKey::serialize(Serializer& aOut) const {
     aOut.write(mData.easing());
     aOut.write(mData.depth());
     return aOut.checkStream();
 }
 
-bool DepthKey::deserialize(Deserializer &aIn)
-{
+bool DepthKey::deserialize(Deserializer& aIn) {
     aIn.pushLogScope("DepthKey");
 
     // easing
-    if (!aIn.read(mData.easing()))
-    {
+    if (!aIn.read(mData.easing())) {
         return aIn.errored("invalid easing param");
     }
 

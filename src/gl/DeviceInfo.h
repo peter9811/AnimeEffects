@@ -1,14 +1,12 @@
 #ifndef GL_DEVICEINFO_H
 #define GL_DEVICEINFO_H
 
-#include <string>
 #include <QGL>
+#include <string>
 
-namespace gl
-{
+namespace gl {
 
-struct DeviceInfo
-{
+struct DeviceInfo {
     static void setInstance(const DeviceInfo* aInstance);
     static bool validInstanceExists();
     static const DeviceInfo& instance();

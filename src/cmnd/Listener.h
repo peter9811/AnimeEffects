@@ -1,16 +1,18 @@
 #ifndef CMND_LISTENER_H
 #define CMND_LISTENER_H
 
-namespace cmnd
-{
+namespace cmnd {
 
-class Listener
-{
+class Listener {
 public:
-    virtual ~Listener() {}
-    virtual void onExecuted() {}
-    virtual void onUndone() {}
-    virtual void onRedone() {}
+    virtual ~Listener() {
+    }
+    virtual void onExecuted() {
+    }
+    virtual void onUndone() {
+    }
+    virtual void onRedone() {
+    }
 };
 
 } // namespace cmnd

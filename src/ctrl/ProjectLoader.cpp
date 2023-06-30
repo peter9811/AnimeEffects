@@ -1,41 +1,34 @@
-#include <fstream>
+#include "ctrl/ProjectLoader.h"
+#include "core/Deserializer.h"
 #include "gui/MainMenuBar.h"
 #include "gui/MainWindow.h"
 #include "qdir.h"
 #include "util/IDSolver.h"
-#include "ctrl/ProjectLoader.h"
-#include "core/Deserializer.h"
+#include <fstream>
 #include <qstandardpaths.h>
 
-namespace ctrl
-{
+namespace ctrl {
 
-ProjectLoader::ProjectLoader()
-    : mLog()
-    , mVersion()
-{
+ProjectLoader::ProjectLoader(): mLog(), mVersion() {
 }
 
-bool ProjectLoader::load(
-        const QString& aPath, core::Project& aProject,
-        const gl::DeviceInfo& aGLDeviceInfo,
-        util::IProgressReporter& aReporter)
-{
+bool ProjectLoader::load(const QString& aPath, core::Project& aProject, const gl::DeviceInfo& aGLDeviceInfo,
+    util::IProgressReporter& aReporter) {
     XC_DEBUG_REPORT() << "project path =" << aPath;
     std::ifstream file(aPath.toLocal8Bit(), /*std::ios::in |*/ std::ios::binary);
 
-    if (file.fail())
-    {
+    if (file.fail()) {
         QSettings settings;
         QStringList recentfiles = settings.value("projectloader/recents").toStringList();
         qInfo() << aPath;
-        if (recentfiles.contains(aPath)){
+        if (recentfiles.contains(aPath)) {
             auto unavailableIndex = recentfiles.indexOf(aPath);
             recentfiles.removeAt(unavailableIndex);
             settings.setValue("projectloader/recents", recentfiles);
             qInfo() << recentfiles;
-            mLog.push_back("Project removed, renamed or otherwise unavailable, please open it manually.\n"
-                            "This path has been removed from your recents.");
+            mLog.push_back(
+                "Project removed, renamed or otherwise unavailable, please open it manually.\n"
+                "This path has been removed from your recents.");
             settings.sync();
         }
 
@@ -51,8 +44,7 @@ bool ProjectLoader::load(
     int rShiftCount = 0;
     {
         size_t maxSize = maxFileSize;
-        while (maxSize > (size_t)std::numeric_limits<int>::max())
-        {
+        while (maxSize > (size_t)std::numeric_limits<int>::max()) {
             maxSize >>= 1;
             ++rShiftCount;
         }
@@ -64,36 +56,29 @@ bool ProjectLoader::load(
     // setup reader
     util::LEStreamReader in(file);
 
-    if (!readHeader(in))
-    {
+    if (!readHeader(in)) {
         mLog.push_back("Failed to read header.");
         return false;
     }
 
-    if (!readGlobalBlock(in, aProject))
-    {
+    if (!readGlobalBlock(in, aProject)) {
         mLog.push_back("Failed to read global block.");
         return false;
     }
 
     core::Deserializer::IDSolverType idSolver;
-    core::Deserializer deserializer(
-                in, idSolver, maxFileSize, mVersion,
-                aGLDeviceInfo, aReporter, rShiftCount);
+    core::Deserializer deserializer(in, idSolver, maxFileSize, mVersion, aGLDeviceInfo, aReporter, rShiftCount);
     deserializer.reportCurrent();
 
     // resources block
-    if (!aProject.resourceHolder().deserialize(deserializer))
-    {
+    if (!aProject.resourceHolder().deserialize(deserializer)) {
         QString log = "Failed to read resources block. : ";
-        for (auto scope : deserializer.logScopes())
-        {
+        for (auto scope : deserializer.logScopes()) {
             log += scope + "/";
         }
         mLog.push_back(log);
 
-        for (auto deslog : deserializer.log())
-        {
+        for (auto deslog : deserializer.log()) {
             mLog.push_back(deslog);
         }
         return false;
@@ -102,17 +87,14 @@ bool ProjectLoader::load(
     deserializer.reportCurrent();
 
     // object tree block
-    if (!aProject.objectTree().deserialize(deserializer))
-    {
+    if (!aProject.objectTree().deserialize(deserializer)) {
         QString log = "Failed to read object tree block. : ";
-        for (auto scope : deserializer.logScopes())
-        {
+        for (auto scope : deserializer.logScopes()) {
             log += scope + "/";
         }
         mLog.push_back(log);
 
-        for (auto deslog : deserializer.log())
-        {
+        for (auto deslog : deserializer.log()) {
             mLog.push_back(deslog);
         }
         return false;
@@ -121,8 +103,7 @@ bool ProjectLoader::load(
     deserializer.reportCurrent();
 
     // solve id references
-    if (!idSolver.solve())
-    {
+    if (!idSolver.solve()) {
         mLog.push_back("Failed to solve id references.");
         return false;
     }
@@ -131,16 +112,17 @@ bool ProjectLoader::load(
     return true;
 }
 
-bool ProjectLoader::readHeader(util::LEStreamReader& aIn)
-{
+bool ProjectLoader::readHeader(util::LEStreamReader& aIn) {
     // signature
     const std::string signature = aIn.readString(6);
-    if (signature != "ANIMFX") return false;
+    if (signature != "ANIMFX")
+        return false;
 
     // endian
     uint8 endian[2];
     aIn.readBuf(endian, 2);
-    if (endian[0] != 0xff || endian[1] != 0x00) return false;
+    if (endian[0] != 0xff || endian[1] != 0x00)
+        return false;
 
     // major version
     const int majorVersion = aIn.readUInt32();
@@ -148,16 +130,12 @@ bool ProjectLoader::readHeader(util::LEStreamReader& aIn)
     const int minorVersion = aIn.readUInt32();
 
     if (majorVersion < AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION ||
-            (majorVersion == AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION &&
-             minorVersion < AE_PROJECT_FORMAT_OLDEST_MINOR_VERSION))
-    {
+        (majorVersion == AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION &&
+            minorVersion < AE_PROJECT_FORMAT_OLDEST_MINOR_VERSION)) {
         mLog.push_back("The file version is too old to read properly.");
         return false;
-    }
-    else if (majorVersion > AE_PROJECT_FORMAT_MAJOR_VERSION ||
-             (majorVersion == AE_PROJECT_FORMAT_MAJOR_VERSION &&
-              minorVersion > AE_PROJECT_FORMAT_MINOR_VERSION))
-    {
+    } else if (majorVersion > AE_PROJECT_FORMAT_MAJOR_VERSION ||
+        (majorVersion == AE_PROJECT_FORMAT_MAJOR_VERSION && minorVersion > AE_PROJECT_FORMAT_MINOR_VERSION)) {
         mLog.push_back("This file has been made with a new version of AnimeEffects, unable to read.");
         return false;
     }
@@ -165,20 +143,22 @@ bool ProjectLoader::readHeader(util::LEStreamReader& aIn)
     mVersion = QVersionNumber(majorVersion, minorVersion);
 
     // reserved
-    if (!aIn.skipZeroArea(16)) return false;
+    if (!aIn.skipZeroArea(16))
+        return false;
 
     return !aIn.isFailed();
 }
 
-bool ProjectLoader::readGlobalBlock(util::LEStreamReader& aIn, core::Project& aProject)
-{
+bool ProjectLoader::readGlobalBlock(util::LEStreamReader& aIn, core::Project& aProject) {
     // signature
     const std::string signature = aIn.readString(4);
-    if (signature != "GLBL") return false;
+    if (signature != "GLBL")
+        return false;
 
     // length
     const uint32 length = aIn.readUInt32();
-    if (length != 64) return false;
+    if (length != 64)
+        return false;
 
     // width
     const uint32 width = aIn.readUInt32();
@@ -192,9 +172,11 @@ bool ProjectLoader::readGlobalBlock(util::LEStreamReader& aIn, core::Project& aP
     const uint8 loop = aIn.readByte();
 
     // reserved
-    if (!aIn.skipZeroArea(47)) return false;
+    if (!aIn.skipZeroArea(47))
+        return false;
 
-    if (aIn.isFailed()) return false;
+    if (aIn.isFailed())
+        return false;
 
     // set values
     aProject.attribute().setImageSize(QSize((int)width, (int)height));

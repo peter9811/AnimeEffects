@@ -1,29 +1,29 @@
 #ifndef CMND_STACK_H
 #define CMND_STACK_H
 
-#include <functional>
-#include <QUndoStack>
-#include <QVector>
-#include <QList>
-#include <QMutableListIterator>
-#include <QListIterator>
-#include "util/LifeLink.h"
 #include "cmnd/Base.h"
 #include "cmnd/Listener.h"
+#include "util/LifeLink.h"
+#include <QList>
+#include <QListIterator>
+#include <QMutableListIterator>
+#include <QUndoStack>
+#include <QVector>
+#include <functional>
 
-namespace cmnd
-{
+namespace cmnd {
 
 class ScopedMacro;
 class ScopedUndoSuspender;
 
-class Stack
-{
+class Stack {
 public:
     Stack();
     ~Stack();
 
-    bool isSuspended() const { return mSuspendCount > 0; }
+    bool isSuspended() const {
+        return mSuspendCount > 0;
+    }
     void push(Base* aCommand);
     void push(const std::vector<Base*>&& aCommands);
     QString undo(bool* undone = nullptr);
@@ -37,8 +37,7 @@ public:
     void setOnEditStatusChanged(const std::function<void(bool)>&);
 
 private:
-    class Macro : public Base
-    {
+    class Macro: public Base {
     public:
         Macro(const QString& aName);
         ~Macro();
@@ -50,6 +49,7 @@ private:
         virtual bool tryRedo();
         virtual bool tryUndo();
         virtual bool isUseless() const;
+
     private:
         void killListeners();
         QList<Base*> mCommands;
@@ -66,8 +66,12 @@ private:
     void endMacro();
 
     friend class ScopedUndoSuspender;
-    void suspendUndo() { ++mSuspendCount; }
-    void resumeUndo() { --mSuspendCount; }
+    void suspendUndo() {
+        ++mSuspendCount;
+    }
+    void resumeUndo() {
+        --mSuspendCount;
+    }
 
     void pushImpl(Base* aCommand);
     void updateEditStatus();

@@ -1,26 +1,23 @@
 #ifndef CORE_MESHKEY_H
 #define CORE_MESHKEY_H
 
-#include <vector>
-#include <array>
-#include <QList>
-#include <QVector>
-#include <QVector2D>
+#include "cmnd/Vector.h"
+#include "core/LayerMesh.h"
+#include "core/TimeKey.h"
 #include "util/NonCopyable.h"
 #include "util/Segment2D.h"
-#include "cmnd/Vector.h"
-#include "core/TimeKey.h"
-#include "core/LayerMesh.h"
+#include <QList>
+#include <QVector2D>
+#include <QVector>
+#include <array>
+#include <vector>
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-template <typename tParent, typename tChild>
-struct MeshLinkNode
-{
-    MeshLinkNode()
-        : parent(), child(), prev(), next() {}
+template<typename tParent, typename tChild> struct MeshLinkNode {
+    MeshLinkNode(): parent(), child(), prev(), next() {
+    }
 
     tParent* parent;
     tChild* child;
@@ -38,8 +35,7 @@ typedef MeshEdgeLinkNode* MeshEdgeLink;
 typedef MeshFaceLinkNode* MeshFaceLink;
 
 //-------------------------------------------------------------------------------------------------
-class MeshVtx : private util::NonCopyable
-{
+class MeshVtx: private util::NonCopyable {
 public:
     float x;
     float y;
@@ -48,14 +44,30 @@ public:
     MeshVtx(float aX, float aY);
     ~MeshVtx();
     MeshVtx(const QVector2D& aPos);
-    QVector2D vec() const { return QVector2D(x, y); }
-    MeshEdgeLink edges() const { return mEdges; }
-    void set(float aX, float aY) { x = aX; y = aY; }
-    void set(const QVector2D& aPos) { x = aPos.x(); y = aPos.y(); }
+    QVector2D vec() const {
+        return QVector2D(x, y);
+    }
+    MeshEdgeLink edges() const {
+        return mEdges;
+    }
+    void set(float aX, float aY) {
+        x = aX;
+        y = aY;
+    }
+    void set(const QVector2D& aPos) {
+        x = aPos.x();
+        y = aPos.y();
+    }
     bool hasOtherParents(const QVector<MeshEdge*>& aEdges) const;
-    bool hasParent() const { return mEdges; }
-    void setIndex(int aIndex) { mIndex = aIndex; }
-    int index() const { return mIndex; }
+    bool hasParent() const {
+        return mEdges;
+    }
+    void setIndex(int aIndex) {
+        mIndex = aIndex;
+    }
+    int index() const {
+        return mIndex;
+    }
     int connectionCount() const;
 
 private:
@@ -68,8 +80,7 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class MeshEdge : private util::NonCopyable
-{
+class MeshEdge: private util::NonCopyable {
 public:
     MeshEdge();
     ~MeshEdge();
@@ -77,16 +88,34 @@ public:
     void set(MeshVtx& aVp0, MeshVtx& aVp1);
     void clear();
 
-    inline QVector2D start() const { return mLink[0].child->vec(); }
-    inline QVector2D end() const { return mLink[1].child->vec(); }
-    inline QVector2D dir() const { return end() - start(); }
-    inline util::Segment2D seg() const { return util::Segment2D(start(), dir()); }
-    inline MeshVtx* vtx(int aIndex) const { return mLink[aIndex].child; }
-    MeshFaceLink faces() const { return mFaces; }
+    inline QVector2D start() const {
+        return mLink[0].child->vec();
+    }
+    inline QVector2D end() const {
+        return mLink[1].child->vec();
+    }
+    inline QVector2D dir() const {
+        return end() - start();
+    }
+    inline util::Segment2D seg() const {
+        return util::Segment2D(start(), dir());
+    }
+    inline MeshVtx* vtx(int aIndex) const {
+        return mLink[aIndex].child;
+    }
+    MeshFaceLink faces() const {
+        return mFaces;
+    }
     bool isEquals(const MeshVtx& aVp0, const MeshVtx& aVp1) const;
-    bool has(const MeshVtx& aVtx) const { return vtx(0) == &aVtx || vtx(1) == &aVtx; }
-    bool hasParent() const { return mFaces; }
-    bool hasChildren() const { return mLink[0].child || mLink[1].child; }
+    bool has(const MeshVtx& aVtx) const {
+        return vtx(0) == &aVtx || vtx(1) == &aVtx;
+    }
+    bool hasParent() const {
+        return mFaces;
+    }
+    bool hasChildren() const {
+        return mLink[0].child || mLink[1].child;
+    }
     bool hasMultiParents() const;
     bool hasOtherParents(const QVector<MeshFace*>& aFaces) const;
 
@@ -102,12 +131,10 @@ private:
 
     MeshEdgeLinkNode mLink[2];
     MeshFaceLink mFaces;
-
 };
 
 //-------------------------------------------------------------------------------------------------
-class MeshFace : private util::NonCopyable
-{
+class MeshFace: private util::NonCopyable {
 public:
     MeshFace();
     ~MeshFace();
@@ -115,7 +142,9 @@ public:
     void set(MeshEdge& aEp0, MeshEdge& aEp1, MeshEdge& aEp2);
     void clear();
 
-    inline MeshEdge* edge(int aIndex) const { return mLink[aIndex].child; }
+    inline MeshEdge* edge(int aIndex) const {
+        return mLink[aIndex].child;
+    }
     MeshEdge* findEdge(const MeshVtx& aVtx0, const MeshVtx& aVtx1) const;
     std::array<MeshVtx*, 3> vertices() const;
     QVector2D vnorm(int aIndex) const;
@@ -140,11 +169,9 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class MeshKey : public TimeKey
-{
+class MeshKey: public TimeKey {
 public:
-    class Data : public LayerMesh
-    {
+    class Data: public LayerMesh {
     public:
         typedef QList<MeshVtx*> VtxList;
         typedef QList<MeshEdge*> EdgeList;
@@ -157,26 +184,48 @@ public:
         QJsonObject serializeToJson() const;
         bool deserializeFromJson(QJsonObject json);
 
-        const VtxList& vertices() const { return mVertices; }
-        const EdgeList& edges() const { return mEdges; }
-        const FaceList& faces() const { return mFaces; }
+        const VtxList& vertices() const {
+            return mVertices;
+        }
+        const EdgeList& edges() const {
+            return mEdges;
+        }
+        const FaceList& faces() const {
+            return mFaces;
+        }
 
-        void setOriginOffset(const QVector2D& aOffset) { mOriginOffset = aOffset; }
+        void setOriginOffset(const QVector2D& aOffset) {
+            mOriginOffset = aOffset;
+        }
 
         // from LayerMesh
-        virtual GLenum primitiveMode() const { return GL_TRIANGLES; }
-        virtual const gl::Vector3* positions() const { return mPositions.data(); }
-        virtual const gl::Vector2* texCoords() const { return mTexCoords.data(); }
-        virtual int vertexCount() const { return mPositions.count(); }
-        virtual const GLuint* indices() const { return mIndices.data(); }
-        virtual GLsizei indexCount() const { return mIndices.count(); }
+        virtual GLenum primitiveMode() const {
+            return GL_TRIANGLES;
+        }
+        virtual const gl::Vector3* positions() const {
+            return mPositions.data();
+        }
+        virtual const gl::Vector2* texCoords() const {
+            return mTexCoords.data();
+        }
+        virtual int vertexCount() const {
+            return mPositions.count();
+        }
+        virtual const GLuint* indices() const {
+            return mIndices.data();
+        }
+        virtual GLsizei indexCount() const {
+            return mIndices.count();
+        }
         virtual gl::BufferObject& getIndexBuffer();
         virtual MeshBuffer& getMeshBuffer();
-        virtual void resetArrayedConnection(
-                ArrayedConnectionList& aDest,
-                const gl::Vector3* aPositions) const;
-        virtual Frame frameSign() const { return Frame(mOwner->frame()); }
-        virtual QVector2D originOffset() const { return mOriginOffset; }
+        virtual void resetArrayedConnection(ArrayedConnectionList& aDest, const gl::Vector3* aPositions) const;
+        virtual Frame frameSign() const {
+            return Frame(mOwner->frame());
+        }
+        virtual QVector2D originOffset() const {
+            return mOriginOffset;
+        }
 
         void destroy();
 
@@ -204,27 +253,29 @@ public:
 
     MeshKey();
 
-    Data& data() { return mData; }
-    const Data& data() const { return mData; }
+    Data& data() {
+        return mData;
+    }
+    const Data& data() const {
+        return mData;
+    }
 
     ///@attention "aDst" will be assigned when the command executed.
-    cmnd::Vector createTrianglePusher(
-            const QVector<QVector2D>& aPos,
-            const QVector<MeshVtx*>& aRef,
-            MeshFace** aDst);
+    cmnd::Vector createTrianglePusher(const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, MeshFace** aDst);
     cmnd::Vector createRemover(MeshVtx& aVtx);
     cmnd::Vector createRemover(MeshFace& aFace);
-    cmnd::Vector createSplitter(
-            MeshFace& aFace, MeshEdge& aEdgeSide,
-            const QVector2D& aPosOnEdge, MeshVtx** aTail);
-    cmnd::Vector createSplitter(
-            MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0,
-            MeshEdge& aEdge1, const QVector2D& aPos1, MeshVtx** aTail);
+    cmnd::Vector createSplitter(MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, MeshVtx** aTail);
+    cmnd::Vector createSplitter(MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0, MeshEdge& aEdge1,
+        const QVector2D& aPos1, MeshVtx** aTail);
     void moveVtx(MeshVtx& aVtx, const QVector2D& aPos);
     void updateGLAttribute();
 
-    virtual TimeKeyType type() const { return TimeKeyType_Mesh; }
-    virtual bool canHoldChild() const { return true; }
+    virtual TimeKeyType type() const {
+        return TimeKeyType_Mesh;
+    }
+    virtual bool canHoldChild() const {
+        return true;
+    }
     virtual TimeKey* createClone();
     virtual bool serialize(Serializer& aOut) const;
     virtual bool deserialize(Deserializer& aIn);
@@ -233,18 +284,12 @@ public:
     void updateVtxIndices();
 
 private:
-    MeshFace* createTriangle(
-            const QVector<QVector2D>& aPos,
-            const QVector<MeshVtx*>& aRef,
-            cmnd::Vector& aCommands);
+    MeshFace* createTriangle(const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, cmnd::Vector& aCommands);
     void listNeedToRemove(MeshVtx& aStartingVtx, cmnd::Vector& aCommands);
     void listNeedToRemove(MeshFace& aStartingFace, cmnd::Vector& aCommands);
-    MeshVtx* splitTriangle(
-            MeshFace& aFace, MeshEdge& aEdgeSide,
-            const QVector2D& aPosOnEdge, cmnd::Vector& aCommands);
-    MeshVtx* splitTriangle(
-            MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0,
-            MeshEdge& aEdge1, const QVector2D& aPos1, cmnd::Vector& aCommands);
+    MeshVtx* splitTriangle(MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, cmnd::Vector& aCommands);
+    MeshVtx* splitTriangle(MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0, MeshEdge& aEdge1,
+        const QVector2D& aPos1, cmnd::Vector& aCommands);
 
     Data mData;
 };

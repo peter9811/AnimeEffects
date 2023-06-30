@@ -1,16 +1,14 @@
 #ifndef CORE_SHADERHOLDER_H
 #define CORE_SHADERHOLDER_H
 
-#include <QVector>
-#include <QScopedPointer>
 #include "gl/EasyShaderProgram.h"
 #include "img/BlendMode.h"
+#include <QScopedPointer>
+#include <QVector>
 
-namespace core
-{
+namespace core {
 
-class ShaderHolder
-{
+class ShaderHolder {
 public:
     ShaderHolder();
     ~ShaderHolder();

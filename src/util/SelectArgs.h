@@ -1,15 +1,10 @@
 #ifndef UTIL_SELECTARGS
 #define UTIL_SELECTARGS
 
-namespace util
-{
+namespace util {
 
-template<typename... tArgs>
-struct SelectArgs
-{
-    template<typename tClass, typename tResult>
-    static auto from( tResult (tClass::*pmf)(tArgs...) ) -> decltype(pmf)
-    {
+template<typename... tArgs> struct SelectArgs {
+    template<typename tClass, typename tResult> static auto from(tResult (tClass::*pmf)(tArgs...)) -> decltype(pmf) {
         return pmf;
     }
 };
@@ -17,4 +12,3 @@ struct SelectArgs
 } // namespace util
 
 #endif // UTIL_SELECTARGS
-

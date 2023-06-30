@@ -1,32 +1,30 @@
 #ifndef GUI_TOOLWIDGET_H
 #define GUI_TOOLWIDGET_H
 
-#include <QWidget>
-#include <QResizeEvent>
-#include "util/Signaler.h"
 #include "ctrl/Driver.h"
 #include "ctrl/FFDParam.h"
 #include "gui/GUIResources.h"
 #include "gui/MainDisplayMode.h"
 #include "gui/MainViewSetting.h"
 #include "gui/ViaPoint.h"
-#include "gui/tool/tool_ViewPanel.h"
-#include "gui/tool/tool_ModePanel.h"
-#include "gui/tool/tool_SRTPanel.h"
-#include "gui/tool/tool_FFDPanel.h"
 #include "gui/tool/tool_BonePanel.h"
-#include "gui/tool/tool_PosePanel.h"
+#include "gui/tool/tool_FFDPanel.h"
 #include "gui/tool/tool_MeshPanel.h"
+#include "gui/tool/tool_ModePanel.h"
+#include "gui/tool/tool_PosePanel.h"
+#include "gui/tool/tool_SRTPanel.h"
+#include "gui/tool/tool_ViewPanel.h"
+#include "util/Signaler.h"
+#include <QResizeEvent>
+#include <QWidget>
 
-namespace gui
-{
+namespace gui {
 
-class ToolWidget : public QWidget
-{
+class ToolWidget: public QWidget {
     Q_OBJECT
 public:
-	ToolWidget(ViaPoint& aViaPoint, GUIResources& aResources, KeyCommandMap& aKeyCommandMap,
-               const QSize& aSizeHint, QWidget* aParent);
+    ToolWidget(ViaPoint& aViaPoint, GUIResources& aResources, KeyCommandMap& aKeyCommandMap, const QSize& aSizeHint,
+        QWidget* aParent);
 
     void setDriver(ctrl::Driver* aDriver);
 
@@ -36,20 +34,30 @@ public:
     util::Signaler<void(const MainViewSetting&)> onViewSettingChanged;
 
 private:
-    virtual QSize sizeHint() const { return mSizeHint; }
+    virtual QSize sizeHint() const {
+        return mSizeHint;
+    }
     virtual void resizeEvent(QResizeEvent* aEvent);
 
-    MainViewSetting& viewSetting() { return mViaPoint.mainViewSetting(); }
-    const MainViewSetting& viewSetting() const { return mViaPoint.mainViewSetting(); }
+    MainViewSetting& viewSetting() {
+        return mViaPoint.mainViewSetting();
+    }
+    const MainViewSetting& viewSetting() const {
+        return mViaPoint.mainViewSetting();
+    }
     void createViewPanel();
     void createModePanel();
     void setPanelActivity(bool aIsActive);
     void setButtonActivity(ctrl::ToolType aType, bool aIsActive);
     void updateGeometry();
     bool meshFromFunction = false;
-    void showHideMesh(bool aShow){
-        if (this->viewSetting().showLayerMesh && aShow && !meshFromFunction){return;};
-        if (aShow){meshFromFunction = true;}
+    void showHideMesh(bool aShow) {
+        if (this->viewSetting().showLayerMesh && aShow && !meshFromFunction) {
+            return;
+        };
+        if (aShow) {
+            meshFromFunction = true;
+        }
         mViewPanel->button(0)->setChecked(aShow);
         this->viewSetting().showLayerMesh = aShow;
         this->onViewSettingChanged(this->viewSetting());
@@ -59,7 +67,7 @@ private:
 
     ViaPoint& mViaPoint;
     GUIResources& mResources;
-	KeyCommandMap& mKeyCommandMap;
+    KeyCommandMap& mKeyCommandMap;
     const QSize mSizeHint;
     tool::ViewPanel* mViewPanel;
     tool::ModePanel* mModePanel;

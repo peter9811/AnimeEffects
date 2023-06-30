@@ -1,14 +1,12 @@
 #ifndef UTIL_IEASYITERATOR
 #define UTIL_IEASYITERATOR
 
-namespace util
-{
+namespace util {
 
-template <typename tObj>
-class IEasyIterator
-{
+template<typename tObj> class IEasyIterator {
 public:
-    virtual ~IEasyIterator() {}
+    virtual ~IEasyIterator() {
+    }
     virtual bool hasNext() const = 0;
     tObj next() = 0;
 };
@@ -16,4 +14,3 @@ public:
 } // namespace util
 
 #endif // UTIL_IEASYITERATOR
-

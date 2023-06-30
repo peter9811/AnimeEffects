@@ -1,17 +1,13 @@
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include "XC.h"
 #include "gui/EasyDialog.h"
+#include "XC.h"
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QVBoxLayout>
 
-namespace gui
-{
+namespace gui {
 
-EasyDialog::EasyDialog(const QString& aTitle, QWidget* aParent, bool aIsModal)
-    : QDialog(aParent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint)
-    , mLayout()
-    , mOk()
-{
+EasyDialog::EasyDialog(const QString& aTitle, QWidget* aParent, bool aIsModal):
+    QDialog(aParent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint), mLayout(), mOk() {
     this->setWindowTitle(aTitle);
     this->setModal(aIsModal);
 
@@ -20,33 +16,27 @@ EasyDialog::EasyDialog(const QString& aTitle, QWidget* aParent, bool aIsModal)
     this->setLayout(mLayout);
 }
 
-void EasyDialog::setMenuBar(QMenuBar* aMenuBar)
-{
+void EasyDialog::setMenuBar(QMenuBar* aMenuBar) {
     mLayout->setMenuBar(aMenuBar);
 }
 
-void EasyDialog::setMainWidget(QWidget* aWidget, bool aAlignLeft)
-{
+void EasyDialog::setMainWidget(QWidget* aWidget, bool aAlignLeft) {
     mLayout->addWidget(aWidget);
-    if (aAlignLeft)
-    {
+    if (aAlignLeft) {
         mLayout->setAlignment(aWidget, Qt::AlignLeft | Qt::AlignTop);
     }
     mLayout->addSpacing(16);
 }
 
-void EasyDialog::setMainLayout(QLayout* aLayout, bool aAlignLeft)
-{
+void EasyDialog::setMainLayout(QLayout* aLayout, bool aAlignLeft) {
     mLayout->addLayout(aLayout);
-    if (aAlignLeft)
-    {
+    if (aAlignLeft) {
         mLayout->setAlignment(aLayout, Qt::AlignLeft | Qt::AlignTop);
     }
     mLayout->addSpacing(16);
 }
 
-void EasyDialog::setOkCancel(const std::function<bool(int)>& aFunction)
-{
+void EasyDialog::setOkCancel(const std::function<bool(int)>& aFunction) {
     auto buttonBox = new QHBoxLayout();
     auto ok = new QPushButton("Ok");
     auto cc = new QPushButton("Cancel");
@@ -58,17 +48,13 @@ void EasyDialog::setOkCancel(const std::function<bool(int)>& aFunction)
     ok->setAutoDefault(false);
     cc->setAutoDefault(false);
 
-    connect(ok, &QPushButton::clicked, [=](bool)
-    {
-        if (aFunction(0))
-        {
+    connect(ok, &QPushButton::clicked, [=](bool) {
+        if (aFunction(0)) {
             this->accept();
         }
     });
-    connect(cc, &QPushButton::clicked, [=](bool)
-    {
-        if (aFunction(1))
-        {
+    connect(cc, &QPushButton::clicked, [=](bool) {
+        if (aFunction(1)) {
             this->reject();
         }
     });
@@ -81,14 +67,12 @@ void EasyDialog::setOkCancel(const std::function<bool(int)>& aFunction)
     mLayout->setAlignment(buttonBox, Qt::AlignBottom | Qt::AlignRight);
 }
 
-void EasyDialog::setOkEnable(bool aIsEnable)
-{
+void EasyDialog::setOkEnable(bool aIsEnable) {
     XC_PTR_ASSERT(mOk);
     mOk->setEnabled(aIsEnable);
 }
 
-void EasyDialog::setCancel(const std::function<bool(int)>& aFunction)
-{
+void EasyDialog::setCancel(const std::function<bool(int)>& aFunction) {
     auto buttonBox = new QHBoxLayout();
     auto cc = new QPushButton("Cancel");
 
@@ -96,10 +80,8 @@ void EasyDialog::setCancel(const std::function<bool(int)>& aFunction)
     cc->setDefault(false);
     cc->setAutoDefault(false);
 
-    connect(cc, &QPushButton::clicked, [=](bool)
-    {
-        if (aFunction(1))
-        {
+    connect(cc, &QPushButton::clicked, [=](bool) {
+        if (aFunction(1)) {
             this->reject();
         }
     });
@@ -109,11 +91,9 @@ void EasyDialog::setCancel(const std::function<bool(int)>& aFunction)
     mLayout->setAlignment(buttonBox, Qt::AlignBottom | Qt::AlignRight);
 }
 
-void EasyDialog::fixSize()
-{
+void EasyDialog::fixSize() {
     this->setFixedSize(this->sizeHint());
-    this->layout()->setSizeConstraint( QLayout::SetFixedSize );
+    this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
 
 } // namespace gui
-

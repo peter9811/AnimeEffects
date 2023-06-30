@@ -1,23 +1,20 @@
 #ifndef CORE_RESOURCEHOLDER_H
 #define CORE_RESOURCEHOLDER_H
 
+#include "core/Deserializer.h"
+#include "core/Serializer.h"
+#include "img/ResourceNode.h"
+#include "util/NonCopyable.h"
 #include <list>
 #include <memory>
-#include "util/NonCopyable.h"
-#include "img/ResourceNode.h"
-#include "core/Serializer.h"
-#include "core/Deserializer.h"
 
-namespace core
-{
+namespace core {
 
-class ResourceHolder
-        : private util::NonCopyable
-{
+class ResourceHolder: private util::NonCopyable {
 public:
-    struct ImageTree
-    {
-        ImageTree() : topNode(), filePath() {}
+    struct ImageTree {
+        ImageTree(): topNode(), filePath() {
+        }
         img::ResourceNode* topNode;
         QString filePath;
     };
@@ -27,20 +24,18 @@ public:
 
     void setRootPath(const QString& aPath);
 
-    void pushImageTree(
-            img::ResourceNode& aTopNode,
-            const QString& aAbsFilePath);
+    void pushImageTree(img::ResourceNode& aTopNode, const QString& aAbsFilePath);
     ImageTree popImageTree();
 
     void insertImageTree(const ImageTree& aTree, int aIndex);
     void removeImageTree(int aIndex);
 
     ImageTree imageTree(int aIndex) const;
-    const std::list<ImageTree>& imageTrees() const { return mImageTrees; }
+    const std::list<ImageTree>& imageTrees() const {
+        return mImageTrees;
+    }
 
-    QString changeAbsoluteFilePath(
-            img::ResourceNode& aTopNode,
-            const QString& aAbsFilePath);
+    QString changeAbsoluteFilePath(img::ResourceNode& aTopNode, const QString& aAbsFilePath);
 
     QString findAbsoluteFilePath(const img::ResourceNode& aTopNode) const;
     QString findRelativeFilePath(const img::ResourceNode& aTopNode) const;

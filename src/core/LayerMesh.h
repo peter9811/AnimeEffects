@@ -1,26 +1,24 @@
 #ifndef CORE_LAYERMESH
 #define CORE_LAYERMESH
 
-#include <QVector>
-#include <QScopedPointer>
+#include "core/Frame.h"
+#include "gl/BufferObject.h"
+#include "gl/Vector2.h"
+#include "gl/Vector2I.h"
+#include "gl/Vector3.h"
 #include "util/ArrayBlock.h"
 #include "util/Range.h"
-#include "gl/Vector2.h"
-#include "gl/Vector3.h"
-#include "gl/Vector2I.h"
-#include "gl/BufferObject.h"
-#include "core/Frame.h"
+#include <QScopedPointer>
+#include <QVector>
 
-namespace core
-{
+namespace core {
 
-class LayerMesh
-{
+class LayerMesh {
 public:
-
-    struct MeshBuffer
-    {
-        struct GLBinder { GLBinder(); };
+    struct MeshBuffer {
+        struct GLBinder {
+            GLBinder();
+        };
         MeshBuffer();
         ~MeshBuffer();
         void reserve(int aVtxCount);
@@ -35,8 +33,7 @@ public:
         int vtxCount;
     };
 
-    struct ArrayedConnection
-    {
+    struct ArrayedConnection {
         enum { kMaxCount = 1024 };
         ArrayedConnection();
         void resetPositions();
@@ -47,8 +44,7 @@ public:
         util::Range vertexRange;
     };
 
-    struct ArrayedConnectionList
-    {
+    struct ArrayedConnectionList {
         ArrayedConnectionList();
         ~ArrayedConnectionList();
         void clearBlocks();
@@ -63,12 +59,12 @@ public:
         int useBlockCount;
     };
 
-    class ArrayedConnectionWriter
-    {
+    class ArrayedConnectionWriter {
         ArrayedConnectionList& mList;
         int mVertexCount;
         ArrayedConnection* mCurBlock;
         int mIndex;
+
     public:
         ArrayedConnectionWriter(ArrayedConnectionList& aList, int aVertexCount);
         ~ArrayedConnectionWriter();
@@ -76,7 +72,8 @@ public:
         void pushPosition(const gl::Vector2& aPos);
     };
 
-    virtual ~LayerMesh() {}
+    virtual ~LayerMesh() {
+    }
     virtual GLenum primitiveMode() const = 0;
     virtual const gl::Vector3* positions() const = 0;
     virtual const gl::Vector2* texCoords() const = 0;
@@ -85,9 +82,7 @@ public:
     virtual GLsizei indexCount() const = 0;
     virtual gl::BufferObject& getIndexBuffer() = 0;
     virtual MeshBuffer& getMeshBuffer() = 0;
-    virtual void resetArrayedConnection(
-            ArrayedConnectionList& aDest,
-            const gl::Vector3* aPositions) const = 0;
+    virtual void resetArrayedConnection(ArrayedConnectionList& aDest, const gl::Vector3* aPositions) const = 0;
     virtual Frame frameSign() const = 0;
     virtual QVector2D originOffset() const = 0;
 };
@@ -95,4 +90,3 @@ public:
 } // namespace core
 
 #endif // CORE_LAYERMESH
-

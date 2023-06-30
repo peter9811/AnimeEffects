@@ -3,11 +3,9 @@
 namespace ctrl {
 namespace mesh {
 
-//-------------------------------------------------------------------------------------------------
-MeshAccessor::MeshAccessor()
-    : mKey()
-{
-}
+    //-------------------------------------------------------------------------------------------------
+    MeshAccessor::MeshAccessor(): mKey() {
+    }
 
 } // namespace mesh
 } // namespace ctrl

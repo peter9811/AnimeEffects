@@ -1,18 +1,17 @@
 #ifndef UTIL_ITREESEEKER
 #define UTIL_ITREESEEKER
 
-namespace util
-{
+namespace util {
 
-template <typename tData, typename tAddress>
-class ITreeSeeker
-{
+template<typename tData, typename tAddress> class ITreeSeeker {
 public:
     typedef tData Data;
     typedef void* Position;
 
-    ITreeSeeker() {}
-    virtual ~ITreeSeeker() {}
+    ITreeSeeker() {
+    }
+    virtual ~ITreeSeeker() {
+    }
 
     virtual Position position(tAddress) const = 0;
     virtual Data data(Position) const = 0;
@@ -22,8 +21,6 @@ public:
     virtual Position nextSib(Position) const = 0;
 };
 
-
 } // namespace util
 
 #endif // UTIL_ITREESEEKER
-

@@ -1,51 +1,68 @@
 #ifndef CORE_OBJECTTREE_H
 #define CORE_OBJECTTREE_H
 
-#include <tuple>
-#include <QVector>
-#include "util/TreePos.h"
-#include "util/LifeLink.h"
-#include "util/NonCopyable.h"
 #include "cmnd/Stack.h"
 #include "cmnd/Vector.h"
-#include "core/ObjectNode.h"
-#include "core/Renderer.h"
-#include "core/Serializer.h"
 #include "core/Deserializer.h"
-#include "core/ResourceEvent.h"
-#include "core/TimeLineEvent.h"
+#include "core/ObjectNode.h"
 #include "core/ProjectEvent.h"
+#include "core/Renderer.h"
+#include "core/ResourceEvent.h"
+#include "core/Serializer.h"
 #include "core/ShaderHolder.h"
 #include "core/TimeCacheLock.h"
-namespace core { class SortAndRenderCall; }
+#include "core/TimeLineEvent.h"
+#include "util/LifeLink.h"
+#include "util/NonCopyable.h"
+#include "util/TreePos.h"
+#include <QVector>
+#include <tuple>
+namespace core {
+class SortAndRenderCall;
+}
 
-namespace core
-{
+namespace core {
 
-class ObjectTree
-        : private util::NonCopyable
-{
+class ObjectTree: private util::NonCopyable {
 public:
     ObjectTree();
     ~ObjectTree();
 
-    util::LifeLink::Pointee<ObjectTree> pointee() { return mLifeLink.pointee<ObjectTree>(this); }
-    util::LifeLink::Pointee<const ObjectTree> constPointee() { return mLifeLink.pointee<const ObjectTree>(this); }
+    util::LifeLink::Pointee<ObjectTree> pointee() {
+        return mLifeLink.pointee<ObjectTree>(this);
+    }
+    util::LifeLink::Pointee<const ObjectTree> constPointee() {
+        return mLifeLink.pointee<const ObjectTree>(this);
+    }
 
-    void grabTopNode(ObjectNode* aNode) { mTopNode.reset(aNode); }
-    ObjectNode* topNode() { return mTopNode.data(); }
-    const ObjectNode* topNode() const { return mTopNode.data(); }
+    void grabTopNode(ObjectNode* aNode) {
+        mTopNode.reset(aNode);
+    }
+    ObjectNode* topNode() {
+        return mTopNode.data();
+    }
+    const ObjectNode* topNode() const {
+        return mTopNode.data();
+    }
 
-    ShaderHolder& shaderHolder() { return mShaderHolder; }
-    const ShaderHolder& shaderHolder() const { return mShaderHolder; }
+    ShaderHolder& shaderHolder() {
+        return mShaderHolder;
+    }
+    const ShaderHolder& shaderHolder() const {
+        return mShaderHolder;
+    }
 
-    TimeCacheLock& timeCacheLock() { return mTimeCacheLock; }
-    const TimeCacheLock& timeCacheLock() const { return mTimeCacheLock; }
+    TimeCacheLock& timeCacheLock() {
+        return mTimeCacheLock;
+    }
+    const TimeCacheLock& timeCacheLock() const {
+        return mTimeCacheLock;
+    }
 
     void render(const RenderInfo& aRenderInfo, bool aUseWorkingCache);
 
     cmnd::Vector createNodeDeleter(ObjectNode& aNode);
-    //cmnd::Vector createNodeMover(const util::TreePos& aFrom, const util::TreePos& aTo);
+    // cmnd::Vector createNodeMover(const util::TreePos& aFrom, const util::TreePos& aTo);
     cmnd::Vector createNodesMover(const QVector<util::TreePos>& aRemoved, const QVector<util::TreePos>& aInserted);
     cmnd::Vector createResourceUpdater(const ResourceEvent& aEvent);
 

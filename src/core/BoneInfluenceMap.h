@@ -1,32 +1,33 @@
 #ifndef CORE_BONEINFLUENCEMAP_H
 #define CORE_BONEINFLUENCEMAP_H
 
-#include <QGL>
-#include <QVector>
-#include <QVector2D>
-#include <QRectF>
-#include <QMatrix4x4>
-#include "util/Segment2D.h"
-#include "util/NonCopyable.h"
-#include "thr/Task.h"
+#include "core/Bone2.h"
 #include "gl/Vector3.h"
 #include "gl/Vector4.h"
 #include "gl/Vector4I.h"
-#include "core/Bone2.h"
-namespace core { class Project; }
-namespace core { class LayerMesh; }
+#include "thr/Task.h"
+#include "util/NonCopyable.h"
+#include "util/Segment2D.h"
+#include <QGL>
+#include <QMatrix4x4>
+#include <QRectF>
+#include <QVector2D>
+#include <QVector>
+namespace core {
+class Project;
+}
+namespace core {
+class LayerMesh;
+}
 
-namespace core
-{
+namespace core {
 
-class BoneInfluenceMap : private util::NonCopyable
-{
+class BoneInfluenceMap: private util::NonCopyable {
 public:
-    typedef GLint   IndicesType;
+    typedef GLint IndicesType;
     typedef GLfloat WeightsType;
 
-    class Accessor
-    {
+    class Accessor {
     public:
         Accessor();
         Accessor(const BoneInfluenceMap& aOwner);
@@ -34,25 +35,23 @@ public:
         const gl::Vector4I* indices1() const;
         const gl::Vector4* weights0() const;
         const gl::Vector4* weights1() const;
+
     private:
         const BoneInfluenceMap* mOwner;
     };
 
-    enum
-    {
-        kBonePerVtxMaxEach = 4,
-        kBonePerVtxMaxAll  = 8
-    };
+    enum { kBonePerVtxMaxEach = 4, kBonePerVtxMaxAll = 8 };
 
     BoneInfluenceMap();
 
     void setMaxBoneCount(int aBoneCount);
     void allocate(int aVertexCount, bool aInitialize = true);
-    int vertexCount() const { return mVertexCount; }
+    int vertexCount() const {
+        return mVertexCount;
+    }
 
     void writeAsync(
-            Project& aProject, const QList<Bone2*>& aTopBones,
-            const QMatrix4x4& aGroupMtx, const LayerMesh& aMesh);
+        Project& aProject, const QList<Bone2*>& aTopBones, const QMatrix4x4& aGroupMtx, const LayerMesh& aMesh);
 
     Accessor accessor() const;
 
@@ -60,8 +59,7 @@ public:
     bool deserialize(Deserializer& aIn);
 
 private:
-    class BoneParam
-    {
+    class BoneParam {
     public:
         BoneParam();
         bool hasParent;
@@ -69,15 +67,14 @@ private:
         BoneShape shape;
     };
 
-    class BoneList
-    {
+    class BoneList {
     public:
-        BoneList() {}
+        BoneList() {
+        }
         QVector<BoneParam> params;
     };
 
-    struct WorkAttribute
-    {
+    struct WorkAttribute {
         int id[kBonePerVtxMaxAll];
         float weight[kBonePerVtxMaxAll];
         short count;
@@ -86,12 +83,12 @@ private:
         void tryPushBoneWeight(int aId, float aWeight);
     };
 
-    class BuildTask : public thr::Task
-    {
+    class BuildTask: public thr::Task {
     public:
         BuildTask(Project& aProject, BoneInfluenceMap& aOwner);
         virtual void run();
         void cancel();
+
     private:
         Project& mProject;
         BoneInfluenceMap& mOwner;

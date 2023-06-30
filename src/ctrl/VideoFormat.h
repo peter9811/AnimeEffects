@@ -1,14 +1,12 @@
 #ifndef CTRL_VIDEOFORMAT_H
 #define CTRL_VIDEOFORMAT_H
 
-#include <QString>
 #include <QList>
+#include <QString>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class VideoCodec
-{
+class VideoCodec {
 public:
     VideoCodec();
     QString name;
@@ -22,8 +20,7 @@ public:
     bool gpuenc;
 };
 
-class VideoFormat
-{
+class VideoFormat {
 public:
     VideoFormat();
     QString name;

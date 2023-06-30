@@ -1,16 +1,9 @@
 #ifndef CTRL_POSEEDITMODE_H
 #define CTRL_POSEEDITMODE_H
 
-namespace ctrl
-{
+namespace ctrl {
 
-enum PoseEditMode
-{
-    PoseEditMode_Move,
-    PoseEditMode_Draw,
-    PoseEditMode_Erase,
-    PoseEditMode_TERM
-};
+enum PoseEditMode { PoseEditMode_Move, PoseEditMode_Draw, PoseEditMode_Erase, PoseEditMode_TERM };
 
 } // namespace ctrl
 

@@ -1,48 +1,33 @@
-#include <QFileInfo>
-#include <QBuffer>
-#include <QApplication>
-#include "util/SelectArgs.h"
+#include "ctrl/Exporter.h"
 #include "gl/Global.h"
 #include "gl/Util.h"
-#include "ctrl/Exporter.h"
+#include "util/SelectArgs.h"
+#include <QApplication>
+#include <QBuffer>
+#include <QFileInfo>
 
-namespace ctrl
-{
+namespace ctrl {
 //-------------------------------------------------------------------------------------------------
-Exporter::Result::Result()
-    : code(ResultCode_TERM)
-{
+Exporter::Result::Result(): code(ResultCode_TERM) {
 }
 
-Exporter::Result::Result(ResultCode aCode, const QString& aMessage)
-    : code(aCode)
-    , message(aMessage)
-{
+Exporter::Result::Result(ResultCode aCode, const QString& aMessage): code(aCode), message(aMessage) {
 }
 
 //-------------------------------------------------------------------------------------------------
-Exporter::CommonParam::CommonParam()
-    : path()
-    , size()
-    , frame()
-    , fps()
-{
+Exporter::CommonParam::CommonParam(): path(), size(), frame(), fps() {
 }
 
-bool Exporter::CommonParam::isValid() const
-{
-    if (frame.diff() < 0)
-    {
+bool Exporter::CommonParam::isValid() const {
+    if (frame.diff() < 0) {
         return false;
     }
 
-    if (fps <= 0)
-    {
+    if (fps <= 0) {
         return false;
     }
 
-    if (size.width() <= 0 || size.height() <= 0)
-    {
+    if (size.width() <= 0 || size.height() <= 0) {
         return false;
     }
 
@@ -50,43 +35,22 @@ bool Exporter::CommonParam::isValid() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Exporter::ImageParam::ImageParam()
-    : name()
-    , suffix("png")
-    , quality(-1)
-{
+Exporter::ImageParam::ImageParam(): name(), suffix("png"), quality(-1) {
 }
 
 //-------------------------------------------------------------------------------------------------
-Exporter::GifParam::GifParam()
-    : optimizePalette()
-    , intermediateBps()
-{
+Exporter::GifParam::GifParam(): optimizePalette(), intermediateBps() {
 }
 
 //-------------------------------------------------------------------------------------------------
-Exporter::VideoParam::VideoParam()
-    : format()
-    , codecIndex(-1)
-    , colorIndex()
-    , bps()
-    , pixfmt()
-{
+Exporter::VideoParam::VideoParam(): format(), codecIndex(-1), colorIndex(), bps(), pixfmt() {
 }
 
 //-------------------------------------------------------------------------------------------------
-Exporter::FFMpeg::FFMpeg()
-    : mProcess()
-    , mFinished()
-    , mErrorOccurred()
-    , mErrorString()
-    , mErrorCode()
-    , mLogs()
-{
+Exporter::FFMpeg::FFMpeg(): mProcess(), mFinished(), mErrorOccurred(), mErrorString(), mErrorCode(), mLogs() {
 }
 
-bool Exporter::FFMpeg::start(const QString& aArgments)
-{
+bool Exporter::FFMpeg::start(const QString& aArgments) {
 #if defined(Q_OS_WIN)
     const QFileInfo localEncoderInfo("./tools/ffmpeg.exe");
     const bool hasLocalEncoder = localEncoderInfo.exists() && localEncoderInfo.isExecutable();
@@ -104,58 +68,50 @@ bool Exporter::FFMpeg::start(const QString& aArgments)
     mProcess->setProcessChannelMode(QProcess::MergedChannels);
 
     auto process = mProcess.data();
-    mProcess->connect(process, &QProcess::readyRead, [=]()
-    {
-        if (this->mProcess)
-        {
+    mProcess->connect(process, &QProcess::readyRead, [=]() {
+        if (this->mProcess) {
             this->mLogs.push_back(QString(this->mProcess->readAll().data()));
-            //qDebug() << QString(process->readAll().data());
+            // qDebug() << QString(process->readAll().data());
         }
     });
 
-    mProcess->connect(process, &QProcess::errorOccurred, [=](QProcess::ProcessError aCode)
-    {
+    mProcess->connect(process, &QProcess::errorOccurred, [=](QProcess::ProcessError aCode) {
         this->mErrorOccurred = true;
         this->mErrorCode = aCode;
-        if (this->mProcess)
-            {
-                this->mErrorString = this->mProcess->errorString();
-            }
+        if (this->mProcess) {
+            this->mErrorString = this->mProcess->errorString();
+        }
     });
-    mProcess->connect(process, util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished), [=](int, QProcess::ExitStatus)
-    {
-        this->mFinished = true;
-    });
+    mProcess->connect(process, util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished),
+        [=](int, QProcess::ExitStatus) { this->mFinished = true; });
 
     // TODO improve the arguments build process
     QStringList arguments;
     arguments = aArgments.split(' ');
     arguments.replaceInStrings("%20", " ");
-    if (arguments.contains("")){
+    if (arguments.contains("")) {
         arguments.removeAt(arguments.indexOf(""));
     }
     qDebug() << "arguments : " << arguments;
     mProcess->start(program, arguments, QIODevice::ReadWrite);
-    //qDebug() << mProcess->readAll().data();
+    // qDebug() << mProcess->readAll().data();
     return !mErrorOccurred;
 }
 
-void Exporter::FFMpeg::write(const QByteArray& aBytes)
-{
+void Exporter::FFMpeg::write(const QByteArray& aBytes) {
     XC_ASSERT(mProcess);
     mProcess->write(aBytes);
 }
 
-bool Exporter::FFMpeg::finish(const std::function<bool()>& aWaiter)
-{
+bool Exporter::FFMpeg::finish(const std::function<bool()>& aWaiter) {
     static const int kMSec = 100;
     XC_ASSERT(mProcess);
 
     mProcess->closeWriteChannel();
 
-    while (!mProcess->waitForFinished(kMSec))
-    {
-        if (!aWaiter() || mFinished || mErrorOccurred) break;
+    while (!mProcess->waitForFinished(kMSec)) {
+        if (!aWaiter() || mFinished || mErrorOccurred)
+            break;
     }
 
     auto exitStatus = mProcess->exitStatus();
@@ -166,50 +122,29 @@ bool Exporter::FFMpeg::finish(const std::function<bool()>& aWaiter)
     return (exitStatus == QProcess::NormalExit);
 }
 
-bool Exporter::FFMpeg::execute(const QString& aArgments,
-                               const std::function<bool()>& aWaiter)
-{
-    if (!start(aArgments)) return false;
-    if (!finish(aWaiter)) return false;
+bool Exporter::FFMpeg::execute(const QString& aArgments, const std::function<bool()>& aWaiter) {
+    if (!start(aArgments))
+        return false;
+    if (!finish(aWaiter))
+        return false;
     return true;
 }
 
-QString Exporter::FFMpeg::popLog()
-{
+QString Exporter::FFMpeg::popLog() {
     QString log = mLogs.join("");
     mLogs.clear();
     return log;
 }
 
 //-------------------------------------------------------------------------------------------------
-Exporter::Exporter(core::Project& aProject)
-    : mProject(aProject)
-    , mFramebuffers()
-    , mClippingFrame()
-    , mDestinationTexturizer()
-    , mTextureDrawer()
-    , mOriginTimeInfo()
-    , mOverwriteConfirmer()
-    , mOverwriteConfirmation()
-    , mProgressReporter()
-    , mUILogger()
-    , mCommonParam()
-    , mImageParam()
-    , mVideoInCodec()
-    , mVideoInCodecQuality()
-    , mVideoExporting()
-    , mFFMpeg()
-    , mExporting(false)
-    , mIndex(0)
-    , mDigitCount(0)
-    , mProgress(0.0f)
-    , mLog()
-    , mIsCanceled()
-{
+Exporter::Exporter(core::Project& aProject):
+    mProject(aProject), mFramebuffers(), mClippingFrame(), mDestinationTexturizer(), mTextureDrawer(),
+    mOriginTimeInfo(), mOverwriteConfirmer(), mOverwriteConfirmation(), mProgressReporter(), mUILogger(),
+    mCommonParam(), mImageParam(), mVideoInCodec(), mVideoInCodecQuality(), mVideoExporting(), mFFMpeg(),
+    mExporting(false), mIndex(0), mDigitCount(0), mProgress(0.0f), mLog(), mIsCanceled() {
 }
 
-Exporter::~Exporter()
-{
+Exporter::~Exporter() {
     finish();
 
     // kill buffer
@@ -217,34 +152,28 @@ Exporter::~Exporter()
     destroyFramebuffers();
 }
 
-void Exporter::setOverwriteConfirmer(const OverwriteConfirmer& aConfirmer)
-{
+void Exporter::setOverwriteConfirmer(const OverwriteConfirmer& aConfirmer) {
     mOverwriteConfirmer = aConfirmer;
 }
 
-void Exporter::setProgressReporter(util::IProgressReporter& aReporter)
-{
+void Exporter::setProgressReporter(util::IProgressReporter& aReporter) {
     mProgressReporter = &aReporter;
 }
 
-void Exporter::setUILogger(UILogger& aLogger)
-{
+void Exporter::setUILogger(UILogger& aLogger) {
     mUILogger = &aLogger;
 }
 
-Exporter::Result Exporter::execute(const CommonParam& aCommon, const ImageParam& aImage)
-{
+Exporter::Result Exporter::execute(const CommonParam& aCommon, const ImageParam& aImage) {
     // check param
-    if (!aCommon.isValid())
-    {
+    if (!aCommon.isValid()) {
         mLog = "Invalid common parameters.";
         return Result(ResultCode_InvalidOperation, mLog);
     }
 
     // check directory
     QFileInfo path(aCommon.path);
-    if (!path.exists() || !path.isDir())
-    {
+    if (!path.exists() || !path.isDir()) {
         mLog = "Invalid directory path.";
         return Result(ResultCode_InvalidOperation, mLog);
     }
@@ -260,8 +189,7 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const ImageParam&
     return execute();
 }
 
-Exporter::Result Exporter::execute(const CommonParam& aCommon, const GifParam& aGif)
-{
+Exporter::Result Exporter::execute(const CommonParam& aCommon, const GifParam& aGif) {
     const QString outFile = QFileInfo(aCommon.path).absoluteFilePath();
     const QString workFile = outFile + "videocache.mp4";
     const QString palette = outFile + "palettecache.png";
@@ -269,34 +197,30 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const GifParam& a
     CommonParam commonParam = aCommon;
     VideoParam videoParam;
 
-    if (aGif.optimizePalette)
-    {
+    if (aGif.optimizePalette) {
         commonParam.path = workFile;
         videoParam.bps = aGif.intermediateBps;
-    }
-    else
-    {
+    } else {
         videoParam.bps = 0;
     }
 
     {
         auto result = execute(commonParam, videoParam);
-        if (!result) return result;
+        if (!result)
+            return result;
     }
 
-    if (aGif.optimizePalette)
-    {
+    if (aGif.optimizePalette) {
 
-        auto waiter = [=]()->bool { return true; };
-        if (mFFMpeg.execute(" -i " + workFile + " -vf palettegen -y " + palette, waiter)){
+        auto waiter = [=]() -> bool { return true; };
+        if (mFFMpeg.execute(" -i " + workFile + " -vf palettegen -y " + palette, waiter)) {
             mFFMpeg.execute(" -i " + workFile + " -i " + palette + " -lavfi paletteuse -y " + outFile, waiter);
         }
 
         QFile::remove(workFile);
         QFile::remove(palette);
 
-        if (mFFMpeg.errorOccurred())
-        {
+        if (mFFMpeg.errorOccurred()) {
             mLog = "FFmpeg error occurred.\n" + mFFMpeg.errorString();
             return Result(ResultCode_FFMpegError, mLog);
         }
@@ -304,11 +228,9 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const GifParam& a
     return Result(ResultCode_Success, "Success.");
 }
 
-Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam& aVideo)
-{
+Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam& aVideo) {
     // check param
-    if (!aCommon.isValid())
-    {
+    if (!aCommon.isValid()) {
         mLog = "Invalid common parameters.";
         return Result(ResultCode_InvalidOperation, mLog);
     }
@@ -316,8 +238,7 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam&
     // check file overwriting
     mOverwriteConfirmation = false;
     QFileInfo filePath(aCommon.path);
-    if (!checkOverwriting(filePath))
-    {
+    if (!checkOverwriting(filePath)) {
         mLog = "Exporting was canceled.";
         mIsCanceled = true;
         return Result(ResultCode_Canceled, mLog);
@@ -363,48 +284,33 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam&
         QString outPath = filePath.absoluteFilePath();
 
         VideoCodec videoCodec;
-        if (aVideo.codecIndex != -1)
-        {
+        if (aVideo.codecIndex != -1) {
             videoCodec = aVideo.format.codecs.at(aVideo.codecIndex);
-        }
-        else
-        {
+        } else {
             videoCodec.icodec = aVideo.format.icodec;
         }
         auto colorIndex = videoCodec.colorspace ? aVideo.colorIndex : 0;
 
         mVideoInCodecQuality = -1;
-        if (videoCodec.icodec == "png")
-        {
+        if (videoCodec.icodec == "png") {
             mVideoInCodec = "PNG";
             mVideoInCodecQuality = 90;
-        }
-        else if (videoCodec.icodec == "ppm")
-        {
+        } else if (videoCodec.icodec == "ppm") {
             mVideoInCodec = "PPM";
-        }
-        else if (videoCodec.icodec == "jpg")
-        {
+        } else if (videoCodec.icodec == "jpg") {
             mVideoInCodec = "JPG";
-        }
-        else if (videoCodec.icodec == "jpeg")
-        {
+        } else if (videoCodec.icodec == "jpeg") {
             mVideoInCodec = "JPEG";
-        }
-        else if (videoCodec.icodec == "bmp")
-        {
+        } else if (videoCodec.icodec == "bmp") {
             mVideoInCodec = "BMP";
-        }
-        else
-        {
+        } else {
             videoCodec.icodec = "png";
             mVideoInCodec = "PNG";
             mVideoInCodecQuality = 90;
         }
 
         // qDebug() << "videoCodec : " << videoCodec.command;
-        if (videoCodec.command.isEmpty())
-        {
+        if (videoCodec.command.isEmpty()) {
             videoCodec.command = "-y -f image2pipe -framerate $ifps -i - -b:v $obps -r $ofps $opath";
         }
 
@@ -415,18 +321,18 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam&
         videoCodec.command.replace(QRegExp("\\$ocodec(\\s|$)"), videoCodec.name + "\\1");
         videoCodec.command.replace(QRegExp("\\$opath(\\s|$)"), outPath.replace(" ", "%20"));
         videoCodec.command.replace(QRegExp("\\$pixfmt(\\s|$)"), aVideo.pixfmt + "\\1");
-        videoCodec.command.replace(QRegExp("\\$arg_colorfilter(\\s|$)"), (colorIndex == 0 ? QString("-vf colormatrix=bt601:bt709") : QString("")) + "\\1");
-        videoCodec.command.replace(QRegExp("\\$arg_colorspace(\\s|$)"), QString("-colorspace ") + (colorIndex == 0 ? QString("bt709") : QString("smpte170m")) + "\\1");
+        videoCodec.command.replace(QRegExp("\\$arg_colorfilter(\\s|$)"),
+            (colorIndex == 0 ? QString("-vf colormatrix=bt601:bt709") : QString("")) + "\\1");
+        videoCodec.command.replace(QRegExp("\\$arg_colorspace(\\s|$)"),
+            QString("-colorspace ") + (colorIndex == 0 ? QString("bt709") : QString("smpte170m")) + "\\1");
         // videoCodec.command.replace("\\", "");
 
         // qDebug() << videoCodec.command;
 
-        if (!mFFMpeg.start(videoCodec.command))
-        {
+        if (!mFFMpeg.start(videoCodec.command)) {
             mLog = "FFmpeg error occurred.\n" + mFFMpeg.errorString();
-            return mFFMpeg.errorCode() == QProcess::FailedToStart ?
-                        Result(ResultCode_FFMpegFailedToStart, mLog) :
-                        Result(ResultCode_FFMpegError, mLog);
+            return mFFMpeg.errorCode() == QProcess::FailedToStart ? Result(ResultCode_FFMpegFailedToStart, mLog)
+                                                                  : Result(ResultCode_FFMpegError, mLog);
         }
     }
 #endif
@@ -434,10 +340,8 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam&
     return execute();
 }
 
-Exporter::Result Exporter::execute()
-{
-    if (mProgressReporter)
-    {
+Exporter::Result Exporter::execute() {
+    if (mProgressReporter) {
         mProgressReporter->setSection("Exporting...");
         mProgressReporter->setMaximum(100);
     }
@@ -445,22 +349,20 @@ Exporter::Result Exporter::execute()
     // start
     {
         auto result = start();
-        if (!result) return result;
+        if (!result)
+            return result;
     }
 
-    while (1)
-    {
-        if (!update()) break;
+    while (1) {
+        if (!update())
+            break;
 
-        if (mProgressReporter)
-        {
+        if (mProgressReporter) {
             mProgressReporter->setProgress((int)(100 * mProgress));
             QString sectionName = "";
-            if (98.5f <= (float)100*mProgress){
+            if (98.5f <= (float)100 * mProgress) {
                 sectionName = QCoreApplication::translate("Exporter", "Finishing up");
-            }
-            else
-            {
+            } else {
                 sectionName = QCoreApplication::translate("Exporter", "Rendering");
             }
 
@@ -468,15 +370,13 @@ Exporter::Result Exporter::execute()
             sectionName += QStringLiteral(".").repeated(qFloor(mTick / tickRate) + 1);
 
             mTick += 1;
-            if (mTick >= 3 * tickRate)
-            {
+            if (mTick >= 3 * tickRate) {
                 mTick = 0;
             }
 
             mProgressReporter->setSection(sectionName);
 
-            if (mProgressReporter->wasCanceled())
-            {
+            if (mProgressReporter->wasCanceled()) {
                 finish();
                 mLog = "Export was canceled.";
                 mIsCanceled = true;
@@ -485,34 +385,27 @@ Exporter::Result Exporter::execute()
         }
     }
 
-    if (mFFMpeg.errorOccurred())
-    {
+    if (mFFMpeg.errorOccurred()) {
         mLog = "FFmpeg error occurred.\n" + mFFMpeg.errorString();
-        return mFFMpeg.errorCode() == QProcess::FailedToStart ?
-                    Result(ResultCode_FFMpegFailedToStart, mLog) :
-                    Result(ResultCode_FFMpegError, mLog);
+        return mFFMpeg.errorCode() == QProcess::FailedToStart ? Result(ResultCode_FFMpegFailedToStart, mLog)
+                                                              : Result(ResultCode_FFMpegError, mLog);
     }
 
     return finish();
 }
 
-Exporter::Result Exporter::start()
-{
+Exporter::Result Exporter::start() {
     // reset value
     mIndex = 0;
     mProgress = 0.0f;
-    mDigitCount = getDigitCount(
-                mCommonParam.frame,
-                mCommonParam.fps,
-                mOriginTimeInfo.fps);
+    mDigitCount = getDigitCount(mCommonParam.frame, mCommonParam.fps, mOriginTimeInfo.fps);
 
     // initialize graphics
     {
         gl::Global::makeCurrent();
 
         // texture drawer
-        if (!mTextureDrawer.init())
-        {
+        if (!mTextureDrawer.init()) {
             mLog = "Failed to initialize TextureDrawer";
             Result(ResultCode_UnclassfiedError, mLog);
         }
@@ -533,8 +426,7 @@ Exporter::Result Exporter::start()
     return Result(ResultCode_Success, "Success.");
 }
 
-bool Exporter::updateTime(core::TimeInfo& aDst)
-{
+bool Exporter::updateTime(core::TimeInfo& aDst) {
     aDst = mOriginTimeInfo;
 
     const int range = mCommonParam.frame.diff() + 1;
@@ -542,12 +434,10 @@ bool Exporter::updateTime(core::TimeInfo& aDst)
     const double frame = mCommonParam.frame.min() + current;
 
     // end of export
-    if (0 < mIndex && mCommonParam.frame.max() < frame)
-    {
+    if (0 < mIndex && mCommonParam.frame.max() < frame) {
         return false;
     }
-    if (mOriginTimeInfo.frameMax < (int)frame)
-    {
+    if (mOriginTimeInfo.frameMax < (int)frame) {
         return false;
     }
 
@@ -560,10 +450,8 @@ bool Exporter::updateTime(core::TimeInfo& aDst)
     return true;
 }
 
-bool Exporter::update()
-{
-    if (!mExporting)
-    {
+bool Exporter::update() {
+    if (!mExporting) {
         return false;
     }
 
@@ -571,8 +459,7 @@ bool Exporter::update()
 
     // setup parameter
     core::TimeInfo timeInfo;
-    if (!updateTime(timeInfo))
-    {
+    if (!updateTime(timeInfo)) {
         return false;
     }
 
@@ -589,8 +476,7 @@ bool Exporter::update()
     mDestinationTexturizer->clearTexture();
 
     // bind framebuffer
-    if (!mFramebuffers.front()->bind())
-    {
+    if (!mFramebuffers.front()->bind()) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to bind framebuffer.", "");
     }
 
@@ -615,18 +501,15 @@ bool Exporter::update()
     mProject.objectTree().render(renderInfo, true);
 
     // unbind framebuffer
-    if (!mFramebuffers.front()->release())
-    {
+    if (!mFramebuffers.front()->release()) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to bind framebuffer.", "");
     }
 
     // scaling
     {
         QOpenGLFramebufferObject* prev = nullptr;
-        for (auto& fbo : mFramebuffers)
-        {
-            if (prev)
-            {
+        for (auto& fbo : mFramebuffers) {
+            if (prev) {
                 fbo->bind();
 
                 const QSize size = fbo->size();
@@ -652,8 +535,7 @@ bool Exporter::update()
         updateLog();
 
         // export
-        if (!exportImage(outImage, currentIndex))
-        {
+        if (!exportImage(outImage, currentIndex)) {
             return false;
         }
     }
@@ -661,58 +543,47 @@ bool Exporter::update()
     return true;
 }
 
-bool Exporter::exportImage(const QImage& aFboImage, int aIndex)
-{
+bool Exporter::exportImage(const QImage& aFboImage, int aIndex) {
     // decide file path
     QFileInfo filePath;
-    if (!decideImagePath(aIndex, filePath))
-    {
+    if (!decideImagePath(aIndex, filePath)) {
         return false;
     }
 
-    if (mVideoExporting)
-    {
+    if (mVideoExporting) {
         QByteArray byteArray;
         QBuffer buffer(&byteArray);
         buffer.open(QIODevice::ReadWrite);
         aFboImage.save(&buffer, mVideoInCodec, mVideoInCodecQuality);
-        //aFboImage.save(&buffer, "PPM");
+        // aFboImage.save(&buffer, "PPM");
         buffer.close();
         mFFMpeg.write(byteArray);
 
-        if (mFFMpeg.errorOccurred())
-        {
+        if (mFFMpeg.errorOccurred()) {
             mLog = "FFmpeg error occurred.\n" + mFFMpeg.errorString();
             return false;
         }
-    }
-    else
-    {
-        //QImage image(aFboImage.constBits(), aFboImage.width(),
-        //             aFboImage.height(), QImage::Format_ARGB32);
-        //image.save(aFilePath);
+    } else {
+        // QImage image(aFboImage.constBits(), aFboImage.width(),
+        //              aFboImage.height(), QImage::Format_ARGB32);
+        // image.save(aFilePath);
         aFboImage.save(filePath.filePath(), Q_NULLPTR, mImageParam.quality);
     }
 
     return true;
 }
 
-Exporter::Result Exporter::finish()
-{
+Exporter::Result Exporter::finish() {
     Result result(ResultCode_Success, "Success.");
 
-    if (mExporting)
-    {
-        if (mVideoExporting)
-        {
-            auto success = mFFMpeg.finish([=]()->bool
-            {
+    if (mExporting) {
+        if (mVideoExporting) {
+            auto success = mFFMpeg.finish([=]() -> bool {
                 // update log if necessary
                 this->updateLog();
                 return true;
             });
-            if (!success)
-            {
+            if (!success) {
                 mLog = "FFmpeg error occurred.\n" + mFFMpeg.errorString();
                 result = Result(ResultCode_FFMpegError, mLog);
             }
@@ -723,58 +594,45 @@ Exporter::Result Exporter::finish()
     return result;
 }
 
-void Exporter::destroyFramebuffers()
-{
-    for (auto& fbo : mFramebuffers)
-    {
+void Exporter::destroyFramebuffers() {
+    for (auto& fbo : mFramebuffers) {
         fbo.reset();
     }
 }
 
-void Exporter::createFramebuffers(const QSize& aOriginSize, const QSize& aExportSize)
-{
+void Exporter::createFramebuffers(const QSize& aOriginSize, const QSize& aExportSize) {
     destroyFramebuffers();
 
-    mFramebuffers.emplace_back(
-                FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize)));
+    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize)));
 
     // setup buffers for scaling
-    if (aOriginSize != aExportSize)
-    {
+    if (aOriginSize != aExportSize) {
         static const int kMaxCount = 3;
         QSize size = aOriginSize;
 
-        for (int i = 0; i < kMaxCount; ++i)
-        {
+        for (int i = 0; i < kMaxCount; ++i) {
             const double scaleX = aExportSize.width() / (double)size.width();
             const double scaleY = aExportSize.height() / (double)size.height();
             const double scaleMax = std::max(scaleX, scaleY);
 
-            if (scaleMax >= 0.5 || i == kMaxCount - 1)
-            {
-                mFramebuffers.emplace_back(
-                            FramebufferPtr(new QOpenGLFramebufferObject(aExportSize)));
+            if (scaleMax >= 0.5 || i == kMaxCount - 1) {
+                mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aExportSize)));
                 break;
-            }
-            else
-            {
+            } else {
                 size.setWidth((int)(size.width() * 0.5));
                 size.setHeight((int)(size.height() * 0.5));
-                mFramebuffers.emplace_back(
-                            FramebufferPtr(new QOpenGLFramebufferObject(size)));
+                mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(size)));
             }
         }
     }
 
     // setup texture
-    for (auto& fbo : mFramebuffers)
-    {
+    for (auto& fbo : mFramebuffers) {
         setTextureParam(*fbo);
     }
 }
 
-void Exporter::setTextureParam(QOpenGLFramebufferObject& aFbo)
-{
+void Exporter::setTextureParam(QOpenGLFramebufferObject& aFbo) {
     auto id = aFbo.texture();
     gl::Global::Functions& ggl = gl::Global::functions();
     ggl.glBindTexture(GL_TEXTURE_2D, id);
@@ -785,15 +643,12 @@ void Exporter::setTextureParam(QOpenGLFramebufferObject& aFbo)
     ggl.glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-bool Exporter::decideImagePath(int aIndex, QFileInfo& aPath)
-{
+bool Exporter::decideImagePath(int aIndex, QFileInfo& aPath) {
     const QString number = QString("%1").arg(aIndex, mDigitCount, 10, QChar('0'));
-    QFileInfo filePath(mCommonParam.path + "/" + mImageParam.name +
-                       number + "." + mImageParam.suffix);
+    QFileInfo filePath(mCommonParam.path + "/" + mImageParam.name + number + "." + mImageParam.suffix);
 
     // check overwrite
-    if (!checkOverwriting(filePath))
-    {
+    if (!checkOverwriting(filePath)) {
         return false;
     }
 
@@ -801,15 +656,10 @@ bool Exporter::decideImagePath(int aIndex, QFileInfo& aPath)
     return true;
 }
 
-bool Exporter::checkOverwriting(const QFileInfo& aPath)
-{
+bool Exporter::checkOverwriting(const QFileInfo& aPath) {
     // check overwrite
-    if (!mOverwriteConfirmation && aPath.exists())
-    {
-        if (aPath.isDir() ||
-                !mOverwriteConfirmer ||
-                !mOverwriteConfirmer(aPath.filePath()))
-        {
+    if (!mOverwriteConfirmation && aPath.exists()) {
+        if (aPath.isDir() || !mOverwriteConfirmer || !mOverwriteConfirmer(aPath.filePath())) {
             return false;
         }
         mOverwriteConfirmation = true;
@@ -817,21 +667,18 @@ bool Exporter::checkOverwriting(const QFileInfo& aPath)
     return true;
 }
 
-int Exporter::getDigitCount(const util::Range& aRange, int aFps, int aFpsOrigin)
-{
+int Exporter::getDigitCount(const util::Range& aRange, int aFps, int aFpsOrigin) {
     int digitCount = 1;
     double count = (aFps * (aRange.diff() + 1)) / (double)aFpsOrigin;
-    for (; count >= 10.0; count *= 0.1) ++digitCount;
+    for (; count >= 10.0; count *= 0.1)
+        ++digitCount;
     return std::max(digitCount, 4);
 }
 
-void Exporter::updateLog()
-{
-    if (mUILogger && mVideoExporting)
-    {
+void Exporter::updateLog() {
+    if (mUILogger && mVideoExporting) {
         auto log = mFFMpeg.popLog();
-        if (!log.isEmpty())
-        {
+        if (!log.isEmpty()) {
             mUILogger->pushLog(log, ctrl::UILogType_Info);
         }
     }

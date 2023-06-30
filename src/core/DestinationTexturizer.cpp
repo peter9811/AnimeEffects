@@ -1,28 +1,21 @@
+#include "core/DestinationTexturizer.h"
 #include "gl/Global.h"
 #include "gl/Util.h"
-#include "core/DestinationTexturizer.h"
 
-namespace
-{
+namespace {
 static const int kAttachmentId = 0;
 }
 
-namespace core
-{
+namespace core {
 
-DestinationTexturizer::DestinationTexturizer()
-    : mFramebuffer()
-    , mTexture()
-    , mShader()
-{
+DestinationTexturizer::DestinationTexturizer(): mFramebuffer(), mTexture(), mShader() {
     mFramebuffer.reset(new gl::Framebuffer());
     mTexture.reset(new gl::Texture());
 
     createShader();
 }
 
-void DestinationTexturizer::resize(const QSize& aSize)
-{
+void DestinationTexturizer::resize(const QSize& aSize) {
     mTexture->destroy();
     mFramebuffer.reset();
 
@@ -39,8 +32,7 @@ void DestinationTexturizer::resize(const QSize& aSize)
     XC_ASSERT(mFramebuffer->isComplete());
 }
 
-void DestinationTexturizer::clearTexture()
-{
+void DestinationTexturizer::clearTexture() {
     XC_ASSERT(mTexture->size().isValid());
 
     auto& ggl = gl::Global::functions();
@@ -48,7 +40,7 @@ void DestinationTexturizer::clearTexture()
     mFramebuffer->bind();
 
     // setup drawbuffers
-    const GLenum attachments[] = { GL_COLOR_ATTACHMENT0 };
+    const GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
     ggl.glDrawBuffers(1, attachments);
 
     gl::Util::resetRenderState();
@@ -61,10 +53,8 @@ void DestinationTexturizer::clearTexture()
     GL_CHECK_ERROR();
 }
 
-void DestinationTexturizer::update(
-        GLuint aFramebuffer, GLuint aFrameTexture, const QMatrix4x4& aViewMatrix,
-        LayerMesh& aMesh, gl::BufferObject& aPositions)
-{
+void DestinationTexturizer::update(GLuint aFramebuffer, GLuint aFrameTexture, const QMatrix4x4& aViewMatrix,
+    LayerMesh& aMesh, gl::BufferObject& aPositions) {
     XC_ASSERT(mTexture->size().isValid());
 
     auto& ggl = gl::Global::functions();
@@ -73,7 +63,7 @@ void DestinationTexturizer::update(
     mFramebuffer->bind();
 
     // setup drawbuffers
-    const GLenum attachments[] = { GL_COLOR_ATTACHMENT0 };
+    const GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
     ggl.glDrawBuffers(1, attachments);
 
     // bind textures
@@ -89,10 +79,7 @@ void DestinationTexturizer::update(
         mShader.setUniformValue("uScreenSize", QSizeF(mTexture->size()));
         mShader.setUniformValue("uDestTexture", 0);
 
-        gl::Util::drawElements(
-                    aMesh.primitiveMode(),
-                    GL_UNSIGNED_INT,
-                    aMesh.getIndexBuffer());
+        gl::Util::drawElements(aMesh.primitiveMode(), GL_UNSIGNED_INT, aMesh.getIndexBuffer());
 
         mShader.release();
     }
@@ -108,38 +95,27 @@ void DestinationTexturizer::update(
     ggl.glFlush();
 }
 
-void DestinationTexturizer::createShader()
-{
+void DestinationTexturizer::createShader() {
     auto shader = &mShader;
 
     gl::ExtendShader source;
-    if (!source.openFromFileVert("./data/shader/PartialScreenCopyingVert.glsl"))
-    {
-        XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.",
-                       source.log());
+    if (!source.openFromFileVert("./data/shader/PartialScreenCopyingVert.glsl")) {
+        XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.", source.log());
     }
-    if (!source.openFromFileFrag("./data/shader/PartialScreenCopyingFrag.glsl"))
-    {
-        XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.",
-                       source.log());
+    if (!source.openFromFileFrag("./data/shader/PartialScreenCopyingFrag.glsl")) {
+        XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.", source.log());
     }
 
-    if (!source.resolveVariation())
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to resolve shader variation.",
-                       source.log());
+    if (!source.resolveVariation()) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to resolve shader variation.", source.log());
     }
 
-    if (!shader->setAllSource(source))
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to compile shader.",
-                       shader->log());
+    if (!shader->setAllSource(source)) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to compile shader.", shader->log());
     }
 
-    if (!shader->link())
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.",
-                       shader->log());
+    if (!shader->link()) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.", shader->log());
     }
 }
 

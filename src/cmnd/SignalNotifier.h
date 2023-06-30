@@ -1,38 +1,31 @@
 #ifndef CMND_SIGNALNOTIFIER
 #define CMND_SIGNALNOTIFIER
 
-#include "util/Signaler.h"
 #include "cmnd/Listener.h"
+#include "util/Signaler.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
-class SignalNotifier : public Listener
-{
+class SignalNotifier: public Listener {
     util::Signaler<void()>& mSignaler;
+
 public:
-    SignalNotifier(util::Signaler<void()>& aSignaler)
-        : mSignaler(aSignaler)
-    {
+    SignalNotifier(util::Signaler<void()>& aSignaler): mSignaler(aSignaler) {
     }
 
-    virtual void onExecuted()
-    {
+    virtual void onExecuted() {
         mSignaler();
     }
 
-    virtual void onUndone()
-    {
+    virtual void onUndone() {
         mSignaler();
     }
 
-    virtual void onRedone()
-    {
+    virtual void onRedone() {
         mSignaler();
     }
 };
 
-}
+} // namespace cmnd
 
 #endif // CMND_SIGNALNOTIFIER
-

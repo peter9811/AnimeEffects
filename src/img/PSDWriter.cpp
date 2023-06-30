@@ -1,56 +1,51 @@
-#include "XC.h"
 #include "img/PSDWriter.h"
+#include "XC.h"
 #include "img/PSDUtil.h"
 
 #define PSDWRITER_CHECK_VALIDVALUE(cond, value, section) \
-    do { if (!(cond)) { mSection = section; mValue = std::to_string(value); mResultCode = ResultCode_InvalidValue; return false; } } while(0)
+    do { \
+        if (!(cond)) { \
+            mSection = section; \
+            mValue = std::to_string(value); \
+            mResultCode = ResultCode_InvalidValue; \
+            return false; \
+        } \
+    } while (0)
 
 #define PSDWRITER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 //#define PSDWRITER_DUMP(...)
 
-namespace img
-{
+namespace img {
 
-PSDWriter::PSDWriter(std::ostream& aOut, const PSDFormat& aFormat)
-    : mOut(aOut)
-    , mFormat(aFormat)
-    , mResultCode(ResultCode_TERM)
-    , mSection()
-    , mValue()
-{
-    if (mOut.fail())
-    {
+PSDWriter::PSDWriter(std::ostream& aOut, const PSDFormat& aFormat):
+    mOut(aOut), mFormat(aFormat), mResultCode(ResultCode_TERM), mSection(), mValue() {
+    if (mOut.fail()) {
         mSection = "output stream";
         mResultCode = ResultCode_InvalidFileHandle;
         return;
     }
 
-    if (!writeHeader())
-    {
+    if (!writeHeader()) {
         return;
     }
     PSDWRITER_DUMP("wrote header. tell: %d", (int)mOut.tellp());
 
-    if (!writeColorModeData())
-    {
+    if (!writeColorModeData()) {
         return;
     }
     PSDWRITER_DUMP("wrote color mode data. tell: %d", (int)mOut.tellp());
 
-    if (!writeImageResources())
-    {
+    if (!writeImageResources()) {
         return;
     }
     PSDWRITER_DUMP("wrote image resources. tell: %d", (int)mOut.tellp());
 
-    if (!writeLayerAndMaskInfo())
-    {
+    if (!writeLayerAndMaskInfo()) {
         return;
     }
     PSDWRITER_DUMP("wrote layer and mask info. tell: %d", (int)mOut.tellp());
 
-    if (!writeImageData())
-    {
+    if (!writeImageData()) {
         return;
     }
     PSDWRITER_DUMP("wrote image data. tell: %d", (int)mOut.tellp());
@@ -59,8 +54,7 @@ PSDWriter::PSDWriter(std::ostream& aOut, const PSDFormat& aFormat)
     mResultCode = ResultCode_Success;
 }
 
-bool PSDWriter::writeHeader()
-{
+bool PSDWriter::writeHeader() {
     mSection = "header";
 
     // signature
@@ -83,8 +77,7 @@ bool PSDWriter::writeHeader()
     return !checkFailure();
 }
 
-bool PSDWriter::writeColorModeData()
-{
+bool PSDWriter::writeColorModeData() {
     mSection = "color mode data";
 
     // length
@@ -93,8 +86,7 @@ bool PSDWriter::writeColorModeData()
     return !checkFailure();
 }
 
-bool PSDWriter::writeImageResources()
-{
+bool PSDWriter::writeImageResources() {
     mSection = "image resources";
 
     // keep position of the 'length'
@@ -102,24 +94,21 @@ bool PSDWriter::writeImageResources()
     write((uint32)0);
 
     // image resource blocks
-    for (const PSDFormat::ImageResourceBlockPtr& block : mFormat.imageResources().blocks)
-    {
+    for (const PSDFormat::ImageResourceBlockPtr& block : mFormat.imageResources().blocks) {
         // signature
         write((uint8*)"8BIM", 4);
         // id
         write(block->id);
         // name
-        if (!block->name.empty())
-        {
+        if (!block->name.empty()) {
             const int nameLength = static_cast<int>(block->name.size());
             PSDWRITER_CHECK_VALIDVALUE(nameLength <= 255, block->name.size(), "image resource block/name");
             write((uint8)nameLength);
             write((uint8*)block->name.c_str(), nameLength);
             // padding
-            if ((nameLength + 1) % 2) writeZero(1);
-        }
-        else
-        {
+            if ((nameLength + 1) % 2)
+                writeZero(1);
+        } else {
             writeZero(2);
         }
 
@@ -128,7 +117,8 @@ bool PSDWriter::writeImageResources()
         // data
         write(block->data.get(), block->dataLength);
         // padding
-        if (block->dataLength % 2) writeZero(1);
+        if (block->dataLength % 2)
+            writeZero(1);
     }
 
     // write the 'length'
@@ -137,8 +127,7 @@ bool PSDWriter::writeImageResources()
     return !checkFailure();
 }
 
-bool PSDWriter::writeLayerAndMaskInfo()
-{
+bool PSDWriter::writeLayerAndMaskInfo() {
     mSection = "layer and mask info";
 
     const PSDFormat::LayerAndMaskInfo& form = mFormat.layerAndMaskInfo();
@@ -148,22 +137,19 @@ bool PSDWriter::writeLayerAndMaskInfo()
     write((uint32)0);
 
     // check empty
-    if (form.layers.empty() && !(bool)form.globalLayerMaskInfo && form.additionalLayerInfos.empty())
-    {
+    if (form.layers.empty() && !(bool)form.globalLayerMaskInfo && form.additionalLayerInfos.empty()) {
         return !checkFailure();
     }
 
     // layer info
-    if (!writeLayerInfo())
-    {
+    if (!writeLayerInfo()) {
         return false;
     }
 
     PSDWRITER_DUMP("global layer mask info : tell %d", (int)mOut.tellp());
 
     // global layer mask info
-    if (form.globalLayerMaskInfo)
-    {
+    if (form.globalLayerMaskInfo) {
         write((uint32)(13 + form.globalLayerMaskInfo->fillerCount));
         write(form.globalLayerMaskInfo->overlayColorSpace);
         write(form.globalLayerMaskInfo->colorComponent[0]);
@@ -172,24 +158,24 @@ bool PSDWriter::writeLayerAndMaskInfo()
         write(form.globalLayerMaskInfo->kind);
         writeZero(form.globalLayerMaskInfo->fillerCount);
 
-        if (checkFailure()) return false;
-    }
-    else
-    {
+        if (checkFailure())
+            return false;
+    } else {
         write((uint32)0);
     }
 
     // additional layer info
-    for (const PSDFormat::AdditionalLayerInfoPtr& addiInfo : form.additionalLayerInfos)
-    {
+    for (const PSDFormat::AdditionalLayerInfoPtr& addiInfo : form.additionalLayerInfos) {
         const bool isOddLength = (addiInfo->dataLength % 2 != 0);
         write((const uint8*)"8BIM", 4);
         write((const uint8*)addiInfo->key.c_str(), 4);
         write(addiInfo->dataLength + (uint32)(isOddLength ? 1u : 0u));
         write(addiInfo->data.get(), addiInfo->dataLength);
-        if (isOddLength) writeZero(1);
+        if (isOddLength)
+            writeZero(1);
 
-        if (checkFailure()) return false;
+        if (checkFailure())
+            return false;
     }
 
     // write the 'length'
@@ -198,8 +184,7 @@ bool PSDWriter::writeLayerAndMaskInfo()
     return !checkFailure();
 }
 
-bool PSDWriter::writeLayerInfo()
-{
+bool PSDWriter::writeLayerInfo() {
     const PSDFormat::LayerAndMaskInfo& form = mFormat.layerAndMaskInfo();
 
     // keep position of the 'layer info length'
@@ -208,110 +193,102 @@ bool PSDWriter::writeLayerInfo()
 
     // layer count
     sint16 layerCount = (sint16)form.layers.size();
-    if (mFormat.imageData().hasTransparency)
-    {
+    if (mFormat.imageData().hasTransparency) {
         layerCount *= -1;
     }
     write(layerCount);
 
     // each layer
-    for (const PSDFormat::LayerPtr& layer : form.layers)
-    {
+    for (const PSDFormat::LayerPtr& layer : form.layers) {
         // rectangle
-        for (int i = 0; i < 4; ++i) write(layer->rect.edge[i]);
+        for (int i = 0; i < 4; ++i)
+            write(layer->rect.edge[i]);
         // number of channels
         uint16 channelCount = (uint16)layer->channels.size();
         write(channelCount);
         // information of each channel
-        for (const PSDFormat::ChannelPtr& channel : layer->channels)
-        {
+        for (const PSDFormat::ChannelPtr& channel : layer->channels) {
             write(channel->id);
             uint32 dataLength = channel->dataLength + 2u; // with compression id
             write(dataLength);
         }
-        if (checkFailure()) return false;
+        if (checkFailure())
+            return false;
 
         // blend mode signature
         write((const uint8*)"8BIM", 4);
 
         // blend mode key
-        PSDWRITER_CHECK_VALIDVALUE(layer->blendMode.size() == 4, layer->blendMode.size(), "layer and mask info/layer info/layer records/blend mode key");
+        PSDWRITER_CHECK_VALIDVALUE(layer->blendMode.size() == 4, layer->blendMode.size(),
+            "layer and mask info/layer info/layer records/blend mode key");
         write((uint8*)layer->blendMode.c_str(), 4);
 
         // opacity
         write(layer->opacity);
         // clipping
-        PSDWRITER_CHECK_VALIDVALUE(layer->clipping == 0 || layer->clipping == 1, layer->clipping, "layer and mask info/layer info/layer records/clipping");
+        PSDWRITER_CHECK_VALIDVALUE(layer->clipping == 0 || layer->clipping == 1, layer->clipping,
+            "layer and mask info/layer info/layer records/clipping");
         write(layer->clipping);
         // flags
         write(layer->flags);
         // filler
         writeZero(1);
 
-        if (checkFailure()) return false;
+        if (checkFailure())
+            return false;
 
         // keep position of the 'length of the extra data field'
         std::ios::pos_type extraDataLengthPos = mOut.tellp();
         write((uint32)0);
 
         // layer mask
-        if (layer->mask)
-        {
+        if (layer->mask) {
             write((uint32)(layer->mask->hasReal ? 36 : 20));
             // rectangle
-            for (int i = 0; i < 4; ++i) write(layer->mask->rect.edge[i]);
+            for (int i = 0; i < 4; ++i)
+                write(layer->mask->rect.edge[i]);
             // default color
-            PSDWRITER_CHECK_VALIDVALUE(layer->mask->defaultColor == 0 || layer->mask->defaultColor == 255, layer->mask->defaultColor, "layer and mask info/layer info/layer records/layer mask/default color");
+            PSDWRITER_CHECK_VALIDVALUE(layer->mask->defaultColor == 0 || layer->mask->defaultColor == 255,
+                layer->mask->defaultColor, "layer and mask info/layer info/layer records/layer mask/default color");
             write(layer->mask->defaultColor);
             // flags
             write(layer->mask->flags);
 
             // real params
-            if (layer->mask->hasReal)
-            {
+            if (layer->mask->hasReal) {
                 write(layer->mask->realFlags);
                 write(layer->mask->realUserMaskBG);
-                for (int i = 0; i < 4; ++i) write(layer->mask->realUserRect.edge[i]);
-            }
-            else
-            {
+                for (int i = 0; i < 4; ++i)
+                    write(layer->mask->realUserRect.edge[i]);
+            } else {
                 writeZero(2);
             }
-        }
-        else
-        {
+        } else {
             write((uint32)0);
         }
-        if (checkFailure()) return false;
+        if (checkFailure())
+            return false;
 
         // blending range
-        if (layer->compositeBlendingRange)
-        {
+        if (layer->compositeBlendingRange) {
             // keep length pos
             std::ios::pos_type blendRangeLengthPos = mOut.tellp();
             write((uint32)0);
 
             // composite range
-            if (layer->compositeBlendingRange->isValid)
-            {
+            if (layer->compositeBlendingRange->isValid) {
                 write(layer->compositeBlendingRange->src, 4);
                 write(layer->compositeBlendingRange->dst, 4);
-            }
-            else
-            {
+            } else {
                 write(PSDFormat::BlendingRange().src, 4);
                 write(PSDFormat::BlendingRange().dst, 4);
             }
             // range of each channel
-            for (const PSDFormat::ChannelPtr& channel : layer->channels)
-            {
-                if (channel->blendingRange.isValid)
-                {
+            for (const PSDFormat::ChannelPtr& channel : layer->channels) {
+                if (channel->blendingRange.isValid) {
                     write(channel->blendingRange.src, 4);
                     write(channel->blendingRange.dst, 4);
-                }
-                else
-                {
+                } else {
                     write(PSDFormat::BlendingRange().src, 4);
                     write(PSDFormat::BlendingRange().dst, 4);
                 }
@@ -319,35 +296,38 @@ bool PSDWriter::writeLayerInfo()
 
             // write length
             writeTo(blendRangeLengthPos, (uint32)(mOut.tellp() - blendRangeLengthPos - 4));
-        }
-        else
-        {
+        } else {
             write((uint32)0);
         }
-        if (checkFailure()) return false;
+        if (checkFailure())
+            return false;
 
         // layer name
         {
             int nameLength = (int)layer->name.size();
-            PSDWRITER_CHECK_VALIDVALUE(nameLength <= 255, nameLength, "layer and mask info/layer info/layer record/layer name");
+            PSDWRITER_CHECK_VALIDVALUE(
+                nameLength <= 255, nameLength, "layer and mask info/layer info/layer record/layer name");
             write((uint8)nameLength);
             write((uint8*)layer->name.c_str(), nameLength);
             // padding
-            if ((nameLength + 1) % 4) writeZero(4 - ((nameLength + 1) % 4));
+            if ((nameLength + 1) % 4)
+                writeZero(4 - ((nameLength + 1) % 4));
         }
-        if (checkFailure()) return false;
+        if (checkFailure())
+            return false;
 
         // additional layer info
-        for (PSDFormat::AdditionalLayerInfoPtr& addiInfo : layer->additionalInfos)
-        {
+        for (PSDFormat::AdditionalLayerInfoPtr& addiInfo : layer->additionalInfos) {
             const bool isOddLength = (addiInfo->dataLength % 2 != 0);
             write((const uint8*)"8BIM", 4);
             write((const uint8*)addiInfo->key.c_str(), 4);
             write(addiInfo->dataLength + (uint32)(isOddLength ? 1u : 0u));
             write(addiInfo->data.get(), addiInfo->dataLength);
-            if (isOddLength) writeZero(1);
+            if (isOddLength)
+                writeZero(1);
 
-            if (checkFailure()) return false;
+            if (checkFailure())
+                return false;
         }
         // write the 'length of the extra data field'
         writeTo(extraDataLengthPos, (uint32)(mOut.tellp() - extraDataLengthPos - 4));
@@ -355,13 +335,12 @@ bool PSDWriter::writeLayerInfo()
     PSDWRITER_DUMP("pre cid : tell %d", (int)mOut.tellp());
 
     // channel image data
-    for (const PSDFormat::LayerPtr& layer : form.layers)
-    {
-        for (const PSDFormat::ChannelPtr& channel : layer->channels)
-        {
+    for (const PSDFormat::LayerPtr& layer : form.layers) {
+        for (const PSDFormat::ChannelPtr& channel : layer->channels) {
             write(channel->compressionId);
             write(channel->data.get(), channel->dataLength);
-            if (checkFailure()) return false;
+            if (checkFailure())
+                return false;
         }
     }
     PSDWRITER_DUMP("pre cid : tell %d", (int)mOut.tellp());
@@ -370,8 +349,7 @@ bool PSDWriter::writeLayerInfo()
     uint32 layerInfoLength = (uint32)(mOut.tellp() - layerInfoLengthPos - 4);
     PSDWRITER_DUMP("test tell %d", layerInfoLength);
 
-    if (layerInfoLength % 2)
-    {
+    if (layerInfoLength % 2) {
         writeZero(1);
         layerInfoLength += 1;
     }
@@ -380,8 +358,7 @@ bool PSDWriter::writeLayerInfo()
     return !checkFailure();
 }
 
-bool PSDWriter::writeImageData()
-{
+bool PSDWriter::writeImageData() {
     mSection = "image data";
 
     const uint32 rleHeaderLength = mFormat.header().height * sizeof(uint16);
@@ -390,24 +367,18 @@ bool PSDWriter::writeImageData()
     write(mFormat.imageData().compressionId);
 
     // compression header
-    if (mFormat.imageData().compressionId == 1)
-    {
+    if (mFormat.imageData().compressionId == 1) {
 
-        for (const PSDFormat::ChannelPtr& channel : mFormat.imageData().channels)
-        {
+        for (const PSDFormat::ChannelPtr& channel : mFormat.imageData().channels) {
             write(channel->data.get(), rleHeaderLength);
         }
     }
 
     // compression data
-    for (const PSDFormat::ChannelPtr& channel : mFormat.imageData().channels)
-    {
-        if (mFormat.imageData().compressionId == 1)
-        {
+    for (const PSDFormat::ChannelPtr& channel : mFormat.imageData().channels) {
+        if (mFormat.imageData().compressionId == 1) {
             write(channel->data.get() + rleHeaderLength, channel->dataLength - rleHeaderLength);
-        }
-        else
-        {
+        } else {
             write(channel->data.get(), channel->dataLength);
         }
     }
@@ -415,33 +386,33 @@ bool PSDWriter::writeImageData()
     return !checkFailure();
 }
 
-bool PSDWriter::checkFailure()
-{
-    if (mOut.fail())
-    {
+bool PSDWriter::checkFailure() {
+    if (mOut.fail()) {
         mResultCode = ResultCode_UnexpectedEndOfFile;
         return true;
     }
     return false;
 }
 
-const std::string PSDWriter::resultMessage() const
-{
+const std::string PSDWriter::resultMessage() const {
     return resultCodeString() + ". '" + mValue + "' (" + mSection + ")";
 }
 
-const std::string PSDWriter::resultCodeString() const
-{
-    switch (mResultCode)
-    {
-    case ResultCode_Success: return "success";
+const std::string PSDWriter::resultCodeString() const {
+    switch (mResultCode) {
+    case ResultCode_Success:
+        return "success";
 
-    case ResultCode_InvalidFileHandle: return "invalid file handle";
-    case ResultCode_InvalidValue: return "invalid value";
+    case ResultCode_InvalidFileHandle:
+        return "invalid file handle";
+    case ResultCode_InvalidValue:
+        return "invalid value";
 
-    case ResultCode_UnexpectedEndOfFile: return "unexpected end of file";
+    case ResultCode_UnexpectedEndOfFile:
+        return "unexpected end of file";
 
-    case ResultCode_TERM: return "no result";
+    case ResultCode_TERM:
+        return "no result";
     default:
         XC_ASSERT(0);
         return "";

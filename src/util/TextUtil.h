@@ -1,18 +1,15 @@
 #ifndef UTIL_TEXTUTIL_H
 #define UTIL_TEXTUTIL_H
 
+#include <QStringList>
 #include <QTextCodec>
 #include <QTextDecoder>
-#include <QStringList>
 
-namespace util
-{
+namespace util {
 
-class TextUtil
-{
+class TextUtil {
 public:
-    class ShiftJisDecoder
-    {
+    class ShiftJisDecoder {
     public:
         ShiftJisDecoder();
         ~ShiftJisDecoder();
@@ -28,7 +25,8 @@ public:
     static QStringList splitAndTrim(const QString& aText, QChar aSplit);
 
 private:
-    TextUtil() {}
+    TextUtil() {
+    }
 };
 
 } // namespace util

@@ -1,38 +1,32 @@
 #ifndef CTRL_FFDEDITOR_H
 #define CTRL_FFDEDITOR_H
 
-#include <QScopedPointer>
-#include "util/Circle.h"
-#include "core/Project.h"
-#include "core/ObjectNode.h"
-#include "core/RenderInfo.h"
-#include "core/CameraInfo.h"
 #include "core/AbstractCursor.h"
+#include "core/CameraInfo.h"
 #include "core/LayerMesh.h"
-#include "ctrl/IEditor.h"
+#include "core/ObjectNode.h"
+#include "core/Project.h"
+#include "core/RenderInfo.h"
 #include "ctrl/DriverResources.h"
 #include "ctrl/FFDParam.h"
+#include "ctrl/IEditor.h"
 #include "ctrl/UILogger.h"
-#include "ctrl/ffd/ffd_Target.h"
 #include "ctrl/ffd/ffd_IMode.h"
+#include "ctrl/ffd/ffd_Target.h"
+#include "util/Circle.h"
+#include <QScopedPointer>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class FFDEditor : public IEditor
-{
+class FFDEditor: public IEditor {
 public:
-    FFDEditor(core::Project& aProject,
-              DriverResources& aDriverResources,
-              UILogger& aUILogger);
+    FFDEditor(core::Project& aProject, DriverResources& aDriverResources, UILogger& aUILogger);
     ~FFDEditor();
 
     virtual bool setTarget(core::ObjectNode* aTarget);
 
     void updateParam(const FFDParam& aParam);
-    virtual bool updateCursor(
-            const core::CameraInfo& aCamera,
-            const core::AbstractCursor& aCursor);
+    virtual bool updateCursor(const core::CameraInfo& aCamera, const core::AbstractCursor& aCursor);
     virtual void updateEvent(EventType);
 
     virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);

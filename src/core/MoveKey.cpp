@@ -1,99 +1,73 @@
-#include "util/MathUtil.h"
 #include "core/MoveKey.h"
 #include "core/Constant.h"
+#include "util/MathUtil.h"
 
-namespace core
-{
+namespace core {
 const MoveKey::SplineType MoveKey::kDefaultSplineType = MoveKey::SplineType_Linear;
 
 //-------------------------------------------------------------------------------------------------
-MoveKey::Data::Data()
-    : mEasing()
-    , mSpline(kDefaultSplineType)
-    , mPos()
-    , mCentroid()
-{
+MoveKey::Data::Data(): mEasing(), mSpline(kDefaultSplineType), mPos(), mCentroid() {
 }
 
-void MoveKey::Data::clampPos()
-{
+void MoveKey::Data::clampPos() {
     mPos.setX(xc_clamp(mPos.x(), Constant::transMin(), Constant::transMax()));
     mPos.setY(xc_clamp(mPos.y(), Constant::transMin(), Constant::transMax()));
 }
 
-void MoveKey::Data::clampCentroid()
-{
+void MoveKey::Data::clampCentroid() {
     mCentroid.setX(xc_clamp(mCentroid.x(), Constant::transMin(), Constant::transMax()));
     mCentroid.setY(xc_clamp(mCentroid.y(), Constant::transMin(), Constant::transMax()));
 }
 
 //-------------------------------------------------------------------------------------------------
 std::array<QVector2D, 2> MoveKey::getCatmullRomVels(
-        const MoveKey* aKey0, const MoveKey* aKey1,
-        const MoveKey* aKey2, const MoveKey* aKey3)
-{
+    const MoveKey* aKey0, const MoveKey* aKey1, const MoveKey* aKey2, const MoveKey* aKey3) {
     XC_ASSERT(aKey1 && aKey2);
 
     std::array<QVector2D, 2> result;
 
-    if (aKey1->data().spline() == SplineType_Linear)
-    {
+    if (aKey1->data().spline() == SplineType_Linear) {
         aKey0 = nullptr;
     }
-    if (aKey2->data().spline() == SplineType_Linear)
-    {
+    if (aKey2->data().spline() == SplineType_Linear) {
         aKey3 = nullptr;
     }
 
-    if (!aKey0)
-    {
+    if (!aKey0) {
         const QVector2D linear = aKey2->pos() - aKey1->pos();
 
-        if (!aKey3)
-        {
+        if (!aKey3) {
             result[1] = linear;
-            result[0]  = linear;
-        }
-        else
-        {
+            result[0] = linear;
+        } else {
             result[1] = 0.5f * (aKey3->pos() - aKey1->pos());
-            result[0]  = util::MathUtil::getAxisInversed(linear.normalized(), result[1]);
+            result[0] = util::MathUtil::getAxisInversed(linear.normalized(), result[1]);
         }
-    }
-    else
-    {
-        if (!aKey3)
-        {
+    } else {
+        if (!aKey3) {
             const QVector2D linear = aKey2->pos() - aKey1->pos();
 
-            result[0]  = 0.5f * (aKey2->pos() - aKey0->pos());
+            result[0] = 0.5f * (aKey2->pos() - aKey0->pos());
             result[1] = util::MathUtil::getAxisInversed(linear.normalized(), result[0]);
-        }
-        else
-        {
-            result[0]  = 0.5f * (aKey2->pos() - aKey0->pos());
+        } else {
+            result[0] = 0.5f * (aKey2->pos() - aKey0->pos());
             result[1] = 0.5f * (aKey3->pos() - aKey1->pos());
         }
     }
     return result;
-
 }
 
 //-------------------------------------------------------------------------------------------------
-MoveKey::MoveKey()
-    : mData()
-{
+MoveKey::MoveKey(): mData() {
 }
 
-TimeKey* MoveKey::createClone()
-{
+TimeKey* MoveKey::createClone() {
     auto newKey = new MoveKey();
     newKey->mData = this->mData;
     return newKey;
 }
 
-bool MoveKey::serialize(Serializer& aOut) const
-{
+bool MoveKey::serialize(Serializer& aOut) const {
     aOut.write(mData.easing());
     aOut.write((int)mData.spline());
     aOut.write(mData.pos());
@@ -101,13 +75,11 @@ bool MoveKey::serialize(Serializer& aOut) const
     return aOut.checkStream();
 }
 
-bool MoveKey::deserialize(Deserializer &aIn)
-{
+bool MoveKey::deserialize(Deserializer& aIn) {
     aIn.pushLogScope("MoveKey");
 
     // easing
-    if (!aIn.read(mData.easing()))
-    {
+    if (!aIn.read(mData.easing())) {
         return aIn.errored("invalid easing param");
     }
 
@@ -115,8 +87,7 @@ bool MoveKey::deserialize(Deserializer &aIn)
     {
         int splineIdx = 0;
         aIn.read(splineIdx);
-        if (splineIdx < 0 || SplineType_TERM <= splineIdx)
-        {
+        if (splineIdx < 0 || SplineType_TERM <= splineIdx) {
             return aIn.errored("invalid spline type");
         }
         mData.setSpline((SplineType)splineIdx);

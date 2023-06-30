@@ -1,18 +1,16 @@
 #ifndef THR_PARALLELER_H
 #define THR_PARALLELER_H
 
-#include <list>
-#include <memory>
-#include "util/NonCopyable.h"
 #include "thr/Task.h"
 #include "thr/TaskQueue.h"
 #include "thr/Worker.h"
+#include "util/NonCopyable.h"
+#include <list>
+#include <memory>
 
-namespace thr
-{
+namespace thr {
 
-class Paralleler : private util::NonCopyable
-{
+class Paralleler: private util::NonCopyable {
 public:
     Paralleler(int aWorkerCount);
 

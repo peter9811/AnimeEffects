@@ -1,35 +1,29 @@
 #ifndef CMND_SCOPEDMACRO_H
 #define CMND_SCOPEDMACRO_H
 
-#include "util/LifeLink.h"
-#include "cmnd/Stack.h"
 #include "cmnd/Listener.h"
+#include "cmnd/Stack.h"
+#include "util/LifeLink.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
-class ScopedMacro
-{
+class ScopedMacro {
     Stack& mStack;
+
 public:
-    ScopedMacro(Stack& aStack, const QString& aText)
-        : mStack(aStack)
-    {
+    ScopedMacro(Stack& aStack, const QString& aText): mStack(aStack) {
         mStack.beginMacro(aText);
     }
 
-    ~ScopedMacro()
-    {
+    ~ScopedMacro() {
         mStack.endMacro();
     }
 
-    void setValidLink(util::LifeLink& aLink)
-    {
+    void setValidLink(util::LifeLink& aLink) {
         mStack.setMacroValidLink(aLink);
     }
 
-    void grabListener(Listener* aListener)
-    {
+    void grabListener(Listener* aListener) {
         mStack.grabMacroListener(aListener);
     }
 };

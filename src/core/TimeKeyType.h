@@ -1,11 +1,9 @@
 #ifndef CORE_TIMEKEYTYPE
 #define CORE_TIMEKEYTYPE
 
-namespace core
-{
+namespace core {
 
-enum TimeKeyType
-{
+enum TimeKeyType {
     TimeKeyType_Move,
     TimeKeyType_Rotate,
     TimeKeyType_Scale,
@@ -23,4 +21,3 @@ enum TimeKeyType
 } // namespace core
 
 #endif // CORE_TIMEKEYTYPE
-

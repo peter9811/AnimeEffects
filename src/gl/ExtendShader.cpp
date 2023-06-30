@@ -1,22 +1,15 @@
 #include "gl/ExtendShader.h"
+#include "XC.h"
 #include <QFile>
 #include <QTextStream>
-#include "XC.h"
 
-namespace gl
-{
+namespace gl {
 
-ExtendShader::ExtendShader()
-    : mOriginalCodeVert()
-    , mOriginalCodeFrag()
-    , mVertexCode()
-    , mFragmentCode()
-    , mVariation()
-    , mLog()
-{
+ExtendShader::ExtendShader():
+    mOriginalCodeVert(), mOriginalCodeFrag(), mVertexCode(), mFragmentCode(), mVariation(), mLog() {
 }
 
-bool ExtendShader::openFromFile(const QString &aFilePath, QString &originalCode) {
+bool ExtendShader::openFromFile(const QString& aFilePath, QString& originalCode) {
     mVariation.clear();
     QFile file(aFilePath);
     if (file.open(QIODevice::ReadOnly)) {
@@ -28,40 +21,34 @@ bool ExtendShader::openFromFile(const QString &aFilePath, QString &originalCode)
     return false;
 }
 
-bool ExtendShader::openFromFileVert(const QString& aFilePath)
-{
+bool ExtendShader::openFromFileVert(const QString& aFilePath) {
     return openFromFile(aFilePath, mOriginalCodeVert);
 }
 
-bool ExtendShader::openFromFileFrag(const QString& aFilePath)
-{
+bool ExtendShader::openFromFileFrag(const QString& aFilePath) {
     return openFromFile(aFilePath, mOriginalCodeFrag);
 }
 
-void ExtendShader::openFromText(const QString& aText, QString &originalCode) {
+void ExtendShader::openFromText(const QString& aText, QString& originalCode) {
     mVariation.clear();
     originalCode = aText;
     mLog = "";
 }
 
-void ExtendShader::openFromTextVert(const QString& aText)
-{
+void ExtendShader::openFromTextVert(const QString& aText) {
     openFromText(aText, mOriginalCodeVert);
 }
 
-void ExtendShader::openFromTextFrag(const QString& aText)
-{
+void ExtendShader::openFromTextFrag(const QString& aText) {
     openFromText(aText, mOriginalCodeFrag);
 }
 
-void ExtendShader::setVariationValue(const QString& aName, const QString& aValue)
-{
-    VariationUnit unit = { aName, aValue };
+void ExtendShader::setVariationValue(const QString& aName, const QString& aValue) {
+    VariationUnit unit = {aName, aValue};
     mVariation.push_back(unit);
 }
 
-bool ExtendShader::resolveVariation()
-{
+bool ExtendShader::resolveVariation() {
     QTextStream out(&mVertexCode);
     mVertexCode.clear();
 
@@ -72,53 +59,43 @@ bool ExtendShader::resolveVariation()
     bool isSuccess = true;
 
     int currentShader = 0; // 0 = vertex, 1 = fragment
-    while (1)
-    {
+    while (1) {
         QString line;
-        if (currentShader == 0)
-        {
+        if (currentShader == 0) {
             line = vertexIn.readLine();
-            if (line.isNull())
-            {
+            if (line.isNull()) {
                 currentShader = 1;
                 out.setString(&mFragmentCode);
                 continue;
             }
         }
-        if (currentShader == 1)
-        {
+        if (currentShader == 1) {
             line = fragmentIn.readLine();
-            if (line.isNull()) break;
+            if (line.isNull())
+                break;
         }
 
         QRegExp lineReg("^#variation\\s+(.*)$");
-        if (lineReg.exactMatch(line))
-        {
+        if (lineReg.exactMatch(line)) {
             QString nameValue = lineReg.cap(1);
-            //XC_REPORT() << "nameValue" << nameValue;
+            // XC_REPORT() << "nameValue" << nameValue;
             QRegExp nameReg("^(\\S+)");
-            if (nameReg.indexIn(nameValue) != -1)
-            {
+            if (nameReg.indexIn(nameValue) != -1) {
                 QString name = nameReg.cap(1);
-                //XC_REPORT() << "name" << name;
+                // XC_REPORT() << "name" << name;
 
                 bool find = false;
-                for (std::vector<VariationUnit>::iterator itr = mVariation.begin(); itr != mVariation.end(); ++itr)
-                {
-                    if (name == itr->name)
-                    {
+                for (std::vector<VariationUnit>::iterator itr = mVariation.begin(); itr != mVariation.end(); ++itr) {
+                    if (name == itr->name) {
                         line = "#define " + itr->name + " " + itr->value;
                         find = true;
                         break;
                     }
                 }
-                if (!find)
-                {
+                if (!find) {
                     line = "#define " + nameValue;
                 }
-            }
-            else
-            {
+            } else {
                 mLog += "Invalid variation format:" + line + "\n";
                 isSuccess = false;
             }

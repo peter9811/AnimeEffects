@@ -1,19 +1,19 @@
 #ifndef CTRL_PROJECTSAVER_H
 #define CTRL_PROJECTSAVER_H
 
-#include <QString>
-#include "util/StreamWriter.h"
 #include "core/Project.h"
+#include "util/StreamWriter.h"
+#include <QString>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class ProjectSaver
-{
+class ProjectSaver {
 public:
     ProjectSaver();
     bool save(const QString& aFilePath, const core::Project& aProject);
-    QString log() const { return mLog; }
+    QString log() const {
+        return mLog;
+    }
 
 private:
     bool writeHeader(util::StreamWriter& aWriter);

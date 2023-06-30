@@ -1,17 +1,16 @@
 #ifndef CTRL_UILOGGER_H
 #define CTRL_UILOGGER_H
 
-#include <QString>
 #include "ctrl/UILog.h"
 #include "ctrl/UILogType.h"
+#include <QString>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class UILogger
-{
+class UILogger {
 public:
-    virtual ~UILogger() {}
+    virtual ~UILogger() {
+    }
     virtual void pushLog(const QString& aMessage, UILogType aType) = 0;
 };
 

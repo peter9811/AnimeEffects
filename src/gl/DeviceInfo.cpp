@@ -1,48 +1,36 @@
-#include "XC.h"
 #include "gl/DeviceInfo.h"
+#include "XC.h"
 #include "gl/Global.h"
 
-namespace
-{
+namespace {
 static const gl::DeviceInfo* sDeviceInfoPtr;
 } // namespace
 
-namespace gl
-{
+namespace gl {
 
-const DeviceInfo& DeviceInfo::instance()
-{
+const DeviceInfo& DeviceInfo::instance() {
     XC_PTR_ASSERT(sDeviceInfoPtr);
     return *sDeviceInfoPtr;
 }
 
-void DeviceInfo::setInstance(const DeviceInfo* aInstance)
-{
+void DeviceInfo::setInstance(const DeviceInfo* aInstance) {
     sDeviceInfoPtr = aInstance;
 }
 
-bool DeviceInfo::validInstanceExists()
-{
+bool DeviceInfo::validInstanceExists() {
     return sDeviceInfoPtr && sDeviceInfoPtr->isValid();
 }
 
-DeviceInfo::DeviceInfo()
-    : vender()
-    , renderer()
-    , version()
-    , maxTextureSize(0)
-    , maxRenderBufferSize(0)
-{
+DeviceInfo::DeviceInfo(): vender(), renderer(), version(), maxTextureSize(0), maxRenderBufferSize(0) {
 }
 
-void DeviceInfo::load()
-{
+void DeviceInfo::load() {
     Global::makeCurrent();
     auto& ggl = Global::functions();
 
-    vender   = std::string((const char*)ggl.glGetString(GL_VENDOR));
+    vender = std::string((const char*)ggl.glGetString(GL_VENDOR));
     renderer = std::string((const char*)ggl.glGetString(GL_RENDERER));
-    version  = std::string((const char*)ggl.glGetString(GL_VERSION));
+    version = std::string((const char*)ggl.glGetString(GL_VERSION));
 
     ggl.glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
     ggl.glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &maxRenderBufferSize);
@@ -76,10 +64,8 @@ void DeviceInfo::load()
 #endif
 }
 
-bool DeviceInfo::isValid() const
-{
+bool DeviceInfo::isValid() const {
     return maxTextureSize > 0 && maxRenderBufferSize > 0;
 }
 
 } // namespace gl
-

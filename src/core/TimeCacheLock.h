@@ -3,11 +3,9 @@
 
 #include <QReadWriteLock>
 
-namespace core
-{
+namespace core {
 
-class TimeCacheLock
-{
+class TimeCacheLock {
 public:
     TimeCacheLock();
     QReadWriteLock working;

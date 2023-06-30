@@ -1,60 +1,45 @@
 ﻿#include "gui/GUIResources.h"
 
-namespace gui
-{
+namespace gui {
 
-GUIResources::GUIResources(const QString& aResourceDir)
-    : mResourceDir(aResourceDir)
-    , mIconMap()
-    , mThemeMap()
-    , mTheme(aResourceDir)
-{
+GUIResources::GUIResources(const QString& aResourceDir):
+    mResourceDir(aResourceDir), mIconMap(), mThemeMap(), mTheme(aResourceDir) {
     detectThemes();
 
     QSettings settings;
     auto theme = settings.value("generalsettings/ui/theme");
-    if (theme.isValid())
-    {
+    if (theme.isValid()) {
         setTheme(theme.toString());
     }
 
     loadIcons();
-
 }
 
-GUIResources::~GUIResources()
-{
-    for (IconMap::iterator itr = mIconMap.begin(); itr != mIconMap.end(); ++itr)
-    {
+GUIResources::~GUIResources() {
+    for (IconMap::iterator itr = mIconMap.begin(); itr != mIconMap.end(); ++itr) {
         QIcon* icon = *itr;
         delete icon;
     }
 }
 
-QIcon GUIResources::icon(const QString& aName) const
-{
+QIcon GUIResources::icon(const QString& aName) const {
     QIcon* icon = mIconMap[aName];
-    if (icon)
-    {
+    if (icon) {
         return *icon;
-    }
-    else
-    {
-        //I don't see a benefit to asserting zero
-        //just because an Icon is missing...
-        //XC_ASSERT(0);
+    } else {
+        // I don't see a benefit to asserting zero
+        // just because an Icon is missing...
+        // XC_ASSERT(0);
         return QIcon();
     }
 }
 
-QString GUIResources::iconPath(const QString& aName)
-{
+QString GUIResources::iconPath(const QString& aName) {
     bool loadLightIcons = mTheme.isDefault() && mTheme.isDark();
-    return mTheme.path()+"/icon"+(loadLightIcons ? "/light" : "")+"/"+aName+".png";
+    return mTheme.path() + "/icon" + (loadLightIcons ? "/light" : "") + "/" + aName + ".png";
 }
 
-void GUIResources::loadIcon(const QString& aPath)
-{
+void GUIResources::loadIcon(const QString& aPath) {
     QString name = QFileInfo(aPath).baseName();
     QPixmap source(aPath);
 
@@ -78,45 +63,38 @@ void GUIResources::loadIcon(const QString& aPath)
 #endif
 }
 
-void GUIResources::loadIcons()
-{
-    if(!mIconMap.empty())
-    {
+void GUIResources::loadIcons() {
+    if (!mIconMap.empty()) {
         QHashIterator<QString, QIcon*> i(mIconMap);
-        while (i.hasNext())
-        {
+        while (i.hasNext()) {
             i.next();
             QIcon* icon = i.value();
-            //qDebug() << i.key() << ": " << i.value();
+            // qDebug() << i.key() << ": " << i.value();
             delete icon;
         }
         mIconMap.clear();
     }
 
     bool loadLightIcons = mTheme.isDefault() && mTheme.isDark();
-    const QString iconDirPath(mResourceDir+"/themes/"+mTheme.id()+"/icon"+(loadLightIcons ? "/light" : ""));
+    const QString iconDirPath(mResourceDir + "/themes/" + mTheme.id() + "/icon" + (loadLightIcons ? "/light" : ""));
 
     QStringList filters;
     filters << "*.png";
     QDirIterator itr(iconDirPath, filters, QDir::Files, QDirIterator::Subdirectories);
 
-    while (itr.hasNext())
-    {
+    while (itr.hasNext()) {
         loadIcon(itr.next());
     }
 }
 
-void GUIResources::detectThemes()
-{
-    const QString themesDirPath(mResourceDir+"/themes");
+void GUIResources::detectThemes() {
+    const QString themesDirPath(mResourceDir + "/themes");
 
     QDirIterator itr(themesDirPath, QDir::Dirs, QDirIterator::FollowSymlinks);
 
-    while (itr.hasNext())
-    {
+    while (itr.hasNext()) {
         itr.next();
-        if(itr.fileName() != "." && itr.fileName() != "..")
-        {
+        if (itr.fileName() != "." && itr.fileName() != "..") {
             qDebug() << Q_FUNC_INFO << itr.fileName();
             theme::Theme theme(mResourceDir, itr.fileName());
             mThemeMap.insert(itr.fileName(), theme);
@@ -124,11 +102,9 @@ void GUIResources::detectThemes()
     }
 }
 
-QStringList GUIResources::themeList()
-{
+QStringList GUIResources::themeList() {
     QStringList kThemeList;
-    if(!mThemeMap.empty())
-    {
+    if (!mThemeMap.empty()) {
         QHashIterator<QString, theme::Theme> i(mThemeMap);
         while (i.hasNext()) {
             i.next();
@@ -138,22 +114,19 @@ QStringList GUIResources::themeList()
     return kThemeList;
 }
 
-bool GUIResources::hasTheme(const QString &aThemeId)
-{
+bool GUIResources::hasTheme(const QString& aThemeId) {
     return mThemeMap.contains(aThemeId);
 }
 
-void GUIResources::setTheme(const QString &aThemeId)
-{
-    if(mTheme.id() != aThemeId && hasTheme(aThemeId)) {
+void GUIResources::setTheme(const QString& aThemeId) {
+    if (mTheme.id() != aThemeId && hasTheme(aThemeId)) {
         mTheme = mThemeMap.value(aThemeId);
         loadIcons();
         onThemeChanged(mTheme);
     }
 }
 
-void GUIResources::triggerOnThemeChanged()
-{
+void GUIResources::triggerOnThemeChanged() {
     onThemeChanged(mTheme);
 }
 

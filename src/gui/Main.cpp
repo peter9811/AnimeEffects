@@ -1,19 +1,18 @@
+#include "XC.h"
+#include "ctrl/System.h"
+#include "gl/Global.h"
+#include "gui/GUIResources.h"
+#include "gui/LocaleDecider.h"
+#include "gui/MSVCBackTracer.h"
 #include "gui/MSVCMemoryLeakDebugger.h" // first of all
+#include "gui/MainWindow.h"
+#include "util/NetworkUtil.h"
 #include <QApplication>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
-#include <QStandardPaths>
 #include <QScopedPointer>
-#include "XC.h"
-#include "gl/Global.h"
-#include "ctrl/System.h"
-#include "gui/MainWindow.h"
-#include "gui/GUIResources.h"
-#include "gui/MSVCBackTracer.h"
-#include "gui/LocaleDecider.h"
-#include "util/NetworkUtil.h"
-
+#include <QStandardPaths>
 
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
 extern MemoryRegister gMemoryRegister;
@@ -23,24 +22,18 @@ extern MemoryRegister gMemoryRegister;
 extern BackTracer gBackTracer;
 #endif // USE_MSVC_BACKTRACE
 
-class AEAssertHandler : public XCAssertHandler
-{
+class AEAssertHandler: public XCAssertHandler {
 public:
-    virtual void failure() const
-    {
+    virtual void failure() const {
 #if defined(USE_MSVC_BACKTRACE)
         gBackTracer.dumpCurrent();
 #endif // USE_MSVC_BACKTRACE
     }
 };
 
-class AEErrorHandler : public XCErrorHandler
-{
+class AEErrorHandler: public XCErrorHandler {
 public:
-    virtual void critical(
-            const QString& aText, const QString& aInfo,
-            const QString& aDetail) const
-    {
+    virtual void critical(const QString& aText, const QString& aInfo, const QString& aDetail) const {
         XC_REPORT() << aText << "\n" << aInfo << "\n" << aDetail;
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Critical);
@@ -48,8 +41,7 @@ public:
 
         msgBox.setText(aText);
         msgBox.setInformativeText(aInfo);
-        if (!aDetail.isEmpty())
-        {
+        if (!aDetail.isEmpty()) {
             msgBox.setDetailedText(aDetail);
         }
 
@@ -66,19 +58,21 @@ XCErrorHandler* gXCErrorHandler = nullptr;
 static AEAssertHandler sAEAssertHandler;
 
 #if defined(USE_MSVC_BACKTRACE)
-#define TRY_ACTION_WITH_EXCEPT(action)                           \
-    __try{ action; }                                             \
-    __except(EXCEPTION_EXECUTE_HANDLER)                          \
-        { qDebug("exception occurred.(%x)", GetExceptionCode()); \
-          gBackTracer.dumpCurrent(); std::abort(); }
+    #define TRY_ACTION_WITH_EXCEPT(action) \
+        __try { \
+            action; \
+        } __except (EXCEPTION_EXECUTE_HANDLER) { \
+            qDebug("exception occurred.(%x)", GetExceptionCode()); \
+            gBackTracer.dumpCurrent(); \
+            std::abort(); \
+        }
 #else
-#define TRY_ACTION_WITH_EXCEPT(action) action
+    #define TRY_ACTION_WITH_EXCEPT(action) action
 #endif // USE_MSVC_BACKTRACE
 
-int entryPoint(int argc, char *argv[]);
+int entryPoint(int argc, char* argv[]);
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
     gXCAssertHandler = &sAEAssertHandler;
 
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
@@ -96,8 +90,7 @@ int main(int argc, char *argv[])
     return result;
 }
 
-int entryPoint(int argc, char *argv[])
-{
+int entryPoint(int argc, char* argv[]) {
     int result = 0;
     // create qt application
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -118,7 +111,6 @@ int entryPoint(int argc, char *argv[])
     const QString stdCacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     const QString cacheDir = !stdCacheDir.isEmpty() ? stdCacheDir : (appDir + "/cache");
 
-
     // initialize current
     QDir::setCurrent(appDir);
 
@@ -130,26 +122,21 @@ int entryPoint(int argc, char *argv[])
     QCoreApplication::setOrganizationName("AnimeEffectsProject");
     QCoreApplication::setApplicationName("AnimeEffects");
 
-
     // language
     QScopedPointer<gui::LocaleDecider> locale(new gui::LocaleDecider());
-    if (locale->translator())
-    {
+    if (locale->translator()) {
         app.installTranslator(locale->translator());
     }
 
     {
         // load constant gui resources
-        QScopedPointer<gui::GUIResources> resources(
-                    new gui::GUIResources(resourceDir));
+        QScopedPointer<gui::GUIResources> resources(new gui::GUIResources(resourceDir));
 
         // create system logic core
-        QScopedPointer<ctrl::System> system(
-                    new ctrl::System(resourceDir, cacheDir));
+        QScopedPointer<ctrl::System> system(new ctrl::System(resourceDir, cacheDir));
 
         // create main window
-        QScopedPointer<gui::MainWindow> mainWindow(
-                    new gui::MainWindow(*system, *resources, locale->localeParam()));
+        QScopedPointer<gui::MainWindow> mainWindow(new gui::MainWindow(*system, *resources, locale->localeParam()));
 
         qDebug() << "show main window";
         // show main window
@@ -160,7 +147,6 @@ int entryPoint(int argc, char *argv[])
         QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
         networking.checkForUpdate(url, networking, mainWindow->window(), false);
 
-
 #if !defined(QT_NO_DEBUG)
         qDebug() << "test new project";
         const QString testPath = resourceDir + "/sample.psd";
@@ -168,9 +154,9 @@ int entryPoint(int argc, char *argv[])
 #endif
         // assoc handle
         auto arguments = app.arguments();
-        if (arguments.last().contains(".anie")){
+        if (arguments.last().contains(".anie")) {
             auto file = arguments.last();
-            if (QFile(file).exists()){
+            if (QFile(file).exists()) {
                 mainWindow->onOpenRecentTriggered(file);
             }
         }
@@ -182,7 +168,6 @@ int entryPoint(int argc, char *argv[])
 
         // save settings(window status, etc.)
         mainWindow->saveCurrentSettings(result);
-
 
         // bind gl context for destructors
         gl::Global::makeCurrent();

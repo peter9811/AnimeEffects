@@ -1,10 +1,8 @@
 #include "util/TreeUtil.h"
 
-namespace util
-{
+namespace util {
 
-TreeUtil::TreeUtil()
-{
+TreeUtil::TreeUtil() {
 }
 
 } // namespace util

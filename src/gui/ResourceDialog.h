@@ -1,19 +1,17 @@
 #ifndef GUI_RESOURCEDIALOG_H
 #define GUI_RESOURCEDIALOG_H
 
-#include <QDialog>
-#include <QDialogButtonBox>
-#include "util/LinkPointer.h"
 #include "core/Project.h"
 #include "gui/EasyDialog.h"
 #include "gui/ResourceDialog.h"
 #include "gui/ResourceTreeWidget.h"
+#include "util/LinkPointer.h"
+#include <QDialog>
+#include <QDialogButtonBox>
 
-namespace gui
-{
+namespace gui {
 
-class ResourceDialog : public EasyDialog
-{
+class ResourceDialog: public EasyDialog {
     Q_OBJECT
 public:
     typedef QList<img::ResourceNode*> NodeList;
@@ -23,7 +21,9 @@ public:
     void updateResourcePath();
 
     bool hasValidNode() const;
-    const NodeList& nodeList() const { return mNodeList; }
+    const NodeList& nodeList() const {
+        return mNodeList;
+    }
 
 private:
     virtual void keyPressEvent(QKeyEvent* aEvent);

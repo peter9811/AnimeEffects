@@ -1,39 +1,34 @@
 #ifndef CTRL_IMAGEFILELOADER_H
 #define CTRL_IMAGEFILELOADER_H
 
-#include <QFileInfo>
-#include <QString>
-#include <QScopedPointer>
-#include "util/IProgressReporter.h"
-#include "gl/DeviceInfo.h"
-#include "core/Project.h"
 #include "core/ObjectTree.h"
+#include "core/Project.h"
+#include "gl/DeviceInfo.h"
+#include "util/IProgressReporter.h"
+#include <QFileInfo>
+#include <QScopedPointer>
+#include <QString>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class ImageFileLoader
-{
+class ImageFileLoader {
 public:
     ImageFileLoader(const gl::DeviceInfo& aDeviceInfo);
 
     void setCanvasSize(const QSize& aSize, bool aForce);
 
-    bool load(const QString& aPath, core::Project& aProject,
-              util::IProgressReporter& aReporter);
+    bool load(const QString& aPath, core::Project& aProject, util::IProgressReporter& aReporter);
 
-    const QString& log() const { return mLog; }
+    const QString& log() const {
+        return mLog;
+    }
 
 private:
-    bool createEmptyCanvas(core::Project& aProject,
-                           const QString& aTopName,
-                           const QSize& aCanvasSize);
+    bool createEmptyCanvas(core::Project& aProject, const QString& aTopName, const QSize& aCanvasSize);
 
-    bool loadPsd(core::Project& aProject,
-                 util::IProgressReporter& aReporter);
+    bool loadPsd(core::Project& aProject, util::IProgressReporter& aReporter);
 
-    bool loadImage(core::Project& aProject,
-                   util::IProgressReporter& aReporter);
+    bool loadImage(core::Project& aProject, util::IProgressReporter& aReporter);
 
     static QRect calculateBoundingRectFromChildren(const core::ObjectNode& aNode);
     void setDefaultPosturesFromInitialRects(core::ObjectNode& aNode);

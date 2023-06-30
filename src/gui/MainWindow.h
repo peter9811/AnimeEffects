@@ -1,42 +1,38 @@
 #ifndef GUI_MAINWINDOW_H
 #define GUI_MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QKeyEvent>
-#include <QFileInfo>
-#include <QScopedPointer>
-#include <QTimer>
 #include "ctrl/System.h"
-#include "gui/MainMenuBar.h"
-#include "gui/MainDisplayWidget.h"
-#include "gui/MainViewSetting.h"
-#include "gui/MainDisplayStyle.h"
-#include "gui/TargetWidget.h"
-#include "gui/PropertyWidget.h"
-#include "gui/ToolWidget.h"
 #include "gui/DriverHolder.h"
 #include "gui/GUIResources.h"
-#include "gui/ViaPoint.h"
-#include "gui/ProjectTabBar.h"
-#include "gui/KeyCommandMap.h"
 #include "gui/KeyCommandInvoker.h"
-#include "gui/ResourceDialog.h"
+#include "gui/KeyCommandMap.h"
 #include "gui/LocaleParam.h"
+#include "gui/MainDisplayStyle.h"
+#include "gui/MainDisplayWidget.h"
+#include "gui/MainMenuBar.h"
+#include "gui/MainViewSetting.h"
 #include "gui/MouseSetting.h"
+#include "gui/ProjectTabBar.h"
+#include "gui/PropertyWidget.h"
+#include "gui/ResourceDialog.h"
+#include "gui/TargetWidget.h"
+#include "gui/ToolWidget.h"
+#include "gui/ViaPoint.h"
 #include "qfilesystemwatcher.h"
 #include "res/res_ResourceUpdater.h"
+#include <QFileInfo>
+#include <QKeyEvent>
+#include <QMainWindow>
+#include <QScopedPointer>
+#include <QTimer>
 
-namespace gui
-{
+namespace gui {
 
-class MainWindow : public QMainWindow
-{
+class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(ctrl::System& aSystem,
-               GUIResources& aResources,
-               const LocaleParam& aLocaleParam);
+    MainWindow(ctrl::System& aSystem, GUIResources& aResources, const LocaleParam& aLocaleParam);
     ~MainWindow();
 
     void showWithSettings();
@@ -47,10 +43,11 @@ public:
     QElapsedTimer timeElapsed;
     qint64 lastPress;
     qint64 lastRelease;
-    static void showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString &aDetailed = "nullptr");
-    QTimer *autosaveTimer;
-    public slots:
-        void autoSave();
+    static void showInfoPopup(
+        const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed = "nullptr");
+    QTimer* autosaveTimer;
+public slots:
+    void autoSave();
 
 public:
     void onNewProjectTriggered();
@@ -84,7 +81,7 @@ private:
     ctrl::System& mSystem;
     GUIResources& mGUIResources;
     ViaPoint mViaPoint;
-	QScopedPointer<KeyCommandMap> mKeyCommandMap;
+    QScopedPointer<KeyCommandMap> mKeyCommandMap;
     QScopedPointer<KeyCommandInvoker> mKeyCommandInvoker;
     MouseSetting mMouseSetting;
     MainMenuBar* mMainMenuBar;

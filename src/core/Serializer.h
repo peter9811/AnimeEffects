@@ -1,30 +1,28 @@
 #ifndef CORE_SERIALIZER
 #define CORE_SERIALIZER
 
+#include "XC.h"
+#include "core/Frame.h"
+#include "gl/Vector2.h"
+#include "gl/Vector3.h"
+#include "util/Easing.h"
+#include "util/IDAssigner.h"
+#include "util/IndexTable.h"
+#include "util/Segment2D.h"
+#include "util/StreamWriter.h"
+#include <QGL>
+#include <QMatrix4x4>
 #include <QPoint>
+#include <QPolygonF>
+#include <QRect>
+#include <QRectF>
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
-#include <QRect>
-#include <QRectF>
-#include <QMatrix4x4>
-#include <QPolygonF>
-#include <QGL>
-#include "XC.h"
-#include "util/Segment2D.h"
-#include "util/Easing.h"
-#include "util/IndexTable.h"
-#include "util/StreamWriter.h"
-#include "util/IDAssigner.h"
-#include "gl/Vector2.h"
-#include "gl/Vector3.h"
-#include "core/Frame.h"
 
-namespace core
-{
+namespace core {
 
-class Serializer
-{
+class Serializer {
 public:
     typedef std::ostream::pos_type PosType;
 
@@ -65,11 +63,9 @@ public:
 
     bool failure() const;
 
-    bool checkStream()
-    {
-        if (failure())
-        {
-            //setLog("stream error");
+    bool checkStream() {
+        if (failure()) {
+            // setLog("stream error");
             return false;
         }
         return true;
@@ -83,4 +79,3 @@ private:
 } // namespace core
 
 #endif // SERIALIZER
-

@@ -1,26 +1,32 @@
 #ifndef CORE_HEIGHTMAP_H
 #define CORE_HEIGHTMAP_H
 
-#include <QRect>
-#include <QVector3D>
-#include <QVector2D>
 #include "XC.h"
 #include "img/Buffer.h"
+#include <QRect>
+#include <QVector2D>
+#include <QVector3D>
 
-namespace core
-{
+namespace core {
 
-class HeightMap
-{
+class HeightMap {
 public:
     HeightMap(const QString& aName);
 
     void grabImage(const XCMemBlock& aBlock, const QRect& aRect);
-    img::Buffer& image() { return mImage; }
-    const img::Buffer& image() const { return mImage; }
+    img::Buffer& image() {
+        return mImage;
+    }
+    const img::Buffer& image() const {
+        return mImage;
+    }
 
-    void setHeightRate(float aRate) { mHeightRate = aRate; }
-    void setBaseHeight(float aBase) { mBaseHeight = aBase; }
+    void setHeightRate(float aRate) {
+        mHeightRate = aRate;
+    }
+    void setBaseHeight(float aBase) {
+        mBaseHeight = aBase;
+    }
 
     float readHeight(const QVector2D& aPos) const;
 

@@ -1,33 +1,28 @@
 #ifndef CORE_MESHKEYUTIL_H
 #define CORE_MESHKEYUTIL_H
 
+#include "cmnd/DoneDeleter.h"
 #include "cmnd/Stable.h"
 #include "cmnd/UndoneDeleter.h"
-#include "cmnd/DoneDeleter.h"
 #include "core/MeshKey.h"
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-class MeshKeyUtil
-{
+class MeshKeyUtil {
 public:
-
     //-------------------------------------------------------------------------------------------------
-    class CreateFace : public cmnd::Stable
-    {
+    class CreateFace: public cmnd::Stable {
         QList<MeshFace*>& mFaceList;
         cmnd::UndoneDeleter<MeshFace> mNewFace;
         std::array<MeshEdge*, 3> mEdges;
 
     public:
-        CreateFace(QList<MeshFace*>& aFaceList,
-                    MeshEdge& aEdge0,
-                    MeshEdge& aEdge1,
-                    MeshEdge& aEdge2);
+        CreateFace(QList<MeshFace*>& aFaceList, MeshEdge& aEdge0, MeshEdge& aEdge1, MeshEdge& aEdge2);
 
-        MeshFace* newFace() { return mNewFace.get(); }
+        MeshFace* newFace() {
+            return mNewFace.get();
+        }
 
         virtual void exec();
         virtual void redo();
@@ -35,17 +30,17 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
-    class CreateEdge : public cmnd::Stable
-    {
+    class CreateEdge: public cmnd::Stable {
         QList<MeshEdge*>& mEdgeList;
         cmnd::UndoneDeleter<MeshEdge> mNewEdge;
         std::array<MeshVtx*, 2> mVtxs;
 
     public:
-        CreateEdge(QList<MeshEdge*>& aEdgeList,
-                    MeshVtx& aVtx0, MeshVtx& aVtx1);
+        CreateEdge(QList<MeshEdge*>& aEdgeList, MeshVtx& aVtx0, MeshVtx& aVtx1);
 
-        MeshEdge* newEdge() { return mNewEdge.get(); }
+        MeshEdge* newEdge() {
+            return mNewEdge.get();
+        }
 
         virtual void exec();
         virtual void redo();
@@ -53,8 +48,7 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
-    class CreateVtx : public cmnd::Stable
-    {
+    class CreateVtx: public cmnd::Stable {
         MeshKey& mKey; // for ffd key
         QList<MeshVtx*>& mVtxList;
         cmnd::UndoneDeleter<MeshVtx> mNewVtx;
@@ -63,17 +57,17 @@ public:
     public:
         CreateVtx(MeshKey& aKey, QList<MeshVtx*>& aVtxList, const QVector2D& aPos);
 
-        MeshVtx* newVtx() { return mNewVtx.get(); }
+        MeshVtx* newVtx() {
+            return mNewVtx.get();
+        }
 
         virtual void exec();
         virtual void redo();
         virtual void undo();
-
     };
 
     //-------------------------------------------------------------------------------------------------
-    class RemoveFace : public cmnd::Stable
-    {
+    class RemoveFace: public cmnd::Stable {
         QList<MeshFace*>& mFaceList;
         cmnd::DoneDeleter<MeshFace> mDelFace;
         std::array<MeshEdge*, 3> mPrevEdges;
@@ -88,8 +82,7 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
-    class RemoveEdge : public cmnd::Stable
-    {
+    class RemoveEdge: public cmnd::Stable {
         QList<MeshEdge*>& mEdgeList;
         cmnd::DoneDeleter<MeshEdge> mDelEdge;
         std::array<MeshVtx*, 2> mPrevVtxs;
@@ -104,8 +97,7 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
-    class RemoveVtx : public cmnd::Stable
-    {
+    class RemoveVtx: public cmnd::Stable {
         MeshKey& mKey; // for ffd key, for update vertex indices
         QList<MeshVtx*>& mVtxList;
         cmnd::DoneDeleter<MeshVtx> mDelVtx;

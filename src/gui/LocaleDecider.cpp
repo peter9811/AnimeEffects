@@ -1,16 +1,11 @@
-#include <QFile>
-#include <QTextStream>
-#include <QSettings>
 #include "gui/LocaleDecider.h"
+#include <QFile>
+#include <QSettings>
+#include <QTextStream>
 
-namespace gui
-{
+namespace gui {
 
-LocaleDecider::LocaleDecider()
-    : mLocaleParam()
-    , mTranslator()
-    , mHasTranslator()
-{
+LocaleDecider::LocaleDecider(): mLocaleParam(), mTranslator(), mHasTranslator() {
     QString locAbb;
 
     {
@@ -18,33 +13,24 @@ LocaleDecider::LocaleDecider()
         auto langVar = settings.value("generalsettings/language");
         auto language = langVar.isValid() ? langVar.toString() : QString();
 
-        if (language == "English")
-        {
-        }
-        else if (language == "Japanese")
-        {
+        if (language == "English") {
+        } else if (language == "Japanese") {
             locAbb = "ja";
-        }
-        else if(language == "Chinese"){
+        } else if (language == "Chinese") {
             locAbb = "zh";
-        }
-        else
-        {
+        } else {
             auto language = QLocale::system().language();
-            if (language == QLocale::Japanese)
-            {
+            if (language == QLocale::Japanese) {
                 locAbb = "ja";
             }
-            if (language == QLocale::Chinese){
+            if (language == QLocale::Chinese) {
                 locAbb = "zh";
             }
         }
     }
 
-    if (!locAbb.isEmpty())
-    {
-        if (mTranslator.load("translation_" + locAbb, "data/locale"))
-        {
+    if (!locAbb.isEmpty()) {
+        if (mTranslator.load("translation_" + locAbb, "data/locale")) {
             mHasTranslator = true;
         }
     }
@@ -58,26 +44,21 @@ LocaleDecider::LocaleDecider()
         const QString opt = "";
 #endif
 
-        const QString preference = locAbb.isEmpty() ?
-                    "preference" : "preference_" + locAbb;
+        const QString preference = locAbb.isEmpty() ? "preference" : "preference_" + locAbb;
 
         QFile file("./data/locale/" + preference + ".txt");
-        if (file.open(QIODevice::ReadOnly))
-        {
+        if (file.open(QIODevice::ReadOnly)) {
             QTextStream in(&file);
-            while (!in.atEnd())
-            {
+            while (!in.atEnd()) {
                 auto kv = in.readLine().split('=');
-                if (kv.count() != 2) continue;
+                if (kv.count() != 2)
+                    continue;
                 auto key = kv[0].trimmed();
                 auto value = kv[1].trimmed();
 
-                if (key == "font_family" + opt)
-                {
+                if (key == "font_family" + opt) {
                     mLocaleParam.fontFamily = value;
-                }
-                else if (key == "font_size" + opt)
-                {
+                } else if (key == "font_size" + opt) {
                     mLocaleParam.fontSize = value;
                 }
             }

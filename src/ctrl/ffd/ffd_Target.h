@@ -1,30 +1,28 @@
 #ifndef CTRL_FFD_TARGET_H
 #define CTRL_FFD_TARGET_H
 
-#include <QScopedPointer>
 #include "ctrl/ffd/ffd_KeyOwner.h"
 #include "ctrl/ffd/ffd_Task.h"
+#include <QScopedPointer>
 
 namespace ctrl {
 namespace ffd {
 
-class Target
-{
-public:
-    Target();
-    Target(core::ObjectNode* aNode);
-    ~Target();
-    bool isValid() const;
-    core::ObjectNode* node;
-    ffd::KeyOwner keyOwner;
-    QScopedPointer<ffd::Task> task;
-};
+    class Target {
+    public:
+        Target();
+        Target(core::ObjectNode* aNode);
+        ~Target();
+        bool isValid() const;
+        core::ObjectNode* node;
+        ffd::KeyOwner keyOwner;
+        QScopedPointer<ffd::Task> task;
+    };
 
-class Targets : public QVector<Target*>
-{
-public:
-    bool hasValidTarget() const;
-};
+    class Targets: public QVector<Target*> {
+    public:
+        bool hasValidTarget() const;
+    };
 
 } // namespace ffd
 } // namespace ctrl

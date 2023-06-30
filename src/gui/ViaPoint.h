@@ -1,38 +1,52 @@
 #ifndef GUI_VIAPOINT_H
 #define GUI_VIAPOINT_H
 
-#include <QWidget>
-#include <QPlainTextEdit>
-#include <QScopedPointer>
-#include "util/NonCopyable.h"
-#include "gl/DeviceInfo.h"
 #include "core/Project.h"
 #include "ctrl/UILogger.h"
-namespace img { class ResourceNode; }
-namespace gui { class ResourceDialog; }
-namespace gui { class MainMenuBar; }
-namespace gui { class KeyCommandMap; }
-namespace gui { class KeyCommandInvoker; }
-namespace gui { class MainViewSetting; }
-namespace gui { class MouseSetting; }
+#include "gl/DeviceInfo.h"
+#include "util/NonCopyable.h"
+#include <QPlainTextEdit>
+#include <QScopedPointer>
+#include <QWidget>
+namespace img {
+class ResourceNode;
+}
+namespace gui {
+class ResourceDialog;
+}
+namespace gui {
+class MainMenuBar;
+}
+namespace gui {
+class KeyCommandMap;
+}
+namespace gui {
+class KeyCommandInvoker;
+}
+namespace gui {
+class MainViewSetting;
+}
+namespace gui {
+class MouseSetting;
+}
 
-namespace gui
-{
+namespace gui {
 
-class ViaPoint
-        : private util::NonCopyable
-        , public ctrl::UILogger
-{
+class ViaPoint: private util::NonCopyable, public ctrl::UILogger {
 public:
     ViaPoint(QWidget* aParent);
 
     void setProject(core::Project* aProject);
 
     void setMainMenuBar(MainMenuBar* aMainMenuBar);
-    MainMenuBar* mainMenuBar() const { return mMainMenuBar; }
+    MainMenuBar* mainMenuBar() const {
+        return mMainMenuBar;
+    }
 
     void setResourceDialog(ResourceDialog* aResDialog);
-    ResourceDialog* resourceDialog() const { return mResDialog; }
+    ResourceDialog* resourceDialog() const {
+        return mResDialog;
+    }
 
     img::ResourceNode* requireOneResource();
 
@@ -45,7 +59,9 @@ public:
     const gl::DeviceInfo& glDeviceInfo() const;
 
     void setKeyCommandMap(KeyCommandMap* aMap);
-    KeyCommandMap* keyCommandMap() const { return mKeyCommandMap; }
+    KeyCommandMap* keyCommandMap() const {
+        return mKeyCommandMap;
+    }
 
     void setKeyCommandInvoker(KeyCommandInvoker* aInvoker);
     void throwKeyPressingToKeyCommandInvoker(const QKeyEvent* aEvent);

@@ -1,50 +1,39 @@
-#include "XC.h"
 #include "gl/Root.h"
+#include "XC.h"
 
-namespace gl
-{
+namespace gl {
 
-Root::Root()
-    : mContextAccessor()
-    , mFunctions()
-{
+Root::Root(): mContextAccessor(), mFunctions() {
 }
 
-void Root::setContextAccessor(ContextAccessor& aAccessor)
-{
+void Root::setContextAccessor(ContextAccessor& aAccessor) {
     mContextAccessor = &aAccessor;
 }
 
-void Root::clearContextAccessor()
-{
+void Root::clearContextAccessor() {
     mContextAccessor = nullptr;
 }
 
-void Root::makeCurrent()
-{
+void Root::makeCurrent() {
     XC_PTR_ASSERT(mContextAccessor);
     mContextAccessor->makeCurrent();
 }
 
-void Root::doneCurrent()
-{
+void Root::doneCurrent() {
     XC_PTR_ASSERT(mContextAccessor);
     mContextAccessor->doneCurrent();
 }
 
-void Root::setFunctions(Global::Functions& aFunctions)
-{
+void Root::setFunctions(Global::Functions& aFunctions) {
     XC_ASSERT(!mFunctions);
     mFunctions = &aFunctions;
 }
 
-void Root::clearFunctions()
-{
+void Root::clearFunctions() {
     mFunctions = nullptr;
 }
 
-Global::Functions& Root::functions()
-{
+Global::Functions& Root::functions() {
     XC_PTR_ASSERT(mFunctions);
     return *mFunctions;
 }

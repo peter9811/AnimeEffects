@@ -1,49 +1,37 @@
 #include "core/OpaKey.h"
 
-namespace core
-{
+namespace core {
 
-OpaKey::Data::Data()
-    : mEasing()
-    , mOpacity(1.0f)
-{
+OpaKey::Data::Data(): mEasing(), mOpacity(1.0f) {
 }
 
-bool OpaKey::Data::isZero() const
-{
+bool OpaKey::Data::isZero() const {
     return mOpacity == 0.0f;
 }
 
-void OpaKey::Data::clamp()
-{
+void OpaKey::Data::clamp() {
     mOpacity = xc_clamp(mOpacity, 0.0f, 1.0f);
 }
 
-OpaKey::OpaKey()
-    : mData()
-{
+OpaKey::OpaKey(): mData() {
 }
 
-TimeKey* OpaKey::createClone()
-{
+TimeKey* OpaKey::createClone() {
     auto newKey = new OpaKey();
     newKey->mData = this->mData;
     return newKey;
 }
 
-bool OpaKey::serialize(Serializer& aOut) const
-{
+bool OpaKey::serialize(Serializer& aOut) const {
     aOut.write(mData.easing());
     aOut.write(mData.opacity());
     return aOut.checkStream();
 }
 
-bool OpaKey::deserialize(Deserializer& aIn)
-{
+bool OpaKey::deserialize(Deserializer& aIn) {
     aIn.pushLogScope("OpaKey");
 
-    if (!aIn.read(mData.easing()))
-    {
+    if (!aIn.read(mData.easing())) {
         return aIn.errored("invalid easing param");
     }
 
@@ -56,4 +44,3 @@ bool OpaKey::deserialize(Deserializer& aIn)
 }
 
 } // namespace core
-

@@ -1,15 +1,12 @@
 #ifndef CTRL_MESHPARAM
 #define CTRL_MESHPARAM
 
-namespace ctrl
-{
+namespace ctrl {
 
-class MeshParam
-{
+class MeshParam {
 public:
-    MeshParam()
-        : mode(0)
-    {}
+    MeshParam(): mode(0) {
+    }
 
     int mode;
 };
@@ -17,4 +14,3 @@ public:
 } // namespace ctrl
 
 #endif // CTRL_MESHPARAM
-

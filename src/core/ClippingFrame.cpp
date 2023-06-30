@@ -1,34 +1,26 @@
+#include "core/ClippingFrame.h"
 #include "gl/Global.h"
 #include "gl/Util.h"
-#include "core/ClippingFrame.h"
 
-namespace
-{
+namespace {
 static const int kAttachmentId = 0;
 }
 
-namespace core
-{
+namespace core {
 
-ClippingFrame::ClippingFrame()
-    : mFramebuffer()
-    , mTexture()
-    , mClippingId(0)
-    , mSingulationShader()
-    , mIndices(GL_ELEMENT_ARRAY_BUFFER)
-    , mRenderStamp()
-{
+ClippingFrame::ClippingFrame():
+    mFramebuffer(), mTexture(), mClippingId(0), mSingulationShader(), mIndices(GL_ELEMENT_ARRAY_BUFFER),
+    mRenderStamp() {
     mFramebuffer.reset(new gl::Framebuffer());
     mTexture.reset(new gl::Texture());
 
-    static const GLuint kIndices[4] = { 0, 1, 3, 2 };
+    static const GLuint kIndices[4] = {0, 1, 3, 2};
     mIndices.resetData(4, GL_STATIC_DRAW, kIndices);
 
     createSingulationShader();
 }
 
-void ClippingFrame::resize(const QSize& aSize)
-{
+void ClippingFrame::resize(const QSize& aSize) {
     auto format = GL_RG_INTEGER;
     auto internalFormat = GL_RG8UI;
 
@@ -45,11 +37,11 @@ void ClippingFrame::resize(const QSize& aSize)
     XC_ASSERT(mFramebuffer->isComplete());
 }
 
-void ClippingFrame::clearTexture()
-{
-    if (mTexture->id() == 0) return;
+void ClippingFrame::clearTexture() {
+    if (mTexture->id() == 0)
+        return;
 
-    static const GLuint clearColorU[] = { 0, 0, 0, 0 };
+    static const GLuint clearColorU[] = {0, 0, 0, 0};
     auto& ggl = gl::Global::functions();
 
     mFramebuffer->bind();
@@ -84,66 +76,59 @@ void ClippingFrame::clearTexture()
     XC_ASSERT(gl::Global::functions().glGetError() == GL_NO_ERROR);
 }
 
-void ClippingFrame::createSingulationShader()
-{
+void ClippingFrame::createSingulationShader() {
     static const char* kVertexShaderText =
-            "#version 330 \n"
-            "in vec2 inPosition;"
-            "in vec2 inTexCoord;"
-            "out vec2 vTexCoord;"
-            "void main() {"
-            "  gl_Position = vec4(inPosition, 0.0, 1.0);"
-            "  vTexCoord = inTexCoord;"
-            "}";
+        "#version 330 \n"
+        "in vec2 inPosition;"
+        "in vec2 inTexCoord;"
+        "out vec2 vTexCoord;"
+        "void main() {"
+        "  gl_Position = vec4(inPosition, 0.0, 1.0);"
+        "  vTexCoord = inTexCoord;"
+        "}";
 
     static const char* kFragmentShaderText =
-            "#version 330 \n"
-            "uniform uint uSingulation;"
-            "uniform usampler2D uTexture;"
-            "in vec2 vTexCoord;"
-            "out uvec2 oClip;"
-            "void main() {"
-            "  uvec2 current = texture(uTexture, vTexCoord).xy;"
-            "  if (uSingulation == current.x) {"
-            "    oClip = uvec2(1, current.y);"
-            "  }"
-            "  else {"
-            "    oClip = uvec2(0, 0);"
-            "  }"
-            "}";
+        "#version 330 \n"
+        "uniform uint uSingulation;"
+        "uniform usampler2D uTexture;"
+        "in vec2 vTexCoord;"
+        "out uvec2 oClip;"
+        "void main() {"
+        "  uvec2 current = texture(uTexture, vTexCoord).xy;"
+        "  if (uSingulation == current.x) {"
+        "    oClip = uvec2(1, current.y);"
+        "  }"
+        "  else {"
+        "    oClip = uvec2(0, 0);"
+        "  }"
+        "}";
 
     auto& shader = mSingulationShader;
     auto& ggl = gl::Global::functions();
 
-    if (!shader.setVertexSource(QString(kVertexShaderText)))
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to compile vertex shader.",
-                       shader.log());
+    if (!shader.setVertexSource(QString(kVertexShaderText))) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to compile vertex shader.", shader.log());
     }
-    if (!shader.setFragmentSource(QString(kFragmentShaderText)))
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to compile fragment shader.",
-                       shader.log());
+    if (!shader.setFragmentSource(QString(kFragmentShaderText))) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to compile fragment shader.", shader.log());
     }
 
     ggl.glBindFragDataLocation(shader.id(), 0, "oClip");
 
-    if (!shader.link())
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.",
-                       shader.log());
+    if (!shader.link()) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.", shader.log());
     }
 }
 
-void ClippingFrame::singulate(uint8 aId)
-{
-    if (mTexture->id() == 0) return;
+void ClippingFrame::singulate(uint8 aId) {
+    if (mTexture->id() == 0)
+        return;
 
     std::array<gl::Vector2, 4> positions;
     positions[0].set(-1.0f, -1.0f);
-    positions[1].set(-1.0f,  1.0f);
-    positions[2].set( 1.0f,  1.0f);
-    positions[3].set( 1.0f, -1.0f);
+    positions[1].set(-1.0f, 1.0f);
+    positions[2].set(1.0f, 1.0f);
+    positions[3].set(1.0f, -1.0f);
     std::array<gl::Vector2, 4> texCoords;
     texCoords[0].set(0.0f, 0.0f);
     texCoords[1].set(0.0f, 1.0f);
@@ -177,30 +162,23 @@ void ClippingFrame::singulate(uint8 aId)
     XC_ASSERT(ggl.glGetError() == GL_NO_ERROR);
 }
 
-void ClippingFrame::bind()
-{
+void ClippingFrame::bind() {
     mFramebuffer->bind();
 }
 
-void ClippingFrame::release()
-{
+void ClippingFrame::release() {
     mFramebuffer->release();
 }
 
-void ClippingFrame::setupDrawBuffers()
-{
-    const GLenum attachments[] = { GL_COLOR_ATTACHMENT0 };
+void ClippingFrame::setupDrawBuffers() {
+    const GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
     gl::Global::functions().glDrawBuffers(1, attachments);
 }
 
-uint8 ClippingFrame::forwardClippingId()
-{
-    if (mClippingId < 255)
-    {
+uint8 ClippingFrame::forwardClippingId() {
+    if (mClippingId < 255) {
         ++mClippingId;
-    }
-    else
-    {
+    } else {
         mClippingId = 1;
         clearTexture();
     }

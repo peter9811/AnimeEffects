@@ -1,27 +1,25 @@
 #ifndef CTRL_PROJECTLOADER_H
 #define CTRL_PROJECTLOADER_H
 
+#include "core/Project.h"
+#include "gl/DeviceInfo.h"
+#include "util/IProgressReporter.h"
+#include "util/StreamReader.h"
 #include <QStringList>
 #include <QVersionNumber>
-#include "util/StreamReader.h"
-#include "util/IProgressReporter.h"
-#include "gl/DeviceInfo.h"
-#include "core/Project.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class ProjectLoader
-{
+class ProjectLoader {
 public:
     ProjectLoader();
 
-    bool load(
-            const QString& aPath, core::Project& aProject,
-            const gl::DeviceInfo& aGLDeviceInfo,
-            util::IProgressReporter& aReporter);
+    bool load(const QString& aPath, core::Project& aProject, const gl::DeviceInfo& aGLDeviceInfo,
+        util::IProgressReporter& aReporter);
 
-    const QStringList& log() const { return mLog; }
+    const QStringList& log() const {
+        return mLog;
+    }
 
 private:
     bool readHeader(util::LEStreamReader& aReader);

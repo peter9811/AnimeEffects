@@ -3,8 +3,7 @@
 
 #include <QObject>
 
-class CmndName : public QObject
-{
+class CmndName: public QObject {
     Q_OBJECT
 public:
     CmndName();

@@ -1,26 +1,29 @@
 #ifndef CMND_SCALABLE_H
 #define CMND_SCALABLE_H
 
-#include <functional>
-#include <QVector>
 #include "cmnd/Base.h"
-#include "cmnd/Vector.h"
 #include "cmnd/Listener.h"
+#include "cmnd/Vector.h"
+#include <QVector>
+#include <functional>
 
-namespace cmnd
-{
+namespace cmnd {
 
-class Scalable : public cmnd::Base
-{
+class Scalable: public cmnd::Base {
 public:
     Scalable();
     virtual ~Scalable();
 
-    virtual void initialize() {}
+    virtual void initialize() {
+    }
     virtual bool initializeAndExecute();
     void grabListener(Listener* aListener);
-    Vector& commands() { return mCommands; }
-    const Vector& commands() const { return mCommands; }
+    Vector& commands() {
+        return mCommands;
+    }
+    const Vector& commands() const {
+        return mCommands;
+    }
 
 private:
     virtual bool isUseless() const;
@@ -33,16 +36,17 @@ private:
     bool mExecuted;
 };
 
-class LambdaScalable : public cmnd::Scalable
-{
+class LambdaScalable: public cmnd::Scalable {
     typedef std::function<void(Vector&)> InitializerType;
     InitializerType mInitializer;
 
-    virtual void initialize() { mInitializer(commands()); }
+    virtual void initialize() {
+        mInitializer(commands());
+    }
 
 public:
-    LambdaScalable(const InitializerType& aInitializer)
-        : mInitializer(aInitializer) {}
+    LambdaScalable(const InitializerType& aInitializer): mInitializer(aInitializer) {
+    }
 };
 
 } // namespace cmnd

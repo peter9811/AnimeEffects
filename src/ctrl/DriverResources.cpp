@@ -4,11 +4,9 @@
 
 namespace ctrl {
 
-DriverResources::DriverResources(): mMeshTransformerResource(), mFFDTaskResource() {
-}
+DriverResources::DriverResources(): mMeshTransformerResource(), mFFDTaskResource() {}
 
-DriverResources::~DriverResources() {
-}
+DriverResources::~DriverResources() {}
 
 void DriverResources::grabMeshTransformerResoure(core::MeshTransformerResource* aResource) {
     mMeshTransformerResource.reset(aResource);

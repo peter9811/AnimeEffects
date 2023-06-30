@@ -17,16 +17,14 @@ namespace ctrl {
 template<typename tKey, typename tCacheObj> class CacheHolder {
 public:
     struct Cache {
-        Cache(): obj(), size(), key(), used(false) {
-        }
+        Cache(): obj(), size(), key(), used(false) {}
         QScopedPointer<tCacheObj> obj;
         size_t size;
         tKey key;
         bool used;
     };
 
-    CacheHolder(): mCaches(), mUsedCacheLog(), mStorageSize() {
-    }
+    CacheHolder(): mCaches(), mUsedCacheLog(), mStorageSize() {}
 
     ~CacheHolder() {
         deleteAll();
@@ -152,10 +150,8 @@ private:
 class GLCorePaintDevice: public QPaintDevice {
 public:
     GLCorePaintDevice(const QPaintDevice& aOriginDevice, GLCorePaintEngine& aEngine):
-        mOrigin(aOriginDevice), mEngine(aEngine) {
-    }
-    virtual ~GLCorePaintDevice() {
-    }
+        mOrigin(aOriginDevice), mEngine(aEngine) {}
+    virtual ~GLCorePaintDevice() {}
     virtual QPaintEngine* paintEngine() const {
         return &mEngine;
     }

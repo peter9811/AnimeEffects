@@ -8,10 +8,8 @@ public:
     typedef tData Data;
     typedef void* Position;
 
-    ITreeSeeker() {
-    }
-    virtual ~ITreeSeeker() {
-    }
+    ITreeSeeker() {}
+    virtual ~ITreeSeeker() {}
 
     virtual Position position(tAddress) const = 0;
     virtual Data data(Position) const = 0;

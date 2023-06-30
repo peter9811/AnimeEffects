@@ -5,8 +5,7 @@
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-FFDKey::Data::Data(): mEasing(), mBuffer(), mVtxCount(0) {
-}
+FFDKey::Data::Data(): mEasing(), mBuffer(), mVtxCount(0) {}
 
 void FFDKey::Data::alloc(int aVtxCount) {
     XC_ASSERT(aVtxCount > 0);
@@ -83,8 +82,7 @@ gl::Vector3 FFDKey::Data::popBackVtx() {
 }
 
 //-------------------------------------------------------------------------------------------------
-FFDKey::FFDKey(): mData() {
-}
+FFDKey::FFDKey(): mData() {}
 
 TimeKey* FFDKey::createClone() {
     auto newKey = new FFDKey();

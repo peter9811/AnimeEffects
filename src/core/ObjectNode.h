@@ -31,11 +31,9 @@ public:
     typedef util::TreeIterator<ObjectNode, ChildrenType::Iterator> Iterator;
     typedef util::TreeIterator<const ObjectNode, ChildrenType::ConstIterator> ConstIterator;
 
-    ObjectNode(): TreeNodeBase(this), mLifeLink() {
-    }
+    ObjectNode(): TreeNodeBase(this), mLifeLink() {}
 
-    virtual ~ObjectNode() {
-    }
+    virtual ~ObjectNode() {}
 
     util::LifeLink::Pointee<ObjectNode> pointee() {
         return mLifeLink.pointee<ObjectNode>(this);

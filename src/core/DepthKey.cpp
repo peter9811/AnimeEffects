@@ -3,16 +3,14 @@
 
 namespace core {
 //-------------------------------------------------------------------------------------------------
-DepthKey::Data::Data(): mEasing(), mDepth(0.0f) {
-}
+DepthKey::Data::Data(): mEasing(), mDepth(0.0f) {}
 
 void DepthKey::Data::clamp() {
     mDepth = xc_clamp(mDepth, Constant::transMin(), Constant::transMax());
 }
 
 //-------------------------------------------------------------------------------------------------
-DepthKey::DepthKey(): mData() {
-}
+DepthKey::DepthKey(): mData() {}
 
 TimeKey* DepthKey::createClone() {
     auto newKey = new DepthKey();

@@ -11,8 +11,7 @@ static const int kDefaultMaxFrame = 60 * 10;
 
 namespace core {
 //-------------------------------------------------------------------------------------------------
-Project::Attribute::Attribute(): mImageSize(), mMaxFrame(kDefaultMaxFrame), mFps(kStandardFps), mLoop(false) {
-}
+Project::Attribute::Attribute(): mImageSize(), mMaxFrame(kDefaultMaxFrame), mFps(kStandardFps), mLoop(false) {}
 
 //-------------------------------------------------------------------------------------------------
 Project::Project(QString aFileName, Animator& aAnimator, Hook* aHookGrabbed):

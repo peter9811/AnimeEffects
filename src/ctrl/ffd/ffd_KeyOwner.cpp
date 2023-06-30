@@ -9,8 +9,7 @@ using namespace core;
 namespace ctrl {
 namespace ffd {
 
-    KeyOwner::KeyOwner(): key(), ownsKey(), parentKey() {
-    }
+    KeyOwner::KeyOwner(): key(), ownsKey(), parentKey() {}
 
     KeyOwner::~KeyOwner() {
         deleteOwnsKey();

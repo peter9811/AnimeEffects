@@ -16,8 +16,7 @@ namespace bone {
 
     public:
         AssignInfluence(core::Bone2* aTarget, int aIndex, const QVector2D& aNext):
-            mTarget(aTarget), mPrev(), mNext(aNext), mIndex(aIndex), mDone(false) {
-        }
+            mTarget(aTarget), mPrev(), mNext(aNext), mIndex(aIndex), mDone(false) {}
 
         int index() const {
             return mIndex;
@@ -62,8 +61,7 @@ namespace bone {
         bool mDone;
 
     public:
-        FuzzyAssignInfluence(): mUnits(), mDone(false) {
-        }
+        FuzzyAssignInfluence(): mUnits(), mDone(false) {}
 
         void push(core::Bone2& aTarget, const std::array<QVector2D, 2>& aPrev, const std::array<QVector2D, 2>& aNext) {
             for (auto& unit : mUnits) {

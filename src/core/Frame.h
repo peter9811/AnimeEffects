@@ -5,11 +5,9 @@ namespace core {
 
 class Frame {
 public:
-    Frame(): mValue(0), mMilli(0) {
-    }
+    Frame(): mValue(0), mMilli(0) {}
 
-    explicit Frame(int aValue): mValue(aValue), mMilli(0) {
-    }
+    explicit Frame(int aValue): mValue(aValue), mMilli(0) {}
 
     static Frame fromDecimal(float aValue) {
         Frame frame;

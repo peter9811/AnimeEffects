@@ -3,20 +3,17 @@
 
 namespace img {
 
-ResourceHandle::ResourceHandle(): mData(), mOriginKeepingCount(), mKeepOrigin() {
-}
+ResourceHandle::ResourceHandle(): mData(), mOriginKeepingCount(), mKeepOrigin() {}
 
 ResourceHandle::~ResourceHandle() {
     setOriginKeeping(false);
 }
 
 ResourceHandle::ResourceHandle(ResourceData* aData, int* aOriginKeepingCount):
-    mData(aData), mOriginKeepingCount(aOriginKeepingCount), mKeepOrigin() {
-}
+    mData(aData), mOriginKeepingCount(aOriginKeepingCount), mKeepOrigin() {}
 
 ResourceHandle::ResourceHandle(const ResourceHandle& aRhs):
-    mData(aRhs.mData), mOriginKeepingCount(aRhs.mOriginKeepingCount), mKeepOrigin() {
-}
+    mData(aRhs.mData), mOriginKeepingCount(aRhs.mOriginKeepingCount), mKeepOrigin() {}
 
 ResourceHandle& ResourceHandle::operator=(const ResourceHandle& aRhs) {
     const bool keepOrigin = mKeepOrigin;

@@ -45,8 +45,7 @@ namespace TimeLineUtil {
     //-------------------------------------------------------------------------------------------------
     class Notifier: public cmnd::Listener {
     public:
-        Notifier(core::Project& aProject): mProject(aProject), mEvent() {
-        }
+        Notifier(core::Project& aProject): mProject(aProject), mEvent() {}
 
         core::TimeLineEvent& event() {
             return mEvent;
@@ -74,8 +73,7 @@ namespace TimeLineUtil {
 
     class ResourceModificationNotifier: public cmnd::Listener {
     public:
-        ResourceModificationNotifier(core::Project& aProject): mProject(aProject), mEvent(aProject) {
-        }
+        ResourceModificationNotifier(core::Project& aProject): mProject(aProject), mEvent(aProject) {}
 
         core::ResourceEvent& event() {
             return mEvent;

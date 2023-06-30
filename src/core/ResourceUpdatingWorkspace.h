@@ -13,8 +13,7 @@ namespace core {
 class ResourceUpdatingWorkspace {
 public:
     struct Unit {
-        Unit(): parent(), mesh(), trans() {
-        }
+        Unit(): parent(), mesh(), trans() {}
         const TimeKey* parent;
         const GridMesh* mesh;
         GridMesh::Transitions trans;

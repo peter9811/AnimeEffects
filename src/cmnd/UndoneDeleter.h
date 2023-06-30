@@ -10,11 +10,9 @@ template<typename tObj> class UndoneDeleter: private util::NonCopyable {
     bool mDone;
 
 public:
-    UndoneDeleter(): mObj(), mDone() {
-    }
+    UndoneDeleter(): mObj(), mDone() {}
 
-    explicit UndoneDeleter(tObj* aObj): mObj(aObj), mDone() {
-    }
+    explicit UndoneDeleter(tObj* aObj): mObj(aObj), mDone() {}
 
     ~UndoneDeleter() {
         if (mObj && !mDone) {

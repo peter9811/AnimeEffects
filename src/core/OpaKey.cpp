@@ -2,8 +2,7 @@
 
 namespace core {
 
-OpaKey::Data::Data(): mEasing(), mOpacity(1.0f) {
-}
+OpaKey::Data::Data(): mEasing(), mOpacity(1.0f) {}
 
 bool OpaKey::Data::isZero() const {
     return mOpacity == 0.0f;
@@ -13,8 +12,7 @@ void OpaKey::Data::clamp() {
     mOpacity = xc_clamp(mOpacity, 0.0f, 1.0f);
 }
 
-OpaKey::OpaKey(): mData() {
-}
+OpaKey::OpaKey(): mData() {}
 
 TimeKey* OpaKey::createClone() {
     auto newKey = new OpaKey();

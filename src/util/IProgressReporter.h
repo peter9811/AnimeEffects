@@ -7,8 +7,7 @@ namespace util {
 
 class IProgressReporter {
 public:
-    virtual ~IProgressReporter() {
-    }
+    virtual ~IProgressReporter() {}
 
     virtual void setSection(const QString& aSection) = 0;
     virtual void setMaximum(int aMax) = 0;

@@ -24,8 +24,7 @@ public:
     static void doneCurrent();
 
 private:
-    Global() {
-    }
+    Global() {}
 };
 
 } // namespace gl

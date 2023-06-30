@@ -37,8 +37,7 @@ public:
 
             :
             type(Type_Linear),
-            range(Range_InOut), weight(1.0f) {
-        }
+            range(Range_InOut), weight(1.0f) {}
         bool isValidParam() const;
         bool operator==(const Param& aRhs) const;
         inline bool operator!=(const Param& aRhs) const {
@@ -100,8 +99,7 @@ public:
     static Easing::Range rangeToEnum(QString range);
 
 private:
-    Easing() {
-    }
+    Easing() {}
 };
 
 } // namespace util

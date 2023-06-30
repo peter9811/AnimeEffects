@@ -13,8 +13,7 @@ namespace util {
 template<typename tData> class BinarySpacePartition2D {
 public:
     struct Object {
-        Object(const tData& aData, const Triangle2D& aTri, const QRectF& aBox): data(aData), tri(aTri), box(aBox) {
-        }
+        Object(const tData& aData, const Triangle2D& aTri, const QRectF& aBox): data(aData), tri(aTri), box(aBox) {}
 
         tData data;
         Triangle2D tri;
@@ -22,8 +21,7 @@ public:
     };
 
     struct Node {
-        explicit Node(const QRectF& aBox): box(aBox), child(), objects() {
-        }
+        explicit Node(const QRectF& aBox): box(aBox), child(), objects() {}
 
         bool hasChild() const {
             return child[0];

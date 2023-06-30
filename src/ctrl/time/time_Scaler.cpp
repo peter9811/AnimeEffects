@@ -10,8 +10,7 @@ namespace ctrl {
 namespace time {
 
     //-------------------------------------------------------------------------------------------------
-    Scaler::Scaler(): mMaxFrame(), mWheel(kWheelValue), mIndex(1), mFrameList() {
-    }
+    Scaler::Scaler(): mMaxFrame(), mWheel(kWheelValue), mIndex(1), mFrameList() {}
 
     void Scaler::setMaxFrame(int aMaxFrame) {
         mMaxFrame = aMaxFrame;

@@ -3,8 +3,7 @@
 
 namespace core {
 
-TimeLineEvent::TimeLineEvent(): mProject(nullptr), mType(Type_TERM), mTargets(), mDefaultTargets() {
-}
+TimeLineEvent::TimeLineEvent(): mProject(nullptr), mType(Type_TERM), mTargets(), mDefaultTargets() {}
 
 void TimeLineEvent::pushTarget(ObjectNode& aNode, const TimeKeyPos& aPos) {
     Target target(aNode, aPos, aPos.index());

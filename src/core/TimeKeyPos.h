@@ -7,11 +7,9 @@ namespace core {
 
 class TimeKeyPos {
 public:
-    TimeKeyPos(): mLine(), mType(), mIndex() {
-    }
+    TimeKeyPos(): mLine(), mType(), mIndex() {}
 
-    TimeKeyPos(TimeLine& aLine, TimeKeyType aType, int aIndex): mLine(&aLine), mType(aType), mIndex(aIndex) {
-    }
+    TimeKeyPos(TimeLine& aLine, TimeKeyType aType, int aIndex): mLine(&aLine), mType(aType), mIndex(aIndex) {}
 
     void setLine(TimeLine* aLine) {
         mLine = aLine;

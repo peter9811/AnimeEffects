@@ -60,8 +60,7 @@ public:
 
     class Hook {
     public:
-        virtual ~Hook() {
-        }
+        virtual ~Hook() {}
     };
 
     Project(QString aFileName, Animator& aAnimator, Hook* aHookGrabbed);

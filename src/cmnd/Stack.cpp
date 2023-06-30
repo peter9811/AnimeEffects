@@ -5,8 +5,7 @@ namespace cmnd {
 
 Stack::Stack():
     mLimit(32), mCommands(), mCurrent(mCommands.end()), mMacro(), mSuspendCount(0), mModifiable(), mEditingOrigin(0),
-    mIsEdited(), mOnEditStatusChanged() {
-}
+    mIsEdited(), mOnEditStatusChanged() {}
 
 Stack::~Stack() {
     XC_PTR_ASSERT(!mMacro);
@@ -186,8 +185,8 @@ void Stack::updateEditStatus() {
 }
 
 //-------------------------------------------------------------------------------------------------
-Stack::Macro::Macro(const QString& aName): mCommands(), mHasValidLink(false), mValidLink(), mListeners(), mName(aName) {
-}
+Stack::Macro::Macro(const QString& aName):
+    mCommands(), mHasValidLink(false), mValidLink(), mListeners(), mName(aName) {}
 
 Stack::Macro::~Macro() {
     qDeleteAll(mCommands.begin(), mCommands.end());

@@ -248,8 +248,7 @@ void ObjectTreeWidget::endRenameEditor() {
 
     public:
         NameChanger(core::ObjectNode& aNode, QTreeWidgetItem& aItem, const QString& aName):
-            mNode(aNode), mItem(aItem), mPrevName(), mNextName(aName) {
-        }
+            mNode(aNode), mItem(aItem), mPrevName(), mNextName(aName) {}
 
         virtual QString name() const {
             return CmndName::tr("Rename object");

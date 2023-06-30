@@ -20,8 +20,7 @@ bool keyAffectsToInfluenceMap(TimeKeyType aKeyType) {
 }
 
 //-------------------------------------------------------------------------------------------------
-BoneUnbindWorkspace::BoneUnbindWorkspace(): units() {
-}
+BoneUnbindWorkspace::BoneUnbindWorkspace(): units() {}
 
 void BoneUnbindWorkspace::push(ObjectNode& aNode) {
     units.push_back(Unit());
@@ -34,8 +33,7 @@ void BoneUnbindWorkspace::push(ObjectNode& aNode) {
     }
 }
 
-BoneUnbindWorkspace::Unit::Unit(): parents(), node() {
-}
+BoneUnbindWorkspace::Unit::Unit(): parents(), node() {}
 
 //-------------------------------------------------------------------------------------------------
 void BoneKeyUpdater::onTimeLineModified(TimeLineEvent& aEvent) {
@@ -159,8 +157,7 @@ class Unbinder {
     QList<Pos> mPositions;
 
 public:
-    Unbinder(): mNode(), mPositions() {
-    }
+    Unbinder(): mNode(), mPositions() {}
 
     void initNode(ObjectNode& aNode) {
         mNode = &aNode;
@@ -312,8 +309,7 @@ cmnd::Base* BoneKeyUpdater::createNodesUnbinderForMove(ObjectTree& aTree, const 
 
     public:
         NodesUnbinderForMove(ObjectTree& aTree, const BoneUnbindWorkspacePtr& aWorkspace):
-            mTree(aTree), mWorkspace(aWorkspace), mUnbinders() {
-        }
+            mTree(aTree), mWorkspace(aWorkspace), mUnbinders() {}
 
         ~NodesUnbinderForMove() {
             qDeleteAll(mUnbinders);

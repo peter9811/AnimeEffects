@@ -2,8 +2,7 @@
 
 namespace gui {
 
-ProjectHook::ProjectHook(): mObjectTrees(), mResourceTrees(), mRenderInfo() {
-}
+ProjectHook::ProjectHook(): mObjectTrees(), mResourceTrees(), mRenderInfo() {}
 
 ProjectHook::~ProjectHook() {
     deleteObjectTrees();

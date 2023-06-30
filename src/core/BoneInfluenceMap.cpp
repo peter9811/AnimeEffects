@@ -11,8 +11,7 @@ namespace core {
 
 //-------------------------------------------------------------------------------------------------
 BoneInfluenceMap::BoneInfluenceMap():
-    mVertexCount(0), mMaxBoneCount(0), mGroupMtx(), mBoneList(), mWorks(), mBuildTask() {
-}
+    mVertexCount(0), mMaxBoneCount(0), mGroupMtx(), mBoneList(), mWorks(), mBuildTask() {}
 
 void BoneInfluenceMap::setMaxBoneCount(int aBoneCount) {
     XC_ASSERT(mBuildTask.isNull());
@@ -311,8 +310,7 @@ bool BoneInfluenceMap::deserialize(Deserializer& aIn) {
 }
 
 //-------------------------------------------------------------------------------------------------
-BoneInfluenceMap::BoneParam::BoneParam(): hasParent(false), hasRange(false), shape() {
-}
+BoneInfluenceMap::BoneParam::BoneParam(): hasParent(false), hasRange(false), shape() {}
 
 //-------------------------------------------------------------------------------------------------
 void BoneInfluenceMap::WorkAttribute::clear() {
@@ -343,8 +341,7 @@ void BoneInfluenceMap::WorkAttribute::tryPushBoneWeight(int aId, float aWeight) 
 
 //-------------------------------------------------------------------------------------------------
 BoneInfluenceMap::BuildTask::BuildTask(Project& aProject, BoneInfluenceMap& aOwner):
-    mProject(aProject), mOwner(aOwner) {
-}
+    mProject(aProject), mOwner(aOwner) {}
 
 void BoneInfluenceMap::BuildTask::run() {
     mOwner.build();
@@ -355,11 +352,9 @@ void BoneInfluenceMap::BuildTask::cancel() {
 }
 
 //-------------------------------------------------------------------------------------------------
-BoneInfluenceMap::Accessor::Accessor(): mOwner() {
-}
+BoneInfluenceMap::Accessor::Accessor(): mOwner() {}
 
-BoneInfluenceMap::Accessor::Accessor(const BoneInfluenceMap& aOwner): mOwner(&aOwner) {
-}
+BoneInfluenceMap::Accessor::Accessor(const BoneInfluenceMap& aOwner): mOwner(&aOwner) {}
 
 const gl::Vector4I* BoneInfluenceMap::Accessor::indices0() const {
     XC_PTR_ASSERT(mOwner);

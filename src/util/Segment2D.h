@@ -8,11 +8,9 @@ namespace util {
 
 class Segment2D {
 public:
-    Segment2D(): start(), dir() {
-    }
+    Segment2D(): start(), dir() {}
 
-    Segment2D(const QVector2D& aStart, const QVector2D& aDir): start(aStart), dir(aDir) {
-    }
+    Segment2D(const QVector2D& aStart, const QVector2D& aDir): start(aStart), dir(aDir) {}
 
     inline QVector2D end() const {
         return start + dir;

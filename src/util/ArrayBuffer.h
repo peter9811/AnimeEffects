@@ -11,8 +11,7 @@ template<typename tObject> class ArrayBuffer {
     int mCount;
 
 public:
-    ArrayBuffer(): mObjects(), mCount() {
-    }
+    ArrayBuffer(): mObjects(), mCount() {}
 
     ArrayBuffer(tObject* aObjects, int aCount): mObjects(), mCount() {
         reset(aObjects, aCount);

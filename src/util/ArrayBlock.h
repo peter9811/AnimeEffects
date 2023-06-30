@@ -7,8 +7,7 @@ namespace util {
 
 template<typename tObj> class ArrayBlock {
 public:
-    ArrayBlock(): mArray(), mCount() {
-    }
+    ArrayBlock(): mArray(), mCount() {}
 
     ArrayBlock(tObj* aArray, int aCount): mArray(aArray), mCount(aCount) {
         XC_ASSERT(aCount > 0);

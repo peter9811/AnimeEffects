@@ -13,8 +13,7 @@ MeshTransformer::MeshTransformer(const QString& aShaderPath):
 }
 
 MeshTransformer::MeshTransformer(MeshTransformerResource& aResource):
-    mResource(aResource), mResourceOwns(false), mOutPositions(), mOutXArrows(), mOutYArrows() {
-}
+    mResource(aResource), mResourceOwns(false), mOutPositions(), mOutXArrows(), mOutYArrows() {}
 
 MeshTransformer::~MeshTransformer() {
     if (mResourceOwns) {

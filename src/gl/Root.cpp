@@ -3,8 +3,7 @@
 
 namespace gl {
 
-Root::Root(): mContextAccessor(), mFunctions() {
-}
+Root::Root(): mContextAccessor(), mFunctions() {}
 
 void Root::setContextAccessor(ContextAccessor& aAccessor) {
     mContextAccessor = &aAccessor;

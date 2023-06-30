@@ -5,8 +5,7 @@ namespace ctrl {
 
 class MeshParam {
 public:
-    MeshParam(): mode(0) {
-    }
+    MeshParam(): mode(0) {}
 
     int mode;
 };

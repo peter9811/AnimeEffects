@@ -15,8 +15,7 @@ public:
         EventType_ProjectAttribute
     };
 
-    virtual ~IEditor() {
-    }
+    virtual ~IEditor() {}
 
     virtual bool setTarget(core::ObjectNode* aTarget) = 0;
 

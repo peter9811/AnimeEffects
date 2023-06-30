@@ -13,15 +13,13 @@ namespace core {
 class Renderer {
 public:
     struct SortUnit {
-        SortUnit(): renderer(), depth() {
-        }
+        SortUnit(): renderer(), depth() {}
         Renderer* renderer;
         float depth;
         TimeLine* timeline;
     };
 
-    virtual ~Renderer() {
-    }
+    virtual ~Renderer() {}
 
     virtual void prerender(const RenderInfo& aInfo, const TimeCacheAccessor&) = 0;
 
@@ -40,8 +38,7 @@ public:
     virtual img::BlendMode blendMode() const {
         return img::BlendMode_TERM;
     }
-    virtual void setBlendMode(img::BlendMode) {
-    }
+    virtual void setBlendMode(img::BlendMode) {}
 };
 
 } // namespace core

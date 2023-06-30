@@ -11,8 +11,7 @@ namespace ctrl {
 namespace ffd {
 
     //-------------------------------------------------------------------------------------------------
-    BrushMode::Status::Status(): state(State_Idle), brush(QVector2D(), 1.0f), commandRef() {
-    }
+    BrushMode::Status::Status(): state(State_Idle), brush(QVector2D(), 1.0f), commandRef() {}
 
     void BrushMode::Status::clear() {
         state = State_Idle;
@@ -29,8 +28,7 @@ namespace ffd {
 
     //-------------------------------------------------------------------------------------------------
     BrushMode::BrushMode(core::Project& aProject, Targets& aTargets):
-        mProject(aProject), mTargets(aTargets), mParam(), mStatus(), mToolPressure(1.0f), mPenPressure(1.0f) {
-    }
+        mProject(aProject), mTargets(aTargets), mParam(), mStatus(), mToolPressure(1.0f), mPenPressure(1.0f) {}
 
     void BrushMode::updateParam(const FFDParam& aParam) {
         mStatus.brush.setRadius(aParam.type == FFDParam::Type_Pencil ? aParam.radius : aParam.eraseRadius);

@@ -9,12 +9,10 @@ namespace util {
 // If you control this class from multiple threads, you need to synchronize it yourself.
 template<typename tObject> class LinkPointer: public LifeLink::Node {
     typedef void (LinkPointer::*SafeBoolType)() const;
-    void dummyFuncForSafeBoolIdiom() const {
-    }
+    void dummyFuncForSafeBoolIdiom() const {}
 
 public:
-    LinkPointer(): mAddress(NULL) {
-    }
+    LinkPointer(): mAddress(NULL) {}
 
     LinkPointer(const LinkPointer<tObject>& aOther) {
         LifeLink::Node::operator=(aOther);

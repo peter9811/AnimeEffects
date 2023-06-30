@@ -5,8 +5,7 @@
 namespace gl {
 
 //-------------------------------------------------------------------------------------------------
-EasyTextureDrawer::EasyTextureDrawer(): mShader(), mIndices() {
-}
+EasyTextureDrawer::EasyTextureDrawer(): mShader(), mIndices() {}
 
 bool EasyTextureDrawer::init() {
     static const char* kVertexShaderText =

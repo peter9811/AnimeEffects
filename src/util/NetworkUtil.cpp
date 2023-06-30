@@ -13,8 +13,7 @@
 
 namespace util {
 
-NetworkUtil::NetworkUtil() {
-}
+NetworkUtil::NetworkUtil() {}
 QByteArray NetworkUtil::getByteArray(QString aURL) {
     QProcess mProcess;
     QByteArray response;

@@ -9,8 +9,7 @@ uint32 gTotalAllocCount = 0;
 int gMaxAllocCount = 0;
 int gAllocCount = 0;
 
-MemoryRegister::MemoryRegister(): mBlocks(), mBlockCount(), mMaxBlockCount(), mCount(), mLock() {
-}
+MemoryRegister::MemoryRegister(): mBlocks(), mBlockCount(), mMaxBlockCount(), mCount(), mLock() {}
 
 MemoryRegister::~MemoryRegister() {
     final();

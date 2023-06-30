@@ -16,8 +16,7 @@ namespace core {
 
 //-------------------------------------------------------------------------------------------------
 template<typename tParent, typename tChild> struct MeshLinkNode {
-    MeshLinkNode(): parent(), child(), prev(), next() {
-    }
+    MeshLinkNode(): parent(), child(), prev(), next() {}
 
     tParent* parent;
     tChild* child;

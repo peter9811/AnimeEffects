@@ -95,8 +95,7 @@ namespace res {
 
     public:
         TreeDeleter(core::ResourceHolder& aHolder, int aIndex):
-            mHolder(aHolder), mTree(), mIndex(aIndex), mDone(false) {
-        }
+            mHolder(aHolder), mTree(), mIndex(aIndex), mDone(false) {}
 
         ~TreeDeleter() {
             if (mDone) {
@@ -128,8 +127,7 @@ namespace res {
         int mIndex;
 
     public:
-        GUITreeDeleter(QTreeWidget& aTree, int aIndex): mTree(aTree), mTopItem(), mIndex(aIndex) {
-        }
+        GUITreeDeleter(QTreeWidget& aTree, int aIndex): mTree(aTree), mTopItem(), mIndex(aIndex) {}
 
         ~GUITreeDeleter() {
             if (mTopItem) {
@@ -155,8 +153,7 @@ namespace res {
 
     public:
         GUITreeItemAppender(QTreeWidgetItem& aParent, QTreeWidgetItem* aItem):
-            mParent(aParent), mItem(aItem), mDone(false) {
-        }
+            mParent(aParent), mItem(aItem), mDone(false) {}
 
         ~GUITreeItemAppender() {
             if (!mDone) {
@@ -192,8 +189,7 @@ namespace res {
 
     public:
         GUITreeItemDeleter(QTreeWidgetItem& aParent, QTreeWidgetItem* aItem):
-            mParent(aParent), mItem(aItem), mIndex(), mDone(false) {
-        }
+            mParent(aParent), mItem(aItem), mIndex(), mDone(false) {}
 
         ~GUITreeItemDeleter() {
             if (mDone) {
@@ -241,8 +237,7 @@ namespace res {
 
     //-------------------------------------------------------------------------------------------------
     ResourceUpdater::ResourceUpdater(ViaPoint& aViaPoint, core::Project& aProject):
-        mViaPoint(aViaPoint), mProject(aProject), mPSDFormat() {
-    }
+        mViaPoint(aViaPoint), mProject(aProject), mPSDFormat() {}
 
     //-------------------------------------------------------------------------------------------------
     void ResourceUpdater::load(QTreeWidget& aTree, const QString& aFilePath) {

@@ -211,8 +211,7 @@ QSize GridMeshCreator::CellTable::calculateCellTableSize(const QSize& aImageSize
 }
 
 GridMeshCreator::CellTable::CellTable(int aCellWidth):
-    mCells(), mCellSize(calculateCellSize(aCellWidth)), mWidth(), mHeight() {
-}
+    mCells(), mCellSize(calculateCellSize(aCellWidth)), mWidth(), mHeight() {}
 
 int GridMeshCreator::CellTable::initCells(const Image& aImage) {
     int count = 0;

@@ -87,8 +87,8 @@ namespace ObjectNodeUtil {
     }
 
     //-------------------------------------------------------------------------------------------------
-    AttributeNotifier::AttributeNotifier(Project& aProject, ObjectNode& aTarget): mProject(aProject), mTarget(aTarget) {
-    }
+    AttributeNotifier::AttributeNotifier(Project& aProject, ObjectNode& aTarget):
+        mProject(aProject), mTarget(aTarget) {}
 
     void AttributeNotifier::onExecuted() {
         mProject.onNodeAttributeModified(mTarget, false);

@@ -11,8 +11,7 @@ namespace bone {
 
     Focuser::Focuser():
         mTopBones(), mFocusLink(), mSelectLink(), mLastFocus(), mFocusChanged(), mFocusConnector(), mFocusRate(),
-        mTargetMtx() {
-    }
+        mTargetMtx() {}
 
     void Focuser::setTopBones(QList<Bone2*>& aTopBones) {
         mTopBones = &aTopBones;

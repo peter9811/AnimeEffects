@@ -5,8 +5,7 @@
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-PoseKey::Data::Data(): mEasing(), mTopBones() {
-}
+PoseKey::Data::Data(): mEasing(), mTopBones() {}
 
 PoseKey::Data::Data(const Data& aRhs) {
     mEasing = aRhs.easing();
@@ -51,8 +50,7 @@ void PoseKey::Data::deleteAll() {
 }
 
 //-------------------------------------------------------------------------------------------------
-PoseKey::PoseKey(): mData() {
-}
+PoseKey::PoseKey(): mData() {}
 
 TimeKey* PoseKey::createClone() {
     auto newKey = new PoseKey();

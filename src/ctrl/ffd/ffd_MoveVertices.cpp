@@ -4,8 +4,7 @@
 namespace ctrl {
 namespace ffd {
 
-    MoveVertices::MoveVertices(): mFixed(false) {
-    }
+    MoveVertices::MoveVertices(): mFixed(false) {}
 
     void MoveVertices::push(cmnd::AssignMemory* aCommand) {
         XC_ASSERT(!mFixed);

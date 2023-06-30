@@ -21,8 +21,7 @@ bool DeviceInfo::validInstanceExists() {
     return sDeviceInfoPtr && sDeviceInfoPtr->isValid();
 }
 
-DeviceInfo::DeviceInfo(): vender(), renderer(), version(), maxTextureSize(0), maxRenderBufferSize(0) {
-}
+DeviceInfo::DeviceInfo(): vender(), renderer(), version(), maxTextureSize(0), maxRenderBufferSize(0) {}
 
 void DeviceInfo::load() {
     Global::makeCurrent();

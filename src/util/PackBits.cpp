@@ -2,8 +2,7 @@
 
 namespace util {
 
-PackBits::PackBits() {
-}
+PackBits::PackBits() {}
 
 size_t PackBits::worstEncodedSize(size_t aSrcSize) {
     return aSrcSize + (aSrcSize / 128) + 1;

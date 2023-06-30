@@ -2,8 +2,7 @@
 
 namespace util {
 
-ByteBuffer::ByteBuffer(): mBlock() {
-}
+ByteBuffer::ByteBuffer(): mBlock() {}
 
 ByteBuffer::ByteBuffer(const ByteBuffer& aRhs): mBlock() {
     if (aRhs.size()) {

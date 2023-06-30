@@ -10,8 +10,7 @@ class LifeLink {
 public:
     class Node {
     public:
-        Node(): mLink(nullptr) {
-        }
+        Node(): mLink(nullptr) {}
 
         Node(const Node& aOther): mLink(nullptr) {
             link(aOther.mLink);
@@ -59,23 +58,19 @@ public:
 
     template<typename tObject> class Pointee {
         typedef void (Pointee::*SafeBoolType)() const;
-        void dummyFuncForSafeBoolIdiom() const {
-        }
+        void dummyFuncForSafeBoolIdiom() const {}
 
     public:
-        Pointee(): lifeLink(nullptr), address(nullptr) {
-        }
+        Pointee(): lifeLink(nullptr), address(nullptr) {}
 
-        template<typename tRhs> Pointee(const Pointee<tRhs>& aRhs): lifeLink(aRhs.lifeLink), address(aRhs.address) {
-        }
+        template<typename tRhs> Pointee(const Pointee<tRhs>& aRhs): lifeLink(aRhs.lifeLink), address(aRhs.address) {}
 
         template<typename tRhs> Pointee& operator=(const Pointee<tRhs>& aRhs) {
             lifeLink = aRhs.lifeLink;
             address = aRhs.address;
         }
 
-        Pointee(LifeLink* aLifeLink, tObject* aAddress): lifeLink(aLifeLink), address(aAddress) {
-        }
+        Pointee(LifeLink* aLifeLink, tObject* aAddress): lifeLink(aLifeLink), address(aAddress) {}
 
         operator SafeBoolType() const {
             return lifeLink ? &Pointee::dummyFuncForSafeBoolIdiom : 0;
@@ -85,8 +80,7 @@ public:
         tObject* address;
     };
 
-    LifeLink(): mList() {
-    }
+    LifeLink(): mList() {}
 
     LifeLink(const LifeLink& aOther): mList() {
         (void)aOther;

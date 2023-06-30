@@ -3,16 +3,14 @@
 
 namespace core {
 //-------------------------------------------------------------------------------------------------
-RotateKey::Data::Data(): mEasing(), mRotate(0.0f) {
-}
+RotateKey::Data::Data(): mEasing(), mRotate(0.0f) {}
 
 void RotateKey::Data::clamp() {
     mRotate = xc_clamp(mRotate, Constant::rotateMin(), Constant::rotateMax());
 }
 
 //-------------------------------------------------------------------------------------------------
-RotateKey::RotateKey(): mData() {
-}
+RotateKey::RotateKey(): mData() {}
 
 TimeKey* RotateKey::createClone() {
     auto newKey = new RotateKey();

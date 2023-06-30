@@ -2,7 +2,6 @@
 
 namespace util {
 
-EasingName::EasingName() {
-}
+EasingName::EasingName() {}
 
 } // namespace util

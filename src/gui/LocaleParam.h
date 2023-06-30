@@ -7,8 +7,7 @@ namespace gui {
 
 class LocaleParam {
 public:
-    LocaleParam(): fontFamily(), fontSize() {
-    }
+    LocaleParam(): fontFamily(), fontSize() {}
 
     QString fontFamily;
     QString fontSize;

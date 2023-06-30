@@ -9,8 +9,7 @@
 namespace {
 class ObjectNodeAttrNotifier: public cmnd::Listener {
 public:
-    ObjectNodeAttrNotifier(core::Project& aProject, core::ObjectNode& aNode): mProject(aProject), mNode(aNode) {
-    }
+    ObjectNodeAttrNotifier(core::Project& aProject, core::ObjectNode& aNode): mProject(aProject), mNode(aNode) {}
     virtual void onExecuted() {
         mProject.onNodeAttributeModified(mNode, false);
     }

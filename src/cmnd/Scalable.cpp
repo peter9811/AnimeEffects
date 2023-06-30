@@ -3,8 +3,7 @@
 
 namespace cmnd {
 
-Scalable::Scalable(): mCommands(), mListeners(), mExecuted(false) {
-}
+Scalable::Scalable(): mCommands(), mListeners(), mExecuted(false) {}
 
 Scalable::~Scalable() {
     qDeleteAll(mCommands);

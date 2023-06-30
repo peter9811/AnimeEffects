@@ -7,8 +7,7 @@ namespace ctrl {
 
 class BoneParam {
 public:
-    BoneParam(): mode(BoneEditMode_Create), piRadius(50.0f), piPressure(1.0f), eiRadius(50.0f), eiPressure(1.0f) {
-    }
+    BoneParam(): mode(BoneEditMode_Create), piRadius(50.0f), piPressure(1.0f), eiRadius(50.0f), eiPressure(1.0f) {}
     BoneEditMode mode;
 
     // for paint influence mode

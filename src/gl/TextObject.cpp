@@ -8,8 +8,7 @@ TextObject::MapKey TextObject::getMapKey(const QString& aText) {
     return MapKey(crc16, aText);
 }
 
-TextObject::TextObject(): mText(), mCRC16(), mTexture(), mWorkCache() {
-}
+TextObject::TextObject(): mText(), mCRC16(), mTexture(), mWorkCache() {}
 
 TextObject::TextObject(const QString& aText): mText(), mCRC16(), mTexture(), mWorkCache() {
     setText(aText);

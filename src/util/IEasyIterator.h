@@ -5,8 +5,7 @@ namespace util {
 
 template<typename tObj> class IEasyIterator {
 public:
-    virtual ~IEasyIterator() {
-    }
+    virtual ~IEasyIterator() {}
     virtual bool hasNext() const = 0;
     tObj next() = 0;
 };

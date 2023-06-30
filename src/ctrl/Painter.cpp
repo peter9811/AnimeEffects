@@ -7,8 +7,7 @@ namespace ctrl {
 GLCorePaintEngine::GLCorePaintEngine():
     QPaintEngine(QPaintEngine::AlphaBlend | QPaintEngine::Antialiasing | QPaintEngine::ConstantOpacity |
         QPaintEngine::PrimitiveTransform),
-    mDrawer(), mFontDrawer(), mTextureCaches(), mTextCaches() {
-}
+    mDrawer(), mFontDrawer(), mTextureCaches(), mTextCaches() {}
 
 bool GLCorePaintEngine::begin(QPaintDevice* aDevPtr) {
     // qDebug() << "begin";
@@ -247,8 +246,7 @@ int GLCorePaintDevice::metric(PaintDeviceMetric aMetric) const {
 }
 
 //-------------------------------------------------------------------------------------------------
-PainterHandle::PainterHandle(): mEngine(), mDevice(), mPainter() {
-}
+PainterHandle::PainterHandle(): mEngine(), mDevice(), mPainter() {}
 
 QPainter* PainterHandle::begin(QPaintDevice& aDevice) {
     QMatrix4x4 view;
@@ -266,8 +264,7 @@ void PainterHandle::end() {
     mDevice.reset();
 }
 #else // USE_GL_CORE_PROFILE
-PainterHandle::PainterHandle(): mPainter() {
-}
+PainterHandle::PainterHandle(): mPainter() {}
 
 QPainter* PainterHandle::begin(QPaintDevice& aDevice) {
     // QPainter use legacy gl commands.

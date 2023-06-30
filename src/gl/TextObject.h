@@ -12,10 +12,8 @@ public:
         quint16 checksum;
         QString text;
 
-        MapKey(): checksum(), text() {
-        }
-        MapKey(quint16 aChecksum, const QString& aText): checksum(aChecksum), text(aText) {
-        }
+        MapKey(): checksum(), text() {}
+        MapKey(quint16 aChecksum, const QString& aText): checksum(aChecksum), text(aText) {}
 
         bool operator<(const MapKey& aRhs) const {
             if (checksum < aRhs.checksum) {

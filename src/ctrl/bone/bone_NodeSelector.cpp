@@ -7,8 +7,7 @@ using namespace core;
 namespace ctrl {
 namespace bone {
 
-    NodeSelector::Tag::Tag(): node(), parent(), children(), originRect(), sortedRect(), isDir(false), isOpened(false) {
-    }
+    NodeSelector::Tag::Tag(): node(), parent(), children(), originRect(), sortedRect(), isDir(false), isOpened(false) {}
 
     NodeSelector::NodeSelector(ObjectNode& aTopNode, const GraphicStyle& aStyle):
         mGraphicStyle(aStyle), mTopNode(aTopNode), mTopTag(), mCurrentTopTag(), mCurrentFocus(), mCurrentSelect(),

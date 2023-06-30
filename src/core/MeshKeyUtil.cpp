@@ -60,8 +60,7 @@ void MeshKeyUtil::CreateEdge::undo() {
 
 //-------------------------------------------------------------------------------------------------
 MeshKeyUtil::CreateVtx::CreateVtx(MeshKey& aKey, QList<MeshVtx*>& aVtxList, const QVector2D& aPos):
-    mKey(aKey), mVtxList(aVtxList), mNewVtx(), mPos(aPos) {
-}
+    mKey(aKey), mVtxList(aVtxList), mNewVtx(), mPos(aPos) {}
 
 void MeshKeyUtil::CreateVtx::exec() {
     XC_ASSERT(!mNewVtx);
@@ -95,8 +94,7 @@ void MeshKeyUtil::CreateVtx::undo() {
 
 //-------------------------------------------------------------------------------------------------
 MeshKeyUtil::RemoveFace::RemoveFace(QList<MeshFace*>& aFaceList, MeshFace& aDelFace):
-    mFaceList(aFaceList), mDelFace(&aDelFace), mPrevEdges(), mIndex() {
-}
+    mFaceList(aFaceList), mDelFace(&aDelFace), mPrevEdges(), mIndex() {}
 
 void MeshKeyUtil::RemoveFace::exec() {
     for (int i = 0; i < 3; ++i) {
@@ -121,8 +119,7 @@ void MeshKeyUtil::RemoveFace::undo() {
 
 //-------------------------------------------------------------------------------------------------
 MeshKeyUtil::RemoveEdge::RemoveEdge(QList<MeshEdge*>& aEdgeList, MeshEdge& aDelEdge):
-    mEdgeList(aEdgeList), mDelEdge(&aDelEdge), mPrevVtxs(), mIndex() {
-}
+    mEdgeList(aEdgeList), mDelEdge(&aDelEdge), mPrevVtxs(), mIndex() {}
 
 void MeshKeyUtil::RemoveEdge::exec() {
     for (int i = 0; i < 2; ++i) {
@@ -147,8 +144,7 @@ void MeshKeyUtil::RemoveEdge::undo() {
 
 //-------------------------------------------------------------------------------------------------
 MeshKeyUtil::RemoveVtx::RemoveVtx(MeshKey& aKey, QList<MeshVtx*>& aVtxList, MeshVtx& aDelVtx):
-    mKey(aKey), mVtxList(aVtxList), mDelVtx(&aDelVtx), mPrevFFDs(), mIndex() {
-}
+    mKey(aKey), mVtxList(aVtxList), mDelVtx(&aDelVtx), mPrevFFDs(), mIndex() {}
 
 void MeshKeyUtil::RemoveVtx::exec() {
     mIndex = mVtxList.indexOf(mDelVtx.get());

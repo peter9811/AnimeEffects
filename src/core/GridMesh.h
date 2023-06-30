@@ -25,8 +25,7 @@ public:
     typedef std::array<GLuint, 3> TriId;
 
     struct Transition {
-        Transition(): id(), pos() {
-        }
+        Transition(): id(), pos() {}
         TriId id;
         util::Triangle2DPos pos;
     };

@@ -2,8 +2,8 @@
 #include "util/MathUtil.h"
 
 namespace core {
-SRTExpans::SRTExpans(): mPos(), mRotate(), mScale(1.0f, 1.0f), mCentroid(), mSpline(), mParentMatrix(), mSplineCache() {
-}
+SRTExpans::SRTExpans():
+    mPos(), mRotate(), mScale(1.0f, 1.0f), mCentroid(), mSpline(), mParentMatrix(), mSplineCache() {}
 
 bool SRTExpans::hasSplineCache(Frame aFrame) const {
     if (aFrame <= 0 || mSplineCache.min() <= 0)

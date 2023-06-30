@@ -18,8 +18,7 @@ namespace ffd {
     //-------------------------------------------------------------------------------------------------
     DragMode::DragMode(core::Project& aProject, Targets& aTargets):
         mProject(aProject), mTargets(aTargets), mParam(), mState(State_Idle), mFocusing(), mFocusTarget(),
-        mFocusIndex(), mFocusPos(), mCommandRef() {
-    }
+        mFocusIndex(), mFocusPos(), mCommandRef() {}
 
     void DragMode::updateParam(const FFDParam& aParam) {
         mParam = aParam;

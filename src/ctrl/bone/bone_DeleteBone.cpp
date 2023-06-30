@@ -4,16 +4,13 @@ namespace ctrl {
 namespace bone {
 
     //-------------------------------------------------------------------------------------------------
-    DeleteBoneImpl::BoneParent::BoneParent(): mTopBones(), mBoneTree(), mIsTopBone() {
-    }
+    DeleteBoneImpl::BoneParent::BoneParent(): mTopBones(), mBoneTree(), mIsTopBone() {}
 
     DeleteBoneImpl::BoneParent::BoneParent(QList<core::Bone2*>* aTopBones):
-        mTopBones(aTopBones), mBoneTree(), mIsTopBone(true) {
-    }
+        mTopBones(aTopBones), mBoneTree(), mIsTopBone(true) {}
 
     DeleteBoneImpl::BoneParent::BoneParent(core::Bone2::Children* aBoneTree):
-        mTopBones(), mBoneTree(aBoneTree), mIsTopBone(false) {
-    }
+        mTopBones(), mBoneTree(aBoneTree), mIsTopBone(false) {}
 
     void DeleteBoneImpl::BoneParent::insert(int aIndex, core::Bone2& aBone) {
         if (mIsTopBone) {
@@ -45,8 +42,7 @@ namespace bone {
     //-------------------------------------------------------------------------------------------------
     DeleteBoneImpl::DeleteBoneImpl(QList<core::Bone2*>& aTopBones, core::Bone2& aBone, bool aIsOrigin):
         mTopBones(aTopBones), mBone(aBone), mParent(), mParentIndex(), mChildrenCount(), mChildrenPos(),
-        mGrandChildrenPos(), mIsOrigin(aIsOrigin), mDone() {
-    }
+        mGrandChildrenPos(), mIsOrigin(aIsOrigin), mDone() {}
 
     DeleteBoneImpl::~DeleteBoneImpl() {
         if (mDone) {

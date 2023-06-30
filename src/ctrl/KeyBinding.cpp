@@ -25,8 +25,7 @@ bool KeyBinding::getKeyValidity(int aKeyCode) {
 }
 
 //-------------------------------------------------------------------------------------------------
-KeyBinding::KeyBinding(): mKeyCode(-1), mSubKeyCode(-1), mModifiers(Qt::NoModifier) {
-}
+KeyBinding::KeyBinding(): mKeyCode(-1), mSubKeyCode(-1), mModifiers(Qt::NoModifier) {}
 
 KeyBinding::KeyBinding(int aKeyCode, Qt::KeyboardModifiers aModifiers, int aSubKeyCode):
     mKeyCode(aKeyCode), mSubKeyCode(aSubKeyCode), mModifiers() {

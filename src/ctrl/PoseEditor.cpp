@@ -11,8 +11,7 @@ using namespace core;
 namespace ctrl {
 
 PoseEditor::PoseEditor(Project& aProject, UILogger& aUILogger):
-    mProject(aProject), mUILogger(aUILogger), mParam(), mTarget(), mKeyOwner(), mCurrent() {
-}
+    mProject(aProject), mUILogger(aUILogger), mParam(), mTarget(), mKeyOwner(), mCurrent() {}
 
 PoseEditor::~PoseEditor() {
     finalize();

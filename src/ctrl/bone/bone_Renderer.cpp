@@ -8,8 +8,7 @@ namespace ctrl {
 namespace bone {
 
     Renderer::Renderer(QPainter& aPainter, const RenderInfo& aInfo):
-        mPainter(aPainter), mInfo(aInfo), mTargetMtx(), mIsShadow(false), mFocusConnector(false) {
-    }
+        mPainter(aPainter), mInfo(aInfo), mTargetMtx(), mIsShadow(false), mFocusConnector(false) {}
 
     std::array<QPointF, 4> Renderer::getBoneQuad(const QPointF& aFrom, const QPointF& aTo) {
         std::array<QPointF, 4> quad;

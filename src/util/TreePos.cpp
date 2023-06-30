@@ -3,8 +3,7 @@
 
 namespace util {
 
-TreePos::TreePos(): mIsValid(false) {
-}
+TreePos::TreePos(): mIsValid(false) {}
 
 TreePos::TreePos(const QModelIndex& aIndex): mIsValid(aIndex.isValid()) {
     pushRecursive(aIndex);

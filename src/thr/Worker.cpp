@@ -8,8 +8,7 @@
 namespace thr {
 
 //-------------------------------------------------------------------------------------------------
-Worker::Thread::Thread(TaskQueue& aQueue): mQueue(aQueue), mExitLock(), mExit(false) {
-}
+Worker::Thread::Thread(TaskQueue& aQueue): mQueue(aQueue), mExitLock(), mExit(false) {}
 
 Worker::Thread::~Thread() {
     // exit
@@ -43,8 +42,7 @@ bool Worker::Thread::isExit() {
 }
 
 //-------------------------------------------------------------------------------------------------
-Worker::Worker(TaskQueue& aQueue): mThread(aQueue) {
-}
+Worker::Worker(TaskQueue& aQueue): mThread(aQueue) {}
 
 void Worker::start(QThread::Priority aPriority) {
     mThread.start(aPriority);

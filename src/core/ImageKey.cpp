@@ -9,8 +9,7 @@
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-ImageKey::Data::Data(): mEasing(), mResHandle(), mBlendMode(img::BlendMode_Normal), mImageOffset(), mGridMesh() {
-}
+ImageKey::Data::Data(): mEasing(), mResHandle(), mBlendMode(img::BlendMode_Normal), mImageOffset(), mGridMesh() {}
 
 ImageKey::Data::Data(const Data& aRhs):
     mEasing(aRhs.mEasing), mResHandle(aRhs.mResHandle), mBlendMode(aRhs.mBlendMode), mImageOffset() {
@@ -35,8 +34,7 @@ void ImageKey::Data::setImageOffset(const QVector2D& aOffset) {
 }
 
 //-------------------------------------------------------------------------------------------------
-ImageKey::Cache::Cache(): mTexture() {
-}
+ImageKey::Cache::Cache(): mTexture() {}
 
 //-------------------------------------------------------------------------------------------------
 ImageKey::ImageKey(): mData(), mCache(), mSleepCount(0) {

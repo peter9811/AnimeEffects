@@ -9,8 +9,7 @@ public:
 
     FFDParam():
         type(Type_Pencil), hardness(1), radius(100), pressure(0.5f), blur(0.0f), eraseHardness(1), eraseRadius(100),
-        erasePressure(0.1f), focusRadius(1.0f) {
-    }
+        erasePressure(0.1f), focusRadius(1.0f) {}
     Type type;
 
     // deformer

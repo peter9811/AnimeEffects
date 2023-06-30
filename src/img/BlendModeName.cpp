@@ -2,7 +2,6 @@
 
 namespace img {
 
-BlendModeName::BlendModeName() {
-}
+BlendModeName::BlendModeName() {}
 
 } // namespace img

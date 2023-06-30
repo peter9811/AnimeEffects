@@ -2,7 +2,6 @@
 
 namespace core {
 
-TimeKey::TimeKey(): TreeNodeBase(this), mFocus(), mSelect(), mFrame() {
-}
+TimeKey::TimeKey(): TreeNodeBase(this), mFocus(), mSelect(), mFrame() {}
 
 } // namespace core

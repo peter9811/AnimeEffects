@@ -8,8 +8,7 @@
 class XCAssertHandler {
 public:
     virtual void failure() const = 0;
-    virtual ~XCAssertHandler() {
-    }
+    virtual ~XCAssertHandler() {}
 };
 
 extern XCAssertHandler* gXCAssertHandler;
@@ -45,8 +44,7 @@ extern XCAssertHandler* gXCAssertHandler;
 class XCErrorHandler {
 public:
     virtual void critical(const QString& aText, const QString& aInfo, const QString& aDetail) const = 0;
-    virtual ~XCErrorHandler() {
-    }
+    virtual ~XCErrorHandler() {}
 };
 
 extern XCErrorHandler* gXCErrorHandler;

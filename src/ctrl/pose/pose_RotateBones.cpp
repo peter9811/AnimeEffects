@@ -5,8 +5,7 @@ namespace pose {
 
     //-------------------------------------------------------------------------------------------------
     RotateBones::RotateBones(core::Bone2* aRootTarget, const QVector<float>& aNexts):
-        mRootTarget(aRootTarget), mPrevs(), mNexts(aNexts), mDone(false) {
-    }
+        mRootTarget(aRootTarget), mPrevs(), mNexts(aNexts), mDone(false) {}
 
     void RotateBones::modifyValue(const QVector<float>& aNexts) {
         mNexts = aNexts;
@@ -46,8 +45,7 @@ namespace pose {
 
     //-------------------------------------------------------------------------------------------------
     RotateAllBones::RotateAllBones(QList<core::Bone2*>& aTopBones, const QVector<float>& aNexts):
-        mTopBones(aTopBones), mPrevs(), mNexts(aNexts), mDone(false) {
-    }
+        mTopBones(aTopBones), mPrevs(), mNexts(aNexts), mDone(false) {}
 
     void RotateAllBones::modifyValue(const QVector<float>& aNexts) {
         mNexts = aNexts;

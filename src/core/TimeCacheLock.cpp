@@ -2,7 +2,6 @@
 
 namespace core {
 
-TimeCacheLock::TimeCacheLock(): working(), current() {
-}
+TimeCacheLock::TimeCacheLock(): working(), current() {}
 
 } // namespace core

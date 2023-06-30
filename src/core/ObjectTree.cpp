@@ -49,8 +49,7 @@ class SortAndRenderCall {
     const TimeCacheAccessor* mAccessor;
 
 public:
-    SortAndRenderCall(): mArray(), mAccessor() {
-    }
+    SortAndRenderCall(): mArray(), mAccessor() {}
 
     void invoke(ObjectNode* aTopNode, const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor) {
         mAccessor = &aAccessor;
@@ -83,11 +82,10 @@ public:
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-ObjectTree::ObjectTree(): mLifeLink(), mTopNode(), mCaller(new SortAndRenderCall()), mShaderHolder(), mTimeCacheLock() {
-}
+ObjectTree::ObjectTree():
+    mLifeLink(), mTopNode(), mCaller(new SortAndRenderCall()), mShaderHolder(), mTimeCacheLock() {}
 
-ObjectTree::~ObjectTree() {
-}
+ObjectTree::~ObjectTree() {}
 
 void ObjectTree::render(const RenderInfo& aInfo, bool aUseWorkingCache) {
     if (mTopNode.data()) {
@@ -169,8 +167,7 @@ cmnd::Vector ObjectTree::createNodesMover(
         MoveNodesCommand(ObjectTree& aTree, const QVector<util::TreePos>& aRemoved,
             const QVector<util::TreePos>& aInserted, const BoneUnbindWorkspacePtr& aWorkspace):
             mTree(aTree.pointee()),
-            mRemoved(aRemoved), mInserted(aInserted), mWorkspace(aWorkspace) {
-        }
+            mRemoved(aRemoved), mInserted(aInserted), mWorkspace(aWorkspace) {}
 
         virtual void exec() {
             redo();

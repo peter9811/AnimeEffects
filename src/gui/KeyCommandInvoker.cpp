@@ -4,8 +4,7 @@
 
 namespace gui {
 
-KeyCommandInvoker::KeyCommandInvoker(KeyCommandMap& aMap): mMap(aMap), mLastCommand(nullptr), mLastKey() {
-}
+KeyCommandInvoker::KeyCommandInvoker(KeyCommandMap& aMap): mMap(aMap), mLastCommand(nullptr), mLastKey() {}
 
 void KeyCommandInvoker::onKeyPressed(const QKeyEvent* aEvent) {
     // if (aEvent->isAutoRepeat()) return;

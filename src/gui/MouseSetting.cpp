@@ -4,8 +4,7 @@
 
 namespace gui {
 
-MouseSetting::MouseSetting(): invertMainViewScaling(), invertTimeLineScaling(), middleMouseMoveCanvas() {
-}
+MouseSetting::MouseSetting(): invertMainViewScaling(), invertTimeLineScaling(), middleMouseMoveCanvas() {}
 
 bool MouseSetting::operator==(const MouseSetting& aRhs) const {
     return invertMainViewScaling == aRhs.invertMainViewScaling && invertTimeLineScaling == aRhs.invertTimeLineScaling &&

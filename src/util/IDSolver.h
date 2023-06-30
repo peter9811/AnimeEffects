@@ -12,8 +12,7 @@ public:
     typedef std::function<void(tData)> Solver;
     typedef std::pair<IdType, Solver> Referencer;
 
-    IDSolver(): mDataMap(), mReferencers() {
-    }
+    IDSolver(): mDataMap(), mReferencers() {}
 
     void pushData(IdType aId, tData aData) {
         mDataMap[aId] = aData;

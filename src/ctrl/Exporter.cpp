@@ -8,15 +8,12 @@
 
 namespace ctrl {
 //-------------------------------------------------------------------------------------------------
-Exporter::Result::Result(): code(ResultCode_TERM) {
-}
+Exporter::Result::Result(): code(ResultCode_TERM) {}
 
-Exporter::Result::Result(ResultCode aCode, const QString& aMessage): code(aCode), message(aMessage) {
-}
+Exporter::Result::Result(ResultCode aCode, const QString& aMessage): code(aCode), message(aMessage) {}
 
 //-------------------------------------------------------------------------------------------------
-Exporter::CommonParam::CommonParam(): path(), size(), frame(), fps() {
-}
+Exporter::CommonParam::CommonParam(): path(), size(), frame(), fps() {}
 
 bool Exporter::CommonParam::isValid() const {
     if (frame.diff() < 0) {
@@ -35,20 +32,16 @@ bool Exporter::CommonParam::isValid() const {
 }
 
 //-------------------------------------------------------------------------------------------------
-Exporter::ImageParam::ImageParam(): name(), suffix("png"), quality(-1) {
-}
+Exporter::ImageParam::ImageParam(): name(), suffix("png"), quality(-1) {}
 
 //-------------------------------------------------------------------------------------------------
-Exporter::GifParam::GifParam(): optimizePalette(), intermediateBps() {
-}
+Exporter::GifParam::GifParam(): optimizePalette(), intermediateBps() {}
 
 //-------------------------------------------------------------------------------------------------
-Exporter::VideoParam::VideoParam(): format(), codecIndex(-1), colorIndex(), bps(), pixfmt() {
-}
+Exporter::VideoParam::VideoParam(): format(), codecIndex(-1), colorIndex(), bps(), pixfmt() {}
 
 //-------------------------------------------------------------------------------------------------
-Exporter::FFMpeg::FFMpeg(): mProcess(), mFinished(), mErrorOccurred(), mErrorString(), mErrorCode(), mLogs() {
-}
+Exporter::FFMpeg::FFMpeg(): mProcess(), mFinished(), mErrorOccurred(), mErrorString(), mErrorCode(), mLogs() {}
 
 bool Exporter::FFMpeg::start(const QString& aArgments) {
 #if defined(Q_OS_WIN)
@@ -141,8 +134,7 @@ Exporter::Exporter(core::Project& aProject):
     mProject(aProject), mFramebuffers(), mClippingFrame(), mDestinationTexturizer(), mTextureDrawer(),
     mOriginTimeInfo(), mOverwriteConfirmer(), mOverwriteConfirmation(), mProgressReporter(), mUILogger(),
     mCommonParam(), mImageParam(), mVideoInCodec(), mVideoInCodecQuality(), mVideoExporting(), mFFMpeg(),
-    mExporting(false), mIndex(0), mDigitCount(0), mProgress(0.0f), mLog(), mIsCanceled() {
-}
+    mExporting(false), mIndex(0), mDigitCount(0), mProgress(0.0f), mLog(), mIsCanceled() {}
 
 Exporter::~Exporter() {
     finish();

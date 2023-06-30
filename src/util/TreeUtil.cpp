@@ -2,7 +2,6 @@
 
 namespace util {
 
-TreeUtil::TreeUtil() {
-}
+TreeUtil::TreeUtil() {}
 
 } // namespace util

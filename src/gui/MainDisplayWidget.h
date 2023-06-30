@@ -62,8 +62,7 @@ private:
         MainDisplayWidget* mOwner;
 
     public:
-        GLContextAccessor(MainDisplayWidget* aOwner): mOwner(aOwner) {
-        }
+        GLContextAccessor(MainDisplayWidget* aOwner): mOwner(aOwner) {}
         virtual void makeCurrent() {
             mOwner->makeCurrent();
         }

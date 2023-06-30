@@ -5,8 +5,7 @@ namespace cmnd {
 
 class SleepableObject {
 public:
-    virtual ~SleepableObject() {
-    }
+    virtual ~SleepableObject() {}
     virtual void awake() = 0;
     virtual void sleep() = 0;
 };

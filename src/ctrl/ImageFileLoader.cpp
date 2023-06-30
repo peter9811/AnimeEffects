@@ -53,8 +53,7 @@ FolderNode* createTopNode(const QString& aName, const QRect& aInitialRect) {
 
 //-------------------------------------------------------------------------------------------------
 ImageFileLoader::ImageFileLoader(const gl::DeviceInfo& aDeviceInfo):
-    mLog(), mFileInfo(), mGLDeviceInfo(aDeviceInfo), mCanvasSize(512, 512), mForceCanvasSize(false) {
-}
+    mLog(), mFileInfo(), mGLDeviceInfo(aDeviceInfo), mCanvasSize(512, 512), mForceCanvasSize(false) {}
 
 void ImageFileLoader::setCanvasSize(const QSize& aSize, bool aForce) {
     if (aSize.width() <= 0 || aSize.height() <= 0)

@@ -14,8 +14,7 @@ public:
     Scalable();
     virtual ~Scalable();
 
-    virtual void initialize() {
-    }
+    virtual void initialize() {}
     virtual bool initializeAndExecute();
     void grabListener(Listener* aListener);
     Vector& commands() {
@@ -45,8 +44,7 @@ class LambdaScalable: public cmnd::Scalable {
     }
 
 public:
-    LambdaScalable(const InitializerType& aInitializer): mInitializer(aInitializer) {
-    }
+    LambdaScalable(const InitializerType& aInitializer): mInitializer(aInitializer) {}
 };
 
 } // namespace cmnd

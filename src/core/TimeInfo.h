@@ -7,8 +7,7 @@ namespace core {
 
 class TimeInfo {
 public:
-    TimeInfo(): fps(0), frameMax(0), loop(false), frame() {
-    }
+    TimeInfo(): fps(0), frameMax(0), loop(false), frame() {}
 
     int fps;
     int frameMax;

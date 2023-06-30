@@ -15,14 +15,11 @@
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-MeshVtx::MeshVtx(): x(0.0f), y(0.0f), mEdges(), mIndex(-1) {
-}
+MeshVtx::MeshVtx(): x(0.0f), y(0.0f), mEdges(), mIndex(-1) {}
 
-MeshVtx::MeshVtx(float aX, float aY): x(aX), y(aY), mEdges() {
-}
+MeshVtx::MeshVtx(float aX, float aY): x(aX), y(aY), mEdges() {}
 
-MeshVtx::MeshVtx(const QVector2D& aPos): x(aPos.x()), y(aPos.y()), mEdges(), mIndex(-1) {
-}
+MeshVtx::MeshVtx(const QVector2D& aPos): x(aPos.x()), y(aPos.y()), mEdges(), mIndex(-1) {}
 
 MeshVtx::~MeshVtx() {
     XC_ASSERT(!hasParent());
@@ -346,8 +343,7 @@ void MeshFace::rawInit(MeshEdge& aEp0, MeshEdge& aEp1, MeshEdge& aEp2) {
 //-------------------------------------------------------------------------------------------------
 MeshKey::Data::Data():
     mOriginOffset(), mVertices(), mEdges(), mFaces(), mPositions(), mTexCoords(), mIndices(), mMeshBuffer(),
-    mIndexBuffer(), mOwner() {
-}
+    mIndexBuffer(), mOwner() {}
 
 MeshKey::Data::Data(const Data& aRhs):
     mOriginOffset(aRhs.mOriginOffset), mVertices(), mEdges(), mFaces(), mPositions(aRhs.mPositions),
@@ -800,8 +796,7 @@ cmnd::Vector MeshKey::createTrianglePusher(
 
     public:
         TrianglePusher(MeshKey& aKey, const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, MeshFace** aDst):
-            mKey(aKey), mPos(aPos), mVtxRef(aRef), mDst(aDst) {
-        }
+            mKey(aKey), mPos(aPos), mVtxRef(aRef), mDst(aDst) {}
 
         virtual bool initializeAndExecute() {
             *mDst = mKey.createTriangle(mPos, mVtxRef, this->commands());
@@ -1011,8 +1006,7 @@ cmnd::Vector MeshKey::createSplitter(
         TrianglePusher(
             MeshKey& aKey, MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, MeshVtx** aTail):
             mKey(aKey),
-            mFace(aFace), mEdgeSide(aEdgeSide), mPosOnEdge(aPosOnEdge), mTail(aTail) {
-        }
+            mFace(aFace), mEdgeSide(aEdgeSide), mPosOnEdge(aPosOnEdge), mTail(aTail) {}
 
         virtual bool initializeAndExecute() {
             *mTail = mKey.splitTriangle(mFace, mEdgeSide, mPosOnEdge, this->commands());
@@ -1040,8 +1034,7 @@ cmnd::Vector MeshKey::createSplitter(MeshFace& aFace, MeshEdge& aEdge0, const QV
         TrianglePusher(MeshKey& aKey, MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0, MeshEdge& aEdge1,
             const QVector2D& aPos1, MeshVtx** aTail):
             mKey(aKey),
-            mFace(aFace), mEdge0(aEdge0), mEdge1(aEdge1), mPos0(aPos0), mPos1(aPos1), mTail(aTail) {
-        }
+            mFace(aFace), mEdge0(aEdge0), mEdge1(aEdge1), mPos0(aPos0), mPos1(aPos1), mTail(aTail) {}
 
         virtual bool initializeAndExecute() {
             *mTail = mKey.splitTriangle(mFace, mEdge0, mPos0, mEdge1, mPos1, this->commands());

@@ -9,8 +9,7 @@ namespace ctrl {
 namespace bone {
 
     struct KeyOwner {
-        KeyOwner(): key(), ownsKey() {
-        }
+        KeyOwner(): key(), ownsKey() {}
 
         explicit operator bool() const {
             return key;

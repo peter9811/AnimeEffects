@@ -13,8 +13,7 @@ namespace gui {
 
 CanvasMover::CanvasMover():
     mCamera(), mMoving(), mRotating(), mResetRotationOrigin(true), mOriginDraggingAngle(), mOriginCanvasCenter(),
-    mOriginCanvasAngle(), mScaleIndex(0) {
-}
+    mOriginCanvasAngle(), mScaleIndex(0) {}
 
 void CanvasMover::setCamera(core::CameraInfo* aCamera) {
     mCamera = aCamera;

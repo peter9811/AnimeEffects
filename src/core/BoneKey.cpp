@@ -8,8 +8,7 @@
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-BoneKey::Data::Data(): mTopBones() {
-}
+BoneKey::Data::Data(): mTopBones() {}
 
 BoneKey::Data::Data(const Data& aRhs) {
     for (const Bone2* bone : aRhs.topBones()) {
@@ -77,12 +76,10 @@ void BoneKey::Cache::setNode(ObjectNode& aNode) {
 }
 
 //-------------------------------------------------------------------------------------------------
-BoneKey::BindingCache::BindingCache(): node(), boneIndex(), innerMtx() {
-}
+BoneKey::BindingCache::BindingCache(): node(), boneIndex(), innerMtx() {}
 
 //-------------------------------------------------------------------------------------------------
-BoneKey::BoneKey(): mData(), mCaches(), mCacheOwner(), mBindingCaches() {
-}
+BoneKey::BoneKey(): mData(), mCaches(), mCacheOwner(), mBindingCaches() {}
 
 BoneKey::~BoneKey() {
     destroyCaches();

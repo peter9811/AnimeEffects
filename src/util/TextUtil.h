@@ -25,8 +25,7 @@ public:
     static QStringList splitAndTrim(const QString& aText, QChar aSplit);
 
 private:
-    TextUtil() {
-    }
+    TextUtil() {}
 };
 
 } // namespace util

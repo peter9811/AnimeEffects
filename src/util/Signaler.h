@@ -15,8 +15,7 @@ public:
     typedef std::list<FunctionType*> ListType;
     typedef FunctionType* IdType;
 
-    Signaler(): mFunctions() {
-    }
+    Signaler(): mFunctions() {}
 
     ~Signaler() {
         for (auto function : mFunctions) {

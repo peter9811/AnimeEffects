@@ -5,8 +5,7 @@ using namespace core;
 namespace ctrl {
 namespace mesh {
 
-    Renderer::Renderer(QPainter& aPainter, const RenderInfo& aInfo): mPainter(aPainter), mInfo(aInfo), mTargetMtx() {
-    }
+    Renderer::Renderer(QPainter& aPainter, const RenderInfo& aInfo): mPainter(aPainter), mInfo(aInfo), mTargetMtx() {}
 
     void Renderer::setAntialiasing(bool aFlag) {
         mPainter.setRenderHint(QPainter::Antialiasing, aFlag);

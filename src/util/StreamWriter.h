@@ -11,8 +11,7 @@ class StreamWriter {
     std::ostream& mOut;
 
 public:
-    StreamWriter(std::ostream& aOut): mOut(aOut) {
-    }
+    StreamWriter(std::ostream& aOut): mOut(aOut) {}
 
     template<typename tValue> void write(tValue aValue) {
         tValue value = XC_TO_LITTLE_ENDIAN(aValue);

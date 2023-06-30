@@ -15,8 +15,7 @@ namespace prop {
         Q_OBJECT
     public:
         Panel(const QString& aTitle, QWidget* aParent);
-        virtual ~Panel() {
-        }
+        virtual ~Panel() {}
         void addGroup(QGroupBox* aGroup);
         void addStretch();
 

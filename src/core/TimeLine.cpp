@@ -39,8 +39,7 @@ TimeKeyType TimeLine::getTimeKeyTypeInOrderOfOperations(int aIndex) {
     return kTimeKeyTypeInOrderOfOperations.at(aIndex);
 }
 
-TimeLine::TimeLine(): mMap(), mCurrent(new TimeKeyExpans()), mWorking(new TimeKeyExpans()), mDefaultKeys() {
-}
+TimeLine::TimeLine(): mMap(), mCurrent(new TimeKeyExpans()), mWorking(new TimeKeyExpans()), mDefaultKeys() {}
 
 TimeLine::~TimeLine() {
     clear();

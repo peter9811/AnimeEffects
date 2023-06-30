@@ -23,8 +23,7 @@ namespace core {
 
 LayerNode::LayerNode(const QString& aName, ShaderHolder& aShaderHolder):
     mName(aName), mIsVisible(true), mIsSlimmedDown(), mInitialRect(), mTimeLine(), mShaderHolder(aShaderHolder),
-    mIsClipped(), mMeshTransformer("./data/shader/MeshTransformVert.glsl"), mCurrentMesh(), mClippees() {
-}
+    mIsClipped(), mMeshTransformer("./data/shader/MeshTransformVert.glsl"), mCurrentMesh(), mClippees() {}
 
 void LayerNode::setDefaultImage(const img::ResourceHandle& aHandle) {
     setDefaultImage(aHandle, aHandle->blendMode());

@@ -6,8 +6,7 @@
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-MeshTransformerResource::MeshTransformerResource() {
-}
+MeshTransformerResource::MeshTransformerResource() {}
 
 void MeshTransformerResource::setup(const QString& aShaderPath) {
     QString code;

@@ -2,14 +2,11 @@
 
 namespace theme {
 
-Theme::Theme(): mId("default"), mFileInfo() {
-}
+Theme::Theme(): mId("default"), mFileInfo() {}
 
-Theme::Theme(QString aResourceDir): mId("default"), mFileInfo(aResourceDir + "/themes/" + mId) {
-}
+Theme::Theme(QString aResourceDir): mId("default"), mFileInfo(aResourceDir + "/themes/" + mId) {}
 
-Theme::Theme(QString aResourceDir, QString aId): mId(aId), mFileInfo(aResourceDir + "/themes/" + mId) {
-}
+Theme::Theme(QString aResourceDir, QString aId): mId(aId), mFileInfo(aResourceDir + "/themes/" + mId) {}
 
 //-------------------------------------------------------------------------------------------------
 QString Theme::id() const {

@@ -4,8 +4,7 @@
 
 namespace core {
 
-ObjectTreeNotifier::ObjectTreeNotifier(Project& aProject): mEvent(aProject) {
-}
+ObjectTreeNotifier::ObjectTreeNotifier(Project& aProject): mEvent(aProject) {}
 
 void ObjectTreeNotifier::onExecuted() {
     auto& roots = mEvent.roots();

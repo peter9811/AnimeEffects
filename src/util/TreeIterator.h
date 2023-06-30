@@ -7,8 +7,7 @@ namespace util {
 
 template<typename tTree, typename tChildrenIterator> class TreeIterator {
     struct Layer {
-        Layer(tTree* aParent): parent(aParent), itr(aParent->children().begin()) {
-        }
+        Layer(tTree* aParent): parent(aParent), itr(aParent->children().begin()) {}
         bool isEnd() const {
             return itr == parent->children().end();
         }
@@ -67,8 +66,7 @@ template<typename tTree, typename tChildrenIterator> class TreeIterator {
     }
 
 public:
-    TreeIterator(tTree* aRoot): mLayers(), mRoot(aRoot), mNext(aRoot) {
-    }
+    TreeIterator(tTree* aRoot): mLayers(), mRoot(aRoot), mNext(aRoot) {}
 
     bool hasNext() const {
         return mNext;

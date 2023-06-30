@@ -37,8 +37,7 @@ namespace bone {
 
     public:
         MoveBone(core::Bone2* aTarget, const QVector2D& aNext, bool aFixChildren):
-            mTarget(aTarget), mPrev(), mNext(aNext), mDone(false), mFixChildren(aFixChildren) {
-        }
+            mTarget(aTarget), mPrev(), mNext(aNext), mDone(false), mFixChildren(aFixChildren) {}
 
         void modifyValue(const QVector2D& aNext) {
             mNext = aNext;

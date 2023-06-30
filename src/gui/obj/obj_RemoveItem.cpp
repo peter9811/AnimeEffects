@@ -4,8 +4,7 @@ namespace gui {
 namespace obj {
 
     RemoveItem::RemoveItem(QTreeWidgetItem& aParent, int aIndex, Item& aItem):
-        mParent(aParent), mItem(aItem), mIndex(aIndex) {
-    }
+        mParent(aParent), mItem(aItem), mIndex(aIndex) {}
 
     void RemoveItem::undo() {
         mParent.insertChild(mIndex, &mItem);

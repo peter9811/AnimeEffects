@@ -3,8 +3,7 @@
 
 namespace core {
 //-------------------------------------------------------------------------------------------------
-ScaleKey::Data::Data(): mEasing(), mScale(1.0f, 1.0f) {
-}
+ScaleKey::Data::Data(): mEasing(), mScale(1.0f, 1.0f) {}
 
 void ScaleKey::Data::clamp() {
     mScale.setX(xc_clamp(mScale.x(), Constant::scaleMin(), Constant::scaleMax()));
@@ -12,8 +11,7 @@ void ScaleKey::Data::clamp() {
 }
 
 //-------------------------------------------------------------------------------------------------
-ScaleKey::ScaleKey(): mData() {
-}
+ScaleKey::ScaleKey(): mData() {}
 
 TimeKey* ScaleKey::createClone() {
     auto newKey = new ScaleKey();

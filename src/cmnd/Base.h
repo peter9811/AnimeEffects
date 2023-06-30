@@ -7,10 +7,8 @@ namespace cmnd {
 
 class Base {
 public:
-    Base() {
-    }
-    virtual ~Base() {
-    }
+    Base() {}
+    virtual ~Base() {}
     virtual QString name() const {
         return QString();
     }

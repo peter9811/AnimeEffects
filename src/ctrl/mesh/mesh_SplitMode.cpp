@@ -16,8 +16,7 @@ namespace ctrl {
 namespace mesh {
 
     //-------------------------------------------------------------------------------------------------
-    SplitMode::RelayPoint::RelayPoint(): vtx(), edge(), face(), pos() {
-    }
+    SplitMode::RelayPoint::RelayPoint(): vtx(), edge(), face(), pos() {}
 
     //-------------------------------------------------------------------------------------------------
     SplitMode::SplitMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):

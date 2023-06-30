@@ -25,8 +25,7 @@ public:
 
 private:
     struct Point {
-        Point(): pos(), prev(), next() {
-        }
+        Point(): pos(), prev(), next() {}
         QVector2D pos;
         Point* prev;
         Point* next;

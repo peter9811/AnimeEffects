@@ -5,8 +5,7 @@ namespace util {
 
 template<typename tObject> class FixedObject {
     typedef void (FixedObject::*SafeBoolType)() const;
-    void dummyFuncForSafeBoolIdiom() const {
-    }
+    void dummyFuncForSafeBoolIdiom() const {}
 
     void makeSureBuffer() {
         if (!mObj) {
@@ -29,8 +28,7 @@ template<typename tObject> class FixedObject {
     bool mIsConstructed;
 
 public:
-    FixedObject(): mObj(nullptr), mIsConstructed(false) {
-    }
+    FixedObject(): mObj(nullptr), mIsConstructed(false) {}
 
     ~FixedObject() {
         destruct();

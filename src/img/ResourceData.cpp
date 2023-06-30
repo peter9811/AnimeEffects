@@ -7,8 +7,7 @@ namespace img {
 
 ResourceData::ResourceData(const QString& aIdentifier, const ResourceNode* aSerialAddress):
     mBuffer(), mPos(), mUserData(), mIsLayer(), mIdentifier(aIdentifier), mBlendMode(BlendMode_Normal), mImageLoader(),
-    mSerialAddress(aSerialAddress) {
-}
+    mSerialAddress(aSerialAddress) {}
 
 void ResourceData::grabImage(const XCMemBlock& aBlock, const QSize& aSize, Format aFormat) {
     mBuffer.grab(aFormat, aBlock, aSize);

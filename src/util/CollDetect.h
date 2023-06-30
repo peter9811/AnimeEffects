@@ -46,8 +46,7 @@ public:
 private:
     static bool rayIntersectsToPolygonEdge(const QVector2D& aTop, const QVector2D& aBottom, const QVector2D& aPoint);
 
-    CollDetect() {
-    }
+    CollDetect() {}
 };
 
 } // namespace util

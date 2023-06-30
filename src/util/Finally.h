@@ -10,8 +10,7 @@ class Finally {
     FunctionType mDest;
 
 public:
-    Finally(FunctionType aDest): mDest(aDest) {
-    }
+    Finally(FunctionType aDest): mDest(aDest) {}
 
     ~Finally() {
         mDest();

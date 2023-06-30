@@ -9,8 +9,7 @@ namespace ctrl {
 namespace pose {
 
     struct KeyOwner {
-        KeyOwner(): key(), ownsKey(), parent() {
-        }
+        KeyOwner(): key(), ownsKey(), parent() {}
 
         explicit operator bool() const {
             return key;

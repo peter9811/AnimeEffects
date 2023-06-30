@@ -20,8 +20,7 @@ int getChannelNum(img::Format aFormat) {
 
 namespace img {
 
-Buffer::Buffer(): mFormat(Format_TERM), mBlock(), mWidth(), mHeight(), mChannelNum() {
-}
+Buffer::Buffer(): mFormat(Format_TERM), mBlock(), mWidth(), mHeight(), mChannelNum() {}
 
 Buffer::~Buffer() {
     free();

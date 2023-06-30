@@ -127,8 +127,7 @@ public:
     }
 
 private:
-    MathUtil() {
-    }
+    MathUtil() {}
 };
 
 } // namespace util

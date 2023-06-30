@@ -72,8 +72,7 @@ public:
         void pushPosition(const gl::Vector2& aPos);
     };
 
-    virtual ~LayerMesh() {
-    }
+    virtual ~LayerMesh() {}
     virtual GLenum primitiveMode() const = 0;
     virtual const gl::Vector3* positions() const = 0;
     virtual const gl::Vector2* texCoords() const = 0;

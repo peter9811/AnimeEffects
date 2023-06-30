@@ -8,8 +8,7 @@ namespace res {
 
     //-------------------------------------------------------------------------------------------------
     ChangeFilePathNotifier::ChangeFilePathNotifier(ViaPoint& aViaPoint, const img::ResourceNode& aNode):
-        mViaPoint(aViaPoint), mNode(aNode) {
-    }
+        mViaPoint(aViaPoint), mNode(aNode) {}
 
     void ChangeFilePathNotifier::notify(bool) {
         if (mViaPoint.resourceDialog()) {

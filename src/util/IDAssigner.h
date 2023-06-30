@@ -9,8 +9,7 @@ template<typename tData> class IDAssigner {
 public:
     typedef int IdType;
 
-    IDAssigner(): mMap(), mCurrent(0) {
-    }
+    IDAssigner(): mMap(), mCurrent(0) {}
 
     IdType getId(tData aData) {
         if (mMap.contains(aData)) {

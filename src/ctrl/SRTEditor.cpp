@@ -10,8 +10,7 @@ namespace ctrl {
 
 //-----------------------------------------------------------------------------------
 SRTEditor::SRTEditor(Project& aProject, UILogger& aUILogger):
-    mProject(aProject), mLifeLink(), mUILogger(aUILogger), mParam(), mTarget(), mKeyOwner() {
-}
+    mProject(aProject), mLifeLink(), mUILogger(aUILogger), mParam(), mTarget(), mKeyOwner() {}
 
 SRTEditor::~SRTEditor() {
     finalize();

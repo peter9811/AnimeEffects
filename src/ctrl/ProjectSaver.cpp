@@ -4,8 +4,7 @@
 
 namespace ctrl {
 
-ProjectSaver::ProjectSaver(): mLog() {
-}
+ProjectSaver::ProjectSaver(): mLog() {}
 
 bool ProjectSaver::save(const QString& aFilePath, const core::Project& aProject) {
     std::ofstream file(aFilePath.toLocal8Bit(), std::ios::out | std::ios::binary);

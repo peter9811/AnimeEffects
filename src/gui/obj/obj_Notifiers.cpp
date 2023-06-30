@@ -5,8 +5,7 @@ namespace gui {
 namespace obj {
 
     //-------------------------------------------------------------------------------------------------
-    ViewUpdatedNotifier::ViewUpdatedNotifier(ObjectTreeWidget& aOwner): mOwner(aOwner) {
-    }
+    ViewUpdatedNotifier::ViewUpdatedNotifier(ObjectTreeWidget& aOwner): mOwner(aOwner) {}
 
     void ViewUpdatedNotifier::onExecuted() {
         mOwner.notifyViewUpdated();
@@ -21,8 +20,7 @@ namespace obj {
     }
 
     //-------------------------------------------------------------------------------------------------
-    RestructureNotifier::RestructureNotifier(ObjectTreeWidget& aOwner): mOwner(aOwner) {
-    }
+    RestructureNotifier::RestructureNotifier(ObjectTreeWidget& aOwner): mOwner(aOwner) {}
 
     void RestructureNotifier::onExecuted() {
         mOwner.notifyRestructure();

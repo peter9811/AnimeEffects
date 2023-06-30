@@ -16,22 +16,18 @@ static const int kStandardFps = 60;
 
 namespace ctrl {
 //-------------------------------------------------------------------------------------------------
-System::SaveResult::SaveResult(): success(), message() {
-}
+System::SaveResult::SaveResult(): success(), message() {}
 
-System::SaveResult::SaveResult(bool aSuccess, const QString& aMessage): success(aSuccess), message(aMessage) {
-}
+System::SaveResult::SaveResult(bool aSuccess, const QString& aMessage): success(aSuccess), message(aMessage) {}
 
 //-------------------------------------------------------------------------------------------------
-System::LoadResult::LoadResult(): project(), message() {
-}
+System::LoadResult::LoadResult(): project(), message() {}
 
-System::LoadResult::LoadResult(core::Project* aProject, const QString& aMessage): project(aProject), message(aMessage) {
-}
+System::LoadResult::LoadResult(core::Project* aProject, const QString& aMessage):
+    project(aProject), message(aMessage) {}
 
 System::LoadResult::LoadResult(core::Project* aProject, const QStringList& aMessage):
-    project(aProject), message(aMessage) {
-}
+    project(aProject), message(aMessage) {}
 
 QString System::LoadResult::messages() const {
     QString msgs;
@@ -43,8 +39,7 @@ QString System::LoadResult::messages() const {
 
 //-------------------------------------------------------------------------------------------------
 System::System(const QString& aResourceDir, const QString& aCacheDir):
-    mResourceDir(aResourceDir), mCacheDir(aCacheDir), mProjects(), mAnimator() {
-}
+    mResourceDir(aResourceDir), mCacheDir(aCacheDir), mProjects(), mAnimator() {}
 
 System::~System() {
     closeAllProjects();

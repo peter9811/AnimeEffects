@@ -89,8 +89,7 @@ void ComputeTexture1D::destroy() {
 
 //-------------------------------------------------------------------------------------------------
 ComputeTexture1DList::ComputeTexture1DList(ComputeTexture1D::CompoType aCompoType, int aCompoCount):
-    mCompoType(aCompoType), mCompoCount(aCompoCount), mList(), mSize() {
-}
+    mCompoType(aCompoType), mCompoCount(aCompoCount), mList(), mSize() {}
 
 ComputeTexture1DList::~ComputeTexture1DList() {
     destroy();

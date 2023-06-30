@@ -59,8 +59,7 @@ namespace gl {
 PrimitiveDrawer::State::State():
     brushColor(QColor(0, 0, 0, 255).rgba()), penColor(QColor(0, 0, 0, 255).rgba()), penWidth(1.0f),
     penStyle(PenStyle_Solid), texture(0), textureColor(QColor(255, 255, 255, 255).rgba()), hasBrush(true), hasPen(true),
-    hasMSAA(false) {
-}
+    hasMSAA(false) {}
 
 bool PrimitiveDrawer::State::operator==(const State& aRhs) const {
     return brushColor == aRhs.brushColor && penColor == aRhs.penColor && penWidth == aRhs.penWidth &&

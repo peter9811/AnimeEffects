@@ -63,8 +63,7 @@ private:
 
 namespace gl {
 
-Texture::Texture(): mId(0), mSize() {
-}
+Texture::Texture(): mId(0), mSize() {}
 
 Texture::~Texture() {
     destroy();

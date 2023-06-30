@@ -9,8 +9,7 @@
 
 namespace ctrl {
 
-ProjectLoader::ProjectLoader(): mLog(), mVersion() {
-}
+ProjectLoader::ProjectLoader(): mLog(), mVersion() {}
 
 bool ProjectLoader::load(const QString& aPath, core::Project& aProject, const gl::DeviceInfo& aGLDeviceInfo,
     util::IProgressReporter& aReporter) {

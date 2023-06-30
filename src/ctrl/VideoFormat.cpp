@@ -3,10 +3,8 @@
 namespace ctrl {
 
 VideoCodec::VideoCodec():
-    name(), label(), icodec(), command(), pixfmts(), lossless(), transparent(), colorspace(), gpuenc() {
-}
+    name(), label(), icodec(), command(), pixfmts(), lossless(), transparent(), colorspace(), gpuenc() {}
 
-VideoFormat::VideoFormat(): name(), label(), icodec(), command(), codecs() {
-}
+VideoFormat::VideoFormat(): name(), label(), icodec(), command(), codecs() {}
 
 } // namespace ctrl

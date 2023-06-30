@@ -21,10 +21,8 @@ typedef double float64;
 #define XC_TO_LITTLE_ENDIAN(x) qToLittleEndian(x)
 
 struct XCMemBlock {
-    XCMemBlock(): data(), size() {
-    }
-    XCMemBlock(uint8* aData, size_t aSize): data(aData), size(aSize) {
-    }
+    XCMemBlock(): data(), size() {}
+    XCMemBlock(uint8* aData, size_t aSize): data(aData), size(aSize) {}
     uint8* data;
     size_t size;
 };

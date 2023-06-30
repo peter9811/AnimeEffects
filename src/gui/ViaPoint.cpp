@@ -6,8 +6,7 @@ namespace gui {
 
 ViaPoint::ViaPoint(QWidget* aParent):
     mParent(aParent), mProject(), mResDialog(), mLogView(), mGLDeviceInfo(), mKeyCommandMap(), mKeyCommandInvoker(),
-    mMainViewSetting(), mMouseSetting() {
-}
+    mMainViewSetting(), mMouseSetting() {}
 
 void ViaPoint::setProject(core::Project* aProject) {
     mProject = aProject;

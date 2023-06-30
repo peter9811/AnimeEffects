@@ -6,8 +6,7 @@ namespace obj {
 
     //-------------------------------------------------------------------------------------------------
     MoveItem::MoveItem(ObjectTreeWidget& aTree, const util::TreePos& aFrom, const util::TreePos& aTo):
-        mTree(aTree), mFrom(aFrom), mTo(aTo) {
-    }
+        mTree(aTree), mFrom(aFrom), mTo(aTo) {}
 
     void MoveItem::exec() {
         // QTreeWidget executed already
@@ -27,8 +26,7 @@ namespace obj {
 
     //-------------------------------------------------------------------------------------------------
     MoveItems::MoveItems(ObjectTreeWidget& aTree, const Positions& aRemoved, const Positions& aInserted):
-        mTree(aTree), mRemoved(aRemoved), mInserted(aInserted) {
-    }
+        mTree(aTree), mRemoved(aRemoved), mInserted(aInserted) {}
 
     void MoveItems::exec() {
         // QTreeWidget executed already

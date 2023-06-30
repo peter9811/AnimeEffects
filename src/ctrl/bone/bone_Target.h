@@ -7,8 +7,7 @@ namespace ctrl {
 namespace bone {
 
     struct Target {
-        Target(): node(), mtx(), invMtx() {
-        }
+        Target(): node(), mtx(), invMtx() {}
 
         explicit operator bool() const {
             return node;

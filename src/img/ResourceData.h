@@ -16,8 +16,7 @@ public:
     typedef std::function<bool(ResourceData& aData)> ImageLoader;
 
     ResourceData(const QString& aIdentifier, const ResourceNode* aSerialAddress);
-    virtual ~ResourceData() {
-    }
+    virtual ~ResourceData() {}
 
     void grabImage(const XCMemBlock& aBlock, const QSize& aSize, Format aFormat);
     XCMemBlock releaseImage();

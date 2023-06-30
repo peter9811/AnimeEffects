@@ -7,14 +7,11 @@
 namespace util {
 class Circle {
 public:
-    Circle(): mCenter(), mRadius() {
-    }
+    Circle(): mCenter(), mRadius() {}
 
-    Circle(const QVector2D& aCenter, float aRadius): mCenter(aCenter), mRadius(aRadius) {
-    }
+    Circle(const QVector2D& aCenter, float aRadius): mCenter(aCenter), mRadius(aRadius) {}
 
-    Circle(const QPointF& aCenter, float aRadius): mCenter(aCenter), mRadius(aRadius) {
-    }
+    Circle(const QPointF& aCenter, float aRadius): mCenter(aCenter), mRadius(aRadius) {}
 
     void setCenter(const QVector2D& aCenter) {
         mCenter = aCenter;

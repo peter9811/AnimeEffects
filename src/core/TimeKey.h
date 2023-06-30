@@ -20,18 +20,15 @@ public:
 
     TimeKey();
 
-    virtual ~TimeKey() {
-    }
+    virtual ~TimeKey() {}
 
     virtual TimeKeyType type() const = 0;
     virtual bool canHoldChild() const {
         return false;
     }
 
-    virtual void sleep() {
-    }
-    virtual void awake() {
-    }
+    virtual void sleep() {}
+    virtual void awake() {}
 
     int frame() const {
         return mFrame;

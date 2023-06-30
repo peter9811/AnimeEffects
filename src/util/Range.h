@@ -5,10 +5,8 @@ namespace util {
 
 class Range {
 public:
-    Range(): mMin(), mMax() {
-    }
-    Range(int aMin, int aMax): mMin(aMin), mMax(aMax) {
-    }
+    Range(): mMin(), mMax() {}
+    Range(int aMin, int aMax): mMin(aMin), mMax(aMax) {}
 
     int min() const {
         return mMin;

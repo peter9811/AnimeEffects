@@ -51,8 +51,7 @@ Triangle2DPos Triangle2DPos::make(const util::Triangle2D& aTriangle, const QVect
     return Triangle2DPos();
 }
 
-Triangle2DPos::Triangle2DPos(): mIndex(-1), mFirst(), mSecond() {
-}
+Triangle2DPos::Triangle2DPos(): mIndex(-1), mFirst(), mSecond() {}
 
 Triangle2DPos::Triangle2DPos(int aIndex, float aFirst, float aSecond):
     mIndex(aIndex), mFirst(aFirst), mSecond(aSecond) {

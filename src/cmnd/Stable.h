@@ -7,18 +7,14 @@ namespace cmnd {
 
 class Stable: public Base {
 public:
-    Stable() {
-    }
-    virtual ~Stable() {
-    }
+    Stable() {}
+    virtual ~Stable() {}
 
     virtual void exec() {
         redo();
     }
-    virtual void redo() {
-    }
-    virtual void undo() {
-    }
+    virtual void redo() {}
+    virtual void undo() {}
 
 private:
     virtual bool tryExec() final {

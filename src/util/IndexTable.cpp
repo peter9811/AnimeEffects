@@ -3,8 +3,7 @@
 namespace util {
 const uint32 IndexTable::kInvalidIndex = static_cast<uint32>(-1);
 
-IndexTable::IndexTable(): mTable(), mWidth(), mHeight(), mCount() {
-}
+IndexTable::IndexTable(): mTable(), mWidth(), mHeight(), mCount() {}
 
 void IndexTable::alloc(int aWidth, int aHeight) {
     mWidth = aWidth;

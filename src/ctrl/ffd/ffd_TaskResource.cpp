@@ -7,8 +7,7 @@ namespace ctrl {
 namespace ffd {
 
     //-------------------------------------------------------------------------------------------------
-    TaskResource::TaskResource() {
-    }
+    TaskResource::TaskResource() {}
 
     void TaskResource::setup(
         const QString& aBrushPath, const QString& aEraserPath, const QString& aFocuserPath, const QString& aBlurPath) {

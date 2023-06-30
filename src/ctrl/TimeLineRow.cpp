@@ -2,12 +2,10 @@
 
 namespace ctrl {
 
-TimeLineRow::TimeLineRow(): node(nullptr), rect(), closedFolder(), selecting() {
-}
+TimeLineRow::TimeLineRow(): node(nullptr), rect(), closedFolder(), selecting() {}
 
 TimeLineRow::TimeLineRow(core::ObjectNode* aNode, const QRect& aRect, bool aClosedFolder, bool aSelecting):
-    node(aNode), rect(aRect), closedFolder(aClosedFolder), selecting(aSelecting) {
-}
+    node(aNode), rect(aRect), closedFolder(aClosedFolder), selecting(aSelecting) {}
 
 float TimeLineRow::keyHeight(int aIndex, int aValidCount) const {
     if (aValidCount <= 1 || (node && node->isSlimmedDown())) {

@@ -13,8 +13,7 @@ namespace core {
 class ResourceHolder: private util::NonCopyable {
 public:
     struct ImageTree {
-        ImageTree(): topNode(), filePath() {
-        }
+        ImageTree(): topNode(), filePath() {}
         img::ResourceNode* topNode;
         QString filePath;
     };

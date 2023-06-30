@@ -5,14 +5,10 @@ namespace cmnd {
 
 class Listener {
 public:
-    virtual ~Listener() {
-    }
-    virtual void onExecuted() {
-    }
-    virtual void onUndone() {
-    }
-    virtual void onRedone() {
-    }
+    virtual ~Listener() {}
+    virtual void onExecuted() {}
+    virtual void onUndone() {}
+    virtual void onRedone() {}
 };
 
 } // namespace cmnd

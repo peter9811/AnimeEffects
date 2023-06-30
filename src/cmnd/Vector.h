@@ -8,10 +8,8 @@ namespace cmnd {
 
 class Vector: public std::vector<Base*> {
 public:
-    Vector() {
-    }
-    virtual ~Vector() {
-    }
+    Vector() {}
+    virtual ~Vector() {}
 
     void push(Base* aCommand) {
         if (aCommand) {

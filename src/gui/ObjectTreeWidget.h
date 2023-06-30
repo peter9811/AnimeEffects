@@ -45,10 +45,8 @@ public:
 
 private:
     struct ItemInfo {
-        ItemInfo(): ptr(nullptr), pos() {
-        }
-        ItemInfo(QTreeWidgetItem* aPtr, const util::TreePos& aPos): ptr(aPtr), pos(aPos) {
-        }
+        ItemInfo(): ptr(nullptr), pos() {}
+        ItemInfo(QTreeWidgetItem* aPtr, const util::TreePos& aPos): ptr(aPtr), pos(aPos) {}
         QTreeWidgetItem* ptr;
         util::TreePos pos;
     };

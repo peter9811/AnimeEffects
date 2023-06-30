@@ -6,8 +6,7 @@
 namespace gl {
 
 ExtendShader::ExtendShader():
-    mOriginalCodeVert(), mOriginalCodeFrag(), mVertexCode(), mFragmentCode(), mVariation(), mLog() {
-}
+    mOriginalCodeVert(), mOriginalCodeFrag(), mVertexCode(), mFragmentCode(), mVariation(), mLog() {}
 
 bool ExtendShader::openFromFile(const QString& aFilePath, QString& originalCode) {
     mVariation.clear();

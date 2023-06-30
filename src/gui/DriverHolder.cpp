@@ -3,8 +3,7 @@
 namespace gui {
 
 DriverHolder::DriverHolder(ViaPoint& aViaPoint):
-    mViaPoint(aViaPoint), mDriverResources(), mDriver(), mProject(), mTimeLineSlot(), mResourceSlot(), mTreeSlot() {
-}
+    mViaPoint(aViaPoint), mDriverResources(), mDriver(), mProject(), mTimeLineSlot(), mResourceSlot(), mTreeSlot() {}
 
 DriverHolder::~DriverHolder() {
     destroy();

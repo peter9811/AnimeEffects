@@ -5,8 +5,7 @@ namespace gui {
 
 class MainViewSetting {
 public:
-    MainViewSetting(): showLayerMesh(), cutImagesByTheFrame(), rotateViewACW(), resetRotateView(), rotateViewCW() {
-    }
+    MainViewSetting(): showLayerMesh(), cutImagesByTheFrame(), rotateViewACW(), resetRotateView(), rotateViewCW() {}
 
     bool showLayerMesh;
     bool cutImagesByTheFrame;

@@ -5,8 +5,7 @@
 namespace core {
 
 CameraInfo::CameraInfo():
-    mDevicePixelRatio(1.0), mScreenSize(), mImageSize(), mCenter(), mLeftTopPos(), mScale(1.0f), mRotate(0.0f) {
-}
+    mDevicePixelRatio(1.0), mScreenSize(), mImageSize(), mCenter(), mLeftTopPos(), mScale(1.0f), mRotate(0.0f) {}
 
 void CameraInfo::reset(const QSize& aScreenSize, double aDpr, const QSize& aImageSize, const QPoint& aLeftTopPos) {
     mDevicePixelRatio = aDpr;

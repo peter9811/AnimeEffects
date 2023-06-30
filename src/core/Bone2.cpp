@@ -7,14 +7,12 @@ namespace core {
 
 Bone2::Bone2():
     TreeNodeBase(this), mOrigin(), mLocalPos(), mLocalAngle(), mRange(), mShape(), mBindingNodes(), mWorldPos(),
-    mWorldAngle(), mRotate(), mFocus(), mSelect() {
-}
+    mWorldAngle(), mRotate(), mFocus(), mSelect() {}
 
 Bone2::Bone2(const Bone2& aRhs):
     TreeNodeBase(this), mOrigin(aRhs.mOrigin), mLocalPos(aRhs.mLocalPos), mLocalAngle(aRhs.mLocalAngle),
     mRange(aRhs.mRange), mShape(aRhs.mShape), mBindingNodes(aRhs.mBindingNodes), mWorldPos(aRhs.mWorldPos),
-    mWorldAngle(aRhs.mWorldAngle), mRotate(aRhs.mRotate), mFocus(), mSelect() {
-}
+    mWorldAngle(aRhs.mWorldAngle), mRotate(aRhs.mRotate), mFocus(), mSelect() {}
 
 Bone2::~Bone2() {
     qDeleteAll(children().begin(), children().end());

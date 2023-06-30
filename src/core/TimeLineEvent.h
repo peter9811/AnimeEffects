@@ -17,10 +17,9 @@ public:
     enum Type { Type_PushKey, Type_RemoveKey, Type_MoveKey, Type_CopyKey, Type_ChangeKeyValue, Type_TERM };
 
     struct Target {
-        Target(): node(), pos(), subIndex() {
-        }
-        Target(ObjectNode& aNode, const TimeKeyPos& aPos, int aSubIndex): node(&aNode), pos(aPos), subIndex(aSubIndex) {
-        }
+        Target(): node(), pos(), subIndex() {}
+        Target(ObjectNode& aNode, const TimeKeyPos& aPos, int aSubIndex):
+            node(&aNode), pos(aPos), subIndex(aSubIndex) {}
 
         ObjectNode* node;
         TimeKeyPos pos;

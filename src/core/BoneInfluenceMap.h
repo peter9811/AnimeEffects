@@ -69,8 +69,7 @@ private:
 
     class BoneList {
     public:
-        BoneList() {
-        }
+        BoneList() {}
         QVector<BoneParam> params;
     };
 

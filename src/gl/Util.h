@@ -19,8 +19,7 @@ public:
     static void drawElements(GLenum aPrimitive, GLenum aType, gl::BufferObject& aIndices);
 
 private:
-    Util() {
-    }
+    Util() {}
 };
 
 } // namespace gl

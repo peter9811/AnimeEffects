@@ -8,8 +8,7 @@ namespace prop {
 
     class ItemBase {
     public:
-        virtual ~ItemBase() {
-        }
+        virtual ~ItemBase() {}
         virtual QWidget* itemWidget() {
             return nullptr;
         }

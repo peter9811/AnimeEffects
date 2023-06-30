@@ -7,11 +7,9 @@ namespace core {
 class ImageResourceUpdaterBase: public cmnd::Stable {
 public:
     ImageResourceUpdaterBase(const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions):
-        mTargets(), mWorkspace(aWorkspace), mCreateTransitions(aCreateTransitions) {
-    }
+        mTargets(), mWorkspace(aWorkspace), mCreateTransitions(aCreateTransitions) {}
 
-    virtual ~ImageResourceUpdaterBase() {
-    }
+    virtual ~ImageResourceUpdaterBase() {}
 
     virtual void exec() {
         for (auto& target : mTargets) {
@@ -66,8 +64,7 @@ public:
 protected:
     struct Target {
         Target(ImageKey* aKey):
-            key(aKey), prevImage(), nextImage(), prevOffset(), nextOffset(), anotherMesh(), nextCellSize(0) {
-        }
+            key(aKey), prevImage(), nextImage(), prevOffset(), nextOffset(), anotherMesh(), nextCellSize(0) {}
         ImageKey* key;
         img::ResourceHandle prevImage;
         img::ResourceHandle nextImage;
@@ -110,8 +107,7 @@ public:
     ImageReloader(TimeLine& aTimeLine, const ResourceEvent& aEvent, const ResourceUpdatingWorkspacePtr& aWorkspace,
         bool aCreateTransitions):
         ImageResourceUpdaterBase(aWorkspace, aCreateTransitions),
-        mTimeLine(aTimeLine), mEvent(aEvent) {
-    }
+        mTimeLine(aTimeLine), mEvent(aEvent) {}
 
     virtual void exec() {
         // push default key
@@ -179,8 +175,7 @@ class ImageSleeper: public cmnd::Stable {
     QList<ImageKey*> mTargets;
 
 public:
-    ImageSleeper(ObjectNode& aNode): mNode(aNode), mTargets() {
-    }
+    ImageSleeper(ObjectNode& aNode): mNode(aNode), mTargets() {}
 
     virtual void exec() {
         ObjectNode::Iterator itr(&mNode);

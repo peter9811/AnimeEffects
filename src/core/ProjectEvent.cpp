@@ -2,7 +2,6 @@
 
 namespace core {
 
-ProjectEvent::ProjectEvent(Project& aProject, Type aType): mProject(aProject), mType(aType) {
-}
+ProjectEvent::ProjectEvent(Project& aProject, Type aType): mProject(aProject), mType(aType) {}
 
 } // namespace core

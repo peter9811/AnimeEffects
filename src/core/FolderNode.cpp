@@ -11,8 +11,7 @@ namespace core {
 
 FolderNode::FolderNode(const QString& aName):
     mName(aName), mIsVisible(true), mIsSlimmedDown(), mInitialRect(), mHeightMap(), mTimeLine(), mIsClipped(),
-    mClippees() {
-}
+    mClippees() {}
 
 FolderNode::~FolderNode() {
     qDeleteAll(children());
@@ -85,8 +84,7 @@ bool FolderNode::isClipper() const {
     return true;
 }
 
-void FolderNode::prerender(const RenderInfo&, const TimeCacheAccessor&) {
-}
+void FolderNode::prerender(const RenderInfo&, const TimeCacheAccessor&) {}
 
 void FolderNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor) {
     if (!mIsVisible)

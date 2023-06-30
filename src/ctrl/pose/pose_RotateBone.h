@@ -14,8 +14,7 @@ namespace pose {
         bool mDone;
 
     public:
-        RotateBone(core::Bone2* aTarget, float aNext): mTarget(aTarget), mPrev(), mNext(aNext), mDone(false) {
-        }
+        RotateBone(core::Bone2* aTarget, float aNext): mTarget(aTarget), mPrev(), mNext(aNext), mDone(false) {}
 
         void modifyValue(float aNext) {
             mNext = aNext;

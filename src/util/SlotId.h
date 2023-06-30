@@ -5,10 +5,8 @@ namespace util {
 
 class SlotId {
 public:
-    SlotId(): mValue() {
-    }
-    SlotId(const void* aValue): mValue(aValue) {
-    }
+    SlotId(): mValue() {}
+    SlotId(const void* aValue): mValue(aValue) {}
     SlotId& operator=(const void* aValue) {
         mValue = aValue;
         return *this;

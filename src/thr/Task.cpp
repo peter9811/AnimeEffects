@@ -3,8 +3,7 @@
 
 namespace thr {
 
-Task::Task(): mState(State_Idle), mIsCanceling(false), mLock() {
-}
+Task::Task(): mState(State_Idle), mIsCanceling(false), mLock() {}
 
 Task::~Task() {
     wait();

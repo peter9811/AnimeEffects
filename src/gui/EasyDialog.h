@@ -11,8 +11,7 @@ namespace gui {
 class EasyDialog: public QDialog {
 public:
     EasyDialog(const QString& aTitle, QWidget* aParent, bool aIsModal = true);
-    virtual ~EasyDialog() {
-    }
+    virtual ~EasyDialog() {}
 
     void setMenuBar(QMenuBar* aMenuBar);
     void setMainWidget(QWidget* aWidget, bool aAlignLeft = true);

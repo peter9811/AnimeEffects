@@ -14,8 +14,7 @@ class ObjectTreeSeeker: public util::ITreeSeeker<TimeKeyBlender::SeekData, Objec
     bool mUseCache;
 
 public:
-    ObjectTreeSeeker(bool aUseCache): mUseCache(aUseCache) {
-    }
+    ObjectTreeSeeker(bool aUseCache): mUseCache(aUseCache) {}
 
     virtual Position position(ObjectNode* aNode) const {
         return aNode;
@@ -189,8 +188,7 @@ TimeKeyBlender::TimeKeyBlender(ObjectNode& aRootNode, bool aUseWorking): mSeeker
     }
 }
 
-TimeKeyBlender::TimeKeyBlender(SeekerType& aSeeker, PositionType aRoot): mSeeker(&aSeeker), mRoot(aRoot) {
-}
+TimeKeyBlender::TimeKeyBlender(SeekerType& aSeeker, PositionType aRoot): mSeeker(&aSeeker), mRoot(aRoot) {}
 
 void TimeKeyBlender::updateCurrents(ObjectNode* aRootNode, const TimeInfo& aTime) {
     {

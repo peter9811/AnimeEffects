@@ -4,8 +4,7 @@
 namespace img {
 
 ResourceNode::ResourceNode(const QString& aIdentifier):
-    TreeNodeBase(this), mHandle(new ResourceData(aIdentifier, this), new int(0)), mIsAbandoned() {
-}
+    TreeNodeBase(this), mHandle(new ResourceData(aIdentifier, this), new int(0)), mIsAbandoned() {}
 
 ResourceNode::~ResourceNode() {
     qDeleteAll(children());

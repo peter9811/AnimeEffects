@@ -10,8 +10,7 @@ class SignalNotifier: public Listener {
     util::Signaler<void()>& mSignaler;
 
 public:
-    SignalNotifier(util::Signaler<void()>& aSignaler): mSignaler(aSignaler) {
-    }
+    SignalNotifier(util::Signaler<void()>& aSignaler): mSignaler(aSignaler) {}
 
     virtual void onExecuted() {
         mSignaler();

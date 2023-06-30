@@ -5,11 +5,9 @@ namespace ctrl {
 namespace ffd {
 
     //-------------------------------------------------------------------------------------------------
-    Target::Target(): node(), keyOwner(), task() {
-    }
+    Target::Target(): node(), keyOwner(), task() {}
 
-    Target::Target(core::ObjectNode* aNode): node(aNode), keyOwner(), task() {
-    }
+    Target::Target(core::ObjectNode* aNode): node(aNode), keyOwner(), task() {}
 
     Target::~Target() {
         keyOwner.deleteOwnsKey();

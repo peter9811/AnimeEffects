@@ -46,8 +46,7 @@ float BoneShape::BendRange::getWeight(float aBendAngle) const {
 //-------------------------------------------------------------------------------------------------
 BoneShape::BoneShape():
     mIsValid(), mSegment(), mVUnit(), mVDirAngle(), mLength(), mRadius(), mBounding(), mPolygon(), mRootBendRange(),
-    mTailBendRange() {
-}
+    mTailBendRange() {}
 
 void BoneShape::updateValidity() {
     const bool hasValidRange = !mRadius[0].isNull() || !mRadius[1].isNull();

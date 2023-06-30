@@ -5,8 +5,7 @@ namespace ctrl {
 
 class SRTParam {
 public:
-    SRTParam(): mode(0), necessarilyMove(), necessarilyRotate(), necessarilyScale(), adjustPosition(true) {
-    }
+    SRTParam(): mode(0), necessarilyMove(), necessarilyRotate(), necessarilyScale(), adjustPosition(true) {}
     int mode;
     bool necessarilyMove;
     bool necessarilyRotate;

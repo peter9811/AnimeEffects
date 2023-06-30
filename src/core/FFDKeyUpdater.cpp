@@ -6,8 +6,7 @@ namespace core {
 //-------------------------------------------------------------------------------------------------
 class FFDResourceUpdater: public cmnd::Stable {
     struct Target {
-        Target(FFDKey* aKey): key(aKey), pos() {
-        }
+        Target(FFDKey* aKey): key(aKey), pos() {}
         FFDKey* key;
         QVector<gl::Vector3> pos;
     };
@@ -18,8 +17,7 @@ class FFDResourceUpdater: public cmnd::Stable {
 
 public:
     FFDResourceUpdater(TimeLine& aTimeLine, const ResourceUpdatingWorkspacePtr& aWorkspace):
-        mTimeLine(aTimeLine), mTargets(), mWorkspace(aWorkspace) {
-    }
+        mTimeLine(aTimeLine), mTargets(), mWorkspace(aWorkspace) {}
 
     virtual void exec() {
         // for each ffd keys

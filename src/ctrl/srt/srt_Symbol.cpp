@@ -25,8 +25,7 @@ namespace srt {
     }
 
     //-----------------------------------------------------------------------------------
-    Symbol::Symbol() {
-    }
+    Symbol::Symbol() {}
 
     void Symbol::build(const QMatrix4x4& aLocalMtx, const QMatrix4x4& aWorldMtx, const CameraInfo& aCamera) {
         using util::MathUtil;

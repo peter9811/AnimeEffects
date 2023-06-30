@@ -14,8 +14,7 @@ using namespace core;
 namespace ctrl {
 
 BoneEditor::BoneEditor(Project& aProject, GraphicStyle& aStyle, UILogger& aUILogger):
-    mProject(aProject), mGraphicStyle(aStyle), mUILogger(aUILogger), mParam(), mCurrent(), mTarget(), mKeyOwner() {
-}
+    mProject(aProject), mGraphicStyle(aStyle), mUILogger(aUILogger), mParam(), mCurrent(), mTarget(), mKeyOwner() {}
 
 BoneEditor::~BoneEditor() {
     finalize();

@@ -30,8 +30,7 @@ template<typename tSwapper> class StreamReader {
     std::vector<uint8> mBuf;
 
 public:
-    StreamReader(std::istream& aIo): mIo(aIo), mStart(aIo.tellg()) {
-    }
+    StreamReader(std::istream& aIo): mIo(aIo), mStart(aIo.tellg()) {}
 
     bool isFailed() const {
         return mIo.fail();

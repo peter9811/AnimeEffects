@@ -16,8 +16,7 @@ public:
     typedef typename ListType::const_reverse_iterator ConstReverseIterator;
     typedef typename ListType::size_type SizeType;
 
-    TreeChildren(TreeNodeType* aOwner): mListImpl(), mOwner(aOwner) {
-    }
+    TreeChildren(TreeNodeType* aOwner): mListImpl(), mOwner(aOwner) {}
 
     Iterator begin() {
         return mListImpl.begin();
@@ -228,11 +227,9 @@ public:
     typedef tTreeNode TreeNodeType;
     typedef TreeChildren<tTreeNode> Children;
 
-    TreeNodeBase(TreeNodeType* aObj): mParent(), mPrevSib(), mNextSib(), mChildren(aObj) {
-    }
+    TreeNodeBase(TreeNodeType* aObj): mParent(), mPrevSib(), mNextSib(), mChildren(aObj) {}
 
-    virtual ~TreeNodeBase() {
-    }
+    virtual ~TreeNodeBase() {}
 
     TreeNodeType* parent() {
         return mParent;

@@ -7,8 +7,7 @@ namespace core {
 
 class Animator {
 public:
-    virtual ~Animator() {
-    }
+    virtual ~Animator() {}
     virtual Frame currentFrame() const = 0;
     virtual void stop() = 0;
     virtual void suspend() = 0;

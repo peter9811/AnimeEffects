@@ -6,8 +6,7 @@ namespace ctrl {
 namespace time {
 
     //-------------------------------------------------------------------------------------------------
-    Focuser::SingleFocus::SingleFocus(): node(), pos() {
-    }
+    Focuser::SingleFocus::SingleFocus(): node(), pos() {}
 
     bool Focuser::SingleFocus::isValid() const {
         return node && !pos.isNull();
@@ -16,8 +15,7 @@ namespace time {
     //-------------------------------------------------------------------------------------------------
     Focuser::Focuser(const QVector<TimeLineRow>& aRows, const Scaler& aScale, int aMargin):
         mRows(aRows), mScale(aScale), mFocusLink(), mPoint(), mRange(), mFoundFocus(false), mViewIsChanged(false),
-        mMargin(aMargin), mRadius(5) {
-    }
+        mMargin(aMargin), mRadius(5) {}
 
     Focuser::SingleFocus Focuser::reset(const QPoint& aPoint) {
         mPoint = aPoint;

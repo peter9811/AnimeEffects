@@ -9,8 +9,7 @@ namespace ctrl {
 
 class UILogger {
 public:
-    virtual ~UILogger() {
-    }
+    virtual ~UILogger() {}
     virtual void pushLog(const QString& aMessage, UILogType aType) = 0;
 };
 

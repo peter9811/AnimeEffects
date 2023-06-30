@@ -11,8 +11,7 @@ namespace mesh {
     class Focuser {
     public:
         struct Focus {
-            Focus(): vtx(), edge(), face() {
-            }
+            Focus(): vtx(), edge(), face() {}
             MeshVtx* vtx;
             MeshEdge* edge;
             MeshFace* face;

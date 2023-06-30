@@ -10,8 +10,7 @@ template<typename tObj> class DealtList;
 //-----------------------------------------------------------------
 template<typename tObj> class DealtListNode {
 public:
-    DealtListNode(): obj(), mPrev(0), mNext(0) {
-    }
+    DealtListNode(): obj(), mPrev(0), mNext(0) {}
     tObj obj;
 
     DealtListNode<tObj>* prev() const {
@@ -36,11 +35,9 @@ public:
 
     class Iterator {
     public:
-        Iterator(): mNext(0) {
-        }
+        Iterator(): mNext(0) {}
 
-        Iterator(NodeType& aFirst): mNext(&aFirst) {
-        }
+        Iterator(NodeType& aFirst): mNext(&aFirst) {}
 
         bool hasNext() {
             return mNext != 0 ? true : false;
@@ -57,8 +54,7 @@ public:
         NodeType* mNext;
     };
 
-    DealtList(): mFirst(0), mLast(0) {
-    }
+    DealtList(): mFirst(0), mLast(0) {}
 
     ~DealtList() {
         clear();

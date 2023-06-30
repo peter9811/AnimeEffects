@@ -6,8 +6,7 @@ namespace core {
 const MoveKey::SplineType MoveKey::kDefaultSplineType = MoveKey::SplineType_Linear;
 
 //-------------------------------------------------------------------------------------------------
-MoveKey::Data::Data(): mEasing(), mSpline(kDefaultSplineType), mPos(), mCentroid() {
-}
+MoveKey::Data::Data(): mEasing(), mSpline(kDefaultSplineType), mPos(), mCentroid() {}
 
 void MoveKey::Data::clampPos() {
     mPos.setX(xc_clamp(mPos.x(), Constant::transMin(), Constant::transMax()));
@@ -58,8 +57,7 @@ std::array<QVector2D, 2> MoveKey::getCatmullRomVels(
 }
 
 //-------------------------------------------------------------------------------------------------
-MoveKey::MoveKey(): mData() {
-}
+MoveKey::MoveKey(): mData() {}
 
 TimeKey* MoveKey::createClone() {
     auto newKey = new MoveKey();

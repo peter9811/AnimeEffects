@@ -12,8 +12,7 @@ namespace gui {
 class MainDisplayStyle: public ctrl::GraphicStyle, private util::NonCopyable {
 public:
     MainDisplayStyle(const QFont& aFont, GUIResources& aResources):
-        mFont(aFont), mFontMetrics(aFont), mResources(aResources) {
-    }
+        mFont(aFont), mFontMetrics(aFont), mResources(aResources) {}
 
     virtual QFont font() const {
         return mFont;

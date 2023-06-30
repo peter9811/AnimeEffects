@@ -18,8 +18,7 @@ template<typename tObject> class GrabNewObject: public Stable {
     bool mIsCanceled;
 
 public:
-    GrabNewObject(tObject* aObject): mObject(aObject), mIsCanceled(false) {
-    }
+    GrabNewObject(tObject* aObject): mObject(aObject), mIsCanceled(false) {}
     ~GrabNewObject() {
         if (mIsCanceled)
             delete mObject;
@@ -37,8 +36,7 @@ template<typename tObject> class GrabDeleteObject: public Stable {
     bool mIsCanceled;
 
 public:
-    GrabDeleteObject(tObject* aObject): mObject(aObject), mIsCanceled(false) {
-    }
+    GrabDeleteObject(tObject* aObject): mObject(aObject), mIsCanceled(false) {}
     ~GrabDeleteObject() {
         if (!mIsCanceled)
             delete mObject;
@@ -55,8 +53,7 @@ class Awake: public Stable {
     SleepableObject* mSleepable;
 
 public:
-    Awake(SleepableObject* aSleepable): mSleepable(aSleepable) {
-    }
+    Awake(SleepableObject* aSleepable): mSleepable(aSleepable) {}
     virtual void undo() {
         mSleepable->sleep();
     }
@@ -69,8 +66,7 @@ class Sleep: public Stable {
     SleepableObject* mSleepable;
 
 public:
-    Sleep(SleepableObject* aSleepable): mSleepable(aSleepable) {
-    }
+    Sleep(SleepableObject* aSleepable): mSleepable(aSleepable) {}
     virtual void undo() {
         mSleepable->awake();
     }
@@ -86,12 +82,10 @@ class Delegatable: public Stable {
     FuncType mRedo;
 
 public:
-    Delegatable(const FuncType& aExec, const FuncType& aUndo): mExec(aExec), mUndo(aUndo), mRedo(aExec) {
-    }
+    Delegatable(const FuncType& aExec, const FuncType& aUndo): mExec(aExec), mUndo(aUndo), mRedo(aExec) {}
 
     Delegatable(const FuncType& aExec, const FuncType& aUndo, const FuncType& aRedo):
-        mExec(aExec), mUndo(aUndo), mRedo(aRedo) {
-    }
+        mExec(aExec), mUndo(aUndo), mRedo(aRedo) {}
     virtual void exec() {
         mExec();
     }
@@ -109,8 +103,7 @@ template<typename tValue> class Assign: public Stable {
     tValue mNext;
 
 public:
-    Assign(tValue* aTarget, tValue aValue): mTarget(aTarget), mPrev(), mNext(aValue) {
-    }
+    Assign(tValue* aTarget, tValue aValue): mTarget(aTarget), mPrev(), mNext(aValue) {}
     virtual void exec() {
         mPrev = *mTarget;
         redo();
@@ -129,8 +122,7 @@ template<typename tTarget, typename tValue> class ConvertAssign: public Stable {
     tValue mNext;
 
 public:
-    ConvertAssign(tTarget* aTarget, tValue aValue): mTarget(aTarget), mPrev(), mNext(aValue) {
-    }
+    ConvertAssign(tTarget* aTarget, tValue aValue): mTarget(aTarget), mPrev(), mNext(aValue) {}
     virtual void exec() {
         mPrev = *mTarget;
         redo();
@@ -150,8 +142,7 @@ template<typename tTarget, typename tValue = tTarget> class ModifiableAssign: pu
     bool mDone;
 
 public:
-    ModifiableAssign(tTarget* aTarget, tValue aValue): mTarget(aTarget), mPrev(), mNext(aValue), mDone(false) {
-    }
+    ModifiableAssign(tTarget* aTarget, tValue aValue): mTarget(aTarget), mPrev(), mNext(aValue), mDone(false) {}
     void modifyValue(tValue aValue) {
         mNext = aValue;
         if (mDone)
@@ -176,8 +167,7 @@ template<typename tObject> class AssignNewObject: public Stable {
     tObject* mValue;
 
 public:
-    AssignNewObject(tObject** aTarget, tObject* aValue): mTarget(aTarget), mValue(aValue) {
-    }
+    AssignNewObject(tObject** aTarget, tObject* aValue): mTarget(aTarget), mValue(aValue) {}
     ~AssignNewObject() {
         if (*mTarget != mValue)
             delete mValue;
@@ -196,8 +186,7 @@ template<typename tVectorObj> class PushBackVector: public Stable {
     tVectorObj mObj;
 
 public:
-    PushBackVector(VectorType* aTarget, tVectorObj aObj): mTarget(aTarget), mObj(aObj) {
-    }
+    PushBackVector(VectorType* aTarget, tVectorObj aObj): mTarget(aTarget), mObj(aObj) {}
     virtual void undo() {
         mObj = mTarget->back();
         mTarget->pop_back();
@@ -214,8 +203,7 @@ template<typename tVectorObj> class RemoveVector: public Stable {
     tVectorObj mObj;
 
 public:
-    RemoveVector(VectorType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {
-    }
+    RemoveVector(VectorType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {}
     virtual void undo() {
         mTarget->insert(mIndex, mObj);
     }
@@ -231,8 +219,7 @@ template<typename tListObj> class PushBackList: public Stable {
     tListObj mObj;
 
 public:
-    PushBackList(ListType* aTarget, tListObj aObj): mTarget(aTarget), mObj(aObj) {
-    }
+    PushBackList(ListType* aTarget, tListObj aObj): mTarget(aTarget), mObj(aObj) {}
     virtual void undo() {
         mObj = mTarget->back();
         mTarget->pop_back();
@@ -248,8 +235,7 @@ template<typename tListObj> class PopBackList: public Stable {
     tListObj mObj;
 
 public:
-    PopBackList(ListType* aTarget): mTarget(aTarget), mObj() {
-    }
+    PopBackList(ListType* aTarget): mTarget(aTarget), mObj() {}
     virtual void undo() {
         if (mObj) {
             mTarget->push_back(mObj);
@@ -270,8 +256,7 @@ template<typename tListObj> class RemoveList: public Stable {
     tListObj mObj;
 
 public:
-    RemoveList(ListType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {
-    }
+    RemoveList(ListType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {}
 
     virtual void undo() {
         mTarget->insert(mIndex, mObj);
@@ -289,8 +274,7 @@ template<typename tListObj> class RemoveListByObj: public Stable {
     tListObj mObj;
 
 public:
-    RemoveListByObj(ListType* aTarget, tListObj aObj): mTarget(aTarget), mIndex(0), mObj(aObj) {
-    }
+    RemoveListByObj(ListType* aTarget, tListObj aObj): mTarget(aTarget), mIndex(0), mObj(aObj) {}
 
     virtual void undo() {
         mTarget->insert(mIndex, mObj);
@@ -307,8 +291,7 @@ template<typename tTree> class PushBackTree: public Stable {
     tTree* mObj;
 
 public:
-    PushBackTree(TreeChildrenType* aTarget, tTree* aObj): mTarget(aTarget), mObj(aObj) {
-    }
+    PushBackTree(TreeChildrenType* aTarget, tTree* aObj): mTarget(aTarget), mObj(aObj) {}
     virtual void undo() {
         mObj = mTarget->popBack();
     }
@@ -324,8 +307,7 @@ template<typename tTree> class PopBackTree: public Stable {
     tTree* mObj;
 
 public:
-    PopBackTree(TreeChildrenType* aTarget): mTarget(aTarget), mObj() {
-    }
+    PopBackTree(TreeChildrenType* aTarget): mTarget(aTarget), mObj() {}
     virtual void undo() {
         mTarget->pushBack(mObj);
     }
@@ -340,8 +322,7 @@ template<typename tTree> class PushBackNewTreeObject: public Stable {
     tTree* mObj;
 
 public:
-    PushBackNewTreeObject(TreeChildrenType* aTarget, tTree* aObj): mTarget(aTarget), mObj(aObj) {
-    }
+    PushBackNewTreeObject(TreeChildrenType* aTarget, tTree* aObj): mTarget(aTarget), mObj(aObj) {}
     ~PushBackNewTreeObject() {
         if (mObj != NULL)
             delete mObj;
@@ -362,8 +343,7 @@ template<typename tTree> class InsertTree: public Stable {
     tTree* mObj;
 
 public:
-    InsertTree(ListType* aTarget, int aIndex, tTree* aObj): mTarget(aTarget), mIndex(aIndex), mObj(aObj) {
-    }
+    InsertTree(ListType* aTarget, int aIndex, tTree* aObj): mTarget(aTarget), mIndex(aIndex), mObj(aObj) {}
 
     virtual void undo() {
         mTarget->erase(mIndex);
@@ -380,8 +360,7 @@ template<typename tTree> class RemoveTree: public Stable {
     tTree* mObj;
 
 public:
-    RemoveTree(ListType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {
-    }
+    RemoveTree(ListType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {}
 
     virtual void undo() {
         mTarget->insert(mIndex, mObj);
@@ -399,8 +378,7 @@ template<typename tTree> class RemoveTreeByObj: public Stable {
     tTree* mObj;
 
 public:
-    RemoveTreeByObj(ListType* aTarget, tTree* aObj): mTarget(aTarget), mIndex(-1), mObj(aObj) {
-    }
+    RemoveTreeByObj(ListType* aTarget, tTree* aObj): mTarget(aTarget), mIndex(-1), mObj(aObj) {}
 
     virtual void undo() {
         mTarget->insert(mIndex, mObj);
@@ -418,8 +396,7 @@ template<typename tKey, typename tValue> class InsertMap: public Stable {
     tValue mValue;
 
 public:
-    InsertMap(QMap<tKey, tValue>& aMap, tKey aKey, tValue aValue): mMap(aMap), mKey(aKey), mValue(aValue) {
-    }
+    InsertMap(QMap<tKey, tValue>& aMap, tKey aKey, tValue aValue): mMap(aMap), mKey(aKey), mValue(aValue) {}
 
     virtual void undo() {
         XC_ASSERT(mMap.contains(mKey));
@@ -440,8 +417,7 @@ template<typename tKey, typename tValue> class RemoveMap: public Stable {
     tValue mPrev;
 
 public:
-    RemoveMap(QMap<tKey, tValue>& aMap, tKey aKey): mMap(aMap), mKey(aKey), mPrev() {
-    }
+    RemoveMap(QMap<tKey, tValue>& aMap, tKey aKey): mMap(aMap), mKey(aKey), mPrev() {}
 
     virtual void undo() {
         XC_ASSERT(!mMap.contains(mKey));

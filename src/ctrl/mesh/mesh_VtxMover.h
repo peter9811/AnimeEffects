@@ -16,8 +16,7 @@ namespace mesh {
 
     public:
         VtxMover(core::MeshKey& aKey, core::MeshVtx& aVtx, const QVector2D& aPos):
-            mKey(aKey), mVtx(aVtx), mPrev(), mNext(aPos), mDone(false) {
-        }
+            mKey(aKey), mVtx(aVtx), mPrev(), mNext(aPos), mDone(false) {}
 
         const core::MeshVtx* currentVtx() const {
             return &mVtx;

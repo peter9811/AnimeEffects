@@ -3,8 +3,7 @@
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-TimeKeyGatherer::Point::Point(): key(), frame(), relativeFrame(), looped() {
-}
+TimeKeyGatherer::Point::Point(): key(), frame(), relativeFrame(), looped() {}
 
 //-------------------------------------------------------------------------------------------------
 TimeKey* TimeKeyGatherer::findLastKey(const TimeLine::MapType& aMap, Frame aFrame) {
@@ -19,8 +18,7 @@ TimeKey* TimeKeyGatherer::findLastKey(const TimeLine::MapType& aMap, Frame aFram
 }
 
 //-------------------------------------------------------------------------------------------------
-TimeKeyGatherer::TimeKeyGatherer(): mPoints(), mFrame() {
-}
+TimeKeyGatherer::TimeKeyGatherer(): mPoints(), mFrame() {}
 
 TimeKeyGatherer::TimeKeyGatherer(
     const TimeLine::MapType& aMap, const TimeInfo& aTimeInfo, ForceType aForceType, TimeKey* aAssignedParent):

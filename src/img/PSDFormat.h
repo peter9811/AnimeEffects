@@ -124,8 +124,7 @@ public:
 
     class LayerMask {
     public:
-        LayerMask(): rect(), defaultColor(), flags(), hasReal(false), realFlags(), realUserMaskBG(), realUserRect() {
-        }
+        LayerMask(): rect(), defaultColor(), flags(), hasReal(false), realFlags(), realUserMaskBG(), realUserRect() {}
 
         Rect rect;
         uint8 defaultColor;
@@ -183,8 +182,7 @@ public:
 
     class LayerAndMaskInfo {
     public:
-        LayerAndMaskInfo(): layerCount() {
-        }
+        LayerAndMaskInfo(): layerCount() {}
 
         sint16 layerCount; // doesn't ref in writer
         LayerList layers;
@@ -199,8 +197,7 @@ public:
         std::list<ChannelPtr> channels;
     };
 
-    PSDFormat(): mHeader(), mColorModeData(), mImageResources(), mLayerAndMaskInfo(), mImageData() {
-    }
+    PSDFormat(): mHeader(), mColorModeData(), mImageResources(), mLayerAndMaskInfo(), mImageData() {}
 
     Header& header() {
         return mHeader;

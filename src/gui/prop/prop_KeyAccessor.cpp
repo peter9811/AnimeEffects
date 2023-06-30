@@ -61,8 +61,7 @@ const core::FFDKey::Data& getFFDKeyData(const core::ObjectNode& aTarget, int aFr
 namespace gui {
 namespace prop {
 
-    KeyAccessor::KeyAccessor(): mProject(), mTarget() {
-    }
+    KeyAccessor::KeyAccessor(): mProject(), mTarget() {}
 
     void KeyAccessor::setProject(core::Project* aProject) {
         mProject = aProject;

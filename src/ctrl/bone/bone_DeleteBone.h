@@ -49,14 +49,12 @@ namespace bone {
 
     class DeleteBone: public DeleteBoneImpl {
     public:
-        DeleteBone(core::BoneKey& aKey, core::Bone2& aBone): DeleteBoneImpl(aKey.data().topBones(), aBone, true) {
-        }
+        DeleteBone(core::BoneKey& aKey, core::Bone2& aBone): DeleteBoneImpl(aKey.data().topBones(), aBone, true) {}
     };
 
     class DeletePose: public DeleteBoneImpl {
     public:
-        DeletePose(core::PoseKey& aKey, core::Bone2& aPose): DeleteBoneImpl(aKey.data().topBones(), aPose, false) {
-        }
+        DeletePose(core::PoseKey& aKey, core::Bone2& aPose): DeleteBoneImpl(aKey.data().topBones(), aPose, false) {}
     };
 
 } // namespace bone

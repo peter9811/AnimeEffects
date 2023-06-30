@@ -10,8 +10,7 @@ namespace srt {
 
     KeyOwner::KeyOwner():
         moveKey(), rotateKey(), scaleKey(), ownsMoveKey(), ownsRotateKey(), ownsScaleKey(), parentMtx(), invParentMtx(),
-        invParentSRMtx(), locSRMtx(), locSRTMtx(), locCSRTMtx(), hasInv() {
-    }
+        invParentSRMtx(), locSRMtx(), locSRTMtx(), locCSRTMtx(), hasInv() {}
 
     KeyOwner::~KeyOwner() {
         deleteOwningKeys();

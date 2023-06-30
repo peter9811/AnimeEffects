@@ -3,8 +3,7 @@
 
 namespace thr {
 
-TaskQueue::TaskQueue(): mTaskList(), mLock(), mCondition(), mCondLock() {
-}
+TaskQueue::TaskQueue(): mTaskList(), mLock(), mCondition(), mCondLock() {}
 
 void TaskQueue::push(Task& aTask) {
     QMutexLocker locker(&mLock);

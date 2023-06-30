@@ -3,8 +3,7 @@
 namespace core {
 
 HeightMap::HeightMap(const QString& aName):
-    mName(aName), mImage(), mImageRect(), mCenter(), mHeightRate(1.0f), mBaseHeight(0.0f) {
-}
+    mName(aName), mImage(), mImageRect(), mCenter(), mHeightRate(1.0f), mBaseHeight(0.0f) {}
 
 void HeightMap::grabImage(const XCMemBlock& aBlock, const QRect& aRect) {
     mImage.free();

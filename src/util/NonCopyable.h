@@ -5,10 +5,8 @@ namespace util {
 
 class NonCopyable {
 protected:
-    NonCopyable() {
-    }
-    ~NonCopyable() {
-    }
+    NonCopyable() {}
+    ~NonCopyable() {}
 
 private:
     NonCopyable(const NonCopyable&);

@@ -10,8 +10,7 @@ using namespace core;
 namespace ctrl {
 
 MeshEditor::MeshEditor(Project& aProject, UILogger& aUILogger):
-    mProject(aProject), mUILogger(aUILogger), mParam(), mCurrent(), mTarget(), mKeyOwner() {
-}
+    mProject(aProject), mUILogger(aUILogger), mParam(), mCurrent(), mTarget(), mKeyOwner() {}
 
 MeshEditor::~MeshEditor() {
     finalize();

@@ -1,27 +1,12 @@
 include(../common.pri)
 
-TARGET      = thr
-TEMPLATE    = lib
-DESTDIR     = .
+TARGET = thr
+TEMPLATE = lib
+CONFIG += staticlib
 
-CONFIG      += staticlib
-INCLUDES    += $$PWD
-
-OBJECTS_DIR = .obj
-MOC_DIR     = .moc
-RCC_DIR     = .rcc
-
-msvc:LIBS            += ../util/util.lib
-msvc:PRE_TARGETDEPS  += ../util/util.lib
-
-mingw:LIBS            += -L"$$OUT_PWD/../util/" -lutil
-mingw:PRE_TARGETDEPS  += ../util/libutil.a
-
-gcc:LIBS            += -L"$$OUT_PWD/../util/" -lutil
-gcc:PRE_TARGETDEPS  += ../util/libutil.a
+LIBS += -L"$$OUT_PWD/../util/" -lutil
 
 INCLUDEPATH += ..
-DEPENDPATH  += ..
 
 SOURCES += \
     Worker.cpp \

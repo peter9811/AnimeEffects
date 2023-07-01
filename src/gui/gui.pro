@@ -1,23 +1,14 @@
 include(../common.pri)
 
-TARGET      = AnimeEffects
-TEMPLATE    = app
-DESTDIR     = ..
-
-CONFIG      += static
-INCLUDES    += $$PWD
-
-OBJECTS_DIR = .obj
-MOC_DIR     = .moc
-RCC_DIR     = .rcc
+TARGET = AnimeEffects
+TEMPLATE = app
+CONFIG += static
+DESTDIR = ..
 
 win32:RC_ICONS = ../AnimeEffects.ico
 macx:ICON = ../AnimeEffects.icns
 
-msvc:LIBS            += ../util/util.lib ../thr/thr.lib ../cmnd/cmnd.lib ../gl/gl.lib ../img/img.lib ../core/core.lib ../ctrl/ctrl.lib
-msvc:PRE_TARGETDEPS  += ../util/util.lib ../thr/thr.lib ../cmnd/cmnd.lib ../gl/gl.lib ../img/img.lib ../core/core.lib ../ctrl/ctrl.lib
-
-mingw:LIBS            += \
+LIBS += \
     -L"$$OUT_PWD/../ctrl/" -lctrl \
     -L"$$OUT_PWD/../core/" -lcore \
     -L"$$OUT_PWD/../img/"  -limg \
@@ -25,34 +16,8 @@ mingw:LIBS            += \
     -L"$$OUT_PWD/../cmnd/" -lcmnd \
     -L"$$OUT_PWD/../thr/"  -lthr \
     -L"$$OUT_PWD/../util/" -lutil
-
-mingw:PRE_TARGETDEPS  += \
-    ../ctrl/libctrl.a \
-    ../core/libcore.a \
-    ../img/libimg.a \
-    ../gl/libgl.a \
-    ../cmnd/libcmnd.a \
-    ../util/libutil.a
-
-gcc:LIBS            += \
-    -L"$$OUT_PWD/../ctrl/" -lctrl \
-    -L"$$OUT_PWD/../core/" -lcore \
-    -L"$$OUT_PWD/../img/"  -limg \
-    -L"$$OUT_PWD/../gl/"   -lgl \
-    -L"$$OUT_PWD/../cmnd/" -lcmnd \
-    -L"$$OUT_PWD/../thr/"  -lthr \
-    -L"$$OUT_PWD/../util/" -lutil
-
-gcc:PRE_TARGETDEPS  += \
-    ../ctrl/libctrl.a \
-    ../core/libcore.a \
-    ../img/libimg.a \
-    ../gl/libgl.a \
-    ../cmnd/libcmnd.a \
-    ../util/libutil.a
 
 INCLUDEPATH += ..
-DEPENDPATH  += ..
 
 SOURCES += \
     Main.cpp \
@@ -194,6 +159,3 @@ HEADERS += \
     tool/tool_PosePanel.h \
     MouseSettingDialog.h \
     MouseSetting.h
-
-FORMS +=
-

@@ -1,47 +1,17 @@
 include(../common.pri)
 
-TARGET      = core
-TEMPLATE    = lib
-DESTDIR     = .
+TARGET = core
+TEMPLATE = lib
+CONFIG += staticlib
 
-CONFIG      += staticlib
-INCLUDES    += $$PWD
-
-OBJECTS_DIR = .obj
-MOC_DIR     = .moc
-RCC_DIR     = .rcc
-
-msvc:LIBS            += ../util/util.lib ../thr/thr.lib ../cmnd/cmnd.lib ../gl/gl.lib ../img/img.lib
-msvc:PRE_TARGETDEPS  += ../util/util.lib ../thr/thr.lib ../cmnd/cmnd.lib ../gl/gl.lib ../img/img.lib
-
-mingw:LIBS            += \
-    -L"$$OUT_PWD/../img/"  -limg \
-    -L"$$OUT_PWD/../gl/"   -lgl \
-    -L"$$OUT_PWD/../cmnd/" -lcmnd \
-    -L"$$OUT_PWD/../thr/"  -lthr \
-    -L"$$OUT_PWD/../util/" -lutil
-
-mingw:PRE_TARGETDEPS  += \
-    ../img/libimg.a \
-    ../gl/libgl.a \
-    ../cmnd/libcmnd.a \
-    ../util/libutil.a
-
-gcc:LIBS            += \
-    -L"$$OUT_PWD/../img/"  -limg \
-    -L"$$OUT_PWD/../gl/"   -lgl \
-    -L"$$OUT_PWD/../cmnd/" -lcmnd \
-    -L"$$OUT_PWD/../thr/"  -lthr \
-    -L"$$OUT_PWD/../util/" -lutil
-
-gcc:PRE_TARGETDEPS  += \
-    ../img/libimg.a \
-    ../gl/libgl.a \
-    ../cmnd/libcmnd.a \
-    ../util/libutil.a
+LIBS += \
+    -L"$$PWD/../img/"  -limg \
+    -L"$$PWD/../gl/"   -lgl \
+    -L"$$PWD/../cmnd/" -lcmnd \
+    -L"$$PWD/../thr/"  -lthr \
+    -L"$$PWD/../util/" -lutil
 
 INCLUDEPATH += ..
-DEPENDPATH  += ..
 
 SOURCES += \
     AbstractCursor.cpp \

@@ -1,8 +1,8 @@
-#include "ctrl/srt/srt_Symbol.h"
-#include "core/Constant.h"
+#include "util/MathUtil.h"
 #include "util/Circle.h"
 #include "util/CollDetect.h"
-#include "util/MathUtil.h"
+#include "core/Constant.h"
+#include "ctrl/srt/srt_Symbol.h"
 
 namespace {
 static const float kSymbolSize = 100.0f;
@@ -42,6 +42,7 @@ namespace srt {
             p[i] = aCamera.toScreenPos(matrix * QPointF(x, y));
         }
         c = (p[0] + p[1] + p[2] + p[3]) / 4.0f;
+
 
         for (int i = 0; i < 4; ++i) {
             v[i] = (p[i] + p[(i + 1) % 4]) * 0.5f - c;

@@ -1,5 +1,5 @@
-#include "gui/prop/prop_KeyKnocker.h"
 #include <QLabel>
+#include "gui/prop/prop_KeyKnocker.h"
 
 namespace gui {
 namespace prop {

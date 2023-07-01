@@ -1,9 +1,9 @@
 #ifndef CORE_MOVEKEY_H
 #define CORE_MOVEKEY_H
 
-#include "core/TimeKey.h"
-#include "util/Easing.h"
 #include <QVector2D>
+#include "util/Easing.h"
+#include "core/TimeKey.h"
 
 namespace core {
 
@@ -61,6 +61,7 @@ public:
             return mCentroid;
         }
     };
+
 
     static QString getSplineName(SplineType spline) {
         switch (spline) {

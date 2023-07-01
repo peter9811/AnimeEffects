@@ -1,12 +1,12 @@
 #ifndef IMG_GRIDMESHCREATOR_H
 #define IMG_GRIDMESHCREATOR_H
 
-#include "XC.h"
-#include "img/Buffer.h"
-#include <QGL>
-#include <QRect>
 #include <QScopedArrayPointer>
 #include <QSize>
+#include <QRect>
+#include <QGL>
+#include "XC.h"
+#include "img/Buffer.h"
 
 namespace img {
 

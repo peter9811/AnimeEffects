@@ -1,29 +1,29 @@
-#include "gui/ObjectTreeWidget.h"
-#include "cmnd/BasicCommands.h"
-#include "cmnd/ScopedMacro.h"
-#include "core/FolderNode.h"
-#include "core/LayerNode.h"
-#include "ctrl/CmndName.h"
-#include "ctrl/TimeLineEditor.h"
-#include "ctrl/TimeLineRow.h"
-#include "ctrl/ffd/ffd_Target.h"
-#include "gui/ProjectHook.h"
-#include "gui/ResourceDialog.h"
-#include "gui/obj/obj_InsertItem.h"
-#include "gui/obj/obj_MoveItem.h"
-#include "gui/obj/obj_Notifiers.h"
-#include "gui/obj/obj_RemoveItem.h"
-#include "gui/obj/obj_Util.h"
-#include "qmessagebox.h"
-#include "util/LinkPointer.h"
-#include "util/TreeUtil.h"
-#include <QDragMoveEvent>
 #include <QMenu>
-#include <QModelIndexList>
 #include <QPainter>
-#include <QProxyStyle>
 #include <QScrollBar>
+#include <QDragMoveEvent>
+#include <QModelIndexList>
 #include <QStyle>
+#include <QProxyStyle>
+#include "ctrl/TimeLineEditor.h"
+#include "qmessagebox.h"
+#include "util/TreeUtil.h"
+#include "util/LinkPointer.h"
+#include "cmnd/ScopedMacro.h"
+#include "cmnd/BasicCommands.h"
+#include "core/LayerNode.h"
+#include "core/FolderNode.h"
+#include "ctrl/TimeLineRow.h"
+#include "ctrl/CmndName.h"
+#include "gui/ObjectTreeWidget.h"
+#include "gui/ResourceDialog.h"
+#include "gui/ProjectHook.h"
+#include "gui/obj/obj_MoveItem.h"
+#include "gui/obj/obj_InsertItem.h"
+#include "gui/obj/obj_RemoveItem.h"
+#include "gui/obj/obj_Notifiers.h"
+#include "gui/obj/obj_Util.h"
+#include "ctrl/ffd/ffd_Target.h"
 #include <iostream>
 #include <sstream>
 
@@ -481,6 +481,7 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
         box.setDetailedText(errorLog);
     }
 
+
     if (successNum != 0) {
         // It doesn't work without this for some godforsaken reason.
         for (int x = 0; x < keys.size(); x++) {
@@ -568,6 +569,7 @@ void ObjectTreeWidget::onObjectActionTriggered(bool) {
                 ptr->setDefaultPosture(QVector2D());
                 ptr->setDefaultDepth(depth);
                 ptr->setDefaultOpacity(1.0f); // @todo support default opacity
+
 
                 cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Create a layer"));
                 // notifier

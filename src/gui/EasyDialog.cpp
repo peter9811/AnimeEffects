@@ -1,8 +1,8 @@
-#include "gui/EasyDialog.h"
-#include "XC.h"
 #include <QHBoxLayout>
-#include <QPushButton>
 #include <QVBoxLayout>
+#include <QPushButton>
+#include "XC.h"
+#include "gui/EasyDialog.h"
 
 namespace gui {
 

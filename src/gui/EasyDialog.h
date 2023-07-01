@@ -1,10 +1,10 @@
 #ifndef GUI_EASYDIALOG_H
 #define GUI_EASYDIALOG_H
 
+#include <functional>
 #include <QDialog>
 #include <QMenuBar>
 #include <QVBoxLayout>
-#include <functional>
 
 namespace gui {
 

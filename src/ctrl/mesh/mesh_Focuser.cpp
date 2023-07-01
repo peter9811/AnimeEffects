@@ -1,6 +1,6 @@
-#include "ctrl/mesh/mesh_Focuser.h"
-#include "util/CollDetect.h"
 #include <QPolygonF>
+#include "util/CollDetect.h"
+#include "ctrl/mesh/mesh_Focuser.h"
 
 namespace {
 static const float kVtxSqRadius = 8.0f * 8.0f;

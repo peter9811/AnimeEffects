@@ -1,9 +1,9 @@
 #ifndef GUI_RES_ITEM_H
 #define GUI_RES_ITEM_H
 
-#include "img/ResourceNode.h"
-#include "util/TreePos.h"
 #include <QTreeWidgetItem>
+#include "util/TreePos.h"
+#include "img/ResourceNode.h"
 
 namespace gui {
 namespace res {

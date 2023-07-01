@@ -1,9 +1,9 @@
-#include "gui/prop/prop_ConstantPanel.h"
-#include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
+#include "cmnd/BasicCommands.h"
 #include "core/Constant.h"
 #include "ctrl/CmndName.h"
 #include "gui/ResourceDialog.h"
+#include "gui/prop/prop_ConstantPanel.h"
 #include "gui/prop/prop_Items.h"
 
 namespace {

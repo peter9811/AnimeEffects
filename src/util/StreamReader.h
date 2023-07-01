@@ -1,14 +1,14 @@
 #ifndef UTIL_STREAMREADER_H
 #define UTIL_STREAMREADER_H
 
-#include "XCType.h"
-#include <cassert>
-#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cstring>
+#include <cassert>
 #include <vector>
+#include "XCType.h"
 
 namespace util {
 

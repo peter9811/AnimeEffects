@@ -1,6 +1,7 @@
-#include "img/PSDReader.h"
-#include "XC.h"
 #include <memory>
+#include "XC.h"
+#include "img/PSDReader.h"
+
 
 //#define PSDREADER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define PSDREADER_DUMP(...)
@@ -48,6 +49,7 @@ PSDReader::PSDReader(std::istream& aIo):
     mSection = "end of file";
     mResultCode = ResultCode_Success;
 }
+
 
 //------------------------------------------------------------//
 // psd header(26 bytes)

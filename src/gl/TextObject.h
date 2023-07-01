@@ -1,8 +1,8 @@
 #ifndef GL_TEXTOBJECT_H
 #define GL_TEXTOBJECT_H
 
-#include "gl/Texture.h"
 #include <memory>
+#include "gl/Texture.h"
 
 namespace gl {
 

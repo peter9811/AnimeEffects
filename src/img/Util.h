@@ -1,14 +1,14 @@
 #ifndef IMG_UTIL_H
 #define IMG_UTIL_H
 
-#include "XC.h"
-#include "img/PSDFormat.h"
-#include "img/ResourceNode.h"
-#include "util/TextUtil.h"
+#include <QSize>
+#include <QRect>
 #include <QColor>
 #include <QImage>
-#include <QRect>
-#include <QSize>
+#include "XC.h"
+#include "util/TextUtil.h"
+#include "img/PSDFormat.h"
+#include "img/ResourceNode.h"
 
 namespace img {
 

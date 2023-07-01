@@ -1,6 +1,6 @@
-#include "core/CameraInfo.h"
 #include "XC.h"
 #include "util/MathUtil.h"
+#include "core/CameraInfo.h"
 
 namespace core {
 

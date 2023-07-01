@@ -1,21 +1,21 @@
 #ifndef CORE_TIMEKEYEXPANS_H
 #define CORE_TIMEKEYEXPANS_H
 
-#include "core/BoneExpans.h"
-#include "core/BoneKey.h"
-#include "core/FFDKey.h"
-#include "core/HsvKey.h"
-#include "core/ImageKey.h"
-#include "core/MeshKey.h"
-#include "core/MoveKey.h"
-#include "core/OpaKey.h"
-#include "core/PoseKey.h"
-#include "core/PosePalette.h"
-#include "core/RotateKey.h"
-#include "core/SRTExpans.h"
-#include "core/ScaleKey.h"
-#include "core/TimeKeyType.h"
 #include "gl/Texture.h"
+#include "core/SRTExpans.h"
+#include "core/MoveKey.h"
+#include "core/RotateKey.h"
+#include "core/ScaleKey.h"
+#include "core/OpaKey.h"
+#include "core/HsvKey.h"
+#include "core/BoneKey.h"
+#include "core/PoseKey.h"
+#include "core/MeshKey.h"
+#include "core/FFDKey.h"
+#include "core/ImageKey.h"
+#include "core/TimeKeyType.h"
+#include "core/PosePalette.h"
+#include "core/BoneExpans.h"
 
 namespace core {
 

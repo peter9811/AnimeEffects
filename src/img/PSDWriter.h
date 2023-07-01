@@ -1,9 +1,9 @@
 #ifndef IMG_PSDWRITER_H
 #define IMG_PSDWRITER_H
 
+#include <iostream>
 #include "XC.h"
 #include "img/PSDFormat.h"
-#include <iostream>
 
 namespace img {
 

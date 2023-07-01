@@ -1,13 +1,13 @@
 #ifndef CORE_IMAGEKEY_H
 #define CORE_IMAGEKEY_H
 
+#include "util/Easing.h"
+#include "gl/Texture.h"
+#include "img/ResourceHandle.h"
+#include "img/BlendMode.h"
 #include "core/GridMesh.h"
 #include "core/TimeKey.h"
-#include "gl/Texture.h"
 #include "gui/obj/obj_Item.h"
-#include "img/BlendMode.h"
-#include "img/ResourceHandle.h"
-#include "util/Easing.h"
 
 namespace core {
 

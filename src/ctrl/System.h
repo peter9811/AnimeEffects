@@ -1,11 +1,11 @@
 #ifndef CTRL_SYSTEM_H
 #define CTRL_SYSTEM_H
 
-#include "core/Project.h"
-#include "gl/DeviceInfo.h"
-#include "util/IProgressReporter.h"
-#include "util/NonCopyable.h"
 #include <QString>
+#include "util/NonCopyable.h"
+#include "util/IProgressReporter.h"
+#include "gl/DeviceInfo.h"
+#include "core/Project.h"
 
 namespace ctrl {
 

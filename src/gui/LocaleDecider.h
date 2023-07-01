@@ -1,9 +1,9 @@
 #ifndef GUI_LOCALEDECIDER_H
 #define GUI_LOCALEDECIDER_H
 
-#include "gui/LocaleParam.h"
 #include <QString>
 #include <QTranslator>
+#include "gui/LocaleParam.h"
 
 namespace gui {
 

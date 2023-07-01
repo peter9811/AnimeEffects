@@ -1,8 +1,8 @@
 #ifndef IMG_COLORRGBA
 #define IMG_COLORRGBA
 
-#include "XC.h"
 #include <QColor>
+#include "XC.h"
 
 namespace img {
 

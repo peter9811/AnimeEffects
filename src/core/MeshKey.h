@@ -1,16 +1,16 @@
 #ifndef CORE_MESHKEY_H
 #define CORE_MESHKEY_H
 
-#include "cmnd/Vector.h"
-#include "core/LayerMesh.h"
-#include "core/TimeKey.h"
+#include <vector>
+#include <array>
+#include <QList>
+#include <QVector>
+#include <QVector2D>
 #include "util/NonCopyable.h"
 #include "util/Segment2D.h"
-#include <QList>
-#include <QVector2D>
-#include <QVector>
-#include <array>
-#include <vector>
+#include "cmnd/Vector.h"
+#include "core/TimeKey.h"
+#include "core/LayerMesh.h"
 
 namespace core {
 

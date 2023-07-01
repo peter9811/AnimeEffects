@@ -1,13 +1,13 @@
 #ifndef CTRL_TIME_FOCUSER_H
 #define CTRL_TIME_FOCUSER_H
 
+#include <QVector>
+#include "util/PlacePointer.h"
+#include "util/LifeLink.h"
 #include "core/TimeKeyPos.h"
 #include "core/TimeLineEvent.h"
 #include "ctrl/TimeLineRow.h"
 #include "ctrl/time/time_Scaler.h"
-#include "util/LifeLink.h"
-#include "util/PlacePointer.h"
-#include <QVector>
 
 namespace ctrl {
 namespace time {

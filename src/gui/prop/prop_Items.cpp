@@ -1,10 +1,10 @@
-#include "gui/prop/prop_Items.h"
-#include "cmnd/ScopedMacro.h"
-#include "util/SelectArgs.h"
-#include <QApplication>
 #include <QDebug>
 #include <QHeaderView>
 #include <QStandardItem>
+#include <QApplication>
+#include "util/SelectArgs.h"
+#include "cmnd/ScopedMacro.h"
+#include "gui/prop/prop_Items.h"
 
 namespace gui {
 namespace prop {

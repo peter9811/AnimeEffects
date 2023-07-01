@@ -1,5 +1,5 @@
-#include "gl/ComputeTexture1D.h"
 #include "gl/Global.h"
+#include "gl/ComputeTexture1D.h"
 
 namespace gl {
 //-------------------------------------------------------------------------------------------------

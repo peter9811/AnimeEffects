@@ -1,8 +1,8 @@
 #ifndef UTIL_TREESEEKITERATOR
 #define UTIL_TREESEEKITERATOR
 
-#include "util/ITreeSeeker.h"
 #include <vector>
+#include "util/ITreeSeeker.h"
 
 namespace util {
 

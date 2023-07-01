@@ -2,10 +2,10 @@
 #define CTRL_SRT_KEYOWNER_H
 
 #include "cmnd/Stack.h"
+#include "core/TimeLine.h"
 #include "core/MoveKey.h"
 #include "core/RotateKey.h"
 #include "core/ScaleKey.h"
-#include "core/TimeLine.h"
 namespace core {
 class TimeKeyExpans;
 }

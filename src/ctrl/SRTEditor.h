@@ -1,17 +1,17 @@
 #ifndef CTRL_SRTEDITOR_H
 #define CTRL_SRTEDITOR_H
 
-#include "core/AbstractCursor.h"
-#include "core/ObjectNode.h"
+#include <QPainter>
+#include "util/LifeLink.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
 #include "core/RenderInfo.h"
+#include "core/AbstractCursor.h"
 #include "ctrl/IEditor.h"
 #include "ctrl/SRTParam.h"
 #include "ctrl/UILogger.h"
-#include "ctrl/srt/srt_IMode.h"
 #include "ctrl/srt/srt_KeyOwner.h"
-#include "util/LifeLink.h"
-#include <QPainter>
+#include "ctrl/srt/srt_IMode.h"
 
 namespace ctrl {
 

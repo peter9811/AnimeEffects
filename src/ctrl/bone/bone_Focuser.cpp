@@ -1,8 +1,8 @@
-#include "ctrl/bone/bone_Focuser.h"
-#include "core/Constant.h"
-#include "ctrl/bone/bone_Renderer.h"
-#include "util/CollDetect.h"
 #include <float.h>
+#include "util/CollDetect.h"
+#include "core/Constant.h"
+#include "ctrl/bone/bone_Focuser.h"
+#include "ctrl/bone/bone_Renderer.h"
 
 using namespace core;
 

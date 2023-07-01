@@ -1,8 +1,8 @@
 #ifndef DRIVERRESOURCES_H
 #define DRIVERRESOURCES_H
 
-#include "util/NonCopyable.h"
 #include <QScopedPointer>
+#include "util/NonCopyable.h"
 namespace core {
 class MeshTransformerResource;
 }

@@ -1,15 +1,15 @@
 #ifndef GL_EASYSHADERPROGRAM_H
 #define GL_EASYSHADERPROGRAM_H
 
-#include "gl/BufferObject.h"
+#include <QOpenGLShaderProgram>
+#include "util/ArrayBlock.h"
 #include "gl/ExtendShader.h"
+#include "gl/BufferObject.h"
 #include "gl/Vector2.h"
-#include "gl/Vector2I.h"
 #include "gl/Vector3.h"
 #include "gl/Vector4.h"
+#include "gl/Vector2I.h"
 #include "gl/Vector4I.h"
-#include "util/ArrayBlock.h"
-#include <QOpenGLShaderProgram>
 
 namespace gl {
 

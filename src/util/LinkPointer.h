@@ -1,8 +1,8 @@
 #ifndef UTIL_LINKPOINTER_H
 #define UTIL_LINKPOINTER_H
 
-#include "XC.h"
 #include "util/LifeLink.h"
+#include "XC.h"
 
 namespace util {
 

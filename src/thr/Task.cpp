@@ -1,5 +1,5 @@
-#include "thr/Task.h"
 #include <QThread>
+#include "thr/Task.h"
 
 namespace thr {
 

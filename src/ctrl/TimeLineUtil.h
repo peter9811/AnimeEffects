@@ -1,24 +1,24 @@
 #ifndef CTRL_TIMELINEUTIL_H
 #define CTRL_TIMELINEUTIL_H
 
-#include "cmnd/Listener.h"
+#include <QVector>
+#include "util/Range.h"
 #include "cmnd/Stable.h"
-#include "core/BoneKey.h"
-#include "core/DepthKey.h"
-#include "core/FFDKey.h"
-#include "core/HsvKey.h"
-#include "core/ImageKey.h"
-#include "core/MeshKey.h"
-#include "core/MoveKey.h"
-#include "core/OpaKey.h"
-#include "core/PoseKey.h"
+#include "cmnd/Listener.h"
 #include "core/Project.h"
-#include "core/RotateKey.h"
-#include "core/ScaleKey.h"
 #include "core/TimeLine.h"
 #include "core/TimeLineEvent.h"
-#include "util/Range.h"
-#include <QVector>
+#include "core/MoveKey.h"
+#include "core/RotateKey.h"
+#include "core/ScaleKey.h"
+#include "core/DepthKey.h"
+#include "core/OpaKey.h"
+#include "core/HsvKey.h"
+#include "core/BoneKey.h"
+#include "core/PoseKey.h"
+#include "core/FFDKey.h"
+#include "core/MeshKey.h"
+#include "core/ImageKey.h"
 
 namespace ctrl {
 

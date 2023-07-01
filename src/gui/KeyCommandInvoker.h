@@ -1,8 +1,8 @@
 #ifndef GUI_KEYCOMMANDINVOKER_H
 #define GUI_KEYCOMMANDINVOKER_H
 
-#include "gui/KeyCommandMap.h"
 #include <QKeyEvent>
+#include "gui/KeyCommandMap.h"
 
 namespace gui {
 

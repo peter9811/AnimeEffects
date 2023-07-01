@@ -1,19 +1,19 @@
 #ifndef GUI_PROP_ITEMS_H
 #define GUI_PROP_ITEMS_H
 
-#include "gui/prop/prop_ItemBase.h"
-#include "util/Easing.h"
-#include <QCheckBox>
-#include <QComboBox>
-#include <QDoubleSpinBox>
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QTreeView>
-#include <QVector2D>
-#include <array>
 #include <functional>
+#include <array>
+#include <QPushButton>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QVector2D>
+#include <QHBoxLayout>
+#include <QTreeView>
+#include <QCheckBox>
+#include <QLineEdit>
+#include "util/Easing.h"
+#include "gui/prop/prop_ItemBase.h"
 
 namespace gui {
 namespace prop {

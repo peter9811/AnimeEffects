@@ -1,13 +1,13 @@
 #ifndef GUI_TOOL_SRTPANEL_H
 #define GUI_TOOL_SRTPANEL_H
 
+#include <vector>
+#include <functional>
+#include <QGroupBox>
+#include "util/Signaler.h"
 #include "ctrl/SRTParam.h"
 #include "gui/GUIResources.h"
 #include "gui/tool/tool_Items.h"
-#include "util/Signaler.h"
-#include <QGroupBox>
-#include <functional>
-#include <vector>
 
 namespace gui {
 namespace tool {

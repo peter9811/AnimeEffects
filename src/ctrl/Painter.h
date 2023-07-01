@@ -1,14 +1,14 @@
 #ifndef CTRL_PAINTER_H
 #define CTRL_PAINTER_H
 
-#include "gl/FontDrawer.h"
-#include "gl/PrimitiveDrawer.h"
-#include "gl/TextObject.h"
-#include <QOpenGLTexture>
-#include <QPaintDevice>
-#include <QPaintEngine>
-#include <QPainter>
 #include <functional>
+#include <QPainter>
+#include <QPaintEngine>
+#include <QPaintDevice>
+#include <QOpenGLTexture>
+#include "gl/PrimitiveDrawer.h"
+#include "gl/FontDrawer.h"
+#include "gl/TextObject.h"
 
 namespace ctrl {
 

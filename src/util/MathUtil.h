@@ -1,12 +1,12 @@
 #ifndef UTIL_MATHUTIL_H
 #define UTIL_MATHUTIL_H
 
-#include "util/Segment2D.h"
-#include <QRect>
+#include <QtMath>
 #include <QVector2D>
 #include <QVector3D>
-#include <QtMath>
+#include <QRect>
 #include <math.h>
+#include "util/Segment2D.h"
 
 namespace util {
 // north east coordinate
@@ -103,6 +103,7 @@ public:
     static QVector2D getRotateVector90Deg(const QVector2D& aVec) {
         return QVector2D(-aVec.y(), aVec.x());
     }
+
 
     static QVector2D getAxisInversed(const QVector2D& aNormAxis, const QVector2D& aVec);
 

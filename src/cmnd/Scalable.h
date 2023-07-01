@@ -1,11 +1,11 @@
 #ifndef CMND_SCALABLE_H
 #define CMND_SCALABLE_H
 
-#include "cmnd/Base.h"
-#include "cmnd/Listener.h"
-#include "cmnd/Vector.h"
-#include <QVector>
 #include <functional>
+#include <QVector>
+#include "cmnd/Base.h"
+#include "cmnd/Vector.h"
+#include "cmnd/Listener.h"
 
 namespace cmnd {
 

@@ -1,12 +1,12 @@
 #ifndef GUI_KEYCOMMANDMAP_H
 #define GUI_KEYCOMMANDMAP_H
 
-#include "ctrl/KeyBinding.h"
-#include <QList>
-#include <QMap>
-#include <QSettings>
-#include <QShortcut>
 #include <functional>
+#include <QMap>
+#include <QList>
+#include <QShortcut>
+#include <QSettings>
+#include "ctrl/KeyBinding.h"
 
 namespace gui {
 

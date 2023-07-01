@@ -1,8 +1,9 @@
-#include "img/PSDUtil.h"
-#include "XC.h"
-#include <cmath>
-#include <iostream>
 #include <vector>
+#include <iostream>
+#include <cmath>
+#include "XC.h"
+#include "img/PSDUtil.h"
+
 
 //#define PSDUTIL_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define PSDUTIL_DUMP(...)
@@ -48,6 +49,7 @@
         RSLT[1] = (uint8)((a0 * FUNC(BACK[1], FRNT[1]) + a1 * FRNT[1] + a2 * BACK[1]) / div); \
         RSLT[2] = (uint8)((a0 * FUNC(BACK[2], FRNT[2]) + a1 * FRNT[2] + a2 * BACK[2]) / div); \
     }
+
 
 namespace img {
 
@@ -365,6 +367,7 @@ bool PSDUtil::decodePlanePackBits(
     const int headerSize = sizeof(LineLengthType) * aHeight;
     const LineLengthType* header = (const LineLengthType*)aSrc;
     const uint8* srcData = aSrc + headerSize;
+
 
     // too short
     if (aDstLength < (unsigned int)(aWidth * aHeight * (aDstStride - 1) + 1)) {

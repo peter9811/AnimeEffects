@@ -1,12 +1,12 @@
 #ifndef CTRL_POSEKEY_H
 #define CTRL_POSEKEY_H
 
-#include "core/Bone2.h"
-#include "core/TimeKey.h"
-#include "util/Easing.h"
-#include "util/LinkPointer.h"
-#include <QList>
 #include <memory>
+#include <QList>
+#include "util/LinkPointer.h"
+#include "util/Easing.h"
+#include "core/TimeKey.h"
+#include "core/Bone2.h"
 namespace core {
 class BoneKey;
 }

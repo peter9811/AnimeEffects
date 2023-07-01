@@ -1,8 +1,8 @@
 #ifndef GL_DEVICEINFO_H
 #define GL_DEVICEINFO_H
 
-#include <QGL>
 #include <string>
+#include <QGL>
 
 namespace gl {
 

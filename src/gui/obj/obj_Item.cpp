@@ -1,5 +1,5 @@
-#include "gui/obj/obj_Item.h"
 #include "gui/ObjectTreeWidget.h"
+#include "gui/obj/obj_Item.h"
 
 namespace {
 static const int kItemColumn = gui::ObjectTreeWidget::kItemColumn;

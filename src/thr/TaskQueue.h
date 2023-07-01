@@ -1,11 +1,11 @@
 #ifndef THR_TASKQUEUE_H
 #define THR_TASKQUEUE_H
 
-#include "thr/Task.h"
-#include "util/NonCopyable.h"
 #include <QList>
 #include <QMutex>
 #include <QWaitCondition>
+#include "util/NonCopyable.h"
+#include "thr/Task.h"
 
 namespace thr {
 

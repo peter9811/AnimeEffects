@@ -1,10 +1,10 @@
 #ifndef GUI_PROP_KEYACCESSOR_H
 #define GUI_PROP_KEYACCESSOR_H
 
-#include "core/ObjectNode.h"
-#include "core/Project.h"
-#include "img/ResourceHandle.h"
 #include "util/Easing.h"
+#include "img/ResourceHandle.h"
+#include "core/Project.h"
+#include "core/ObjectNode.h"
 
 namespace gui {
 namespace prop {

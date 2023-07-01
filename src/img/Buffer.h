@@ -1,10 +1,10 @@
 #ifndef IMG_BUFFER_H
 #define IMG_BUFFER_H
 
-#include "XC.h"
-#include "img/Format.h"
 #include <QColor>
 #include <QSize>
+#include "XC.h"
+#include "img/Format.h"
 
 namespace img {
 

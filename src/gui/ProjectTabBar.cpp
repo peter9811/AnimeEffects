@@ -1,6 +1,6 @@
-#include "gui/ProjectTabBar.h"
 #include <QFile>
 #include <QFileInfo>
+#include "gui/ProjectTabBar.h"
 
 namespace gui {
 

@@ -1,8 +1,8 @@
 #ifndef CTRL_SRT_IMODE
 #define CTRL_SRT_IMODE
 
-#include "core/AbstractCursor.h"
 #include "core/CameraInfo.h"
+#include "core/AbstractCursor.h"
 #include "core/RenderInfo.h"
 #include "ctrl/SRTParam.h"
 

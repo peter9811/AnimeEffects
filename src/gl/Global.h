@@ -1,10 +1,10 @@
 #ifndef GL_GLOBAL_H
 #define GL_GLOBAL_H
 
-#include <QGLFormat>
-#include <QOpenGLContext>
 #include <QOpenGLFunctions_4_0_Core>
+#include <QOpenGLContext>
 #include <QOpenGLWidget>
+#include <QGLFormat>
 
 namespace gl {
 
@@ -29,6 +29,7 @@ private:
 
 } // namespace gl
 
+
 #include "XCAssert.h"
 
 #define GL_CHECK_ERROR() \
@@ -39,5 +40,6 @@ private:
             Q_ASSERT(0); \
         } \
     } while (0)
+
 
 #endif // GL_GLOBAL_H

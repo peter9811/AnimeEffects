@@ -1,6 +1,6 @@
-#include "gui/tool/tool_ModePanel.h"
-#include "XC.h"
 #include <QDebug>
+#include "XC.h"
+#include "gui/tool/tool_ModePanel.h"
 
 namespace gui {
 namespace tool {

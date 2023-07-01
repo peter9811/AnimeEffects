@@ -1,9 +1,9 @@
-#include "gl/PrimitiveDrawer.h"
-#include "gl/Global.h"
-#include "gl/Triangulator.h"
-#include "gl/Util.h"
-#include "util/MathUtil.h"
 #include <float.h>
+#include "util/MathUtil.h"
+#include "gl/Global.h"
+#include "gl/Util.h"
+#include "gl/Triangulator.h"
+#include "gl/PrimitiveDrawer.h"
 
 namespace {
 static const int kMinVtxCountOfSlot = 32;

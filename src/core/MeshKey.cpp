@@ -1,16 +1,16 @@
-#include "core/MeshKey.h"
+#include <float.h>
+#include <QPolygonF>
 #include "XC.h"
-#include "cmnd/BasicCommands.h"
-#include "cmnd/Scalable.h"
-#include "core/Constant.h"
-#include "core/FFDKey.h"
-#include "core/MeshKeyUtil.h"
 #include "qjsonarray.h"
 #include "qjsonobject.h"
 #include "util/CollDetect.h"
 #include "util/MathUtil.h"
-#include <QPolygonF>
-#include <float.h>
+#include "cmnd/BasicCommands.h"
+#include "cmnd/Scalable.h"
+#include "core/Constant.h"
+#include "core/MeshKey.h"
+#include "core/MeshKeyUtil.h"
+#include "core/FFDKey.h"
 
 namespace core {
 
@@ -1153,6 +1153,7 @@ MeshVtx* MeshKey::splitTriangle(MeshFace& aFace, MeshEdge& aEdge0, const QVector
     XC_PTR_ASSERT(commonVtx);
     MeshEdge* anotherEdge = aFace.oppositeEdge(*commonVtx);
     XC_PTR_ASSERT(anotherEdge);
+
 
     QVector<MeshVtx*> oppositeVertices[2];
     {

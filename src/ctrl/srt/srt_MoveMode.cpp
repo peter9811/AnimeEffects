@@ -1,10 +1,10 @@
-#include "ctrl/srt/srt_MoveMode.h"
+#include "util/MathUtil.h"
 #include "cmnd/ScopedMacro.h"
 #include "core/Constant.h"
 #include "core/TimeKeyBlender.h"
-#include "ctrl/CmndName.h"
 #include "ctrl/TimeLineUtil.h"
-#include "util/MathUtil.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/srt/srt_MoveMode.h"
 
 using namespace core;
 

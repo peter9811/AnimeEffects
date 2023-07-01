@@ -1,15 +1,15 @@
 #ifndef GUI_MAINMENUBAR_H
 #define GUI_MAINMENUBAR_H
 
+#include <QMenuBar>
+#include <QAction>
+#include <QCheckBox>
+#include <QSpinBox>
 #include "core/Project.h"
 #include "ctrl/VideoFormat.h"
 #include "gui/EasyDialog.h"
 #include "gui/GUIResources.h"
 #include "qprocess.h"
-#include <QAction>
-#include <QCheckBox>
-#include <QMenuBar>
-#include <QSpinBox>
 
 namespace gui {
 class MainWindow;
@@ -109,6 +109,7 @@ public:
 private:
     QCheckBox* mLoopBox;
 };
+
 
 } // namespace gui
 

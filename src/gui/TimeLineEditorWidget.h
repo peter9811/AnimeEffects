@@ -1,14 +1,14 @@
 #ifndef GUI_TIMELINEINNERWIDGET_H
 #define GUI_TIMELINEINNERWIDGET_H
 
-#include "KeyCommandMap.h"
-#include "core/TimeLineEvent.h"
-#include "ctrl/TimeLineEditor.h"
-#include "gui/GUIResources.h"
-#include "gui/ViaPoint.h"
+#include <QWidget>
 #include <QAction>
 #include <QTreeWidgetItem>
-#include <QWidget>
+#include "core/TimeLineEvent.h"
+#include "ctrl/TimeLineEditor.h"
+#include "gui/ViaPoint.h"
+#include "gui/GUIResources.h"
+#include "KeyCommandMap.h"
 
 namespace gui {
 
@@ -84,6 +84,7 @@ public:
 
     QColor trackSeperatorColor() const;
     void setTrackSeperatorColor(const QColor& trackSeperatorColor);
+
 
 private:
     void updateTimeCursorPos();

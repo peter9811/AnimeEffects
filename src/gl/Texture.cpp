@@ -1,5 +1,5 @@
-#include "gl/Texture.h"
 #include "gl/Global.h"
+#include "gl/Texture.h"
 
 #define F_MAKE_MIPMAP 0
 
@@ -62,6 +62,7 @@ private:
 #endif
 
 namespace gl {
+
 
 Texture::Texture(): mId(0), mSize() {}
 

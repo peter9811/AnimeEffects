@@ -1,16 +1,16 @@
 #ifndef CTRL_TIME_RENDERER_H
 #define CTRL_TIME_RENDERER_H
 
+#include <QVector>
+#include <QPainter>
+#include <QSettings>
+#include "util/Range.h"
 #include "core/CameraInfo.h"
 #include "core/ObjectNode.h"
 #include "core/TimeFormat.h"
 #include "ctrl/TimeLineRow.h"
 #include "ctrl/time/time_Scaler.h"
 #include "gui/theme/TimeLine.h"
-#include "util/Range.h"
-#include <QPainter>
-#include <QSettings>
-#include <QVector>
 
 namespace ctrl {
 namespace time {

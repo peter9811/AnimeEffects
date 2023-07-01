@@ -1,10 +1,10 @@
-#include "ctrl/ProjectLoader.h"
-#include "core/Deserializer.h"
+#include <fstream>
 #include "gui/MainMenuBar.h"
 #include "gui/MainWindow.h"
 #include "qdir.h"
 #include "util/IDSolver.h"
-#include <fstream>
+#include "ctrl/ProjectLoader.h"
+#include "core/Deserializer.h"
 #include <qstandardpaths.h>
 
 namespace ctrl {

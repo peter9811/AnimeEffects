@@ -1,8 +1,8 @@
 #ifndef UTIL_BUFFER
 #define UTIL_BUFFER
 
-#include "XC.h"
 #include <cstring>
+#include "XC.h"
 
 namespace util {
 

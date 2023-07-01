@@ -1,14 +1,14 @@
-#include "gui/TimeLineEditorWidget.h"
+#include <QMenu>
+#include <QMessageBox>
 #include "core/TimeKeyExpans.h"
+#include "gui/TimeLineEditorWidget.h"
 #include "gui/MouseSetting.h"
 #include "gui/obj/obj_Item.h"
 #include "qapplication.h"
-#include <QClipboard>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QMenu>
-#include <QMessageBox>
+#include <QClipboard>
 #include <QMimeData>
 
 namespace gui {
@@ -567,5 +567,6 @@ QColor TimeLineEditorWidget::trackSeperatorColor() const {
 void TimeLineEditorWidget::setTrackSeperatorColor(const QColor& trackSeperatorColor) {
     mTimelineTheme.setTrackSeperatorColor(trackSeperatorColor);
 }
+
 
 } // namespace gui

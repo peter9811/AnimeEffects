@@ -1,22 +1,22 @@
 #ifndef GUI_TIMELINEWIDGET_H
 #define GUI_TIMELINEWIDGET_H
 
+#include <QScrollArea>
+#include <QTreeWidgetItem>
+#include <QTimer>
+#include <QTime>
+#include <QScopedPointer>
+#include "util/Signaler.h"
+#include "core/Project.h"
+#include "core/CameraInfo.h"
 #include "core/AbstractCursor.h"
 #include "core/Animator.h"
-#include "core/CameraInfo.h"
-#include "core/Project.h"
 #include "core/TimeLineEvent.h"
 #include "ctrl/TimeLineEditor.h"
-#include "gui/GUIResources.h"
+#include "gui/theme/TimeLine.h"
 #include "gui/TimeLineEditorWidget.h"
 #include "gui/ViaPoint.h"
-#include "gui/theme/TimeLine.h"
-#include "util/Signaler.h"
-#include <QScopedPointer>
-#include <QScrollArea>
-#include <QTime>
-#include <QTimer>
-#include <QTreeWidgetItem>
+#include "gui/GUIResources.h"
 
 namespace gui {
 
@@ -39,6 +39,7 @@ public:
     util::Signaler<void()> onFrameUpdated;
     util::Signaler<void()> onTimeFormatChanged;
     util::Signaler<void(bool)> onPlayBackStateChanged;
+
 
 public:
     void onTreeViewUpdated(QTreeWidgetItem* aTopNode);

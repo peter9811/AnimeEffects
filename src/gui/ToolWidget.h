@@ -1,22 +1,22 @@
 #ifndef GUI_TOOLWIDGET_H
 #define GUI_TOOLWIDGET_H
 
+#include <QWidget>
+#include <QResizeEvent>
+#include "util/Signaler.h"
 #include "ctrl/Driver.h"
 #include "ctrl/FFDParam.h"
 #include "gui/GUIResources.h"
 #include "gui/MainDisplayMode.h"
 #include "gui/MainViewSetting.h"
 #include "gui/ViaPoint.h"
-#include "gui/tool/tool_BonePanel.h"
-#include "gui/tool/tool_FFDPanel.h"
-#include "gui/tool/tool_MeshPanel.h"
-#include "gui/tool/tool_ModePanel.h"
-#include "gui/tool/tool_PosePanel.h"
-#include "gui/tool/tool_SRTPanel.h"
 #include "gui/tool/tool_ViewPanel.h"
-#include "util/Signaler.h"
-#include <QResizeEvent>
-#include <QWidget>
+#include "gui/tool/tool_ModePanel.h"
+#include "gui/tool/tool_SRTPanel.h"
+#include "gui/tool/tool_FFDPanel.h"
+#include "gui/tool/tool_BonePanel.h"
+#include "gui/tool/tool_PosePanel.h"
+#include "gui/tool/tool_MeshPanel.h"
 
 namespace gui {
 

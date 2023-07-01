@@ -1,20 +1,20 @@
 #ifndef CORE_LAYERNODE_H
 #define CORE_LAYERNODE_H
 
+#include <QVector>
 #include "XC.h"
-#include "core/BoneInfluenceMap.h"
-#include "core/GridMesh.h"
-#include "core/HeightMap.h"
-#include "core/MeshTransformer.h"
-#include "core/ObjectNode.h"
-#include "core/Renderer.h"
-#include "core/ShaderHolder.h"
-#include "core/TimeLine.h"
 #include "gl/EasyShaderProgram.h"
 #include "gl/Texture.h"
 #include "img/Buffer.h"
 #include "img/ResourceHandle.h"
-#include <QVector>
+#include "core/ObjectNode.h"
+#include "core/Renderer.h"
+#include "core/GridMesh.h"
+#include "core/HeightMap.h"
+#include "core/TimeLine.h"
+#include "core/BoneInfluenceMap.h"
+#include "core/MeshTransformer.h"
+#include "core/ShaderHolder.h"
 
 namespace core {
 

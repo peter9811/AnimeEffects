@@ -1,9 +1,9 @@
 #ifndef IMG_PSDFORMAT_H
 #define IMG_PSDFORMAT_H
 
-#include "XC.h"
-#include <iostream>
 #include <memory>
+#include <iostream>
+#include "XC.h"
 
 namespace img {
 

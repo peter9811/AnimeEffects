@@ -1,23 +1,23 @@
 #ifndef CORE_PROJECT_H
 #define CORE_PROJECT_H
 
-#include "cmnd/Stack.h"
-#include "core/Animator.h"
-#include "core/ObjectTree.h"
-#include "core/ObjectTreeEvent.h"
-#include "core/ProjectEvent.h"
-#include "core/ResourceEvent.h"
-#include "core/ResourceHolder.h"
-#include "core/TimeInfo.h"
-#include "core/TimeLineEvent.h"
-#include "thr/Paralleler.h"
-#include "util/LifeLink.h"
-#include "util/NonCopyable.h"
-#include "util/Signaler.h"
-#include <QScopedPointer>
 #include <QSize>
 #include <QString>
+#include <QScopedPointer>
 #include <functional>
+#include "util/LifeLink.h"
+#include "util/Signaler.h"
+#include "util/NonCopyable.h"
+#include "thr/Paralleler.h"
+#include "cmnd/Stack.h"
+#include "core/ObjectTree.h"
+#include "core/Animator.h"
+#include "core/TimeInfo.h"
+#include "core/TimeLineEvent.h"
+#include "core/ResourceHolder.h"
+#include "core/ResourceEvent.h"
+#include "core/ObjectTreeEvent.h"
+#include "core/ProjectEvent.h"
 
 namespace core {
 

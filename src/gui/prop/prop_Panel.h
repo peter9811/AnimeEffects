@@ -1,12 +1,12 @@
 #ifndef GUI_PROP_PANEL_H
 #define GUI_PROP_PANEL_H
 
-#include "gui/prop/prop_ItemBase.h"
-#include "gui/prop/prop_KeyGroup.h"
+#include <functional>
 #include <QPalette>
 #include <QSize>
 #include <QVBoxLayout>
-#include <functional>
+#include "gui/prop/prop_KeyGroup.h"
+#include "gui/prop/prop_ItemBase.h"
 
 namespace gui {
 namespace prop {

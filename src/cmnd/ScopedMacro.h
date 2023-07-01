@@ -1,9 +1,9 @@
 #ifndef CMND_SCOPEDMACRO_H
 #define CMND_SCOPEDMACRO_H
 
-#include "cmnd/Listener.h"
-#include "cmnd/Stack.h"
 #include "util/LifeLink.h"
+#include "cmnd/Stack.h"
+#include "cmnd/Listener.h"
 
 namespace cmnd {
 

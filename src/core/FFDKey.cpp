@@ -141,6 +141,7 @@ bool FFDKey::serialize(Serializer& aOut) const {
     return aOut.checkStream();
 }
 
+
 bool FFDKey::deserialize(Deserializer& aIn) {
     aIn.pushLogScope("FFDKey");
 

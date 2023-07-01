@@ -1,6 +1,6 @@
+#include "util/MathUtil.h"
 #include "core/MoveKey.h"
 #include "core/Constant.h"
-#include "util/MathUtil.h"
 
 namespace core {
 const MoveKey::SplineType MoveKey::kDefaultSplineType = MoveKey::SplineType_Linear;

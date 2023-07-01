@@ -1,12 +1,12 @@
 #ifndef CORE_RESOURCEHOLDER_H
 #define CORE_RESOURCEHOLDER_H
 
-#include "core/Deserializer.h"
-#include "core/Serializer.h"
-#include "img/ResourceNode.h"
-#include "util/NonCopyable.h"
 #include <list>
 #include <memory>
+#include "util/NonCopyable.h"
+#include "img/ResourceNode.h"
+#include "core/Serializer.h"
+#include "core/Deserializer.h"
 
 namespace core {
 

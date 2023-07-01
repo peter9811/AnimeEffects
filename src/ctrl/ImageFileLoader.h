@@ -1,13 +1,13 @@
 #ifndef CTRL_IMAGEFILELOADER_H
 #define CTRL_IMAGEFILELOADER_H
 
-#include "core/ObjectTree.h"
-#include "core/Project.h"
-#include "gl/DeviceInfo.h"
-#include "util/IProgressReporter.h"
 #include <QFileInfo>
-#include <QScopedPointer>
 #include <QString>
+#include <QScopedPointer>
+#include "util/IProgressReporter.h"
+#include "gl/DeviceInfo.h"
+#include "core/Project.h"
+#include "core/ObjectTree.h"
 
 namespace ctrl {
 

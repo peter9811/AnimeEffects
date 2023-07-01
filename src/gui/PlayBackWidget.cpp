@@ -1,8 +1,8 @@
 #include "gui/PlayBackWidget.h"
-#include "XC.h"
 #include <QFile>
 #include <QTextStream>
 #include <functional>
+#include "XC.h"
 
 namespace {
 int kButtonSize = 28;

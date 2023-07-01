@@ -1,8 +1,8 @@
-#include "img/GridMeshCreator.h"
-#include "img/ColorRGBA.h"
-#include "img/Util.h"
 #include "util/MathUtil.h"
 #include "util/TriangleRasterizer.h"
+#include "img/GridMeshCreator.h"
+#include "img/Util.h"
+#include "img/ColorRGBA.h"
 
 namespace img {
 

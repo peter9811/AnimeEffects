@@ -1,20 +1,20 @@
 #ifndef CTRL_DRIVER_H
 #define CTRL_DRIVER_H
 
-#include "core/AbstractCursor.h"
-#include "core/ObjectNode.h"
 #include "core/Project.h"
+#include "core/AbstractCursor.h"
 #include "core/RenderInfo.h"
+#include "core/ObjectNode.h"
 #include "core/TimeKeyBlender.h"
-#include "ctrl/BoneEditor.h"
-#include "ctrl/DriverResources.h"
-#include "ctrl/FFDEditor.h"
-#include "ctrl/GraphicStyle.h"
-#include "ctrl/IEditor.h"
-#include "ctrl/MeshEditor.h"
-#include "ctrl/PoseEditor.h"
-#include "ctrl/SRTEditor.h"
 #include "ctrl/ToolType.h"
+#include "ctrl/IEditor.h"
+#include "ctrl/SRTEditor.h"
+#include "ctrl/FFDEditor.h"
+#include "ctrl/BoneEditor.h"
+#include "ctrl/PoseEditor.h"
+#include "ctrl/MeshEditor.h"
+#include "ctrl/GraphicStyle.h"
+#include "ctrl/DriverResources.h"
 #include "ctrl/UILogger.h"
 
 namespace ctrl {

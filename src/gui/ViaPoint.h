@@ -1,13 +1,13 @@
 #ifndef GUI_VIAPOINT_H
 #define GUI_VIAPOINT_H
 
-#include "core/Project.h"
-#include "ctrl/UILogger.h"
-#include "gl/DeviceInfo.h"
-#include "util/NonCopyable.h"
+#include <QWidget>
 #include <QPlainTextEdit>
 #include <QScopedPointer>
-#include <QWidget>
+#include "util/NonCopyable.h"
+#include "gl/DeviceInfo.h"
+#include "core/Project.h"
+#include "ctrl/UILogger.h"
 namespace img {
 class ResourceNode;
 }

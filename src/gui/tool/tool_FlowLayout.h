@@ -3,8 +3,8 @@
 
 #include <QLayout>
 #include <QRect>
-#include <QStyle>
 #include <QWidgetItem>
+#include <QStyle>
 
 namespace gui {
 namespace tool {

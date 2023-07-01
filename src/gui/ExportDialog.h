@@ -1,15 +1,15 @@
 #ifndef GUI_EXPORTDIALOG_H
 #define GUI_EXPORTDIALOG_H
 
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QFormLayout>
+#include <QComboBox>
+#include <QLabel>
 #include "core/Project.h"
 #include "ctrl/Exporter.h"
 #include "ctrl/VideoFormat.h"
 #include "gui/EasyDialog.h"
-#include <QComboBox>
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QFormLayout>
-#include <QLabel>
 
 namespace gui {
 

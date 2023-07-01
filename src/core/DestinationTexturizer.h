@@ -1,11 +1,11 @@
 #ifndef CORE_DESTINATIONTEXTURIZER_H
 #define CORE_DESTINATIONTEXTURIZER_H
 
-#include "core/LayerMesh.h"
-#include "core/RenderInfo.h"
-#include "gl/EasyShaderProgram.h"
 #include "gl/Framebuffer.h"
 #include "gl/Texture.h"
+#include "gl/EasyShaderProgram.h"
+#include "core/RenderInfo.h"
+#include "core/LayerMesh.h"
 
 namespace core {
 

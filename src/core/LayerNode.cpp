@@ -1,23 +1,23 @@
-#include "core/LayerNode.h"
+#include <utility>
+#include <QMatrix4x4>
+#include <QOpenGLFunctions>
+#include <QOpenGLContext>
 #include "XC.h"
-#include "core/ClippingFrame.h"
-#include "core/DepthKey.h"
-#include "core/DestinationTexturizer.h"
-#include "core/FFDKeyUpdater.h"
-#include "core/ImageKeyUpdater.h"
+#include "gl/Global.h"
+#include "gl/ExtendShader.h"
+#include "gl/Util.h"
+#include "img/ResourceNode.h"
+#include "img/BlendMode.h"
+#include "core/LayerNode.h"
 #include "core/ObjectNodeUtil.h"
+#include "core/TimeKeyExpans.h"
+#include "core/DepthKey.h"
 #include "core/ResourceEvent.h"
 #include "core/ResourceUpdatingWorkspace.h"
-#include "core/TimeKeyExpans.h"
-#include "gl/ExtendShader.h"
-#include "gl/Global.h"
-#include "gl/Util.h"
-#include "img/BlendMode.h"
-#include "img/ResourceNode.h"
-#include <QMatrix4x4>
-#include <QOpenGLContext>
-#include <QOpenGLFunctions>
-#include <utility>
+#include "core/FFDKeyUpdater.h"
+#include "core/ImageKeyUpdater.h"
+#include "core/ClippingFrame.h"
+#include "core/DestinationTexturizer.h"
 
 namespace core {
 
@@ -142,6 +142,7 @@ void LayerNode::prerender(const RenderInfo& aInfo, const TimeCacheAccessor& aAcc
     // transform shape by current keys
     transformShape(aInfo, aAccessor);
 }
+
 
 void LayerNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor) {
     if (!mIsVisible)
@@ -320,6 +321,7 @@ void LayerNode::renderShape(const RenderInfo& aInfo, const TimeCacheAccessor& aA
     auto texCoordOffset = mCurrentMesh->originOffset() - expans.imageOffset();
     auto blendMode = expans.blendMode();
     const QMatrix4x4 viewMatrix = aInfo.camera.viewMatrix();
+
 
     auto& shader = aInfo.isGrid ? mShaderHolder.gridShader() : mShaderHolder.shader(blendMode, isClippee);
 

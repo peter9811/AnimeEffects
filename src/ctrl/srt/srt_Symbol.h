@@ -1,10 +1,10 @@
 #ifndef CTRL_SRT_SYMBOL_H
 #define CTRL_SRT_SYMBOL_H
 
-#include "core/CameraInfo.h"
-#include "core/RenderInfo.h"
-#include "ctrl/srt/srt_FocusType.h"
 #include <QMatrix4x4>
+#include "core/RenderInfo.h"
+#include "core/CameraInfo.h"
+#include "ctrl/srt/srt_FocusType.h"
 
 namespace ctrl {
 namespace srt {

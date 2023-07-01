@@ -1,9 +1,9 @@
+#include "util/TreeUtil.h"
+#include "util/MathUtil.h"
 #include "core/BoneKey.h"
-#include "core/ObjectNodeUtil.h"
 #include "core/Project.h"
 #include "core/TimeKeyBlender.h"
-#include "util/MathUtil.h"
-#include "util/TreeUtil.h"
+#include "core/ObjectNodeUtil.h"
 
 namespace core {
 
@@ -126,6 +126,7 @@ void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets) {
         aProject.paralleler().wakeAll();
 #endif
     }
+
 
     // update binding caches
     {

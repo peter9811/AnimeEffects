@@ -1,5 +1,5 @@
-#include "img/PSDWriter.h"
 #include "XC.h"
+#include "img/PSDWriter.h"
 #include "img/PSDUtil.h"
 
 #define PSDWRITER_CHECK_VALIDVALUE(cond, value, section) \

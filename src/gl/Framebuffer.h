@@ -1,9 +1,9 @@
 #ifndef GL_FRAMEBUFFER_H
 #define GL_FRAMEBUFFER_H
 
-#include "util/NonCopyable.h"
-#include <QGL>
 #include <array>
+#include <QGL>
+#include "util/NonCopyable.h"
 
 namespace gl {
 

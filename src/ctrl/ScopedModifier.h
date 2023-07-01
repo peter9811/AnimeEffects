@@ -2,8 +2,8 @@
 #define CTRL_SCOPEDMODIFIER
 
 #include "cmnd/ScopedUndoSuspender.h"
-#include "core/Animator.h"
 #include "core/Project.h"
+#include "core/Animator.h"
 
 namespace ctrl {
 

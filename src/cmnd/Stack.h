@@ -1,15 +1,15 @@
 #ifndef CMND_STACK_H
 #define CMND_STACK_H
 
-#include "cmnd/Base.h"
-#include "cmnd/Listener.h"
-#include "util/LifeLink.h"
-#include <QList>
-#include <QListIterator>
-#include <QMutableListIterator>
+#include <functional>
 #include <QUndoStack>
 #include <QVector>
-#include <functional>
+#include <QList>
+#include <QMutableListIterator>
+#include <QListIterator>
+#include "util/LifeLink.h"
+#include "cmnd/Base.h"
+#include "cmnd/Listener.h"
 
 namespace cmnd {
 

@@ -7,10 +7,10 @@
 
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
 
-    #include "XC.h"
-    #include <QMutex>
-    #include <new>
     #include <stdlib.h>
+    #include <new>
+    #include <QMutex>
+    #include "XC.h"
 
 struct MyMemoryFooter {
     uint32 sign;

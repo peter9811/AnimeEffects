@@ -1,15 +1,15 @@
 #ifndef GUI_INFOLABELWIDGET_H
 #define GUI_INFOLABELWIDGET_H
 
-#include "core/Animator.h"
-#include "core/Project.h"
-#include "core/TimeFormat.h"
-#include "core/TimeInfo.h"
-#include "gui/GUIResources.h"
-#include "gui/ViaPoint.h"
-#include "util/Range.h"
 #include <QLabel>
 #include <QSettings>
+#include "gui/GUIResources.h"
+#include "gui/ViaPoint.h"
+#include "core/Project.h"
+#include "core/TimeInfo.h"
+#include "core/TimeFormat.h"
+#include "core/Animator.h"
+#include "util/Range.h"
 
 namespace gui {
 

@@ -1,6 +1,6 @@
-#include "gui/MouseSetting.h"
-#include <QApplication>
 #include <QSettings>
+#include <QApplication>
+#include "gui/MouseSetting.h"
 
 namespace gui {
 

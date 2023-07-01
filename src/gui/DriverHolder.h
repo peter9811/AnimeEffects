@@ -1,15 +1,15 @@
 #ifndef GUI_DRIVERHOLDER_H
 #define GUI_DRIVERHOLDER_H
 
-#include "core/Project.h"
-#include "ctrl/Driver.h"
-#include "ctrl/DriverResources.h"
-#include "ctrl/GraphicStyle.h"
-#include "ctrl/System.h"
-#include "ctrl/ToolType.h"
-#include "gui/ViaPoint.h"
 #include "util/LinkPointer.h"
 #include "util/Signaler.h"
+#include "core/Project.h"
+#include "ctrl/System.h"
+#include "ctrl/Driver.h"
+#include "ctrl/ToolType.h"
+#include "ctrl/DriverResources.h"
+#include "ctrl/GraphicStyle.h"
+#include "gui/ViaPoint.h"
 
 namespace gui {
 

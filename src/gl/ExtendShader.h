@@ -1,8 +1,8 @@
 #ifndef GL_EXTENDSHADER_H
 #define GL_EXTENDSHADER_H
 
-#include <QString>
 #include <vector>
+#include <QString>
 
 namespace gl {
 

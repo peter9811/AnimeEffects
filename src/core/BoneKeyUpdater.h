@@ -1,11 +1,11 @@
 #ifndef CORE_BONEKEYUPDATER_H
 #define CORE_BONEKEYUPDATER_H
 
-#include "core/ObjectTreeEvent.h"
-#include "core/ProjectEvent.h"
-#include "core/ResourceEvent.h"
 #include "core/TimeLine.h"
+#include "core/ObjectTreeEvent.h"
+#include "core/ResourceEvent.h"
 #include "core/TimeLineEvent.h"
+#include "core/ProjectEvent.h"
 namespace core {
 class ObjectTree;
 }

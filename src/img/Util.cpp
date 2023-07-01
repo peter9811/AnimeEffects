@@ -1,9 +1,9 @@
+#include <string>
+#include "util/TextUtil.h"
 #include "img/Util.h"
-#include "img/BlendMode.h"
 #include "img/ColorRGBA.h"
 #include "img/PSDUtil.h"
-#include "util/TextUtil.h"
-#include <string>
+#include "img/BlendMode.h"
 
 namespace img {
 

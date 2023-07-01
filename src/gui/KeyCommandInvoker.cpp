@@ -1,6 +1,6 @@
+#include <QDebug>
 #include "gui/KeyCommandInvoker.h"
 #include "gui/KeyCommandMap.h"
-#include <QDebug>
 
 namespace gui {
 

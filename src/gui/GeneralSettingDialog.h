@@ -1,13 +1,13 @@
 #ifndef GUI_GENERALSETTINGDIALOG_H
 #define GUI_GENERALSETTINGDIALOG_H
 
-#include "core/TimeFormat.h"
-#include "gui/EasyDialog.h"
 #include "gui/GUIResources.h"
-#include "qspinbox.h"
-#include <QCheckBox>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QFormLayout>
+#include "gui/EasyDialog.h"
+#include "core/TimeFormat.h"
+#include "qspinbox.h"
 
 namespace gui {
 

@@ -1,13 +1,13 @@
 #ifndef CTRL_MESHEDITOR_H
 #define CTRL_MESHEDITOR_H
 
+#include "core/Project.h"
+#include "core/ObjectNode.h"
 #include "core/AbstractCursor.h"
 #include "core/MeshKey.h"
-#include "core/ObjectNode.h"
-#include "core/Project.h"
-#include "ctrl/IEditor.h"
 #include "ctrl/MeshParam.h"
 #include "ctrl/UILogger.h"
+#include "ctrl/IEditor.h"
 #include "ctrl/mesh/mesh_IMode.h"
 #include "ctrl/mesh/mesh_KeyOwner.h"
 #include "ctrl/mesh/mesh_Target.h"

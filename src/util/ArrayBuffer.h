@@ -1,8 +1,8 @@
 #ifndef UTIL_ARRAYBUFFER_H
 #define UTIL_ARRAYBUFFER_H
 
-#include "XC.h"
 #include <utility>
+#include "XC.h"
 
 namespace util {
 
@@ -105,6 +105,7 @@ public:
         return mObjects[aIndex];
     }
 };
+
 
 } // namespace util
 

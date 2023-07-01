@@ -1,14 +1,14 @@
 #ifndef CORE_TIMELINE_H
 #define CORE_TIMELINE_H
 
-#include "cmnd/Vector.h"
-#include "core/Deserializer.h"
-#include "core/Serializer.h"
-#include "core/TimeKey.h"
-#include "core/TimeKeyType.h"
+#include <array>
 #include <QMap>
 #include <QScopedPointer>
-#include <array>
+#include "cmnd/Vector.h"
+#include "core/TimeKey.h"
+#include "core/TimeKeyType.h"
+#include "core/Serializer.h"
+#include "core/Deserializer.h"
 namespace core {
 class Project;
 }
@@ -18,6 +18,7 @@ class ObjectNode;
 namespace core {
 class TimeKeyExpans;
 }
+
 
 namespace core {
 

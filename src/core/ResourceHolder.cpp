@@ -1,6 +1,6 @@
-#include "core/ResourceHolder.h"
-#include "img/BlendMode.h"
 #include <QDir>
+#include "img/BlendMode.h"
+#include "core/ResourceHolder.h"
 
 namespace core {
 
@@ -195,6 +195,7 @@ bool ResourceHolder::deserialize(Deserializer& aIn) {
 
     // dive log scope
     aIn.pushLogScope("Resources");
+
 
     // top node count
     int topNodeCount = 0;

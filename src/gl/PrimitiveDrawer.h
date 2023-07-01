@@ -1,14 +1,14 @@
 #ifndef GL_PRIMITIVEDRAWER_H
 #define GL_PRIMITIVEDRAWER_H
 
+#include <vector>
+#include <functional>
+#include <QPolygonF>
+#include <QBrush>
+#include <QPen>
 #include "gl/BufferObject.h"
 #include "gl/EasyShaderProgram.h"
 #include "gl/Texture.h"
-#include <QBrush>
-#include <QPen>
-#include <QPolygonF>
-#include <functional>
-#include <vector>
 
 namespace gl {
 

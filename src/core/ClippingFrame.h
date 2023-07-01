@@ -1,11 +1,11 @@
 #ifndef CORE_CLIPPINGFRAME_H
 #define CORE_CLIPPINGFRAME_H
 
-#include "gl/BufferObject.h"
-#include "gl/EasyShaderProgram.h"
+#include <QScopedPointer>
 #include "gl/Framebuffer.h"
 #include "gl/Texture.h"
-#include <QScopedPointer>
+#include "gl/BufferObject.h"
+#include "gl/EasyShaderProgram.h"
 
 namespace core {
 

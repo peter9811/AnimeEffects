@@ -1,11 +1,11 @@
+#include <algorithm>
 #include "core/FolderNode.h"
-#include "core/ClippingFrame.h"
-#include "core/DepthKey.h"
 #include "core/ObjectNodeUtil.h"
 #include "core/ObjectTreeEvent.h"
 #include "core/ResourceEvent.h"
 #include "core/TimeKeyExpans.h"
-#include <algorithm>
+#include "core/DepthKey.h"
+#include "core/ClippingFrame.h"
 
 namespace core {
 

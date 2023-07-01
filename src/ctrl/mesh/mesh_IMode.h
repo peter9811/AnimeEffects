@@ -1,8 +1,8 @@
 #ifndef CTRL_MESH_IMODE
 #define CTRL_MESH_IMODE
 
-#include "core/AbstractCursor.h"
 #include "core/CameraInfo.h"
+#include "core/AbstractCursor.h"
 #include "core/RenderInfo.h"
 #include "ctrl/MeshParam.h"
 

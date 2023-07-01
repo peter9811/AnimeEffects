@@ -1,8 +1,8 @@
 #ifndef CTRL_TIME_SCALER_H
 #define CTRL_TIME_SCALER_H
 
-#include <QPoint>
 #include <array>
+#include <QPoint>
 
 namespace ctrl {
 namespace time {

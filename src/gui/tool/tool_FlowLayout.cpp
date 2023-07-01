@@ -1,5 +1,5 @@
-#include "gui/tool/tool_FlowLayout.h"
 #include <QWidget>
+#include "gui/tool/tool_FlowLayout.h"
 
 namespace gui {
 namespace tool {

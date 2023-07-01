@@ -1,5 +1,5 @@
-#include "img/ResourceHandle.h"
 #include <utility>
+#include "img/ResourceHandle.h"
 
 namespace img {
 

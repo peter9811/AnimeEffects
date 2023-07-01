@@ -1,14 +1,14 @@
 #ifndef CTRL_BONEEDITOR_H
 #define CTRL_BONEEDITOR_H
 
+#include "core/Project.h"
+#include "core/ObjectNode.h"
 #include "core/AbstractCursor.h"
 #include "core/BoneKey.h"
-#include "core/ObjectNode.h"
-#include "core/Project.h"
 #include "ctrl/BoneEditMode.h"
 #include "ctrl/BoneParam.h"
-#include "ctrl/GraphicStyle.h"
 #include "ctrl/IEditor.h"
+#include "ctrl/GraphicStyle.h"
 #include "ctrl/UILogger.h"
 #include "ctrl/bone/bone_IMode.h"
 #include "ctrl/bone/bone_KeyOwner.h"

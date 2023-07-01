@@ -1,9 +1,9 @@
 #ifndef XCASSERT_H
 #define XCASSERT_H
 
-#include "XCReport.h"
-#include <QString>
 #include <string>
+#include <QString>
+#include "XCReport.h"
 
 class XCAssertHandler {
 public:
@@ -40,6 +40,7 @@ extern XCAssertHandler* gXCAssertHandler;
             Q_ASSERT(0); \
         } \
     } while (0)
+
 
 class XCErrorHandler {
 public:

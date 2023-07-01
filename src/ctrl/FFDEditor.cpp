@@ -1,10 +1,10 @@
-#include "ctrl/FFDEditor.h"
+#include "gl/Global.h"
 #include "core/MeshTransformerResource.h"
+#include "ctrl/FFDEditor.h"
 #include "ctrl/ffd/ffd_BrushMode.h"
 #include "ctrl/ffd/ffd_DragMode.h"
-#include "gl/ComputeTexture1D.h"
-#include "gl/Global.h"
 #include "gl/Util.h"
+#include "gl/ComputeTexture1D.h"
 
 using namespace core;
 

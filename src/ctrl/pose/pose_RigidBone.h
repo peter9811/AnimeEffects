@@ -1,9 +1,9 @@
 #ifndef CTRL_POSE_RIGIDBONE_H
 #define CTRL_POSE_RIGIDBONE_H
 
-#include "core/Bone2.h"
-#include "util/TreeIterator.h"
 #include "util/TreeNodeBase.h"
+#include "util/TreeIterator.h"
+#include "core/Bone2.h"
 
 namespace ctrl {
 namespace pose {

@@ -1,11 +1,11 @@
 #ifndef GL_TRIANGULATOR_H
 #define GL_TRIANGULATOR_H
 
-#include "XC.h"
-#include "gl/Vector2.h"
 #include <QPolygonF>
 #include <QVector2D>
 #include <QVector>
+#include "XC.h"
+#include "gl/Vector2.h"
 
 namespace gl {
 

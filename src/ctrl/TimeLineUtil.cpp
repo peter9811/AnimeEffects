@@ -1,12 +1,12 @@
-#include "ctrl/TimeLineUtil.h"
+#include <QDebug>
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
-#include "core/FFDKeyUpdater.h"
-#include "core/ImageKeyUpdater.h"
-#include "core/ResourceUpdatingWorkspace.h"
 #include "core/TimeKeyType.h"
+#include "core/ImageKeyUpdater.h"
+#include "core/FFDKeyUpdater.h"
+#include "core/ResourceUpdatingWorkspace.h"
+#include "ctrl/TimeLineUtil.h"
 #include "ctrl/CmndName.h"
-#include <QDebug>
 
 using namespace core;
 

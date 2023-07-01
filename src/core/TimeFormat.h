@@ -4,9 +4,9 @@
 #include <QDebug>
 #include <QtMath>
 
-#include "util/MathUtil.h"
-#include "util/Range.h"
 #include <QString>
+#include "util/Range.h"
+#include "util/MathUtil.h"
 
 namespace core {
 

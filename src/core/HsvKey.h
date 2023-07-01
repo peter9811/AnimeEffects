@@ -1,8 +1,8 @@
 #ifndef HSVKEY_H
 #define HSVKEY_H
 
-#include "core/TimeKey.h"
 #include "util/Easing.h"
+#include "core/TimeKey.h"
 #include "util/MathUtil.h"
 
 namespace core {

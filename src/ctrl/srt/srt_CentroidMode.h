@@ -1,11 +1,11 @@
 #ifndef CTRL_SRT_CENTROIDMODE_H
 #define CTRL_SRT_CENTROIDMODE_H
 
-#include "core/ObjectNode.h"
 #include "core/Project.h"
-#include "ctrl/srt/srt_CentroidMover.h"
+#include "core/ObjectNode.h"
 #include "ctrl/srt/srt_IMode.h"
 #include "ctrl/srt/srt_KeyOwner.h"
+#include "ctrl/srt/srt_CentroidMover.h"
 
 namespace ctrl {
 namespace srt {

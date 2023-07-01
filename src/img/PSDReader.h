@@ -1,10 +1,10 @@
 #ifndef IMG_PSDREADER_H
 #define IMG_PSDREADER_H
 
-#include "XC.h"
-#include "img/PSDFormat.h"
-#include "util/StreamReader.h"
 #include <memory>
+#include "XC.h"
+#include "util/StreamReader.h"
+#include "img/PSDFormat.h"
 
 namespace img {
 

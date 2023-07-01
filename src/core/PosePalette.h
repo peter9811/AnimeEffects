@@ -1,14 +1,14 @@
 #ifndef CORE_POSEPALETTE_H
 #define CORE_POSEPALETTE_H
 
-#include "XC.h"
-#include "core/BoneKey.h"
-#include "core/PoseKey.h"
-#include "gl/Vector4.h"
-#include "util/ArrayBlock.h"
+#include <array>
 #include <QMatrix4x4>
 #include <QVector>
-#include <array>
+#include "XC.h"
+#include "util/ArrayBlock.h"
+#include "gl/Vector4.h"
+#include "core/BoneKey.h"
+#include "core/PoseKey.h"
 
 namespace core {
 

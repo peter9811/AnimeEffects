@@ -1,8 +1,8 @@
 #ifndef GUI_THEME_INFO_H
 #define GUI_THEME_INFO_H
 
-#include <QFileInfo>
 #include <QString>
+#include <QFileInfo>
 
 #include <QPalette>
 

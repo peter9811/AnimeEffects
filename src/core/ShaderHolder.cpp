@@ -1,6 +1,6 @@
-#include "core/ShaderHolder.h"
 #include "gl/ExtendShader.h"
 #include "gl/Global.h"
+#include "core/ShaderHolder.h"
 
 namespace core {
 
@@ -163,6 +163,7 @@ const gl::EasyShaderProgram& ShaderHolder::gridShader() const {
     XC_PTR_ASSERT(mGridShaders.at(0));
     return *(mGridShaders.at(0));
 }
+
 
 gl::EasyShaderProgram& ShaderHolder::reserveClipperShader(bool aIsClippee) {
     if (!mClipperShaders.at(aIsClippee)) {

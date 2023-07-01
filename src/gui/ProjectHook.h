@@ -1,9 +1,9 @@
 #ifndef GUI_PROJECTHOOK_H
 #define GUI_PROJECTHOOK_H
 
+#include <QTreeWidgetItem>
 #include "core/Project.h"
 #include "core/RenderInfo.h"
-#include <QTreeWidgetItem>
 
 namespace gui {
 

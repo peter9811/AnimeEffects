@@ -1,5 +1,5 @@
-#include "core/SRTExpans.h"
 #include "util/MathUtil.h"
+#include "core/SRTExpans.h"
 
 namespace core {
 SRTExpans::SRTExpans():

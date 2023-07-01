@@ -1,11 +1,11 @@
 #ifndef CTRL_BONE_NODESELECTOR_H
 #define CTRL_BONE_NODESELECTOR_H
 
-#include "core/Bone2.h"
-#include "core/CameraInfo.h"
-#include "core/ObjectNode.h"
-#include "ctrl/GraphicStyle.h"
 #include <vector>
+#include "core/Bone2.h"
+#include "core/ObjectNode.h"
+#include "core/CameraInfo.h"
+#include "ctrl/GraphicStyle.h"
 
 namespace ctrl {
 namespace bone {

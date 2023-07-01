@@ -1,14 +1,14 @@
 #ifndef CORE_TIMEKEY_H
 #define CORE_TIMEKEY_H
 
-#include "cmnd/SleepableObject.h"
-#include "core/Deserializer.h"
-#include "core/Serializer.h"
-#include "core/TimeKeyType.h"
 #include "util/LifeLink.h"
-#include "util/NonCopyable.h"
-#include "util/TreeIterator.h"
 #include "util/TreeNodeBase.h"
+#include "util/TreeIterator.h"
+#include "util/NonCopyable.h"
+#include "cmnd/SleepableObject.h"
+#include "core/Serializer.h"
+#include "core/Deserializer.h"
+#include "core/TimeKeyType.h"
 
 namespace core {
 
@@ -68,6 +68,7 @@ private:
 
 } // namespace core
 
+
 #define TIMEKEY_TYPE_ASSERT(aKey, aType) \
     XC_MSG_ASSERT((aKey).type() == core::TimeKeyType_##aType, "timekey type error: %d", (aKey).type())
 
@@ -76,5 +77,6 @@ private:
         XC_PTR_ASSERT(aKeyPtr); \
         TIMEKEY_TYPE_ASSERT(*(aKeyPtr), aType); \
     } while (0)
+
 
 #endif // CORE_TIMEKEY_H

@@ -1,11 +1,11 @@
 #ifndef CORE_HEIGHTMAP_H
 #define CORE_HEIGHTMAP_H
 
+#include <QRect>
+#include <QVector3D>
+#include <QVector2D>
 #include "XC.h"
 #include "img/Buffer.h"
-#include <QRect>
-#include <QVector2D>
-#include <QVector3D>
 
 namespace core {
 

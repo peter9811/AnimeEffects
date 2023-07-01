@@ -1,19 +1,19 @@
 #ifndef CTRL_FFD_TASK_H
 #define CTRL_FFD_TASK_H
 
-#include "core/LayerMesh.h"
-#include "core/MeshTransformer.h"
-#include "core/TimeKeyExpans.h"
-#include "ctrl/FFDParam.h"
-#include "ctrl/ffd/ffd_TaskResource.h"
+#include <QMatrix4x4>
+#include "util/Circle.h"
+#include "gl/Vector2I.h"
+#include "gl/Vector2.h"
+#include "gl/Vector3.h"
+#include "gl/Task.h"
 #include "gl/BufferObject.h"
 #include "gl/ComputeTexture1D.h"
-#include "gl/Task.h"
-#include "gl/Vector2.h"
-#include "gl/Vector2I.h"
-#include "gl/Vector3.h"
-#include "util/Circle.h"
-#include <QMatrix4x4>
+#include "core/TimeKeyExpans.h"
+#include "core/MeshTransformer.h"
+#include "core/LayerMesh.h"
+#include "ctrl/FFDParam.h"
+#include "ctrl/ffd/ffd_TaskResource.h"
 
 namespace ctrl {
 namespace ffd {

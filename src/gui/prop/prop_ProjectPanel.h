@@ -1,12 +1,12 @@
 #ifndef GUI_PROP_PROJECTPANEL_H
 #define GUI_PROP_PROJECTPANEL_H
 
-#include "core/ObjectNode.h"
 #include "core/Project.h"
-#include "gui/prop/prop_AttrGroup.h"
-#include "gui/prop/prop_Items.h"
-#include "gui/prop/prop_KeyGroup.h"
+#include "core/ObjectNode.h"
 #include "gui/prop/prop_Panel.h"
+#include "gui/prop/prop_AttrGroup.h"
+#include "gui/prop/prop_KeyGroup.h"
+#include "gui/prop/prop_Items.h"
 
 namespace gui {
 namespace prop {

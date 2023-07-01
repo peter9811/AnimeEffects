@@ -1,12 +1,12 @@
 #ifndef THR_WORKER_H
 #define THR_WORKER_H
 
-#include "thr/TaskQueue.h"
-#include "util/NonCopyable.h"
+#include <QThread>
 #include <QMutex>
 #include <QReadWriteLock>
-#include <QThread>
 #include <QWaitCondition>
+#include "util/NonCopyable.h"
+#include "thr/TaskQueue.h"
 
 namespace thr {
 

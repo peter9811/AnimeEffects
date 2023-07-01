@@ -1,13 +1,13 @@
 #ifndef CTRL_MESH_CREATEMODE_H
 #define CTRL_MESH_CREATEMODE_H
 
-#include "core/ObjectNode.h"
 #include "core/Project.h"
-#include "ctrl/mesh/mesh_Focuser.h"
+#include "core/ObjectNode.h"
 #include "ctrl/mesh/mesh_IMode.h"
 #include "ctrl/mesh/mesh_KeyOwner.h"
-#include "ctrl/mesh/mesh_MeshAccessor.h"
 #include "ctrl/mesh/mesh_Target.h"
+#include "ctrl/mesh/mesh_Focuser.h"
+#include "ctrl/mesh/mesh_MeshAccessor.h"
 #include "ctrl/mesh/mesh_VtxMover.h"
 
 namespace ctrl {

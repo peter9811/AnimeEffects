@@ -1,10 +1,10 @@
 #ifndef IMG_PSDUTIL_H
 #define IMG_PSDUTIL_H
 
+#include <memory>
+#include <QRect>
 #include "XC.h"
 #include "img/PSDFormat.h"
-#include <QRect>
-#include <memory>
 
 namespace img {
 

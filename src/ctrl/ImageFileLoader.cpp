@@ -1,19 +1,19 @@
-#include "ctrl/ImageFileLoader.h"
+#include <QRegExp>
+#include <fstream>
+#include <QDebug>
 #include "XC.h"
-#include "core/FolderNode.h"
-#include "core/HeightMap.h"
-#include "core/LayerNode.h"
-#include "core/ObjectNodeUtil.h"
-#include "img/BlendMode.h"
+#include "qapplication.h"
+#include "util/TextUtil.h"
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
 #include "img/ResourceNode.h"
 #include "img/Util.h"
-#include "qapplication.h"
-#include "util/TextUtil.h"
-#include <QDebug>
-#include <QRegExp>
-#include <fstream>
+#include "img/BlendMode.h"
+#include "core/LayerNode.h"
+#include "core/FolderNode.h"
+#include "core/HeightMap.h"
+#include "core/ObjectNodeUtil.h"
+#include "ctrl/ImageFileLoader.h"
 
 using namespace core;
 

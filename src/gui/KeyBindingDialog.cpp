@@ -1,15 +1,15 @@
-#include "gui/KeyBindingDialog.h"
-#include "XC.h"
-#include <QApplication>
-#include <QDebug>
 #include <QFormLayout>
-#include <QFrame>
 #include <QGroupBox>
-#include <QKeyEvent>
-#include <QKeySequence>
 #include <QLineEdit>
 #include <QScrollArea>
+#include <QDebug>
+#include <QKeyEvent>
+#include <QKeySequence>
 #include <QTabWidget>
+#include <QFrame>
+#include <QApplication>
+#include "XC.h"
+#include "gui/KeyBindingDialog.h"
 
 namespace gui {
 

@@ -1,5 +1,5 @@
-#include "gui/res/res_Item.h"
 #include "gui/ResourceTreeWidget.h"
+#include "gui/res/res_Item.h"
 
 namespace {
 static const int kItemColumn = gui::ResourceTreeWidget::kItemColumn;

@@ -1,5 +1,5 @@
-#include "MathUtil.h"
 #include <float.h>
+#include "MathUtil.h"
 
 namespace util {
 

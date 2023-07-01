@@ -1,6 +1,6 @@
+#include "util/ArrayBlock.h"
 #include "core/FFDKeyUpdater.h"
 #include "core/FFDKey.h"
-#include "util/ArrayBlock.h"
 
 namespace core {
 //-------------------------------------------------------------------------------------------------
@@ -68,6 +68,7 @@ public:
         }
     }
 };
+
 
 //-------------------------------------------------------------------------------------------------
 cmnd::Stable* FFDKeyUpdater::createResourceUpdater(ObjectNode& aNode, const ResourceUpdatingWorkspacePtr& aWorkspace) {

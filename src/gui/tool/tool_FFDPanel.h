@@ -1,16 +1,16 @@
 #ifndef GUI_TOOL_FFDPANEL_H
 #define GUI_TOOL_FFDPANEL_H
 
-#include "ctrl/FFDParam.h"
-#include "gui/GUIResources.h"
-#include "gui/tool/tool_Items.h"
-#include "util/Signaler.h"
-#include <QButtonGroup>
+#include <vector>
+#include <functional>
 #include <QGroupBox>
 #include <QPushButton>
 #include <QSlider>
-#include <functional>
-#include <vector>
+#include <QButtonGroup>
+#include "util/Signaler.h"
+#include "ctrl/FFDParam.h"
+#include "gui/GUIResources.h"
+#include "gui/tool/tool_Items.h"
 
 namespace gui {
 namespace tool {

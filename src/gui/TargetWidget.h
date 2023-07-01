@@ -1,15 +1,15 @@
 #ifndef GUI_CONTROLWIDGET_H
 #define GUI_CONTROLWIDGET_H
 
-#include "core/Animator.h"
-#include "core/Project.h"
-#include "gui/GUIResources.h"
+#include <QSplitter>
 #include "gui/ObjectTreeWidget.h"
+#include "gui/TimeLineWidget.h"
+#include "gui/GUIResources.h"
 #include "gui/PlayBackWidget.h"
 #include "gui/TimeLineInfoWidget.h"
-#include "gui/TimeLineWidget.h"
 #include "gui/ViaPoint.h"
-#include <QSplitter>
+#include "core/Project.h"
+#include "core/Animator.h"
 
 namespace gui {
 

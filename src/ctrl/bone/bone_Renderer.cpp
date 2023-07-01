@@ -1,6 +1,6 @@
-#include "ctrl/bone/bone_Renderer.h"
-#include "core/Constant.h"
 #include "util/MathUtil.h"
+#include "core/Constant.h"
+#include "ctrl/bone/bone_Renderer.h"
 
 using namespace core;
 
@@ -53,6 +53,7 @@ namespace bone {
 
         const Qt::PenStyle penStyle = mIsShadow ? Qt::DashLine : Qt::SolidLine;
         const QPointF pos = getScreenPointF(aBone->worldPos());
+
 
         // each child
         for (const Bone2* child : aBone->children()) {

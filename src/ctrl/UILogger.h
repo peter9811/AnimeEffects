@@ -1,9 +1,9 @@
 #ifndef CTRL_UILOGGER_H
 #define CTRL_UILOGGER_H
 
+#include <QString>
 #include "ctrl/UILog.h"
 #include "ctrl/UILogType.h"
-#include <QString>
 
 namespace ctrl {
 

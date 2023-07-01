@@ -1,8 +1,8 @@
 #ifndef CMND_VECTOR
 #define CMND_VECTOR
 
-#include "cmnd/Base.h"
 #include <vector>
+#include "cmnd/Base.h"
 
 namespace cmnd {
 

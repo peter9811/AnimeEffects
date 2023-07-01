@@ -1,11 +1,11 @@
 #ifndef GUI_MAINDISPLAYSTYLE
 #define GUI_MAINDISPLAYSTYLE
 
-#include "ctrl/GraphicStyle.h"
-#include "gui/GUIResources.h"
-#include "util/NonCopyable.h"
 #include <QFont>
 #include <QFontMetrics>
+#include "util/NonCopyable.h"
+#include "ctrl/GraphicStyle.h"
+#include "gui/GUIResources.h"
 
 namespace gui {
 

@@ -1,25 +1,25 @@
-#include "gui/MainWindow.h"
-#include "GeneralSettingDialog.h"
-#include "ctrl/Exporter.h"
-#include "gl/Global.h"
-#include "gui/ExportDialog.h"
-#include "util/IProgressReporter.h"
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QDockWidget>
-#include <QElapsedTimer>
-#include <QFileDialog>
-#include <QFileSystemWatcher>
-#include <QGraphicsDropShadowEffect>
-#include <QMessageBox>
 #include <QSettings>
+#include <QFileDialog>
+#include <QDockWidget>
+#include <QGraphicsDropShadowEffect>
 #include <QShortcut>
+#include <QElapsedTimer>
+#include <QMessageBox>
+#include <QFileSystemWatcher>
+#include "GeneralSettingDialog.h"
+#include "util/IProgressReporter.h"
+#include "gl/Global.h"
+#include "ctrl/Exporter.h"
+#include "gui/MainWindow.h"
+#include "gui/ExportDialog.h"
 // New Exporter
 #include "gui/exportdiag.h"
 //---//
 #include "gui/NewProjectDialog.h"
-#include "gui/ProjectHook.h"
 #include "gui/ResourceDialog.h"
+#include "gui/ProjectHook.h"
 #include "gui/menu/menu_ProgressReporter.h"
 #include "util/NetworkUtil.h"
 
@@ -441,6 +441,7 @@ void MainWindow::onThemeUpdated(theme::Theme& aTheme) {
         mDockPropertyWidget->setStyleSheet(QTextStream(&stylesheet).readAll());
         stylesheet.close();
     }
+
 
     stylesheet.setFileName(aTheme.path() + "/stylesheet/toolwidget.ssa");
     if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -1015,8 +1016,8 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
             auto infoText =
                 tr("Exporting video requires FFmpeg to be installed on your computer, "
                    "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
-                   "In the following screen you can instruct AnimeEffects to download and install it "
-                   "automatically for you, "
+                   "In the following screen you can instruct AnimeEffects to download and install it automatically for "
+                   "you, "
                    "or you can download it by yourself and tell AnimeEffects where it is.");
             message.setInformativeText(infoText);
             message.setStandardButtons(QMessageBox::Ok);

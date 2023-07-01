@@ -1,8 +1,8 @@
 #ifndef CORE_SCALEKEY_H
 #define CORE_SCALEKEY_H
 
-#include "core/TimeKey.h"
 #include "util/Easing.h"
+#include "core/TimeKey.h"
 
 namespace core {
 

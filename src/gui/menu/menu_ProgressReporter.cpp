@@ -1,5 +1,5 @@
-#include "gui/menu/menu_ProgressReporter.h"
 #include <QApplication>
+#include "gui/menu/menu_ProgressReporter.h"
 
 namespace gui {
 namespace menu {

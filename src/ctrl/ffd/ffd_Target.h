@@ -1,9 +1,9 @@
 #ifndef CTRL_FFD_TARGET_H
 #define CTRL_FFD_TARGET_H
 
+#include <QScopedPointer>
 #include "ctrl/ffd/ffd_KeyOwner.h"
 #include "ctrl/ffd/ffd_Task.h"
-#include <QScopedPointer>
 
 namespace ctrl {
 namespace ffd {

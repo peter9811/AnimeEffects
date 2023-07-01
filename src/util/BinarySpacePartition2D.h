@@ -1,12 +1,12 @@
 #ifndef UTIL_BINARYSPACEPARTITION2D
 #define UTIL_BINARYSPACEPARTITION2D
 
-#include "util/CollDetect.h"
-#include "util/Triangle2D.h"
-#include <QRectF>
 #include <array>
-#include <list>
 #include <vector>
+#include <list>
+#include <QRectF>
+#include "util/Triangle2D.h"
+#include "util/CollDetect.h"
 
 namespace util {
 

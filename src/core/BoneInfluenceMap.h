@@ -1,18 +1,18 @@
 #ifndef CORE_BONEINFLUENCEMAP_H
 #define CORE_BONEINFLUENCEMAP_H
 
-#include "core/Bone2.h"
+#include <QGL>
+#include <QVector>
+#include <QVector2D>
+#include <QRectF>
+#include <QMatrix4x4>
+#include "util/Segment2D.h"
+#include "util/NonCopyable.h"
+#include "thr/Task.h"
 #include "gl/Vector3.h"
 #include "gl/Vector4.h"
 #include "gl/Vector4I.h"
-#include "thr/Task.h"
-#include "util/NonCopyable.h"
-#include "util/Segment2D.h"
-#include <QGL>
-#include <QMatrix4x4>
-#include <QRectF>
-#include <QVector2D>
-#include <QVector>
+#include "core/Bone2.h"
 namespace core {
 class Project;
 }

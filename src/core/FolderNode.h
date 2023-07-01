@@ -1,11 +1,11 @@
 #ifndef CORE_FOLDERNODE_H
 #define CORE_FOLDERNODE_H
 
-#include "XC.h"
-#include "core/HeightMap.h"
-#include "core/ObjectNode.h"
-#include "core/TimeLine.h"
 #include <QScopedPointer>
+#include "XC.h"
+#include "core/ObjectNode.h"
+#include "core/HeightMap.h"
+#include "core/TimeLine.h"
 
 namespace core {
 

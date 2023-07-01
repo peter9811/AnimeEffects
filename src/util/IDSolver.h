@@ -1,8 +1,8 @@
 #ifndef UTIL_IDSOLVER
 #define UTIL_IDSOLVER
 
-#include <QMap>
 #include <functional>
+#include <QMap>
 
 namespace util {
 

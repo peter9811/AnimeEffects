@@ -1,14 +1,14 @@
 #ifndef CTRL_SRT_MOVEMODE_H
 #define CTRL_SRT_MOVEMODE_H
 
+#include "util/PlacePointer.h"
 #include "cmnd/BasicCommands.h"
-#include "core/ObjectNode.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
 #include "ctrl/ScopedModifier.h"
 #include "ctrl/srt/srt_IMode.h"
 #include "ctrl/srt/srt_KeyOwner.h"
 #include "ctrl/srt/srt_Symbol.h"
-#include "util/PlacePointer.h"
 
 namespace ctrl {
 namespace srt {

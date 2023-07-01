@@ -1,9 +1,9 @@
 #ifndef CTRL_TIME_CURRENT_H
 #define CTRL_TIME_CURRENT_H
 
+#include <QPoint>
 #include "core/Frame.h"
 #include "ctrl/time/time_Scaler.h"
-#include <QPoint>
 
 namespace ctrl {
 namespace time {

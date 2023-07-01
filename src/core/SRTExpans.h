@@ -1,11 +1,11 @@
 #ifndef CORE_SRTEXPANS
 #define CORE_SRTEXPANS
 
-#include "core/Frame.h"
-#include "util/FergusonCoonsSpline.h"
-#include "util/Range.h"
-#include <QMatrix4x4>
 #include <QRect>
+#include <QMatrix4x4>
+#include "util/Range.h"
+#include "util/FergusonCoonsSpline.h"
+#include "core/Frame.h"
 
 namespace core {
 

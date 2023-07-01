@@ -1,10 +1,10 @@
 #ifndef CORE_TIMEKEYGATHERER_H
 #define CORE_TIMEKEYGATHERER_H
 
-#include "XC.h"
-#include "core/TimeInfo.h"
-#include "core/TimeLine.h"
 #include <array>
+#include "core/TimeLine.h"
+#include "core/TimeInfo.h"
+#include "XC.h"
 
 namespace core {
 

@@ -1,9 +1,9 @@
 #ifndef CORE_OBJECTTREENOTIFIER_H
 #define CORE_OBJECTTREENOTIFIER_H
 
+#include <QVector>
 #include "cmnd/Listener.h"
 #include "core/ObjectTreeEvent.h"
-#include <QVector>
 namespace core {
 class Project;
 }

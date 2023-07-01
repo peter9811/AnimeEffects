@@ -1,15 +1,15 @@
 #ifndef CORE_LAYERMESH
 #define CORE_LAYERMESH
 
-#include "core/Frame.h"
-#include "gl/BufferObject.h"
-#include "gl/Vector2.h"
-#include "gl/Vector2I.h"
-#include "gl/Vector3.h"
+#include <QVector>
+#include <QScopedPointer>
 #include "util/ArrayBlock.h"
 #include "util/Range.h"
-#include <QScopedPointer>
-#include <QVector>
+#include "gl/Vector2.h"
+#include "gl/Vector3.h"
+#include "gl/Vector2I.h"
+#include "gl/BufferObject.h"
+#include "core/Frame.h"
 
 namespace core {
 

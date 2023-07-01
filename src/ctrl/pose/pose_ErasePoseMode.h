@@ -1,17 +1,17 @@
 #ifndef CTRL_POSE_ERASEPOSEMODE_H
 #define CTRL_POSE_ERASEPOSEMODE_H
 
-#include "core/AbstractCursor.h"
-#include "core/BoneKey.h"
-#include "core/ObjectNode.h"
+#include <QMatrix4x4>
+#include "util/Circle.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
+#include "core/BoneKey.h"
+#include "core/AbstractCursor.h"
 #include "ctrl/bone/bone_Focuser.h"
 #include "ctrl/pose/pose_IMode.h"
 #include "ctrl/pose/pose_KeyOwner.h"
 #include "ctrl/pose/pose_RotateBones.h"
 #include "ctrl/pose/pose_Target.h"
-#include "util/Circle.h"
-#include <QMatrix4x4>
 
 namespace ctrl {
 namespace pose {

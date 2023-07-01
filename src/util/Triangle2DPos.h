@@ -1,8 +1,8 @@
 #ifndef UTIL_TRIANGLE2DPOS_H
 #define UTIL_TRIANGLE2DPOS_H
 
-#include "util/Triangle2D.h"
 #include <array>
+#include "util/Triangle2D.h"
 
 namespace util {
 

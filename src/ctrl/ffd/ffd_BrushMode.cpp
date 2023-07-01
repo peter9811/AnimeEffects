@@ -1,9 +1,9 @@
-#include "ctrl/ffd/ffd_BrushMode.h"
-#include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
-#include "ctrl/CmndName.h"
-#include "ctrl/TimeLineUtil.h"
+#include "cmnd/BasicCommands.h"
 #include "gl/Global.h"
+#include "ctrl/TimeLineUtil.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/ffd/ffd_BrushMode.h"
 
 using namespace core;
 

@@ -1,6 +1,6 @@
-#include "gui/CanvasMover.h"
 #include "XC.h"
 #include "util/MathUtil.h"
+#include "gui/CanvasMover.h"
 
 namespace {
 static const int kWheelValue = 120;

@@ -1,14 +1,14 @@
 #ifndef GUI_PROP_CURRENTKEYPANEL_H
 #define GUI_PROP_CURRENTKEYPANEL_H
 
-#include "core/ObjectNode.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
 #include "gui/ViaPoint.h"
-#include "gui/prop/prop_Items.h"
-#include "gui/prop/prop_KeyAccessor.h"
+#include "gui/prop/prop_Panel.h"
 #include "gui/prop/prop_KeyGroup.h"
 #include "gui/prop/prop_KeyKnocker.h"
-#include "gui/prop/prop_Panel.h"
+#include "gui/prop/prop_Items.h"
+#include "gui/prop/prop_KeyAccessor.h"
 
 namespace gui {
 namespace prop {
@@ -125,6 +125,7 @@ namespace prop {
         CheckItem* mAbsolute;
         bool mKeyExists;
     };
+
 
     //-------------------------------------------------------------------------------------------------
     class PoseKeyGroup: public KeyGroup {

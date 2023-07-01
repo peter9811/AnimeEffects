@@ -1,5 +1,5 @@
-#include "ctrl/pose/pose_RigidBone.h"
 #include "util/MathUtil.h"
+#include "ctrl/pose/pose_RigidBone.h"
 
 namespace ctrl {
 namespace pose {

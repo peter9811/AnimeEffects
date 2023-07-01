@@ -1,5 +1,5 @@
-#include "img/ResourceNode.h"
 #include <memory>
+#include "img/ResourceNode.h"
 
 namespace img {
 

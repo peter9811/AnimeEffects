@@ -1,9 +1,9 @@
 #ifndef GUI_PROP_ATTRGROUP_H
 #define GUI_PROP_ATTRGROUP_H
 
-#include "gui/prop/prop_ItemBase.h"
-#include <QFormLayout>
 #include <QGroupBox>
+#include <QFormLayout>
+#include "gui/prop/prop_ItemBase.h"
 
 namespace gui {
 namespace prop {

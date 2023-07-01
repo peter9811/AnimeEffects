@@ -1,9 +1,9 @@
 #ifndef GUI_PROJECTTABBAR_H
 #define GUI_PROJECTTABBAR_H
 
-#include "core/Project.h"
-#include <QTabBar>
 #include <QVector>
+#include <QTabBar>
+#include "core/Project.h"
 
 #include "gui/GUIResources.h"
 
@@ -32,6 +32,7 @@ private:
     GUIResources& mGUIResources;
     void onThemeUpdated(theme::Theme&);
 };
+
 
 } // namespace gui
 

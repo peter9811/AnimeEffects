@@ -1,9 +1,9 @@
 #ifndef GUI_OBJ_UTIL_H
 #define GUI_OBJ_UTIL_H
 
-#include "gui/ObjectTreeWidget.h"
-#include "util/TreePos.h"
 #include <QTreeWidgetItem>
+#include "util/TreePos.h"
+#include "gui/ObjectTreeWidget.h"
 
 namespace gui {
 namespace obj {

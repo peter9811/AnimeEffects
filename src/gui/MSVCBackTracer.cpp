@@ -3,9 +3,9 @@
 #if defined(USE_MSVC_BACKTRACE)
     #include <QDebug>
     #include <Windows.h>
-    #include <excpt.h>
-    #include <imagehlp.h>
     #include <stdlib.h>
+    #include <imagehlp.h>
+    #include <excpt.h>
 
     #pragma comment(lib, "imagehlp.lib")
 

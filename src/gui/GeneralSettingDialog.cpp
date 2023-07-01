@@ -1,14 +1,14 @@
-#include "gui/GeneralSettingDialog.h"
-#include "MainWindow.h"
-#include "util/NetworkUtil.h"
 #include <QApplication>
-#include <QComboBox>
-#include <QFileDialog>
-#include <QFormLayout>
-#include <QGroupBox>
-#include <QMessageBox>
 #include <QSettings>
+#include <QGroupBox>
+#include <QFormLayout>
+#include <QComboBox>
 #include <qstandardpaths.h>
+#include <QFileDialog>
+#include <QMessageBox>
+#include "MainWindow.h"
+#include "gui/GeneralSettingDialog.h"
+#include "util/NetworkUtil.h"
 
 namespace {
 
@@ -212,6 +212,7 @@ QString indexToTimeFormat(int aIndex) {
     }
 }
 
+
 namespace gui {
 
 GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget* aParent):
@@ -291,6 +292,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mTimeFormatBox->setCurrentIndex(mInitialTimeFormatIndex);
         form->addRow(tr("Timeline format :"), mTimeFormatBox);
 
+
         mThemeBox = new QComboBox();
         QStringList themeList = mGUIResources.themeList();
         for (int i = 0; i < themeList.size(); ++i) {
@@ -305,6 +307,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mAutoSave = new QCheckBox();
         mAutoSave->setChecked(bAutoSave);
         projectSaving->addRow(tr("Automatically save your project : "), mAutoSave);
+
 
         mAutoSaveDelayBox = new QSpinBox();
         mAutoSaveDelayBox->setValue(mAutoSaveDelay);
@@ -442,6 +445,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                      << "| Palete remove: " << QFile("palette.png").remove();
             palettegen.deleteLater();
 
+
             ffmpegNotif.setWindowTitle(tr("FFmpeg test success"));
             ffmpegNotif.setText(tr("All tests have passed, FFmpeg is working correctly."));
             ffmpegNotif.setDetailedText(
@@ -478,6 +482,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             success.addButton(QMessageBox::Ok);
             success.exec();
         });
+
 
         autoSetup = new QPushButton(tr("Download and automatically setup"));
         connect(autoSetup, &QPushButton::clicked, [=]() {
@@ -550,6 +555,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
     createTab(tr("FFmpeg"), ffmpegSettings);
     createTab(tr("Animation keys"), keysettings);
     createTab(tr("Keybindings"), keybindingSettings);
+
 
     this->setMainWidget(mTabs, false);
 

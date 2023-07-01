@@ -2,9 +2,9 @@
 #define CTRL_FFD_BRUSHMODE_H
 
 #include "core/Project.h"
+#include "ctrl/ffd/ffd_Target.h"
 #include "ctrl/ffd/ffd_IMode.h"
 #include "ctrl/ffd/ffd_MoveVertices.h"
-#include "ctrl/ffd/ffd_Target.h"
 
 namespace ctrl {
 namespace ffd {

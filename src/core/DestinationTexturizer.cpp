@@ -1,6 +1,6 @@
-#include "core/DestinationTexturizer.h"
 #include "gl/Global.h"
 #include "gl/Util.h"
+#include "core/DestinationTexturizer.h"
 
 namespace {
 static const int kAttachmentId = 0;

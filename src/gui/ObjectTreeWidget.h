@@ -1,22 +1,22 @@
 #ifndef GUI_OBJECTTREEWIDGET_H
 #define GUI_OBJECTTREEWIDGET_H
 
+#include <QTreeWidget>
+#include <QDropEvent>
+#include <QHeaderView>
+#include <QAction>
+#include "ctrl/TimeLineEditor.h"
+#include "util/PlacePointer.h"
+#include "util/LinkPointer.h"
+#include "util/TreePos.h"
+#include "util/Signaler.h"
 #include "cmnd/ScopedMacro.h"
+#include "core/Project.h"
 #include "core/ObjectTree.h"
 #include "core/ObjectTreeNotifier.h"
-#include "core/Project.h"
-#include "ctrl/TimeLineEditor.h"
 #include "gui/GUIResources.h"
 #include "gui/ViaPoint.h"
 #include "gui/obj/obj_Item.h"
-#include "util/LinkPointer.h"
-#include "util/PlacePointer.h"
-#include "util/Signaler.h"
-#include "util/TreePos.h"
-#include <QAction>
-#include <QDropEvent>
-#include <QHeaderView>
-#include <QTreeWidget>
 
 namespace gui {
 

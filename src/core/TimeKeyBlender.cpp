@@ -1,11 +1,11 @@
-#include "core/TimeKeyBlender.h"
-#include "core/DepthKey.h"
-#include "core/LayerMesh.h"
-#include "core/ObjectNodeUtil.h"
-#include "core/TimeKeyExpans.h"
-#include "util/MathUtil.h"
 #include "util/TreeIterator.h"
 #include "util/TreeSeekIterator.h"
+#include "util/MathUtil.h"
+#include "core/TimeKeyExpans.h"
+#include "core/TimeKeyBlender.h"
+#include "core/LayerMesh.h"
+#include "core/ObjectNodeUtil.h"
+#include "core/DepthKey.h"
 
 namespace core {
 
@@ -60,6 +60,7 @@ public:
 };
 
 } // namespace core
+
 
 namespace core {
 //-------------------------------------------------------------------------------------------------
@@ -552,6 +553,7 @@ void TimeKeyBlender::blendHSVKey(PositionType aPos, const TimeInfo& aTime) {
         }
     }
 }
+
 
 void TimeKeyBlender::blendOpaKey(PositionType aPos, const TimeInfo& aTime) {
     auto seekData = mSeeker->data(aPos);

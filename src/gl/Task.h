@@ -1,8 +1,8 @@
 #ifndef GL_TASK_H
 #define GL_TASK_H
 
-#include "util/NonCopyable.h"
 #include <QGL>
+#include "util/NonCopyable.h"
 
 namespace gl {
 

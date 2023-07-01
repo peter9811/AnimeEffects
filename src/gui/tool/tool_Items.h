@@ -1,13 +1,13 @@
 #ifndef GUI_TOOL_ITEMS_H
 #define GUI_TOOL_ITEMS_H
 
-#include "util/Range.h"
-#include <QButtonGroup>
-#include <QCheckBox>
-#include <QLabel>
-#include <QPushButton>
-#include <QSlider>
 #include <functional>
+#include <QButtonGroup>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QSlider>
+#include <QLabel>
+#include "util/Range.h"
 
 namespace gui {
 namespace tool {

@@ -1,6 +1,6 @@
-#include "core/ClippingFrame.h"
 #include "gl/Global.h"
 #include "gl/Util.h"
+#include "core/ClippingFrame.h"
 
 namespace {
 static const int kAttachmentId = 0;

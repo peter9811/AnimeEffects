@@ -227,6 +227,7 @@ public:
     typedef tTreeNode TreeNodeType;
     typedef TreeChildren<tTreeNode> Children;
 
+
     TreeNodeBase(TreeNodeType* aObj): mParent(), mPrevSib(), mNextSib(), mChildren(aObj) {}
 
     virtual ~TreeNodeBase() {}
@@ -258,6 +259,7 @@ public:
     const Children& children() const {
         return mChildren;
     }
+
 
 private:
     friend Children;

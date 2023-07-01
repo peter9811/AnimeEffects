@@ -1,12 +1,12 @@
 #ifndef CTRL_PROJECTLOADER_H
 #define CTRL_PROJECTLOADER_H
 
-#include "core/Project.h"
-#include "gl/DeviceInfo.h"
-#include "util/IProgressReporter.h"
-#include "util/StreamReader.h"
 #include <QStringList>
 #include <QVersionNumber>
+#include "util/StreamReader.h"
+#include "util/IProgressReporter.h"
+#include "gl/DeviceInfo.h"
+#include "core/Project.h"
 
 namespace ctrl {
 

@@ -1,12 +1,12 @@
 #ifndef CTRL_MESH_RENDERER_H
 #define CTRL_MESH_RENDERER_H
 
-#include "core/RenderInfo.h"
-#include "ctrl/mesh/mesh_Focuser.h"
-#include "ctrl/mesh/mesh_MeshAccessor.h"
-#include <QMatrix4x4>
-#include <QPainter>
 #include <array>
+#include <QPainter>
+#include <QMatrix4x4>
+#include "core/RenderInfo.h"
+#include "ctrl/mesh/mesh_MeshAccessor.h"
+#include "ctrl/mesh/mesh_Focuser.h"
 
 namespace ctrl {
 namespace mesh {

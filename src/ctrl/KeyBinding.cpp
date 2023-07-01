@@ -1,5 +1,5 @@
-#include "ctrl/KeyBinding.h"
 #include <QKeySequence>
+#include "ctrl/KeyBinding.h"
 
 namespace ctrl {
 

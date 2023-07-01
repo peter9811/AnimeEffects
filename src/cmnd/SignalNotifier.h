@@ -1,8 +1,8 @@
 #ifndef CMND_SIGNALNOTIFIER
 #define CMND_SIGNALNOTIFIER
 
-#include "cmnd/Listener.h"
 #include "util/Signaler.h"
+#include "cmnd/Listener.h"
 
 namespace cmnd {
 

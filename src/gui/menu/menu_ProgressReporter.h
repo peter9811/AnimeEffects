@@ -1,13 +1,13 @@
 #ifndef GUI_MENU_PROGRESSREPORTER_H
 #define GUI_MENU_PROGRESSREPORTER_H
 
+#include <QLabel>
+#include <QProgressBar>
+#include <QPlainTextEdit>
+#include <QProgressDialog>
+#include "util/IProgressReporter.h"
 #include "ctrl/UILogger.h"
 #include "gui/EasyDialog.h"
-#include "util/IProgressReporter.h"
-#include <QLabel>
-#include <QPlainTextEdit>
-#include <QProgressBar>
-#include <QProgressDialog>
 
 namespace gui {
 namespace menu {

@@ -1,26 +1,26 @@
 #ifndef GUI_MAINDISPLAYWIDGET_H
 #define GUI_MAINDISPLAYWIDGET_H
 
-#include "core/AbstractCursor.h"
-#include "core/ClippingFrame.h"
-#include "core/DestinationTexturizer.h"
-#include "core/Project.h"
-#include "core/TimeInfo.h"
-#include "ctrl/Driver.h"
-#include "ctrl/Painter.h"
-#include "gl/EasyTextureDrawer.h"
+#include <QOpenGLWidget>
+#include <QOpenGLFramebufferObject>
+#include <QScopedPointer>
+#include <QTabBar>
+#include <QReadWriteLock>
+#include <QtMath>
+#include "util/LinkPointer.h"
 #include "gl/Global.h"
 #include "gl/Root.h"
 #include "gl/VertexArrayObject.h"
-#include "gui/CanvasMover.h"
+#include "gl/EasyTextureDrawer.h"
+#include "core/Project.h"
+#include "core/AbstractCursor.h"
+#include "core/TimeInfo.h"
+#include "core/ClippingFrame.h"
+#include "core/DestinationTexturizer.h"
+#include "ctrl/Driver.h"
+#include "ctrl/Painter.h"
 #include "gui/MainViewSetting.h"
-#include "util/LinkPointer.h"
-#include <QOpenGLFramebufferObject>
-#include <QOpenGLWidget>
-#include <QReadWriteLock>
-#include <QScopedPointer>
-#include <QTabBar>
-#include <QtMath>
+#include "gui/CanvasMover.h"
 namespace gui {
 class ProjectTabBar;
 }
@@ -48,6 +48,7 @@ public:
     const QReadWriteLock& renderingLock() const {
         return mRenderingLock;
     }
+
 
     // boostlike signals
 public:

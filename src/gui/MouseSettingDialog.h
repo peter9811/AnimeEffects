@@ -1,10 +1,10 @@
 #ifndef GUI_MOUSESETTINGDIALOG_H
 #define GUI_MOUSESETTINGDIALOG_H
 
-#include "gui/EasyDialog.h"
-#include "gui/MouseSetting.h"
-#include "gui/ViaPoint.h"
 #include <QCheckBox>
+#include "gui/EasyDialog.h"
+#include "gui/ViaPoint.h"
+#include "gui/MouseSetting.h"
 
 namespace gui {
 

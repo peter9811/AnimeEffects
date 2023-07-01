@@ -1,6 +1,6 @@
-#include "core/LayerMesh.h"
 #include "XC.h"
 #include "gl/Global.h"
+#include "core/LayerMesh.h"
 
 namespace core {
 

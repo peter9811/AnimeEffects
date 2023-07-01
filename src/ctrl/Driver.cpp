@@ -1,5 +1,5 @@
-#include "ctrl/Driver.h"
 #include "util/CollDetect.h"
+#include "ctrl/Driver.h"
 
 namespace {
 

@@ -1,9 +1,9 @@
 #ifndef UTIL_SIGNALER_H
 #define UTIL_SIGNALER_H
 
-#include "util/SlotId.h"
-#include <functional>
 #include <list>
+#include <functional>
+#include "util/SlotId.h"
 
 namespace util {
 

@@ -1,12 +1,12 @@
 #ifndef GUI_TOOL_VIEWPANEL_H
 #define GUI_TOOL_VIEWPANEL_H
 
-#include "gui/GUIResources.h"
-#include "gui/tool/tool_FlowLayout.h"
+#include <vector>
+#include <functional>
 #include <QGroupBox>
 #include <QPushButton>
-#include <functional>
-#include <vector>
+#include "gui/GUIResources.h"
+#include "gui/tool/tool_FlowLayout.h"
 
 namespace gui {
 namespace tool {

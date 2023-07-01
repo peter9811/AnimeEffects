@@ -1,9 +1,9 @@
-#include "ctrl/ffd/ffd_DragMode.h"
-#include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
-#include "ctrl/CmndName.h"
-#include "ctrl/TimeLineUtil.h"
+#include "cmnd/BasicCommands.h"
 #include "gl/Global.h"
+#include "ctrl/TimeLineUtil.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/ffd/ffd_DragMode.h"
 
 namespace {
 static const float kFocusRadius = 5.0f;

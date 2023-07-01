@@ -1,11 +1,11 @@
 #ifndef GUI_PLAYBACKWIDGET_H
 #define GUI_PLAYBACKWIDGET_H
 
-#include "gui/GUIResources.h"
-#include <QPushButton>
-#include <QWidget>
-#include <functional>
 #include <vector>
+#include <functional>
+#include <QWidget>
+#include <QPushButton>
+#include "gui/GUIResources.h"
 
 namespace gui {
 

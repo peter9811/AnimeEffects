@@ -1,12 +1,13 @@
-#include "ctrl/SRTEditor.h"
-#include "core/ObjectNodeUtil.h"
 #include "core/TimeKeyExpans.h"
-#include "ctrl/srt/srt_CentroidMode.h"
+#include "core/ObjectNodeUtil.h"
+#include "ctrl/SRTEditor.h"
 #include "ctrl/srt/srt_MoveMode.h"
+#include "ctrl/srt/srt_CentroidMode.h"
 
 using namespace core;
 
 namespace ctrl {
+
 
 //-----------------------------------------------------------------------------------
 SRTEditor::SRTEditor(Project& aProject, UILogger& aUILogger):

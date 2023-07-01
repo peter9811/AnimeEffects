@@ -1,12 +1,12 @@
 #ifndef CTRL_BONE_RENDERER_H
 #define CTRL_BONE_RENDERER_H
 
-#include "core/Bone2.h"
-#include "core/RenderInfo.h"
-#include "util/Circle.h"
-#include <QMatrix4x4>
-#include <QPainter>
 #include <array>
+#include <QPainter>
+#include <QMatrix4x4>
+#include "util/Circle.h"
+#include "core/RenderInfo.h"
+#include "core/Bone2.h"
 
 namespace ctrl {
 namespace bone {

@@ -1,24 +1,24 @@
 #ifndef CTRL_EXPORTER_H
 #define CTRL_EXPORTER_H
 
-#include "core/ClippingFrame.h"
-#include "core/DestinationTexturizer.h"
+#include <list>
+#include <memory>
+#include <functional>
+#include <QString>
+#include <QSize>
+#include <QFileInfo>
+#include <QProcess>
+#include <QOpenGLFramebufferObject>
+#include "util/Range.h"
+#include "util/IProgressReporter.h"
+#include "ctrl/UILogger.h"
+#include "gl/EasyTextureDrawer.h"
 #include "core/Project.h"
 #include "core/TimeInfo.h"
 #include "core/TimeKeyBlender.h"
-#include "ctrl/UILogger.h"
+#include "core/ClippingFrame.h"
+#include "core/DestinationTexturizer.h"
 #include "ctrl/VideoFormat.h"
-#include "gl/EasyTextureDrawer.h"
-#include "util/IProgressReporter.h"
-#include "util/Range.h"
-#include <QFileInfo>
-#include <QOpenGLFramebufferObject>
-#include <QProcess>
-#include <QSize>
-#include <QString>
-#include <functional>
-#include <list>
-#include <memory>
 
 namespace ctrl {
 

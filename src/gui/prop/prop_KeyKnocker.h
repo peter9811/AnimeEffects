@@ -1,10 +1,10 @@
 #ifndef GUI_PROP_KEYKNOCKER_H
 #define GUI_PROP_KEYKNOCKER_H
 
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QPushButton>
 #include <functional>
+#include <QGroupBox>
+#include <QPushButton>
+#include <QHBoxLayout>
 
 namespace gui {
 namespace prop {

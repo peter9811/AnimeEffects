@@ -1,22 +1,23 @@
-#include "gui/ExportDialog.h"
-#include "MainMenuBar.h"
-#include "MainWindow.h"
-#include "util/SelectArgs.h"
-#include <QCheckBox>
-#include <QComboBox>
-#include <QFileInfo>
-#include <QFontMetrics>
-#include <QFormLayout>
-#include <QFrame>
-#include <QGroupBox>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPlainTextEdit>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QStackedLayout>
 #include <QVBoxLayout>
+#include <QFormLayout>
+#include <QStackedLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QGroupBox>
+#include <QFrame>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QFileInfo>
+#include <QPlainTextEdit>
+#include <QFontMetrics>
+#include "MainMenuBar.h"
+#include "util/SelectArgs.h"
+#include "gui/ExportDialog.h"
+#include "MainWindow.h"
+
 
 namespace {
 

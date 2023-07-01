@@ -1,13 +1,13 @@
 #ifndef GL_FONTDRAWER_H
 #define GL_FONTDRAWER_H
 
+#include <QFont>
+#include "gl/Framebuffer.h"
+#include "gl/Texture.h"
 #include "gl/BufferObject.h"
 #include "gl/EasyShaderProgram.h"
-#include "gl/EasyTextureDrawer.h"
-#include "gl/Framebuffer.h"
 #include "gl/TextObject.h"
-#include "gl/Texture.h"
-#include <QFont>
+#include "gl/EasyTextureDrawer.h"
 
 namespace gl {
 

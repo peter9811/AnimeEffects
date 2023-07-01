@@ -1,6 +1,6 @@
-#include "gui/prop/prop_Panel.h"
 #include <QFile>
 #include <QTextStream>
+#include "gui/prop/prop_Panel.h"
 
 namespace {
 static const int kCollapsedPanelHeight = 22;

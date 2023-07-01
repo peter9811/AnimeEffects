@@ -1,9 +1,9 @@
 #ifndef CTRL_GRAPHICSTYLE_H
 #define CTRL_GRAPHICSTYLE_H
 
-#include <QIcon>
 #include <QRect>
 #include <QString>
+#include <QIcon>
 
 namespace ctrl {
 

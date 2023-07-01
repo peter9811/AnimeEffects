@@ -1,11 +1,11 @@
-#include "ctrl/bone/bone_BindNodesMode.h"
-#include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
+#include "cmnd/BasicCommands.h"
 #include "core/TimeKeyBlender.h"
-#include "ctrl/CmndName.h"
 #include "ctrl/TimeLineUtil.h"
-#include "ctrl/bone/bone_Notifier.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/bone/bone_BindNodesMode.h"
 #include "ctrl/bone/bone_Renderer.h"
+#include "ctrl/bone/bone_Notifier.h"
 
 using namespace core;
 

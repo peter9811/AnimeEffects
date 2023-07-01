@@ -1,6 +1,6 @@
 #include "core/ObjectNodeUtil.h"
-#include "core/Project.h"
 #include "core/TimeKeyExpans.h"
+#include "core/Project.h"
 namespace {
 
 #if 0
@@ -101,6 +101,7 @@ namespace ObjectNodeUtil {
     void AttributeNotifier::onRedone() {
         mProject.onNodeAttributeModified(mTarget, false);
     }
+
 
 } // namespace ObjectNodeUtil
 

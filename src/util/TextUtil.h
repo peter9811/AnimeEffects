@@ -1,9 +1,9 @@
 #ifndef UTIL_TEXTUTIL_H
 #define UTIL_TEXTUTIL_H
 
-#include <QStringList>
 #include <QTextCodec>
 #include <QTextDecoder>
+#include <QStringList>
 
 namespace util {
 

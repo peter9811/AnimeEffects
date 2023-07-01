@@ -3,8 +3,8 @@
 
 #include "cmnd/BasicCommands.h"
 #include "core/Project.h"
-#include "ctrl/ffd/ffd_IMode.h"
 #include "ctrl/ffd/ffd_Target.h"
+#include "ctrl/ffd/ffd_IMode.h"
 
 namespace ctrl {
 namespace ffd {

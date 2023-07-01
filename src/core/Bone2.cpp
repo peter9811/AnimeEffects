@@ -1,7 +1,7 @@
-#include "core/Bone2.h"
 #include "qjsonarray.h"
 #include "qjsonobject.h"
 #include "util/MathUtil.h"
+#include "core/Bone2.h"
 
 namespace core {
 

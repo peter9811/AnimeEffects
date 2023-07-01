@@ -1,9 +1,9 @@
 #ifndef CORE_RESOURCEUPDATINGWORKSPACE_H
 #define CORE_RESOURCEUPDATINGWORKSPACE_H
 
-#include "core/GridMesh.h"
-#include <QList>
 #include <memory>
+#include <QList>
+#include "core/GridMesh.h"
 namespace core {
 class TimeKey;
 }

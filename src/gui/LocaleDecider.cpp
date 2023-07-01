@@ -1,7 +1,7 @@
-#include "gui/LocaleDecider.h"
 #include <QFile>
-#include <QSettings>
 #include <QTextStream>
+#include <QSettings>
+#include "gui/LocaleDecider.h"
 
 namespace gui {
 

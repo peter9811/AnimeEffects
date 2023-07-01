@@ -1,12 +1,12 @@
 #ifndef NETWORKUTIL_H
 #define NETWORKUTIL_H
-#include "gui/menu/menu_ProgressReporter.h"
-#include <QByteArray>
-#include <QDebug>
-#include <QFileInfo>
-#include <QJsonDocument>
 #include <QProcess>
+#include <QJsonDocument>
+#include <QFileInfo>
+#include <QByteArray>
 #include <QString>
+#include <QDebug>
+#include "gui/menu/menu_ProgressReporter.h"
 
 namespace util {
 class NetworkUtil {

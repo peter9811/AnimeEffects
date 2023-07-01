@@ -1,7 +1,7 @@
-#include "img/ResourceHandle.h"
-#include "img/ResourceNode.h"
-#include "util/MathUtil.h"
 #include <algorithm>
+#include "util/MathUtil.h"
+#include "img/ResourceNode.h"
+#include "img/ResourceHandle.h"
 
 namespace img {
 

@@ -1,9 +1,9 @@
 #ifndef GL_COMPUTETEXTURE1D_H
 #define GL_COMPUTETEXTURE1D_H
 
+#include <QGL>
 #include "XC.h"
 #include "util/NonCopyable.h"
-#include <QGL>
 
 namespace gl {
 

@@ -1,6 +1,6 @@
-#include "gui/prop/prop_KeyAccessor.h"
 #include "core/TimeKeyExpans.h"
 #include "ctrl/TimeLineUtil.h"
+#include "gui/prop/prop_KeyAccessor.h"
 
 namespace {
 
@@ -76,6 +76,7 @@ namespace prop {
     XC_ASSERT(isValid()); \
     if (!isValid()) \
         return;
+
 
     //-------------------------------------------------------------------------------------------------
     void KeyAccessor::assignDefaultDepth(float aNext) {

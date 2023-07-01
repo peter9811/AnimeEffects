@@ -1,15 +1,15 @@
-#include "gui/ResourceDialog.h"
-#include "gui/MainMenuBar.h"
-#include "gui/res/res_ResourceUpdater.h"
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QMenuBar>
+#include <QFileDialog>
+#include <QMessageBox>
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
 #include "img/Util.h"
-#include <QFileDialog>
-#include <QHBoxLayout>
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QPushButton>
-#include <QVBoxLayout>
+#include "gui/ResourceDialog.h"
+#include "gui/MainMenuBar.h"
+#include "gui/res/res_ResourceUpdater.h"
 
 namespace gui {
 

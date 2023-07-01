@@ -1,15 +1,15 @@
 #ifndef CORE_BONE2_H
 #define CORE_BONE2_H
 
-#include "core/BoneShape.h"
-#include "core/Deserializer.h"
-#include "core/Serializer.h"
-#include "util/LifeLink.h"
-#include "util/TreeIterator.h"
-#include "util/TreeNodeBase.h"
-#include <QMatrix4x4>
-#include <QVector2D>
 #include <array>
+#include <QVector2D>
+#include <QMatrix4x4>
+#include "util/LifeLink.h"
+#include "util/TreeNodeBase.h"
+#include "util/TreeIterator.h"
+#include "core/BoneShape.h"
+#include "core/Serializer.h"
+#include "core/Deserializer.h"
 namespace core {
 class ObjectNode;
 }

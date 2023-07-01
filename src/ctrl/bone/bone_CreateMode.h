@@ -1,13 +1,13 @@
 #ifndef CTRL_BONE_CREATEMODE_H
 #define CTRL_BONE_CREATEMODE_H
 
-#include "core/BoneKey.h"
-#include "core/ObjectNode.h"
 #include "core/Project.h"
-#include "ctrl/bone/bone_Focuser.h"
+#include "core/ObjectNode.h"
+#include "core/BoneKey.h"
 #include "ctrl/bone/bone_IMode.h"
 #include "ctrl/bone/bone_KeyOwner.h"
 #include "ctrl/bone/bone_Target.h"
+#include "ctrl/bone/bone_Focuser.h"
 
 namespace ctrl {
 namespace bone {

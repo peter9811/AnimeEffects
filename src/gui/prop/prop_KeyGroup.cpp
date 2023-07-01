@@ -1,6 +1,6 @@
-#include "gui/prop/prop_KeyGroup.h"
 #include <QIcon>
 #include <QLabel>
+#include "gui/prop/prop_KeyGroup.h"
 
 namespace gui {
 namespace prop {

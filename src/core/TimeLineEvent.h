@@ -1,8 +1,8 @@
 #ifndef CORE_TIMELINEEVENT
 #define CORE_TIMELINEEVENT
 
-#include "core/TimeKeyPos.h"
 #include <QVector>
+#include "core/TimeKeyPos.h"
 namespace core {
 class Project;
 }

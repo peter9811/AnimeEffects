@@ -1,7 +1,7 @@
-#include "core/Project.h"
-#include "XC.h"
 #include <QFileInfo>
 #include <QUndoCommand>
+#include "XC.h"
+#include "core/Project.h"
 
 namespace {
 static const int kParaThreadCount = 4;

@@ -1,11 +1,11 @@
 #ifndef GL_VECTOR3
 #define GL_VECTOR3
 
-#include "gl/Vector2.h"
 #include <QGL>
-#include <QPoint>
 #include <QVector2D>
 #include <QVector3D>
+#include <QPoint>
+#include "gl/Vector2.h"
 
 namespace gl {
 
@@ -52,6 +52,7 @@ struct Vector3 {
     Vector2 vec2() const {
         return Vector2::make(x, y);
     }
+
 
     Vector3 operator+(const Vector3& aRhs) const {
         Vector3 result = {x + aRhs.x, y + aRhs.y, z + aRhs.z};

@@ -1,16 +1,16 @@
 #ifndef GUI_RESOURCETREEWIDGET_H
 #define GUI_RESOURCETREEWIDGET_H
 
+#include <QTreeWidget>
+#include <QAction>
+#include "util/Signaler.h"
+#include "util/LinkPointer.h"
 #include "cmnd/Stack.h"
-#include "core/Project.h"
+#include "img/PSDFormat.h"
 #include "core/ResourceHolder.h"
+#include "core/Project.h"
 #include "gui/ViaPoint.h"
 #include "gui/res/res_Notifier.h"
-#include "img/PSDFormat.h"
-#include "util/LinkPointer.h"
-#include "util/Signaler.h"
-#include <QAction>
-#include <QTreeWidget>
 
 namespace gui {
 

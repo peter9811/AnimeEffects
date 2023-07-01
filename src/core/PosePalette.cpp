@@ -1,6 +1,6 @@
+#include <QQuaternion>
 #include "core/PosePalette.h"
 #include "util/MathUtil.h"
-#include <QQuaternion>
 
 namespace core {
 

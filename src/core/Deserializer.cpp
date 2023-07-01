@@ -1,5 +1,5 @@
-#include "core/Deserializer.h"
 #include "XC.h"
+#include "core/Deserializer.h"
 #include "util/PackBits.h"
 
 namespace core {
@@ -368,6 +368,7 @@ bool Deserializer::endBlock() {
 bool Deserializer::failure() const {
     return mIn.isFailed();
 }
+
 
 void Deserializer::pushLogScope(const QString& aScope) {
     mScopes.push_back(aScope);

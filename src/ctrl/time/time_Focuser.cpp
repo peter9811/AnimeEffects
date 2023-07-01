@@ -99,6 +99,7 @@ namespace time {
                 const int validNum = timeLine.validTypeCount();
                 int validIndex = 0;
 
+
                 for (int i = 0; i < TimeKeyType_TERM; ++i) {
                     auto type = TimeLine::getTimeKeyTypeInOrderOfOperations(i);
                     const TimeLine::MapType& map = timeLine.map(type);

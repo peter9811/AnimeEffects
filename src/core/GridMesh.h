@@ -1,21 +1,21 @@
 #ifndef CORE_GRIDMESH_H
 #define CORE_GRIDMESH_H
 
+#include <QGL>
+#include <QSize>
+#include <QScopedArrayPointer>
 #include "XC.h"
-#include "core/Deserializer.h"
-#include "core/LayerMesh.h"
-#include "core/Serializer.h"
-#include "gl/BufferObject.h"
-#include "gl/Vector2.h"
-#include "gl/Vector3.h"
-#include "img/GridMeshCreator.h"
-#include "util/ArrayBlock.h"
-#include "util/ArrayBuffer.h"
 #include "util/Dir4.h"
 #include "util/Triangle2DPos.h"
-#include <QGL>
-#include <QScopedArrayPointer>
-#include <QSize>
+#include "util/ArrayBlock.h"
+#include "util/ArrayBuffer.h"
+#include "gl/Vector2.h"
+#include "gl/Vector3.h"
+#include "gl/BufferObject.h"
+#include "img/GridMeshCreator.h"
+#include "core/LayerMesh.h"
+#include "core/Serializer.h"
+#include "core/Deserializer.h"
 
 namespace core {
 class HeightMap;

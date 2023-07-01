@@ -1,25 +1,25 @@
-#include "gui/MainMenuBar.h"
+#include <QFile>
+#include <QMenu>
+#include <QAction>
+#include <QMessageBox>
+#include <QDomDocument>
+#include <QJsonDocument>
+#include <qstandardpaths.h>
+#include <QDesktopServices>
+#include "qprocess.h"
+#include "util/TextUtil.h"
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
 #include "core/ObjectNodeUtil.h"
 #include "ctrl/CmndName.h"
-#include "gui/EasyDialog.h"
-#include "gui/GeneralSettingDialog.h"
-#include "gui/KeyBindingDialog.h"
+#include "gui/MainMenuBar.h"
 #include "gui/MainWindow.h"
-#include "gui/MouseSettingDialog.h"
 #include "gui/ResourceDialog.h"
-#include "qprocess.h"
+#include "gui/EasyDialog.h"
+#include "gui/KeyBindingDialog.h"
+#include "gui/GeneralSettingDialog.h"
+#include "gui/MouseSettingDialog.h"
 #include "util/NetworkUtil.h"
-#include "util/TextUtil.h"
-#include <QAction>
-#include <QDesktopServices>
-#include <QDomDocument>
-#include <QFile>
-#include <QJsonDocument>
-#include <QMenu>
-#include <QMessageBox>
-#include <qstandardpaths.h>
 
 namespace gui {
 //-------------------------------------------------------------------------------------------------

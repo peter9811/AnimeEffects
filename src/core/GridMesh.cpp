@@ -1,20 +1,20 @@
+#include <float.h>
+#include <QVector3D>
+#include <QMatrix4x4>
+#include <QPoint>
+#include <QtMath>
+#include <QScopedArrayPointer>
+#include "qjsonarray.h"
+#include "qjsonobject.h"
+#include "util/TriangleRasterizer.h"
+#include "util/CollDetect.h"
+#include "util/MathUtil.h"
+#include "util/BinarySpacePartition2D.h"
+#include "img/PixelPos.h"
+#include "img/Quad.h"
 #include "core/GridMesh.h"
 #include "core/HeightMap.h"
 #include "core/TimeLine.h"
-#include "img/PixelPos.h"
-#include "img/Quad.h"
-#include "qjsonarray.h"
-#include "qjsonobject.h"
-#include "util/BinarySpacePartition2D.h"
-#include "util/CollDetect.h"
-#include "util/MathUtil.h"
-#include "util/TriangleRasterizer.h"
-#include <QMatrix4x4>
-#include <QPoint>
-#include <QScopedArrayPointer>
-#include <QVector3D>
-#include <QtMath>
-#include <float.h>
 
 namespace core {
 
@@ -364,6 +364,7 @@ bool GridMesh::hasConnection(int aArrayIndex, int aIdIndex) const {
 int GridMesh::connectionId(int aArrayIndex, int aIdIndex) const {
     return mHexaConnections[aArrayIndex].id[aIdIndex];
 }
+
 
 std::pair<bool, gl::Vector3> GridMesh::gatherValidPositions(
     int aIndex, const gl::Vector3* aPositions, const bool* aValidity) const {

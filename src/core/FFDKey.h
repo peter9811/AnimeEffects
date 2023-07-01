@@ -1,10 +1,10 @@
 #ifndef CORE_FFDKEY_H
 #define CORE_FFDKEY_H
 
-#include "core/TimeKey.h"
-#include "gl/Vector3.h"
-#include "util/Easing.h"
 #include <QVector>
+#include "util/Easing.h"
+#include "gl/Vector3.h"
+#include "core/TimeKey.h"
 
 namespace core {
 

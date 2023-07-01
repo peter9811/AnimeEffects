@@ -1,13 +1,13 @@
 #ifndef CORE_MESHTRANSFORMER_H
 #define CORE_MESHTRANSFORMER_H
 
-#include "core/LayerMesh.h"
-#include "core/TimeKeyExpans.h"
-#include "gl/BufferObject.h"
-#include "gl/Vector3.h"
-#include "util/ArrayBlock.h"
-#include "util/NonCopyable.h"
 #include <QScopedPointer>
+#include "util/NonCopyable.h"
+#include "util/ArrayBlock.h"
+#include "gl/Vector3.h"
+#include "gl/BufferObject.h"
+#include "core/TimeKeyExpans.h"
+#include "core/LayerMesh.h"
 namespace core {
 class MeshTransformerResource;
 }

@@ -1,8 +1,8 @@
+#include "gl/Global.h"
+#include "gl/Util.h"
 #include "core/MeshTransformer.h"
 #include "core/MeshTransformerResource.h"
 #include "core/ObjectNodeUtil.h"
-#include "gl/Global.h"
-#include "gl/Util.h"
 
 namespace core {
 

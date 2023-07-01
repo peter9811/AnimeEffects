@@ -1,8 +1,8 @@
 #ifndef UTIL_INDEXTABLE_H
 #define UTIL_INDEXTABLE_H
 
-#include "XC.h"
 #include <QScopedArrayPointer>
+#include "XC.h"
 
 namespace util {
 

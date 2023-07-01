@@ -1,18 +1,18 @@
-#include "gui/res/res_ResourceUpdater.h"
-#include "cmnd/BasicCommands.h"
-#include "cmnd/ScopedMacro.h"
-#include "ctrl/CmndName.h"
-#include "gui/res/res_ImageSetter.h"
-#include "img/BlendMode.h"
+#include <utility>
+#include <iostream>
+#include <QFileInfo>
+#include <QMessageBox>
+#include "util/TextUtil.h"
+#include "util/TreeUtil.h"
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
 #include "img/Util.h"
-#include "util/TextUtil.h"
-#include "util/TreeUtil.h"
-#include <QFileInfo>
-#include <QMessageBox>
-#include <iostream>
-#include <utility>
+#include "img/BlendMode.h"
+#include "cmnd/ScopedMacro.h"
+#include "cmnd/BasicCommands.h"
+#include "ctrl/CmndName.h"
+#include "gui/res/res_ImageSetter.h"
+#include "gui/res/res_ResourceUpdater.h"
 
 //#define RESOURCE_UPDATER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define RESOURCE_UPDATER_DUMP(...)
@@ -465,6 +465,7 @@ namespace res {
             auto corresponds = findCorrespondingNode(aCurNode.children(), *child);
             XC_ASSERT(corresponds.first <= 1); // check identifiability
 
+
             if (corresponds.first == 1) {
                 auto childIndex = aCurNode.children().indexOf(corresponds.second);
                 auto childItem = aCurItem.child(childIndex);
@@ -627,6 +628,7 @@ namespace res {
         }
         if (index >= (int)holder.imageTrees().size())
             return;
+
 
         // find gui index
         int guiIndex = 0;

@@ -1,5 +1,5 @@
-#include "gui/prop/prop_AttrGroup.h"
 #include <QLabel>
+#include "gui/prop/prop_AttrGroup.h"
 
 namespace gui {
 namespace prop {

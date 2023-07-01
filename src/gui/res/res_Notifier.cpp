@@ -1,5 +1,5 @@
-#include "gui/res/res_Notifier.h"
 #include "gui/ResourceDialog.h"
+#include "gui/res/res_Notifier.h"
 
 using namespace core;
 

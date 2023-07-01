@@ -1,14 +1,14 @@
 #ifndef GUI_PROP_BACKBOARD_H
 #define GUI_PROP_BACKBOARD_H
 
-#include "core/ObjectNode.h"
+#include <QWidget>
+#include <QVBoxLayout>
 #include "core/Project.h"
+#include "core/ObjectNode.h"
 #include "gui/ViaPoint.h"
 #include "gui/prop/prop_ConstantPanel.h"
-#include "gui/prop/prop_CurrentKeyPanel.h"
 #include "gui/prop/prop_DefaultKeyPanel.h"
-#include <QVBoxLayout>
-#include <QWidget>
+#include "gui/prop/prop_CurrentKeyPanel.h"
 
 namespace gui {
 namespace prop {

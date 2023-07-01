@@ -1,9 +1,9 @@
 #ifndef CTRL_BONE_FOCUSER_H
 #define CTRL_BONE_FOCUSER_H
 
-#include "core/BoneKey.h"
-#include "core/CameraInfo.h"
 #include <QMatrix4x4>
+#include "core/CameraInfo.h"
+#include "core/BoneKey.h"
 
 namespace ctrl {
 namespace bone {

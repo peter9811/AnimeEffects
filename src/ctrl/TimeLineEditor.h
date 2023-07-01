@@ -1,24 +1,24 @@
 #ifndef CTRL_TIMELINEEDITOR_H
 #define CTRL_TIMELINEEDITOR_H
 
-#include "core/AbstractCursor.h"
-#include "core/CameraInfo.h"
-#include "core/ObjectNode.h"
+#include <QRect>
+#include <QVector>
+#include <QScopedPointer>
+#include "gui/obj/obj_Item.h"
+#include "util/Range.h"
+#include "util/LinkPointer.h"
+#include "util/PlacePointer.h"
 #include "core/Project.h"
+#include "core/AbstractCursor.h"
+#include "core/ObjectNode.h"
+#include "core/CameraInfo.h"
 #include "core/TimeKeyPos.h"
 #include "ctrl/TimeLineRow.h"
 #include "ctrl/TimeLineUtil.h"
 #include "ctrl/time/time_Current.h"
-#include "ctrl/time/time_Focuser.h"
 #include "ctrl/time/time_Scaler.h"
-#include "gui/obj/obj_Item.h"
+#include "ctrl/time/time_Focuser.h"
 #include "gui/theme/TimeLine.h"
-#include "util/LinkPointer.h"
-#include "util/PlacePointer.h"
-#include "util/Range.h"
-#include <QRect>
-#include <QScopedPointer>
-#include <QVector>
 
 namespace ctrl {
 

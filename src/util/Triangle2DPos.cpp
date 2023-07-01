@@ -3,6 +3,7 @@
 
 namespace util {
 
+
 Triangle2DPos Triangle2DPos::make(const util::Triangle2D& aTriangle, const QVector2D& aPoint) {
     int farIndex = -1;
     float maxLengthSq = 0;

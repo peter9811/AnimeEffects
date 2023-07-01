@@ -1,8 +1,8 @@
 #ifndef CTRL_POSE_IMODE_H
 #define CTRL_POSE_IMODE_H
 
-#include "core/AbstractCursor.h"
 #include "core/CameraInfo.h"
+#include "core/AbstractCursor.h"
 #include "core/RenderInfo.h"
 #include "ctrl/PoseParam.h"
 

@@ -18,4 +18,5 @@ void VertexArrayObject::release() {
     gl::Global::functions().glBindVertexArray(0);
 }
 
+
 } // namespace gl

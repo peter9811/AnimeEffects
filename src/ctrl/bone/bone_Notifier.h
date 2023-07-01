@@ -2,9 +2,9 @@
 #define CTRL_BONE_NOTIFIER_H
 
 #include "cmnd/Listener.h"
-#include "core/BoneKey.h"
-#include "core/ObjectNode.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
+#include "core/BoneKey.h"
 
 namespace ctrl {
 namespace bone {

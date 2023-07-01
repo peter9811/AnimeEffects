@@ -1,8 +1,8 @@
 #ifndef UTIL_TRIANGLE2D_H
 #define UTIL_TRIANGLE2D_H
 
-#include "util/Segment2D.h"
 #include <QVector2D>
+#include "util/Segment2D.h"
 
 namespace util {
 

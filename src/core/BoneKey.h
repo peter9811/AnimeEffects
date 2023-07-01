@@ -1,14 +1,14 @@
 #ifndef CORE_BONEKEY_H
 #define CORE_BONEKEY_H
 
+#include <memory>
+#include <QList>
+#include <QMatrix4x4>
+#include "util/LinkPointer.h"
+#include "core/TimeKey.h"
 #include "core/Bone2.h"
 #include "core/BoneInfluenceMap.h"
 #include "core/ObjectNode.h"
-#include "core/TimeKey.h"
-#include "util/LinkPointer.h"
-#include <QList>
-#include <QMatrix4x4>
-#include <memory>
 namespace core {
 class Project;
 }

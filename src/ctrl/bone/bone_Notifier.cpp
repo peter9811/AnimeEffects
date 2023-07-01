@@ -1,5 +1,5 @@
-#include "ctrl/bone/bone_Notifier.h"
 #include "core/PoseKey.h"
+#include "ctrl/bone/bone_Notifier.h"
 #include "ctrl/bone/bone_GeoBuilder.h"
 
 using namespace core;

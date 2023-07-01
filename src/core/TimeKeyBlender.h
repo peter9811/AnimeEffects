@@ -1,15 +1,15 @@
 #ifndef CORE_TIMEKEYBLENDER_H
 #define CORE_TIMEKEYBLENDER_H
 
+#include <array>
+#include <QVector3D>
+#include "util/ITreeSeeker.h"
 #include "core/ObjectTree.h"
-#include "core/TimeCacheLock.h"
 #include "core/TimeInfo.h"
+#include "core/TimeLineEvent.h"
 #include "core/TimeKeyExpans.h"
 #include "core/TimeKeyGatherer.h"
-#include "core/TimeLineEvent.h"
-#include "util/ITreeSeeker.h"
-#include <QVector3D>
-#include <array>
+#include "core/TimeCacheLock.h"
 
 namespace core {
 
@@ -21,6 +21,7 @@ public:
     };
     typedef util::ITreeSeeker<SeekData, ObjectNode*> SeekerType;
     typedef SeekerType::Position PositionType;
+
 
     static QMatrix4x4 getLocalSRMatrix(const ObjectNode& aNode, const TimeInfo& aTime);
 

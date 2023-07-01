@@ -1,13 +1,13 @@
-#include "ctrl/BoneEditor.h"
 #include "core/TimeKeyExpans.h"
-#include "ctrl/bone/bone_BindNodesMode.h"
+#include "ctrl/BoneEditor.h"
 #include "ctrl/bone/bone_CreateMode.h"
 #include "ctrl/bone/bone_DeleteMode.h"
+#include "ctrl/bone/bone_MoveJointMode.h"
+#include "ctrl/bone/bone_BindNodesMode.h"
+#include "ctrl/bone/bone_InfluenceMode.h"
+#include "ctrl/bone/bone_PaintInflMode.h"
 #include "ctrl/bone/bone_EraseInflMode.h"
 #include "ctrl/bone/bone_GeoBuilder.h"
-#include "ctrl/bone/bone_InfluenceMode.h"
-#include "ctrl/bone/bone_MoveJointMode.h"
-#include "ctrl/bone/bone_PaintInflMode.h"
 
 using namespace core;
 

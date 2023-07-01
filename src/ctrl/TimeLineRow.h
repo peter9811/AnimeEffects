@@ -1,8 +1,8 @@
 #ifndef CTRL_TIMELINEROW_H
 #define CTRL_TIMELINEROW_H
 
-#include "core/ObjectNode.h"
 #include <QRect>
+#include "core/ObjectNode.h"
 
 namespace ctrl {
 

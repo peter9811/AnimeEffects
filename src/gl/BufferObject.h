@@ -1,8 +1,8 @@
 #ifndef GL_BUFFEROBJECT_H
 #define GL_BUFFEROBJECT_H
 
-#include "util/NonCopyable.h"
 #include <QGL>
+#include "util/NonCopyable.h"
 
 namespace gl {
 

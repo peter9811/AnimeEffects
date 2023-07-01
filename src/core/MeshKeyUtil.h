@@ -1,9 +1,9 @@
 #ifndef CORE_MESHKEYUTIL_H
 #define CORE_MESHKEYUTIL_H
 
-#include "cmnd/DoneDeleter.h"
 #include "cmnd/Stable.h"
 #include "cmnd/UndoneDeleter.h"
+#include "cmnd/DoneDeleter.h"
 #include "core/MeshKey.h"
 
 namespace core {

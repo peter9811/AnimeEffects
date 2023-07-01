@@ -1,22 +1,22 @@
 #ifndef CORE_OBJECTTREE_H
 #define CORE_OBJECTTREE_H
 
-#include "cmnd/Stack.h"
-#include "cmnd/Vector.h"
-#include "core/Deserializer.h"
-#include "core/ObjectNode.h"
-#include "core/ProjectEvent.h"
-#include "core/Renderer.h"
-#include "core/ResourceEvent.h"
-#include "core/Serializer.h"
-#include "core/ShaderHolder.h"
-#include "core/TimeCacheLock.h"
-#include "core/TimeLineEvent.h"
+#include <tuple>
+#include <QVector>
+#include "util/TreePos.h"
 #include "util/LifeLink.h"
 #include "util/NonCopyable.h"
-#include "util/TreePos.h"
-#include <QVector>
-#include <tuple>
+#include "cmnd/Stack.h"
+#include "cmnd/Vector.h"
+#include "core/ObjectNode.h"
+#include "core/Renderer.h"
+#include "core/Serializer.h"
+#include "core/Deserializer.h"
+#include "core/ResourceEvent.h"
+#include "core/TimeLineEvent.h"
+#include "core/ProjectEvent.h"
+#include "core/ShaderHolder.h"
+#include "core/TimeCacheLock.h"
 namespace core {
 class SortAndRenderCall;
 }

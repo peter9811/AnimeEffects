@@ -1,10 +1,10 @@
 #ifndef CORE_ABSTRACTCURSOR_H
 #define CORE_ABSTRACTCURSOR_H
 
-#include "core/CameraInfo.h"
+#include <functional>
 #include <QMouseEvent>
 #include <QPoint>
-#include <functional>
+#include "core/CameraInfo.h"
 
 namespace core {
 

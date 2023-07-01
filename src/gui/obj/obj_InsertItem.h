@@ -1,9 +1,9 @@
 #ifndef GUI_OBJ_INSERTITEM_H
 #define GUI_OBJ_INSERTITEM_H
 
+#include <QTreeWidgetItem>
 #include "cmnd/Stable.h"
 #include "gui/obj/obj_Item.h"
-#include <QTreeWidgetItem>
 
 namespace gui {
 namespace obj {

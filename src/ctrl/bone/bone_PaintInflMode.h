@@ -1,14 +1,14 @@
 #ifndef CTRL_BONE_PAINTINFLMODE_H
 #define CTRL_BONE_PAINTINFLMODE_H
 
-#include "core/BoneKey.h"
-#include "core/ObjectNode.h"
+#include "util/Circle.h"
 #include "core/Project.h"
-#include "ctrl/bone/bone_AssignInfluence.h"
+#include "core/ObjectNode.h"
+#include "core/BoneKey.h"
 #include "ctrl/bone/bone_IMode.h"
 #include "ctrl/bone/bone_KeyOwner.h"
 #include "ctrl/bone/bone_Target.h"
-#include "util/Circle.h"
+#include "ctrl/bone/bone_AssignInfluence.h"
 
 namespace ctrl {
 namespace bone {

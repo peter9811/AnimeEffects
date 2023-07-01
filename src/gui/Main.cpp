@@ -1,18 +1,19 @@
-#include "XC.h"
-#include "ctrl/System.h"
-#include "gl/Global.h"
-#include "gui/GUIResources.h"
-#include "gui/LocaleDecider.h"
-#include "gui/MSVCBackTracer.h"
 #include "gui/MSVCMemoryLeakDebugger.h" // first of all
-#include "gui/MainWindow.h"
-#include "util/NetworkUtil.h"
 #include <QApplication>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
-#include <QScopedPointer>
 #include <QStandardPaths>
+#include <QScopedPointer>
+#include "XC.h"
+#include "gl/Global.h"
+#include "ctrl/System.h"
+#include "gui/MainWindow.h"
+#include "gui/GUIResources.h"
+#include "gui/MSVCBackTracer.h"
+#include "gui/LocaleDecider.h"
+#include "util/NetworkUtil.h"
+
 
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
 extern MemoryRegister gMemoryRegister;
@@ -111,6 +112,7 @@ int entryPoint(int argc, char* argv[]) {
     const QString stdCacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     const QString cacheDir = !stdCacheDir.isEmpty() ? stdCacheDir : (appDir + "/cache");
 
+
     // initialize current
     QDir::setCurrent(appDir);
 
@@ -121,6 +123,7 @@ int entryPoint(int argc, char* argv[]) {
     // set organization and application name for the application setting
     QCoreApplication::setOrganizationName("AnimeEffectsProject");
     QCoreApplication::setApplicationName("AnimeEffects");
+
 
     // language
     QScopedPointer<gui::LocaleDecider> locale(new gui::LocaleDecider());
@@ -147,6 +150,7 @@ int entryPoint(int argc, char* argv[]) {
         QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
         networking.checkForUpdate(url, networking, mainWindow->window(), false);
 
+
 #if !defined(QT_NO_DEBUG)
         qDebug() << "test new project";
         const QString testPath = resourceDir + "/sample.psd";
@@ -168,6 +172,7 @@ int entryPoint(int argc, char* argv[]) {
 
         // save settings(window status, etc.)
         mainWindow->saveCurrentSettings(result);
+
 
         // bind gl context for destructors
         gl::Global::makeCurrent();

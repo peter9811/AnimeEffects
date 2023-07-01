@@ -19,6 +19,7 @@ public:
     virtual Position nextSib(Position) const = 0;
 };
 
+
 } // namespace util
 
 #endif // UTIL_ITREESEEKER

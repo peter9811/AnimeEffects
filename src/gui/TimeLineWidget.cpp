@@ -1,6 +1,6 @@
+#include <QScrollBar>
 #include "gui/TimeLineWidget.h"
 #include "gui/PlayBackWidget.h"
-#include <QScrollBar>
 
 namespace gui {
 

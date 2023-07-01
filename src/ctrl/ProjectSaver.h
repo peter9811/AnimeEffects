@@ -1,9 +1,9 @@
 #ifndef CTRL_PROJECTSAVER_H
 #define CTRL_PROJECTSAVER_H
 
-#include "core/Project.h"
-#include "util/StreamWriter.h"
 #include <QString>
+#include "util/StreamWriter.h"
+#include "core/Project.h"
 
 namespace ctrl {
 

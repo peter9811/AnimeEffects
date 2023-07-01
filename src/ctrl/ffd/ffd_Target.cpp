@@ -1,5 +1,5 @@
-#include "ctrl/ffd/ffd_Target.h"
 #include "gl/Global.h"
+#include "ctrl/ffd/ffd_Target.h"
 
 namespace ctrl {
 namespace ffd {
@@ -28,6 +28,7 @@ namespace ffd {
         }
         return false;
     }
+
 
 } // namespace ffd
 } // namespace ctrl

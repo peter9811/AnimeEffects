@@ -1,6 +1,6 @@
-#include "ctrl/bone/bone_NodeSelector.h"
-#include "core/TimeKeyBlender.h"
 #include <algorithm>
+#include "core/TimeKeyBlender.h"
+#include "ctrl/bone/bone_NodeSelector.h"
 
 using namespace core;
 

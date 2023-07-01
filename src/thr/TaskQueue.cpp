@@ -1,5 +1,5 @@
-#include "thr/TaskQueue.h"
 #include <QMutexLocker>
+#include "thr/TaskQueue.h"
 
 namespace thr {
 

@@ -1,8 +1,8 @@
 #ifndef UTIL_SEGMENT2D_H
 #define UTIL_SEGMENT2D_H
 
-#include <QRectF>
 #include <QVector2D>
+#include <QRectF>
 
 namespace util {
 

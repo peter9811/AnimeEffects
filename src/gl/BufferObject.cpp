@@ -1,5 +1,5 @@
-#include "gl/BufferObject.h"
 #include "XC.h"
+#include "gl/BufferObject.h"
 #include "gl/Global.h"
 
 namespace gl {

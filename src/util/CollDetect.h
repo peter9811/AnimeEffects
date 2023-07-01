@@ -1,10 +1,10 @@
 #ifndef UTIL_COLLDETECT_H
 #define UTIL_COLLDETECT_H
 
-#include "util/ArrayBlock.h"
+#include <QVector2D>
 #include "util/Segment2D.h"
 #include "util/Triangle2D.h"
-#include <QVector2D>
+#include "util/ArrayBlock.h"
 
 namespace util {
 // north east coordinate

@@ -1,9 +1,9 @@
 #ifndef UTIL_EASING
 #define UTIL_EASING
 
-#include <QSettings>
 #include <QString>
 #include <QStringList>
+#include <QSettings>
 
 namespace util {
 

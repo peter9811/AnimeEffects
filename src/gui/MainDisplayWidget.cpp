@@ -1,19 +1,19 @@
-#include "gui/MainDisplayWidget.h"
-#include "XC.h"
-#include "core/ClippingFrame.h"
-#include "gl/Framebuffer.h"
-#include "gl/Texture.h"
-#include "gl/Util.h"
-#include "gui/KeyCommandMap.h"
-#include "gui/MouseSetting.h"
-#include "gui/ProjectHook.h"
-#include "gui/ProjectTabBar.h"
-#include "gui/ViaPoint.h"
-#include "util/Finally.h"
-#include <QGuiApplication>
+#include <functional>
 #include <QMouseEvent>
 #include <QOpenGLFunctions>
-#include <functional>
+#include <QGuiApplication>
+#include "XC.h"
+#include "util/Finally.h"
+#include "gl/Util.h"
+#include "gl/Framebuffer.h"
+#include "gl/Texture.h"
+#include "core/ClippingFrame.h"
+#include "gui/MainDisplayWidget.h"
+#include "gui/ProjectHook.h"
+#include "gui/ViaPoint.h"
+#include "gui/ProjectTabBar.h"
+#include "gui/KeyCommandMap.h"
+#include "gui/MouseSetting.h"
 
 namespace gui {
 

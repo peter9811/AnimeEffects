@@ -1,6 +1,6 @@
+#include "util/TreeUtil.h"
 #include "core/PoseKey.h"
 #include "core/BoneKey.h"
-#include "util/TreeUtil.h"
 
 namespace core {
 

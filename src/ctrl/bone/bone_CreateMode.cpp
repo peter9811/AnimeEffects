@@ -1,13 +1,13 @@
-#include "ctrl/bone/bone_CreateMode.h"
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
 #include "core/TimeLine.h"
-#include "ctrl/CmndName.h"
 #include "ctrl/TimeLineUtil.h"
-#include "ctrl/bone/bone_Notifier.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/bone/bone_CreateMode.h"
+#include "ctrl/bone/bone_Renderer.h"
 #include "ctrl/bone/bone_PushNewPoses.h"
 #include "ctrl/bone/bone_PushNewTopPoses.h"
-#include "ctrl/bone/bone_Renderer.h"
+#include "ctrl/bone/bone_Notifier.h"
 
 using namespace core;
 
@@ -94,6 +94,7 @@ namespace bone {
             renderer.renderJoint(*mDangledTop);
         }
     }
+
 
     void CreateMode::pushNewBone(core::Bone2& aParent, core::Bone2& aNewChild) {
         XC_ASSERT(!mKeyOwner.owns());

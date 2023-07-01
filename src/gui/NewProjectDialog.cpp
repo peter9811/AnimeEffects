@@ -1,12 +1,12 @@
-#include "gui/NewProjectDialog.h"
-#include <QCheckBox>
-#include <QFileDialog>
-#include <QFormLayout>
+#include <QSpinBox>
 #include <QGroupBox>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QSpinBox>
+#include <QFileDialog>
+#include <QCheckBox>
+#include "gui/NewProjectDialog.h"
 
 namespace gui {
 

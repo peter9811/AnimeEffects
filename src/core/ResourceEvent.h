@@ -1,8 +1,8 @@
 #ifndef CORE_RESOURCEEVENT_H
 #define CORE_RESOURCEEVENT_H
 
-#include "img/ResourceNode.h"
 #include <QVector>
+#include "img/ResourceNode.h"
 namespace core {
 class Project;
 }

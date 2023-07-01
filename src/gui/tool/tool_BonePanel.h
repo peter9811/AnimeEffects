@@ -1,13 +1,13 @@
 #ifndef GUI_TOOL_BONEPANEL_H
 #define GUI_TOOL_BONEPANEL_H
 
+#include <QGroupBox>
+#include <QPushButton>
+#include <QButtonGroup>
+#include "util/Signaler.h"
 #include "ctrl/BoneParam.h"
 #include "gui/GUIResources.h"
 #include "gui/tool/tool_Items.h"
-#include "util/Signaler.h"
-#include <QButtonGroup>
-#include <QGroupBox>
-#include <QPushButton>
 
 namespace gui {
 namespace tool {

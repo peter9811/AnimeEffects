@@ -1,6 +1,6 @@
 #include "gui/ViaPoint.h"
-#include "gui/KeyCommandInvoker.h"
 #include "gui/ResourceDialog.h"
+#include "gui/KeyCommandInvoker.h"
 
 namespace gui {
 

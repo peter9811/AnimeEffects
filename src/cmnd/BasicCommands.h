@@ -1,15 +1,15 @@
 #ifndef CMND_BASICCOMMANDS_H
 #define CMND_BASICCOMMANDS_H
 
-#include "XC.h"
-#include "cmnd/SleepableObject.h"
-#include "cmnd/Stable.h"
-#include <QMap>
-#include <QVector>
-#include <functional>
-#include <memory>
 #include <stdlib.h>
 #include <string.h>
+#include <functional>
+#include <memory>
+#include <QMap>
+#include <QVector>
+#include "XC.h"
+#include "cmnd/Stable.h"
+#include "cmnd/SleepableObject.h"
 
 namespace cmnd {
 

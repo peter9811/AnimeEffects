@@ -1,14 +1,14 @@
 #ifndef GUI_TOOL_MODEPANEL_H
 #define GUI_TOOL_MODEPANEL_H
 
+#include <vector>
+#include <functional>
+#include <QGroupBox>
+#include <QPushButton>
+#include <QButtonGroup>
 #include "ctrl/ToolType.h"
 #include "gui/GUIResources.h"
 #include "gui/tool/tool_FlowLayout.h"
-#include <QButtonGroup>
-#include <QGroupBox>
-#include <QPushButton>
-#include <functional>
-#include <vector>
 
 namespace gui {
 namespace tool {

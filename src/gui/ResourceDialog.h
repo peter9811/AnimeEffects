@@ -1,13 +1,13 @@
 #ifndef GUI_RESOURCEDIALOG_H
 #define GUI_RESOURCEDIALOG_H
 
+#include <QDialog>
+#include <QDialogButtonBox>
+#include "util/LinkPointer.h"
 #include "core/Project.h"
 #include "gui/EasyDialog.h"
 #include "gui/ResourceDialog.h"
 #include "gui/ResourceTreeWidget.h"
-#include "util/LinkPointer.h"
-#include <QDialog>
-#include <QDialogButtonBox>
 
 namespace gui {
 

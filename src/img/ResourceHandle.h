@@ -1,8 +1,8 @@
 #ifndef IMG_RESOURCEHANDLE_H
 #define IMG_RESOURCEHANDLE_H
 
-#include "img/ResourceData.h"
 #include <memory>
+#include "img/ResourceData.h"
 
 namespace img {
 

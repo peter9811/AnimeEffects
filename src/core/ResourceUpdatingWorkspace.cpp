@@ -4,6 +4,7 @@ namespace core {
 
 ResourceUpdatingWorkspace::ResourceUpdatingWorkspace(): transUnits() {}
 
+
 GridMesh::Transitions& ResourceUpdatingWorkspace::makeSureTransitions(const TimeKey* aParent, const GridMesh& aMesh) {
     for (auto& unit : transUnits) {
         // found

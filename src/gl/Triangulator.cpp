@@ -1,5 +1,5 @@
-#include "gl/Triangulator.h"
 #include "util/CollDetect.h"
+#include "gl/Triangulator.h"
 
 namespace gl {
 

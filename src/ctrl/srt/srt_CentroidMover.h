@@ -1,10 +1,10 @@
 #ifndef CTRL_SRT_CENTROIDMOVER_H
 #define CTRL_SRT_CENTROIDMOVER_H
 
+#include <functional>
 #include "cmnd/Stable.h"
 #include "core/ObjectNode.h"
 #include "core/Project.h"
-#include <functional>
 namespace core {
 class MoveKey;
 }

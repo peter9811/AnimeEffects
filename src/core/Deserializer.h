@@ -1,29 +1,29 @@
 #ifndef CORE_DESERIALIZER
 #define CORE_DESERIALIZER
 
-#include "XC.h"
-#include "core/Frame.h"
-#include "gl/DeviceInfo.h"
-#include "gl/Vector2.h"
-#include "gl/Vector3.h"
-#include "util/Easing.h"
-#include "util/IDSolver.h"
-#include "util/IProgressReporter.h"
-#include "util/IndexTable.h"
-#include "util/Segment2D.h"
-#include "util/StreamReader.h"
-#include <QGL>
-#include <QMatrix4x4>
-#include <QPoint>
-#include <QPolygonF>
-#include <QRect>
-#include <QRectF>
 #include <QStringList>
+#include <QVector>
+#include <QPoint>
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
-#include <QVector>
+#include <QRect>
+#include <QRectF>
+#include <QMatrix4x4>
+#include <QPolygonF>
+#include <QGL>
 #include <QVersionNumber>
+#include "XC.h"
+#include "util/Segment2D.h"
+#include "util/Easing.h"
+#include "util/IndexTable.h"
+#include "util/StreamReader.h"
+#include "util/IDSolver.h"
+#include "util/IProgressReporter.h"
+#include "gl/Vector2.h"
+#include "gl/Vector3.h"
+#include "gl/DeviceInfo.h"
+#include "core/Frame.h"
 
 namespace core {
 

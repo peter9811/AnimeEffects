@@ -1,10 +1,10 @@
-#include "ctrl/Exporter.h"
+#include <QFileInfo>
+#include <QBuffer>
+#include <QApplication>
+#include "util/SelectArgs.h"
 #include "gl/Global.h"
 #include "gl/Util.h"
-#include "util/SelectArgs.h"
-#include <QApplication>
-#include <QBuffer>
-#include <QFileInfo>
+#include "ctrl/Exporter.h"
 
 namespace ctrl {
 //-------------------------------------------------------------------------------------------------

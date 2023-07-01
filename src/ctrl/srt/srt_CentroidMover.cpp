@@ -1,9 +1,10 @@
-#include "ctrl/srt/srt_CentroidMover.h"
-#include "core/ImageKey.h"
-#include "core/MeshKey.h"
-#include "core/MoveKey.h"
+#include "core/TimeKeyBlender.h"
 #include "core/Project.h"
 #include "core/TimeKeyBlender.h"
+#include "core/MoveKey.h"
+#include "core/ImageKey.h"
+#include "core/MeshKey.h"
+#include "ctrl/srt/srt_CentroidMover.h"
 
 using namespace core;
 

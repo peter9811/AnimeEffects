@@ -2,13 +2,13 @@
 #define GUI_RES_NOTIFIER_H
 
 #include "cmnd/Listener.h"
-#include "core/BoneKey.h"
-#include "core/ObjectNode.h"
+#include "img/ResourceNode.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
+#include "core/BoneKey.h"
 #include "core/ResourceEvent.h"
 #include "gui/ViaPoint.h"
 #include "gui/res/res_Item.h"
-#include "img/ResourceNode.h"
 
 namespace gui {
 namespace res {

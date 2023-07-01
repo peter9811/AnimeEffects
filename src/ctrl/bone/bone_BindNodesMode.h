@@ -1,15 +1,15 @@
 #ifndef CTRL_BONE_BINDNODESMODE_H
 #define CTRL_BONE_BINDNODESMODE_H
 
-#include "core/BoneKey.h"
-#include "core/ObjectNode.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
+#include "core/BoneKey.h"
 #include "ctrl/GraphicStyle.h"
-#include "ctrl/bone/bone_Focuser.h"
 #include "ctrl/bone/bone_IMode.h"
 #include "ctrl/bone/bone_KeyOwner.h"
-#include "ctrl/bone/bone_NodeSelector.h"
 #include "ctrl/bone/bone_Target.h"
+#include "ctrl/bone/bone_Focuser.h"
+#include "ctrl/bone/bone_NodeSelector.h"
 
 namespace ctrl {
 namespace bone {

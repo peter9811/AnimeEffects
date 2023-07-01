@@ -1,7 +1,7 @@
 #include "gl/ExtendShader.h"
-#include "XC.h"
 #include <QFile>
 #include <QTextStream>
+#include "XC.h"
 
 namespace gl {
 

@@ -1,10 +1,10 @@
-#include "core/BoneInfluenceMap.h"
+#include <float.h>
+#include <QtMath>
 #include "XC.h"
 #include "core/Constant.h"
-#include "core/LayerMesh.h"
 #include "core/Project.h"
-#include <QtMath>
-#include <float.h>
+#include "core/LayerMesh.h"
+#include "core/BoneInfluenceMap.h"
 //#include <QElapsedTimer>
 
 namespace core {

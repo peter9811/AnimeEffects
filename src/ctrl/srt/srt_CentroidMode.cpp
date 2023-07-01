@@ -1,12 +1,12 @@
-#include "ctrl/srt/srt_CentroidMode.h"
+#include "util/MathUtil.h"
 #include "cmnd/ScopedMacro.h"
 #include "core/Constant.h"
 #include "core/ObjectNodeUtil.h"
-#include "core/TimeKeyBlender.h"
 #include "core/TimeKeyExpans.h"
-#include "ctrl/CmndName.h"
+#include "core/TimeKeyBlender.h"
 #include "ctrl/TimeLineUtil.h"
-#include "util/MathUtil.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/srt/srt_CentroidMode.h"
 
 namespace {
 static const float kTransRange = 3.0f;

@@ -1,6 +1,6 @@
+#include "util/TreeUtil.h"
 #include "core/ObjectTreeNotifier.h"
 #include "core/Project.h"
-#include "util/TreeUtil.h"
 
 namespace core {
 

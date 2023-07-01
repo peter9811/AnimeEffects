@@ -1,9 +1,9 @@
 #ifndef UTIL_STREAMWRITER
 #define UTIL_STREAMWRITER
 
-#include "XC.h"
-#include <array>
 #include <ostream>
+#include <array>
+#include "XC.h"
 
 namespace util {
 

@@ -1,20 +1,20 @@
 #ifndef CTRL_FFDEDITOR_H
 #define CTRL_FFDEDITOR_H
 
-#include "core/AbstractCursor.h"
-#include "core/CameraInfo.h"
-#include "core/LayerMesh.h"
-#include "core/ObjectNode.h"
+#include <QScopedPointer>
+#include "util/Circle.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
 #include "core/RenderInfo.h"
+#include "core/CameraInfo.h"
+#include "core/AbstractCursor.h"
+#include "core/LayerMesh.h"
+#include "ctrl/IEditor.h"
 #include "ctrl/DriverResources.h"
 #include "ctrl/FFDParam.h"
-#include "ctrl/IEditor.h"
 #include "ctrl/UILogger.h"
-#include "ctrl/ffd/ffd_IMode.h"
 #include "ctrl/ffd/ffd_Target.h"
-#include "util/Circle.h"
-#include <QScopedPointer>
+#include "ctrl/ffd/ffd_IMode.h"
 
 namespace ctrl {
 

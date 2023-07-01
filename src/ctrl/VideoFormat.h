@@ -1,8 +1,8 @@
 #ifndef CTRL_VIDEOFORMAT_H
 #define CTRL_VIDEOFORMAT_H
 
-#include <QList>
 #include <QString>
+#include <QList>
 
 namespace ctrl {
 

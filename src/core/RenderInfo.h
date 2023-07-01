@@ -1,10 +1,10 @@
 #ifndef CORE_RENDERINFO_H
 #define CORE_RENDERINFO_H
 
+#include <QGL>
 #include "XC.h"
 #include "core/CameraInfo.h"
 #include "core/TimeInfo.h"
-#include <QGL>
 namespace core {
 class ClippingFrame;
 }

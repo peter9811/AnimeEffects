@@ -1,8 +1,8 @@
 #ifndef GUI_OBJ_ITEM_H
 #define GUI_OBJ_ITEM_H
 
-#include "core/ObjectNode.h"
 #include <QTreeWidget>
+#include "core/ObjectNode.h"
 
 namespace gui {
 namespace obj {
@@ -32,5 +32,6 @@ namespace obj {
 
 } // namespace obj
 } // namespace gui
+
 
 #endif // GUI_OBJ_ITEM_H

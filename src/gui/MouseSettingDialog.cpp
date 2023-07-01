@@ -1,6 +1,6 @@
-#include "gui/MouseSettingDialog.h"
-#include <QFormLayout>
 #include <QGroupBox>
+#include <QFormLayout>
+#include "gui/MouseSettingDialog.h"
 
 namespace gui {
 

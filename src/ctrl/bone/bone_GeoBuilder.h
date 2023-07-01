@@ -1,9 +1,9 @@
 #ifndef CTRL_BONE_GEOBUILDER_H
 #define CTRL_BONE_GEOBUILDER_H
 
-#include "core/Bone2.h"
-#include "util/Segment2D.h"
 #include <QPolygonF>
+#include "util/Segment2D.h"
+#include "core/Bone2.h"
 
 namespace ctrl {
 namespace bone {

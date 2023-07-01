@@ -1,15 +1,15 @@
 #include "NetworkUtil.h"
-#include "gui/menu/menu_ProgressReporter.h"
 #include "qapplication.h"
 #include "qdir.h"
 #include "qjsonarray.h"
+#include "gui/menu/menu_ProgressReporter.h"
 #include "qmessagebox.h"
 #include "qpushbutton.h"
-#include <QAbstractButton>
-#include <QDesktopServices>
 #include <QEventLoop>
 #include <QJsonObject>
 #include <QRegularExpression>
+#include <QDesktopServices>
+#include <QAbstractButton>
 
 namespace util {
 

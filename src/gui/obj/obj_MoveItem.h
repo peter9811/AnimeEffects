@@ -1,9 +1,9 @@
 #ifndef GUI_OBJ_MOVEITEM_H
 #define GUI_OBJ_MOVEITEM_H
 
+#include "util/TreePos.h"
 #include "cmnd/Stable.h"
 #include "gui/ObjectTreeWidget.h"
-#include "util/TreePos.h"
 
 namespace gui {
 namespace obj {

@@ -1,11 +1,11 @@
 #ifndef CORE_BONESHAPE_H
 #define CORE_BONESHAPE_H
 
-#include "core/Deserializer.h"
-#include "core/Serializer.h"
-#include "util/Segment2D.h"
-#include <QPolygonF>
 #include <array>
+#include <QPolygonF>
+#include "util/Segment2D.h"
+#include "core/Serializer.h"
+#include "core/Deserializer.h"
 
 namespace core {
 
@@ -28,6 +28,7 @@ public:
     void adjustTailBendFromDirections(const QVector2D& aMyDir, const QVector2D& aChildDir);
 
     float influence(const QVector2D& aPos) const;
+
 
     // serialize
     bool serialize(Serializer& aOut) const;

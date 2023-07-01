@@ -1,11 +1,11 @@
 #ifndef GUI_PROP_KEYGROUP_H
 #define GUI_PROP_KEYGROUP_H
 
-#include "gui/prop/prop_ItemBase.h"
+#include <functional>
+#include <QGroupBox>
 #include <QCheckBox>
 #include <QFormLayout>
-#include <QGroupBox>
-#include <functional>
+#include "gui/prop/prop_ItemBase.h"
 
 namespace gui {
 namespace prop {

@@ -2,8 +2,8 @@
 #define CTRL_POSE_KEYOWNER_H
 
 #include "cmnd/Stack.h"
-#include "core/PoseKey.h"
 #include "core/TimeLine.h"
+#include "core/PoseKey.h"
 
 namespace ctrl {
 namespace pose {

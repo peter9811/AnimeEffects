@@ -1,12 +1,12 @@
-#include "ctrl/System.h"
-#include "ctrl/ImageFileLoader.h"
-#include "ctrl/ProjectLoader.h"
-#include "ctrl/ProjectSaver.h"
-#include "gl/DeviceInfo.h"
-#include "gl/Global.h"
 #include <QDir>
 #include <QFile>
 #include <qstandardpaths.h>
+#include "gl/Global.h"
+#include "gl/DeviceInfo.h"
+#include "ctrl/System.h"
+#include "ctrl/ProjectSaver.h"
+#include "ctrl/ProjectLoader.h"
+#include "ctrl/ImageFileLoader.h"
 
 using namespace core;
 

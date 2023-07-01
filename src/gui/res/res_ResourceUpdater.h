@@ -2,11 +2,11 @@
 #define GUI_RES_RESOURCEUPDATER_H
 
 #include "cmnd/Stack.h"
+#include "img/PSDFormat.h"
 #include "core/Project.h"
 #include "gui/ViaPoint.h"
 #include "gui/res/res_Item.h"
 #include "gui/res/res_Notifier.h"
-#include "img/PSDFormat.h"
 
 namespace gui {
 namespace res {

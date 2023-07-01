@@ -1,12 +1,12 @@
 #ifndef CTRL_BONE_PUSHNEWTOPPOSES
 #define CTRL_BONE_PUSHNEWTOPPOSES
 
+#include <QVector>
+#include "util/TreeUtil.h"
 #include "cmnd/Stable.h"
 #include "core/BoneKey.h"
 #include "core/PoseKey.h"
 #include "core/TimeKeyType.h"
-#include "util/TreeUtil.h"
-#include <QVector>
 
 namespace ctrl {
 namespace bone {

@@ -1,10 +1,10 @@
-#include "core/BoneShape.h"
-#include "core/Constant.h"
+#include <QtMath>
 #include "qjsonarray.h"
 #include "qjsonobject.h"
-#include "util/CollDetect.h"
 #include "util/MathUtil.h"
-#include <QtMath>
+#include "util/CollDetect.h"
+#include "core/Constant.h"
+#include "core/BoneShape.h"
 
 //-------------------------------------------------------------------------------------------------
 namespace {
@@ -272,6 +272,7 @@ float BoneShape::getBoneWeight(const QVector2D& aPoint) const {
     return twistWeight * nearness;
 }
 #endif
+
 
 float BoneShape::getWeakness(float aRate) const {
     const float rootV = mRadius[0].y() / mLength;

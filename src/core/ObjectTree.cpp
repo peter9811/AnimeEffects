@@ -1,17 +1,17 @@
-#include "core/ObjectTree.h"
-#include "cmnd/BasicCommands.h"
-#include "cmnd/Stable.h"
-#include "cmnd/Vector.h"
-#include "core/BoneKeyUpdater.h"
-#include "core/FolderNode.h"
-#include "core/ImageKeyUpdater.h"
-#include "core/LayerNode.h"
-#include "core/ObjectTreeEvent.h"
-#include "core/TimeCacheAccessor.h"
-#include "util/LinkPointer.h"
-#include "util/TreeUtil.h"
 #include <algorithm>
 #include <functional>
+#include "util/LinkPointer.h"
+#include "util/TreeUtil.h"
+#include "cmnd/Stable.h"
+#include "cmnd/Vector.h"
+#include "cmnd/BasicCommands.h"
+#include "core/ObjectTree.h"
+#include "core/LayerNode.h"
+#include "core/FolderNode.h"
+#include "core/ObjectTreeEvent.h"
+#include "core/TimeCacheAccessor.h"
+#include "core/BoneKeyUpdater.h"
+#include "core/ImageKeyUpdater.h"
 
 namespace core {
 

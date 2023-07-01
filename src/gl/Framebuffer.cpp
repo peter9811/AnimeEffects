@@ -1,5 +1,5 @@
-#include "gl/Framebuffer.h"
 #include "XC.h"
+#include "gl/Framebuffer.h"
 #include "gl/Global.h"
 
 namespace gl {

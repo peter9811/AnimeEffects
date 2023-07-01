@@ -1,7 +1,7 @@
-#include "gl/Util.h"
 #include "XC.h"
-#include "gl/BufferObject.h"
+#include "gl/Util.h"
 #include "gl/Global.h"
+#include "gl/BufferObject.h"
 
 namespace gl {
 

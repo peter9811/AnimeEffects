@@ -1,5 +1,5 @@
-#include "cmnd/Scalable.h"
 #include <QDebug>
+#include "cmnd/Scalable.h"
 
 namespace cmnd {
 
@@ -86,5 +86,6 @@ bool Scalable::tryUndo() {
 
     return succeed;
 }
+
 
 } // namespace cmnd

@@ -1,14 +1,14 @@
-#include "ctrl/bone/bone_DeleteMode.h"
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
 #include "core/TimeLine.h"
-#include "ctrl/CmndName.h"
 #include "ctrl/TimeLineUtil.h"
-#include "ctrl/bone/bone_DeleteBone.h"
-#include "ctrl/bone/bone_Notifier.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/bone/bone_DeleteMode.h"
+#include "ctrl/bone/bone_Renderer.h"
 #include "ctrl/bone/bone_PushNewPoses.h"
 #include "ctrl/bone/bone_PushNewTopPoses.h"
-#include "ctrl/bone/bone_Renderer.h"
+#include "ctrl/bone/bone_Notifier.h"
+#include "ctrl/bone/bone_DeleteBone.h"
 
 using namespace core;
 

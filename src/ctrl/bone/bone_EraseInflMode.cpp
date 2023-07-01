@@ -1,12 +1,12 @@
-#include "ctrl/bone/bone_EraseInflMode.h"
-#include "cmnd/ScopedMacro.h"
-#include "core/Constant.h"
-#include "ctrl/CmndName.h"
-#include "ctrl/TimeLineUtil.h"
-#include "ctrl/bone/bone_Notifier.h"
-#include "ctrl/bone/bone_Renderer.h"
 #include "util/CollDetect.h"
 #include "util/MathUtil.h"
+#include "cmnd/ScopedMacro.h"
+#include "core/Constant.h"
+#include "ctrl/TimeLineUtil.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/bone/bone_EraseInflMode.h"
+#include "ctrl/bone/bone_Renderer.h"
+#include "ctrl/bone/bone_Notifier.h"
 
 using namespace core;
 
@@ -114,6 +114,7 @@ namespace bone {
 
         const float ratio = util::CollDetect::getRawSegmentRate(boneSeg, brushPos);
         auto linearRange = aBone.blendedRange(ratio);
+
 
         if (ratio < 0.0f) {
             auto len = (brushPos - ppos).length() - brushRange;

@@ -1,8 +1,8 @@
 #ifndef CORE_OBJECTTREEEVENT_H
 #define CORE_OBJECTTREEEVENT_H
 
-#include "core/ObjectNode.h"
 #include <QVector>
+#include "core/ObjectNode.h"
 namespace core {
 class Project;
 }

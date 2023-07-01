@@ -1,5 +1,5 @@
-#include "gl/DeviceInfo.h"
 #include "XC.h"
+#include "gl/DeviceInfo.h"
 #include "gl/Global.h"
 
 namespace {

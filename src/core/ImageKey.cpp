@@ -1,8 +1,8 @@
-#include "core/ImageKey.h"
 #include "Project.h"
-#include "core/Constant.h"
-#include "img/BlendMode.h"
 #include "img/ResourceNode.h"
+#include "img/BlendMode.h"
+#include "core/ImageKey.h"
+#include "core/Constant.h"
 #include "qjsonobject.h"
 #include "util/LinkPointer.h"
 

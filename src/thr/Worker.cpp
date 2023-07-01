@@ -1,6 +1,6 @@
-#include "thr/Worker.h"
-#include <QDebug>
 #include <QMutexLocker>
+#include <QDebug>
+#include "thr/Worker.h"
 
 //#define THR_WORKER_DUMP(...) qDebug(__VA_ARGS__)
 #define THR_WORKER_DUMP(...)

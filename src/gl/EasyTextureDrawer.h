@@ -1,10 +1,10 @@
 #ifndef GL_EASYTEXTUREDRAWER_H
 #define GL_EASYTEXTUREDRAWER_H
 
-#include "gl/BufferObject.h"
-#include "gl/EasyShaderProgram.h"
-#include "util/NonCopyable.h"
 #include <array>
+#include "util/NonCopyable.h"
+#include "gl/EasyShaderProgram.h"
+#include "gl/BufferObject.h"
 
 namespace gl {
 

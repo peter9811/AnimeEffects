@@ -1,12 +1,12 @@
 #ifndef GUI_KEYBINDINGDIALOG_H
 #define GUI_KEYBINDINGDIALOG_H
 
-#include "ctrl/KeyBinding.h"
-#include "gui/EasyDialog.h"
-#include "gui/KeyCommandMap.h"
 #include <QFormLayout>
 #include <QLineEdit>
 #include <QTabWidget>
+#include "ctrl/KeyBinding.h"
+#include "gui/EasyDialog.h"
+#include "gui/KeyCommandMap.h"
 
 namespace gui {
 

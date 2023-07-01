@@ -2,9 +2,9 @@
 #define CTRL_MESH_NOTIFIER_H
 
 #include "cmnd/Listener.h"
-#include "core/MeshKey.h"
-#include "core/ObjectNode.h"
 #include "core/Project.h"
+#include "core/ObjectNode.h"
+#include "core/MeshKey.h"
 
 namespace ctrl {
 namespace mesh {

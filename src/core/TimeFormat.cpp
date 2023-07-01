@@ -79,6 +79,7 @@ const QString TimeFormat::frameToString(const int aFrame, const TimeFormatType a
     }
 }
 
+
 DDHHMMSSmmm TimeFormat::msToDDHHMMSSmmm(double ms) {
     int d = 0, h = 0, m = 0, s = 0, mi = 0;
     if (ms >= (86400 * 1000)) {

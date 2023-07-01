@@ -1,19 +1,19 @@
-#include "gui/ResourceTreeWidget.h"
-#include "MainWindow.h"
+#include <QMenu>
+#include <QFileDialog>
+#include <chrono>
+#include <thread>
+#include "qfilesystemwatcher.h"
+#include "qmessagebox.h"
+#include "util/TreeUtil.h"
 #include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
 #include "ctrl/CmndName.h"
 #include "gui/ProjectHook.h"
+#include "gui/ResourceTreeWidget.h"
 #include "gui/res/res_Item.h"
-#include "gui/res/res_Notifier.h"
 #include "gui/res/res_ResourceUpdater.h"
-#include "qfilesystemwatcher.h"
-#include "qmessagebox.h"
-#include "util/TreeUtil.h"
-#include <QFileDialog>
-#include <QMenu>
-#include <chrono>
-#include <thread>
+#include "gui/res/res_Notifier.h"
+#include "MainWindow.h"
 
 namespace gui {
 

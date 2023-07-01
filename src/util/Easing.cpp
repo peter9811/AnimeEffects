@@ -1,6 +1,6 @@
+#include <QtMath>
 #include "util/Easing.h"
 #include "util/EasingName.h"
-#include <QtMath>
 
 namespace util {
 
@@ -117,6 +117,7 @@ Easing::Range Easing::rangeToEnum(QString range) {
     else
         return Easing::Range_InOut; // Default range is InOut, defined as "All" by Hidefuku
 }
+
 
 //-------------------------------------------------------------------------------------------------
 QStringList Easing::getTypeNameList() {

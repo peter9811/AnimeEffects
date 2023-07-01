@@ -1,9 +1,9 @@
-#include "ctrl/pose/pose_BoneDynamics.h"
-#include "core/Constant.h"
-#include "util/CollDetect.h"
-#include "util/MathUtil.h"
-#include "util/TreeUtil.h"
 #include <cmath>
+#include "util/TreeUtil.h"
+#include "util/MathUtil.h"
+#include "util/CollDetect.h"
+#include "core/Constant.h"
+#include "ctrl/pose/pose_BoneDynamics.h"
 
 using namespace core;
 

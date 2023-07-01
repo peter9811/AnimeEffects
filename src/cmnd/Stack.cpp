@@ -1,5 +1,5 @@
-#include "cmnd/Stack.h"
 #include "XC.h"
+#include "cmnd/Stack.h"
 
 namespace cmnd {
 

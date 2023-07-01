@@ -1,7 +1,7 @@
-#include "core/MeshTransformerResource.h"
-#include "gl/ExtendShader.h"
-#include "gl/Global.h"
 #include <QFile>
+#include "gl/Global.h"
+#include "gl/ExtendShader.h"
+#include "core/MeshTransformerResource.h"
 
 namespace core {
 
@@ -24,6 +24,7 @@ gl::EasyShaderProgram& MeshTransformerResource::program(bool aUseSkinning, bool 
 const gl::EasyShaderProgram& MeshTransformerResource::program(bool aUseSkinning, bool aUseDualQuaternion) const {
     return !aUseSkinning ? mProgram[0] : (!aUseDualQuaternion ? mProgram[1] : mProgram[2]);
 }
+
 
 void MeshTransformerResource::loadFile(const QString& aPath, QString& aDstCode) {
     QFile file(aPath);

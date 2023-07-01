@@ -1,6 +1,6 @@
-#include "util/CollDetect.h"
-#include <cmath>
 #include <limits>
+#include <cmath>
+#include "util/CollDetect.h"
 
 namespace util {
 

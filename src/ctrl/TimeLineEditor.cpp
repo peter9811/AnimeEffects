@@ -1,12 +1,6 @@
-#include "ctrl/TimeLineEditor.h"
-#include "cmnd/BasicCommands.h"
-#include "cmnd/ScopedMacro.h"
-#include "core/FFDKeyUpdater.h"
-#include "core/ImageKeyUpdater.h"
+#include <QPainter>
 #include "core/ResourceUpdatingWorkspace.h"
 #include "core/TimeKeyExpans.h"
-#include "ctrl/CmndName.h"
-#include "ctrl/time/time_Renderer.h"
 #include "ffd/ffd_Target.h"
 #include "qapplication.h"
 #include "qclipboard.h"
@@ -14,7 +8,13 @@
 #include "qjsondocument.h"
 #include "qjsonobject.h"
 #include "util/TreeIterator.h"
-#include <QPainter>
+#include "cmnd/ScopedMacro.h"
+#include "cmnd/BasicCommands.h"
+#include "ctrl/TimeLineEditor.h"
+#include "ctrl/CmndName.h"
+#include "ctrl/time/time_Renderer.h"
+#include "core/FFDKeyUpdater.h"
+#include "core/ImageKeyUpdater.h"
 
 using namespace core;
 

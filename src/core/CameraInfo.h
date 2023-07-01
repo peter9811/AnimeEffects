@@ -1,13 +1,13 @@
 #ifndef CORE_CAMERAINFO_H
 #define CORE_CAMERAINFO_H
 
-#include <QMatrix4x4>
-#include <QPointF>
-#include <QRectF>
-#include <QSize>
+#include <array>
 #include <QVector2D>
 #include <QVector3D>
-#include <array>
+#include <QSize>
+#include <QRectF>
+#include <QPointF>
+#include <QMatrix4x4>
 
 namespace core {
 

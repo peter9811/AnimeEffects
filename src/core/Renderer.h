@@ -1,12 +1,12 @@
 #ifndef CORE_RENDERER_H
 #define CORE_RENDERER_H
 
+#include <QVector3D>
+#include <QList>
 #include "XC.h"
+#include "img/BlendMode.h"
 #include "core/RenderInfo.h"
 #include "core/TimeCacheAccessor.h"
-#include "img/BlendMode.h"
-#include <QList>
-#include <QVector3D>
 
 namespace core {
 

@@ -1,6 +1,6 @@
-#include "ctrl/bone/bone_GeoBuilder.h"
-#include "core/Constant.h"
 #include "util/MathUtil.h"
+#include "core/Constant.h"
+#include "ctrl/bone/bone_GeoBuilder.h"
 
 using namespace core;
 

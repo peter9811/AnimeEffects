@@ -1,11 +1,11 @@
-#include "gui/prop/prop_DefaultKeyPanel.h"
-#include "cmnd/BasicCommands.h"
 #include "cmnd/ScopedMacro.h"
+#include "cmnd/BasicCommands.h"
 #include "core/Constant.h"
-#include "core/DepthKey.h"
 #include "core/TimeKeyExpans.h"
+#include "core/DepthKey.h"
 #include "ctrl/TimeLineUtil.h"
 #include "gui/ResourceDialog.h"
+#include "gui/prop/prop_DefaultKeyPanel.h"
 #include "gui/prop/prop_Items.h"
 
 namespace gui {

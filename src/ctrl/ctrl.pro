@@ -1,10 +1,20 @@
 include(../common.pri)
 
-TARGET = ctrl
-TEMPLATE = lib
-CONFIG += staticlib
+TARGET      = ctrl
+TEMPLATE    = lib
+DESTDIR     = .
 
-LIBS += \
+CONFIG      += staticlib
+INCLUDES    += $$PWD
+
+OBJECTS_DIR = .obj
+MOC_DIR     = .moc
+RCC_DIR     = .rcc
+
+msvc:LIBS            += ../util/util.lib ../thr/thr.lib ../cmnd/cmnd.lib ../gl/gl.lib ../img/img.lib ../core/core.lib
+msvc:PRE_TARGETDEPS  += ../util/util.lib ../thr/thr.lib ../cmnd/cmnd.lib ../gl/gl.lib ../img/img.lib ../core/core.lib
+
+mingw:LIBS            += \
     -L"$$OUT_PWD/../core/" -lcore \
     -L"$$OUT_PWD/../img/"  -limg \
     -L"$$OUT_PWD/../gl/"   -lgl \
@@ -12,7 +22,30 @@ LIBS += \
     -L"$$OUT_PWD/../thr/"  -lthr \
     -L"$$OUT_PWD/../util/" -lutil
 
+mingw:PRE_TARGETDEPS  += \
+    ../core/libcore.a \
+    ../img/libimg.a \
+    ../gl/libgl.a \
+    ../cmnd/libcmnd.a \
+    ../util/libutil.a
+
+gcc:LIBS            += \
+    -L"$$OUT_PWD/../core/" -lcore \
+    -L"$$OUT_PWD/../img/"  -limg \
+    -L"$$OUT_PWD/../gl/"   -lgl \
+    -L"$$OUT_PWD/../cmnd/" -lcmnd \
+    -L"$$OUT_PWD/../thr/"  -lthr \
+    -L"$$OUT_PWD/../util/" -lutil
+
+gcc:PRE_TARGETDEPS  += \
+    ../core/libcore.a \
+    ../img/libimg.a \
+    ../gl/libgl.a \
+    ../cmnd/libcmnd.a \
+    ../util/libutil.a
+
 INCLUDEPATH += ..
+DEPENDPATH  += ..
 
 SOURCES += \
     Driver.cpp \

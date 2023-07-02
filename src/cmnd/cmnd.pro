@@ -1,12 +1,27 @@
 include(../common.pri)
 
-TARGET = cmnd
-TEMPLATE = lib
-CONFIG += staticlib
+TARGET      = cmnd
+TEMPLATE    = lib
+DESTDIR     = .
 
-LIBS += -L"$$PWD/../util" -lutil
+CONFIG      += staticlib
+INCLUDES    += $$PWD
+
+OBJECTS_DIR = .obj
+MOC_DIR     = .moc
+RCC_DIR     = .rcc
+
+msvc:LIBS            += ../util/util.lib
+msvc:PRE_TARGETDEPS  += ../util/util.lib
+
+mingw:LIBS            += -L"$$OUT_PWD/../util/" -lutil
+mingw:PRE_TARGETDEPS  += ../util/libutil.a
+
+gcc:LIBS            += -L"$$OUT_PWD/../util/" -lutil
+gcc:PRE_TARGETDEPS  += ../util/libutil.a
 
 INCLUDEPATH += ..
+DEPENDPATH  += ..
 
 SOURCES += \
     Stack.cpp \

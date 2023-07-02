@@ -1,10 +1,18 @@
 include(../common.pri)
 
-TARGET = util
-TEMPLATE = lib
-CONFIG += staticlib
+TARGET      = util
+TEMPLATE    = lib
+DESTDIR     = .
+
+CONFIG      += staticlib
+INCLUDES    += $$PWD
+
+OBJECTS_DIR = .obj
+MOC_DIR     = .moc
+RCC_DIR     = .rcc
 
 INCLUDEPATH += ..
+DEPENDPATH  += ..
 
 SOURCES += \
     CollDetect.cpp \

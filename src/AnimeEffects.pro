@@ -1,38 +1,49 @@
-TEMPLATE = subdirs
+#-------------------------------------------------
+#
+# Project created by QtCreator 2014-10-30T19:23:19
+#
+#-------------------------------------------------
+
 TARGET = AnimeEffects
 
-# Specify subdirectories to build
-SUBDIRS = util thr cmnd gl img core ctrl gui
+TEMPLATE    = subdirs
+SUBDIRS     = util thr cmnd gl img core ctrl gui
 
-# Build in ordered mode
 CONFIG += ordered
 
-# Common paths
-TRANSLATION_DIR = $$PWD/../data/locale
-DATA_DIR = $$PWD/../data
-TOOLS_DIR = $$PWD/../tools
+TRANSLATIONS += ../data/locale/translation_ja.ts
+TRANSLATIONS += ../data/locale/translation_zh.ts
 
-# Add translations
-TRANSLATIONS += $$TRANSLATION_DIR/translation_ja.ts
-TRANSLATIONS += $$TRANSLATION_DIR/translation_zh.ts
-
-# copy resources
+# copy directory
 win32 {
-    copydata.commands = $(COPY_DIR) $$shell_path($$DATA_DIR) $$shell_path($$OUT_PWD/data)
-    copytools.commands = $(COPY_DIR) $$shell_path($$TOOLS_DIR) $$shell_path($$OUT_PWD/tools)
+copydata.commands = $(COPY_DIR) $$shell_path($$PWD/../data) $$shell_path($$OUT_PWD/data)
+copytools.commands = $(COPY_DIR) $$shell_path($$PWD/../tools) $$shell_path($$OUT_PWD/tools)
+first.depends = $(first) copydata copytools
+export(first.depends)
+export(copydata.commands)
+export(copytools.commands)
+QMAKE_EXTRA_TARGETS += first copydata copytools
 }
 unix:!macx {
-    copydata.commands = rsync -ru $$shell_path($$DATA_DIR) $$shell_path($$OUT_PWD)
-    copytools.commands = rsync -ru $$shell_path($$TOOLS_DIR) $$shell_path($$OUT_PWD)
+copydata.commands = rsync -ru $$shell_path($$PWD/../data) $$shell_path($$OUT_PWD)
+copytools.commands = rsync -ru $$shell_path($$PWD/../tools) $$shell_path($$OUT_PWD)
+first.depends = $(first) copydata copytools
+export(first.depends)
+export(copydata.commands)
+export(copytools.commands)
+QMAKE_EXTRA_TARGETS += first copydata copytools
 }
 macx {
-    copydata.commands = rsync -ru $$shell_path($$DATA_DIR) $$shell_path($$OUT_PWD/AnimeEffects.app)
-    copytools.commands = rsync -ru $$shell_path($$TOOLS_DIR) $$shell_path($$OUT_PWD/AnimeEffects.app)
+copydata.commands = rsync -ru $$shell_path($$PWD/../data) $$shell_path($$OUT_PWD/AnimeEffects.app)
+copytools.commands = rsync -ru $$shell_path($$PWD/../tools) $$shell_path($$OUT_PWD/AnimeEffects.app)
+first.depends = $(first) copydata copytools
+export(first.depends)
+export(copydata.commands)
+export(copytools.commands)
+QMAKE_EXTRA_TARGETS += first copydata copytools
 }
 
-first.depends = copydata copytools
-QMAKE_EXTRA_TARGETS += first copydata copytools
-
+# Installs
 unix{
     isEmpty(PREFIX) {
         PREFIX = /usr/local
@@ -45,5 +56,7 @@ unix{
     iconfiles.files = dist/AnimeEffects.png
     iconfiles.path = $$PREFIX/share/icons/hicolor/256x256/
 
-    INSTALLS += target shortcutfiles iconfiles
+    INSTALLS += target
+    INSTALLS += shortcutfiles
+    INSTALLS += iconfiles
 }

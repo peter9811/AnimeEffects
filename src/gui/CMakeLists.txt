@@ -1,6 +1,13 @@
 project(AnimeEffects)
 
-add_executable(${PROJECT_NAME}
+set(MACOSX_BUNDLE_ICON_FILE AnimeEffects.icns)
+
+set(app_icon_macos "../AnimeEffects.icns")
+set_source_files_properties(${app_icon_macos} PROPERTIES
+    MACOSX_PACKAGE_LOCATION "Resources"
+)
+
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     ../XC.h
     ../XCAssert.h
     ../XCReport.h
@@ -77,6 +84,8 @@ add_executable(${PROJECT_NAME}
     tool/tool_PosePanel.cpp tool/tool_PosePanel.h
     tool/tool_SRTPanel.cpp tool/tool_SRTPanel.h
     tool/tool_ViewPanel.cpp tool/tool_ViewPanel.h
+    icon.rc
+    ${app_icon_macos}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE
     ..

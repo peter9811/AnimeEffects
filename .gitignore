@@ -29,7 +29,7 @@
 *.app
 
 # Qt
-*.pro.user
+*.*.user
 
 # Build Directory
 build*/

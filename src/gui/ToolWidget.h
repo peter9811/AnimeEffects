@@ -23,8 +23,13 @@ namespace gui {
 class ToolWidget: public QWidget {
     Q_OBJECT
 public:
-    ToolWidget(ViaPoint& aViaPoint, GUIResources& aResources, KeyCommandMap& aKeyCommandMap, const QSize& aSizeHint,
-        QWidget* aParent);
+    ToolWidget(
+        ViaPoint& aViaPoint,
+        GUIResources& aResources,
+        KeyCommandMap& aKeyCommandMap,
+        const QSize& aSizeHint,
+        QWidget* aParent
+    );
 
     void setDriver(ctrl::Driver* aDriver);
 
@@ -34,17 +39,11 @@ public:
     util::Signaler<void(const MainViewSetting&)> onViewSettingChanged;
 
 private:
-    virtual QSize sizeHint() const {
-        return mSizeHint;
-    }
+    virtual QSize sizeHint() const { return mSizeHint; }
     virtual void resizeEvent(QResizeEvent* aEvent);
 
-    MainViewSetting& viewSetting() {
-        return mViaPoint.mainViewSetting();
-    }
-    const MainViewSetting& viewSetting() const {
-        return mViaPoint.mainViewSetting();
-    }
+    MainViewSetting& viewSetting() { return mViaPoint.mainViewSetting(); }
+    const MainViewSetting& viewSetting() const { return mViaPoint.mainViewSetting(); }
     void createViewPanel();
     void createModePanel();
     void setPanelActivity(bool aIsActive);

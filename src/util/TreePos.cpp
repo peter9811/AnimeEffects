@@ -5,9 +5,7 @@ namespace util {
 
 TreePos::TreePos(): mIsValid(false) {}
 
-TreePos::TreePos(const QModelIndex& aIndex): mIsValid(aIndex.isValid()) {
-    pushRecursive(aIndex);
-}
+TreePos::TreePos(const QModelIndex& aIndex): mIsValid(aIndex.isValid()) { pushRecursive(aIndex); }
 
 TreePos::TreePos(const QModelIndex& aParentIndex, int aRow): mIsValid(aParentIndex.isValid() && aRow >= 0) {
     pushRecursive(aParentIndex);
@@ -93,9 +91,7 @@ bool TreePos::contains(const TreePos& aRhs) const {
     return true;
 }
 
-void TreePos::setValidity(bool aIsValid) {
-    mIsValid = aIsValid;
-}
+void TreePos::setValidity(bool aIsValid) { mIsValid = aIsValid; }
 
 void TreePos::pushRow(int aRow) {
     if (aRow < 0)

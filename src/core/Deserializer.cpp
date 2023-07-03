@@ -4,11 +4,27 @@
 
 namespace core {
 
-Deserializer::Deserializer(util::LEStreamReader& aIn, IDSolverType& aSolver, size_t aMaxFileSize,
-    QVersionNumber aVersion, const gl::DeviceInfo& aGLDeviceInfo, util::IProgressReporter& aReporter, int aRShiftCount):
+Deserializer::Deserializer(
+    util::LEStreamReader& aIn,
+    IDSolverType& aSolver,
+    size_t aMaxFileSize,
+    QVersionNumber aVersion,
+    const gl::DeviceInfo& aGLDeviceInfo,
+    util::IProgressReporter& aReporter,
+    int aRShiftCount
+):
     mIn(aIn),
-    mIDSolver(aSolver), mBlockEnds(), mScopes(), mLog(), mValue(), mMaxFileSize(aMaxFileSize), mVersion(aVersion),
-    mGLDeviceInfo(aGLDeviceInfo), mReporter(aReporter), mRShiftCount(aRShiftCount), mFileBegin() {
+    mIDSolver(aSolver),
+    mBlockEnds(),
+    mScopes(),
+    mLog(),
+    mValue(),
+    mMaxFileSize(aMaxFileSize),
+    mVersion(aVersion),
+    mGLDeviceInfo(aGLDeviceInfo),
+    mReporter(aReporter),
+    mRShiftCount(aRShiftCount),
+    mFileBegin() {
     // set null to zero
     mIDSolver.pushData(0, nullptr);
 
@@ -16,13 +32,9 @@ Deserializer::Deserializer(util::LEStreamReader& aIn, IDSolverType& aSolver, siz
     mFileBegin = mIn.tellg();
 }
 
-void Deserializer::read(bool& aValue) {
-    aValue = (bool)mIn.readUInt32();
-}
+void Deserializer::read(bool& aValue) { aValue = (bool)mIn.readUInt32(); }
 
-void Deserializer::read(int& aValue) {
-    aValue = mIn.readSInt32();
-}
+void Deserializer::read(int& aValue) { aValue = mIn.readSInt32(); }
 
 void Deserializer::read(QList<int>& aValue) {
     int size = aValue.size();
@@ -31,9 +43,7 @@ void Deserializer::read(QList<int>& aValue) {
     }
 }
 
-void Deserializer::read(float& aValue) {
-    aValue = mIn.readFloat32();
-}
+void Deserializer::read(float& aValue) { aValue = mIn.readFloat32(); }
 
 void Deserializer::read(QPoint& aValue) {
     aValue.setX(mIn.readSInt32());
@@ -365,26 +375,16 @@ bool Deserializer::endBlock() {
     return true;
 }
 
-bool Deserializer::failure() const {
-    return mIn.isFailed();
-}
+bool Deserializer::failure() const { return mIn.isFailed(); }
 
 
-void Deserializer::pushLogScope(const QString& aScope) {
-    mScopes.push_back(aScope);
-}
+void Deserializer::pushLogScope(const QString& aScope) { mScopes.push_back(aScope); }
 
-void Deserializer::popLogScope() {
-    mScopes.pop_back();
-}
+void Deserializer::popLogScope() { mScopes.pop_back(); }
 
-void Deserializer::setLog(const QString& aLog) {
-    mLog.push_back(aLog);
-}
+void Deserializer::setLog(const QString& aLog) { mLog.push_back(aLog); }
 
-const QVector<QString>& Deserializer::logScopes() const {
-    return mScopes;
-}
+const QVector<QString>& Deserializer::logScopes() const { return mScopes; }
 
 void Deserializer::alignBy(size_t aSize) {
     size_t tail = aSize % 4;

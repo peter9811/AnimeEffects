@@ -110,9 +110,7 @@ gl::EasyShaderProgram& ShaderHolder::reserveHSVShader() {
     return *mHSVShaders[index];
 }
 
-void ShaderHolder::reserveHSVShaders() {
-    reserveHSVShader();
-}
+void ShaderHolder::reserveHSVShaders() { reserveHSVShader(); }
 
 gl::EasyShaderProgram& ShaderHolder::HSVShader() {
     const int index = 0;

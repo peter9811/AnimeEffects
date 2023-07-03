@@ -19,9 +19,7 @@ public:
 
     PSDWriter(std::ostream& aOut, const PSDFormat& aFormat);
 
-    ResultCode resultCode() const {
-        return mResultCode;
-    }
+    ResultCode resultCode() const { return mResultCode; }
     const std::string resultMessage() const;
     const std::string resultCodeString() const;
 
@@ -34,19 +32,19 @@ private:
     bool writeImageData();
     bool checkFailure();
 
-    template<typename tValue> void write(tValue aValue) {
+    template<typename tValue>
+    void write(tValue aValue) {
         tValue value = XC_TO_BIG_ENDIAN(aValue);
         mOut.write((char*)(&value), sizeof(tValue));
     }
-    template<typename tValue> void writeTo(std::ios::pos_type aPos, tValue aValue) {
+    template<typename tValue>
+    void writeTo(std::ios::pos_type aPos, tValue aValue) {
         std::ios::pos_type current = mOut.tellp();
         mOut.seekp(aPos);
         write<tValue>(aValue);
         mOut.seekp(current);
     }
-    void write(const uint8* aBuffer, int aLength) {
-        mOut.write((const char*)aBuffer, aLength);
-    }
+    void write(const uint8* aBuffer, int aLength) { mOut.write((const char*)aBuffer, aLength); }
     void writeZero(int aLength) {
         for (int i = 0; i < aLength; ++i)
             mOut.put((char)0);

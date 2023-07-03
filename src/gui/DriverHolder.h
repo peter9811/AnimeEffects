@@ -21,12 +21,8 @@ public:
     void create(core::Project& aProject, ctrl::GraphicStyle& aGraphicStyle);
     void destroy();
 
-    ctrl::Driver* driver() {
-        return mDriver.data();
-    }
-    const ctrl::Driver* driver() const {
-        return mDriver.data();
-    }
+    ctrl::Driver* driver() { return mDriver.data(); }
+    const ctrl::Driver* driver() const { return mDriver.data(); }
 
     // boostlike signals
 public:

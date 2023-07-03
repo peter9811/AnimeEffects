@@ -25,9 +25,7 @@ PoseKey::Data& PoseKey::Data::operator=(const Data& aRhs) {
     return *this;
 }
 
-PoseKey::Data::~Data() {
-    deleteAll();
-}
+PoseKey::Data::~Data() { deleteAll(); }
 
 void PoseKey::Data::createBonesBy(BoneKey& aAreaBone) {
     deleteAll();
@@ -36,13 +34,9 @@ void PoseKey::Data::createBonesBy(BoneKey& aAreaBone) {
     }
 }
 
-QList<Bone2*>& PoseKey::Data::topBones() {
-    return mTopBones;
-}
+QList<Bone2*>& PoseKey::Data::topBones() { return mTopBones; }
 
-const QList<Bone2*>& PoseKey::Data::topBones() const {
-    return mTopBones;
-}
+const QList<Bone2*>& PoseKey::Data::topBones() const { return mTopBones; }
 
 void PoseKey::Data::deleteAll() {
     qDeleteAll(mTopBones);

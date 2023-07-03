@@ -22,9 +22,7 @@ namespace img {
 
 Buffer::Buffer(): mFormat(Format_TERM), mBlock(), mWidth(), mHeight(), mChannelNum() {}
 
-Buffer::~Buffer() {
-    free();
-}
+Buffer::~Buffer() { free(); }
 
 Buffer::Buffer(const Buffer& aRhs):
     mFormat(aRhs.mFormat), mBlock(), mWidth(aRhs.mWidth), mHeight(aRhs.mHeight), mChannelNum(aRhs.mChannelNum) {

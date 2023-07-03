@@ -3,13 +3,9 @@
 
 namespace gl {
 
-EasyShaderProgram::EasyShaderProgram(): mImpl(), mVBOs() {
-    mAttributeLocations.reserve(32);
-}
+EasyShaderProgram::EasyShaderProgram(): mImpl(), mVBOs() { mAttributeLocations.reserve(32); }
 
-EasyShaderProgram::~EasyShaderProgram() {
-    qDeleteAll(mVBOs.begin(), mVBOs.end());
-}
+EasyShaderProgram::~EasyShaderProgram() { qDeleteAll(mVBOs.begin(), mVBOs.end()); }
 
 bool EasyShaderProgram::setAllSource(const ExtendShader& aShader) {
     bool result = true;
@@ -30,17 +26,11 @@ bool EasyShaderProgram::setFragmentSource(const QString& aSource) {
     return mImpl.addShaderFromSourceCode(QOpenGLShader::Fragment, aSource);
 }
 
-bool EasyShaderProgram::link() {
-    return mImpl.link();
-}
+bool EasyShaderProgram::link() { return mImpl.link(); }
 
-QString EasyShaderProgram::log() const {
-    return mImpl.log();
-}
+QString EasyShaderProgram::log() const { return mImpl.log(); }
 
-GLuint EasyShaderProgram::id() const {
-    return mImpl.programId();
-}
+GLuint EasyShaderProgram::id() const { return mImpl.programId(); }
 
 void EasyShaderProgram::bind() {
     mImpl.bind();
@@ -60,16 +50,13 @@ void EasyShaderProgram::release() {
     GL_CHECK_ERROR();
 }
 
-int EasyShaderProgram::attributeLocation(const char* aName) const {
-    return mImpl.attributeLocation(aName);
-}
+int EasyShaderProgram::attributeLocation(const char* aName) const { return mImpl.attributeLocation(aName); }
 
-int EasyShaderProgram::uniformLocation(const char* aName) const {
-    return mImpl.uniformLocation(aName);
-}
+int EasyShaderProgram::uniformLocation(const char* aName) const { return mImpl.uniformLocation(aName); }
 
 void EasyShaderProgram::setAttributeBuffer(
-    const char* aName, BufferObject& aObj, GLenum aType, int aTuple, int aOffset) {
+    const char* aName, BufferObject& aObj, GLenum aType, int aTuple, int aOffset
+) {
     const int location = mImpl.attributeLocation(aName);
     if (location != -1) {
         mImpl.enableAttributeArray(location);
@@ -98,7 +85,8 @@ void EasyShaderProgram::makeSureVBO(int aLocation, GLsizeiptr aTypeSize, const v
 }
 
 void EasyShaderProgram::setRawAttributeArray(
-    const char* aName, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride) {
+    const char* aName, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride
+) {
     const int location = mImpl.attributeLocation(aName);
     if (location < 0)
         return;
@@ -109,7 +97,8 @@ void EasyShaderProgram::setRawAttributeArray(
 }
 
 void EasyShaderProgram::setRawAttributeArray(
-    int aLocation, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride) {
+    int aLocation, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride
+) {
     if (aLocation < 0)
         return;
     makeSureVBO(aLocation, aTypeSize, aArray, aTuple * aCount);
@@ -119,7 +108,8 @@ void EasyShaderProgram::setRawAttributeArray(
 }
 
 void EasyShaderProgram::setRawAttributeIArray(
-    const char* aName, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride) {
+    const char* aName, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride
+) {
     const int location = attributeLocation(aName);
     if (location < 0)
         return;
@@ -130,7 +120,8 @@ void EasyShaderProgram::setRawAttributeIArray(
 }
 
 void EasyShaderProgram::setRawAttributeIArray(
-    int aLocation, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride) {
+    int aLocation, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride
+) {
     if (aLocation < 0)
         return;
     makeSureVBO(aLocation, aTypeSize, aArray, aTuple * aCount);

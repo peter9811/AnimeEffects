@@ -30,9 +30,7 @@ public:
     void removeImageTree(int aIndex);
 
     ImageTree imageTree(int aIndex) const;
-    const std::list<ImageTree>& imageTrees() const {
-        return mImageTrees;
-    }
+    const std::list<ImageTree>& imageTrees() const { return mImageTrees; }
 
     QString changeAbsoluteFilePath(img::ResourceNode& aTopNode, const QString& aAbsFilePath);
 

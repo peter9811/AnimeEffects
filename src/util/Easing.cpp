@@ -183,17 +183,11 @@ float Easing::calculate(Param aParam, float t, float b, float c, float d) {
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::sineIn(float t, float b, float c, float d) {
-    return -c * qCos(t / d * (M_PI / 2)) + c + b;
-}
+float Easing::sineIn(float t, float b, float c, float d) { return -c * qCos(t / d * (M_PI / 2)) + c + b; }
 
-float Easing::sineOut(float t, float b, float c, float d) {
-    return c * qSin(t / d * (M_PI / 2)) + b;
-}
+float Easing::sineOut(float t, float b, float c, float d) { return c * qSin(t / d * (M_PI / 2)) + b; }
 
-float Easing::sineInOut(float t, float b, float c, float d) {
-    return -c / 2 * (qCos(M_PI * t / d) - 1) + b;
-}
+float Easing::sineInOut(float t, float b, float c, float d) { return -c / 2 * (qCos(M_PI * t / d) - 1) + b; }
 
 //-------------------------------------------------------------------------------------------------
 float Easing::quadIn(float t, float b, float c, float d) {
@@ -280,9 +274,7 @@ float Easing::quintInOut(float t, float b, float c, float d) {
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::expoIn(float t, float b, float c, float d) {
-    return (t == 0) ? b : c * qPow(2, 10 * (t / d - 1)) + b;
-}
+float Easing::expoIn(float t, float b, float c, float d) { return (t == 0) ? b : c * qPow(2, 10 * (t / d - 1)) + b; }
 
 float Easing::expoOut(float t, float b, float c, float d) {
     return (t == d) ? b + c : c * (-qPow(2, -10 * t / d) + 1) + b;
@@ -394,9 +386,7 @@ float Easing::elasticInOut(float t, float b, float c, float d) {
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::bounceIn(float t, float b, float c, float d) {
-    return c - bounceOut(d - t, 0, c, d) + b;
-}
+float Easing::bounceIn(float t, float b, float c, float d) { return c - bounceOut(d - t, 0, c, d) + b; }
 
 float Easing::bounceOut(float t, float b, float c, float d) {
     if ((t /= d) < (1.0f / 2.75f)) {

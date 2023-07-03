@@ -10,15 +10,9 @@ namespace {
 class ObjectNodeAttrNotifier: public cmnd::Listener {
 public:
     ObjectNodeAttrNotifier(core::Project& aProject, core::ObjectNode& aNode): mProject(aProject), mNode(aNode) {}
-    virtual void onExecuted() {
-        mProject.onNodeAttributeModified(mNode, false);
-    }
-    virtual void onUndone() {
-        mProject.onNodeAttributeModified(mNode, true);
-    }
-    virtual void onRedone() {
-        mProject.onNodeAttributeModified(mNode, false);
-    }
+    virtual void onExecuted() { mProject.onNodeAttributeModified(mNode, false); }
+    virtual void onUndone() { mProject.onNodeAttributeModified(mNode, true); }
+    virtual void onRedone() { mProject.onNodeAttributeModified(mNode, false); }
 
 private:
     core::Project& mProject;
@@ -31,8 +25,14 @@ namespace prop {
 
     //-------------------------------------------------------------------------------------------------
     ConstantPanel::ConstantPanel(ViaPoint& aViaPoint, core::Project& aProject, const QString& aTitle, QWidget* aParent):
-        Panel(aTitle, aParent), mViaPoint(aViaPoint), mProject(aProject), mTarget(), mLabelWidth(),
-        mRenderingAttributes(), mBlendMode(), mClipped() {
+        Panel(aTitle, aParent),
+        mViaPoint(aViaPoint),
+        mProject(aProject),
+        mTarget(),
+        mLabelWidth(),
+        mRenderingAttributes(),
+        mBlendMode(),
+        mClipped() {
         mLabelWidth = this->fontMetrics().boundingRect(tr("MaxTextWidth :")).width();
 
         build();
@@ -52,9 +52,7 @@ namespace prop {
         updateAttribute();
     }
 
-    void ConstantPanel::setPlayBackActivity(bool aIsActive) {
-        this->setEnabled(!aIsActive);
-    }
+    void ConstantPanel::setPlayBackActivity(bool aIsActive) { this->setEnabled(!aIsActive); }
 
     void ConstantPanel::build() {
         using core::Constant;

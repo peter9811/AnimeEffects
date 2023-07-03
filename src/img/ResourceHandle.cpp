@@ -5,9 +5,7 @@ namespace img {
 
 ResourceHandle::ResourceHandle(): mData(), mOriginKeepingCount(), mKeepOrigin() {}
 
-ResourceHandle::~ResourceHandle() {
-    setOriginKeeping(false);
-}
+ResourceHandle::~ResourceHandle() { setOriginKeeping(false); }
 
 ResourceHandle::ResourceHandle(ResourceData* aData, int* aOriginKeepingCount):
     mData(aData), mOriginKeepingCount(aOriginKeepingCount), mKeepOrigin() {}
@@ -37,9 +35,7 @@ void ResourceHandle::reset() {
     setOriginKeeping(keepOrigin);
 }
 
-void ResourceHandle::swapData(ResourceHandle& aRhs) {
-    mData.swap(aRhs.mData);
-}
+void ResourceHandle::swapData(ResourceHandle& aRhs) { mData.swap(aRhs.mData); }
 
 void ResourceHandle::setOriginKeeping(bool aKeepOrigin) {
     if (!mKeepOrigin && aKeepOrigin) {

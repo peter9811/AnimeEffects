@@ -3,8 +3,10 @@
 
 namespace util {
 
-template<typename... tArgs> struct SelectArgs {
-    template<typename tClass, typename tResult> static auto from(tResult (tClass::*pmf)(tArgs...)) -> decltype(pmf) {
+template<typename... tArgs>
+struct SelectArgs {
+    template<typename tClass, typename tResult>
+    static auto from(tResult (tClass::*pmf)(tArgs...)) -> decltype(pmf) {
         return pmf;
     }
 };

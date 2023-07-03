@@ -6,9 +6,9 @@ namespace ctrl {
 namespace mesh {
 
     Notifier::Notifier(
-        core::Project& aProject, core::ObjectNode& aTarget, core::MeshKey& aKey, core::TimeLineEvent::Type aType):
-        mProject(aProject),
-        mTarget(aTarget), mKey(aKey), mEvent() {
+        core::Project& aProject, core::ObjectNode& aTarget, core::MeshKey& aKey, core::TimeLineEvent::Type aType
+    ):
+        mProject(aProject), mTarget(aTarget), mKey(aKey), mEvent() {
         mEvent.setType(aType);
         mEvent.pushTarget(mTarget, TimeKeyType_Mesh, mProject.animator().currentFrame().get());
     }

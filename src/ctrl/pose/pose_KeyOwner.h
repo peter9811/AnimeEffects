@@ -11,12 +11,8 @@ namespace pose {
     struct KeyOwner {
         KeyOwner(): key(), ownsKey(), parent() {}
 
-        explicit operator bool() const {
-            return key;
-        }
-        bool owns() const {
-            return ownsKey;
-        }
+        explicit operator bool() const { return key; }
+        bool owns() const { return ownsKey; }
         void pushOwnsKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);
         void deleteOwnsKey();
 

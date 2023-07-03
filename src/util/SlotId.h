@@ -11,12 +11,8 @@ public:
         mValue = aValue;
         return *this;
     }
-    const void* value() const {
-        return mValue;
-    }
-    bool isValid() const {
-        return mValue != NULL;
-    }
+    const void* value() const { return mValue; }
+    bool isValid() const { return mValue != NULL; }
 
 private:
     const void* mValue;

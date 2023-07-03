@@ -264,11 +264,24 @@ void CentroidMover::redo()
 }
 #else
     //-------------------------------------------------------------------------------------------------
-    CentroidMover::CentroidMover(Project& aProject, ObjectNode& aTarget, const QVector2D& aCentroidMove,
-        const QVector2D& aPositionMove, int aFrame, bool aAdjustPos):
+    CentroidMover::CentroidMover(
+        Project& aProject,
+        ObjectNode& aTarget,
+        const QVector2D& aCentroidMove,
+        const QVector2D& aPositionMove,
+        int aFrame,
+        bool aAdjustPos
+    ):
         mProject(aProject),
-        mTarget(aTarget), mKey(), mCentroidMove(aCentroidMove), mPositionMove(aPositionMove), mPrevPosition(),
-        mPrevCentroid(), mFrame(aFrame), mAdjustPos(aAdjustPos), mDone() {}
+        mTarget(aTarget),
+        mKey(),
+        mCentroidMove(aCentroidMove),
+        mPositionMove(aPositionMove),
+        mPrevPosition(),
+        mPrevCentroid(),
+        mFrame(aFrame),
+        mAdjustPos(aAdjustPos),
+        mDone() {}
 
     void CentroidMover::modifyValue(const QVector2D& aNewCentroidMove, const QVector2D& aNewPositionMove) {
         mCentroidMove = aNewCentroidMove;

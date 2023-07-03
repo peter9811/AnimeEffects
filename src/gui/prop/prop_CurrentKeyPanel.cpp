@@ -13,8 +13,14 @@ namespace prop {
 
     //-------------------------------------------------------------------------------------------------
     MoveKeyGroup::MoveKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth):
-        KeyGroup(tr("Move"), aLabelWidth), mAccessor(aAccessor), mKnocker(), mEasing(), mSpline(), mPosition(),
-        mCentroid(), mKeyExists(false) {
+        KeyGroup(tr("Move"), aLabelWidth),
+        mAccessor(aAccessor),
+        mKnocker(),
+        mEasing(),
+        mSpline(),
+        mPosition(),
+        mCentroid(),
+        mKeyExists(false) {
         mKnocker = new KeyKnocker(tr("Move"));
         mKnocker->set([=]() {
             this->mAccessor.knockNewMove();
@@ -34,8 +40,10 @@ namespace prop {
 
             // spline
             mSpline = new ComboItem(this);
-            mSpline->box().addItems(QStringList() << "Linear"
-                                                  << "CatmullRom");
+            mSpline->box().addItems(
+                QStringList() << "Linear"
+                              << "CatmullRom"
+            );
             mSpline->setValue(core::MoveKey::kDefaultSplineType, false);
             mSpline->onValueUpdated = [=](int, int aNext) { this->mAccessor.assignMoveSpline(aNext); };
             this->addItem(tr("Spline :"), mSpline);
@@ -76,9 +84,7 @@ namespace prop {
         mCentroid->setValue(data.centroid());
     }
 
-    bool MoveKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool MoveKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     RotateKeyGroup::RotateKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth):
@@ -103,8 +109,10 @@ namespace prop {
 
             // rotate
             mRotate = new DecimalItem(this);
-            mRotate->setRange(MathUtil::getDegreeFromRadian(core::Constant::rotateMin()),
-                MathUtil::getDegreeFromRadian(core::Constant::rotateMax()));
+            mRotate->setRange(
+                MathUtil::getDegreeFromRadian(core::Constant::rotateMin()),
+                MathUtil::getDegreeFromRadian(core::Constant::rotateMax())
+            );
             mRotate->onValueUpdated = [=](double, double aNext) {
                 this->mAccessor.assignRotateAngle(MathUtil::getRadianFromDegree(aNext));
             };
@@ -132,9 +140,7 @@ namespace prop {
         mRotate->setValue(util::MathUtil::getDegreeFromRadian(data.rotate()));
     }
 
-    bool RotateKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool RotateKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     ScaleKeyGroup::ScaleKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth):
@@ -184,9 +190,7 @@ namespace prop {
         mScale->setValue(data.scale());
     }
 
-    bool ScaleKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool ScaleKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     DepthKeyGroup::DepthKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth):
@@ -236,13 +240,15 @@ namespace prop {
         mDepth->setValue(data.depth());
     }
 
-    bool DepthKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool DepthKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     OpaKeyGroup::OpaKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth):
-        KeyGroup(tr("Opacity"), aLabelWidth), mAccessor(aAccessor), mKnocker(), mEasing(), mOpacity(),
+        KeyGroup(tr("Opacity"), aLabelWidth),
+        mAccessor(aAccessor),
+        mKnocker(),
+        mEasing(),
+        mOpacity(),
         mKeyExists(false) {
         mKnocker = new KeyKnocker(tr("Opacity"));
         mKnocker->set([=]() {
@@ -290,13 +296,17 @@ namespace prop {
         mOpacity->setValue(data.opacity());
     }
 
-    bool OpaKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool OpaKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     HSVKeyGroup::HSVKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth):
-        KeyGroup(tr("HSV"), aLabelWidth), mAccessor(aAccessor), mKnocker(), mEasing(), mHue(), mSaturation(), mValue(),
+        KeyGroup(tr("HSV"), aLabelWidth),
+        mAccessor(aAccessor),
+        mKnocker(),
+        mEasing(),
+        mHue(),
+        mSaturation(),
+        mValue(),
         mKeyExists(false) {
         mKnocker = new KeyKnocker(tr("HSV"));
         mKnocker->set([=]() {
@@ -367,9 +377,7 @@ namespace prop {
         mAbsolute->box().setChecked(bool(data.hsv()[3]));
     }
 
-    bool HSVKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool HSVKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     PoseKeyGroup::PoseKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth):
@@ -412,9 +420,7 @@ namespace prop {
         mEasing->setValue(data.easing(), false);
     }
 
-    bool PoseKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool PoseKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     FFDKeyGroup::FFDKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth):
@@ -457,14 +463,18 @@ namespace prop {
         mEasing->setValue(data.easing(), false);
     }
 
-    bool FFDKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool FFDKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     ImageKeyGroup::ImageKeyGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth, ViaPoint& aViaPoint):
-        KeyGroup(tr("Image"), aLabelWidth), mAccessor(aAccessor), mKnocker(), mBrowse(), mOffset(), mCellSize(),
-        mKeyExists(false), mViaPoint(aViaPoint) {
+        KeyGroup(tr("Image"), aLabelWidth),
+        mAccessor(aAccessor),
+        mKnocker(),
+        mBrowse(),
+        mOffset(),
+        mCellSize(),
+        mKeyExists(false),
+        mViaPoint(aViaPoint) {
         mKnocker = new KeyKnocker(tr("Image"));
         mKnocker->set([=]() {
             this->knockNewKey();
@@ -528,16 +538,26 @@ namespace prop {
         mCellSize->setValue(data.gridMesh().cellSize());
     }
 
-    bool ImageKeyGroup::keyExists() const {
-        return mKeyExists;
-    }
+    bool ImageKeyGroup::keyExists() const { return mKeyExists; }
 
     //-------------------------------------------------------------------------------------------------
     CurrentKeyPanel::CurrentKeyPanel(
-        ViaPoint& aViaPoint, core::Project& aProject, const QString& aTitle, QWidget* aParent):
+        ViaPoint& aViaPoint, core::Project& aProject, const QString& aTitle, QWidget* aParent
+    ):
         Panel(aTitle, aParent),
-        mViaPoint(aViaPoint), mProject(aProject), mTarget(), mKeyAccessor(), mLabelWidth(), mMovePanel(),
-        mRotatePanel(), mScalePanel(), mDepthPanel(), mOpaPanel(), mHSVPanel(), mPosePanel(), mFFDPanel(),
+        mViaPoint(aViaPoint),
+        mProject(aProject),
+        mTarget(),
+        mKeyAccessor(),
+        mLabelWidth(),
+        mMovePanel(),
+        mRotatePanel(),
+        mScalePanel(),
+        mDepthPanel(),
+        mOpaPanel(),
+        mHSVPanel(),
+        mPosePanel(),
+        mFFDPanel(),
         mImagePanel() {
         mKeyAccessor.setProject(&aProject);
         mLabelWidth = this->fontMetrics().boundingRect(tr("Max text width :")).width();

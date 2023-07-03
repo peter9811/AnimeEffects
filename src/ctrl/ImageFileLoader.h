@@ -19,9 +19,7 @@ public:
 
     bool load(const QString& aPath, core::Project& aProject, util::IProgressReporter& aReporter);
 
-    const QString& log() const {
-        return mLog;
-    }
+    const QString& log() const { return mLog; }
 
 private:
     bool createEmptyCanvas(core::Project& aProject, const QString& aTopName, const QSize& aCanvasSize);

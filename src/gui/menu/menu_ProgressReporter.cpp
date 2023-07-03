@@ -16,25 +16,15 @@ namespace menu {
         }
     }
 
-    void ProgressReporter::cancel() {
-        mDialog.cancel();
-    }
+    void ProgressReporter::cancel() { mDialog.cancel(); }
 
-    void ProgressReporter::setSection(const QString& aSection) {
-        mDialog.setLabelText(aSection);
-    }
+    void ProgressReporter::setSection(const QString& aSection) { mDialog.setLabelText(aSection); }
 
-    void ProgressReporter::setMaximum(int aMax) {
-        mDialog.setMaximum(aMax);
-    }
+    void ProgressReporter::setMaximum(int aMax) { mDialog.setMaximum(aMax); }
 
-    void ProgressReporter::setProgress(int aValue) {
-        mDialog.setValue(aValue);
-    }
+    void ProgressReporter::setProgress(int aValue) { mDialog.setValue(aValue); }
 
-    bool ProgressReporter::wasCanceled() const {
-        return mDialog.wasCanceled();
-    }
+    bool ProgressReporter::wasCanceled() const { return mDialog.wasCanceled(); }
 
     //-------------------------------------------------------------------------------------------------
     LoggableProgressDialog::LoggableProgressDialog(bool aCancelable, QWidget* aParent):
@@ -72,13 +62,9 @@ namespace menu {
         this->hide();
     }
 
-    void LoggableProgressDialog::setLabelText(const QString& aText) {
-        mLabel->setText(aText);
-    }
+    void LoggableProgressDialog::setLabelText(const QString& aText) { mLabel->setText(aText); }
 
-    void LoggableProgressDialog::setMaximum(int aMax) {
-        mBar->setMaximum(aMax);
-    }
+    void LoggableProgressDialog::setMaximum(int aMax) { mBar->setMaximum(aMax); }
 
     void LoggableProgressDialog::setValue(int aValue) {
         mBar->setValue(aValue);
@@ -98,9 +84,7 @@ namespace menu {
 #endif
     }
 
-    bool LoggableProgressDialog::wasCanceled() const {
-        return mCanceled;
-    }
+    bool LoggableProgressDialog::wasCanceled() const { return mCanceled; }
 
     //-------------------------------------------------------------------------------------------------
     LoggableProgressReporter::LoggableProgressReporter(bool aCancelable, QWidget* aParent):
@@ -108,29 +92,17 @@ namespace menu {
         mDialog.show();
     }
 
-    void LoggableProgressReporter::cancel() {
-        mDialog.cancel();
-    }
+    void LoggableProgressReporter::cancel() { mDialog.cancel(); }
 
-    void LoggableProgressReporter::setSection(const QString& aSection) {
-        mDialog.setLabelText(aSection);
-    }
+    void LoggableProgressReporter::setSection(const QString& aSection) { mDialog.setLabelText(aSection); }
 
-    void LoggableProgressReporter::setMaximum(int aMax) {
-        mDialog.setMaximum(aMax);
-    }
+    void LoggableProgressReporter::setMaximum(int aMax) { mDialog.setMaximum(aMax); }
 
-    void LoggableProgressReporter::setProgress(int aValue) {
-        mDialog.setValue(aValue);
-    }
+    void LoggableProgressReporter::setProgress(int aValue) { mDialog.setValue(aValue); }
 
-    bool LoggableProgressReporter::wasCanceled() const {
-        return mDialog.wasCanceled();
-    }
+    bool LoggableProgressReporter::wasCanceled() const { return mDialog.wasCanceled(); }
 
-    void LoggableProgressReporter::pushLog(const QString& aMessage, ctrl::UILogType) {
-        mDialog.setLog(aMessage);
-    }
+    void LoggableProgressReporter::pushLog(const QString& aMessage, ctrl::UILogType) { mDialog.setLog(aMessage); }
 
 } // namespace menu
 } // namespace gui

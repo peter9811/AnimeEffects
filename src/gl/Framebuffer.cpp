@@ -4,9 +4,7 @@
 
 namespace gl {
 
-Framebuffer::Framebuffer(): mId(0), mColors() {
-    Global::functions().glGenFramebuffers(1, &mId);
-}
+Framebuffer::Framebuffer(): mId(0), mColors() { Global::functions().glGenFramebuffers(1, &mId); }
 
 Framebuffer::~Framebuffer() {
     if (mId != 0) {
@@ -67,16 +65,10 @@ bool Framebuffer::isComplete() const {
     return attachResult == GL_FRAMEBUFFER_COMPLETE;
 }
 
-void Framebuffer::bind() {
-    Global::functions().glBindFramebuffer(GL_FRAMEBUFFER, mId);
-}
+void Framebuffer::bind() { Global::functions().glBindFramebuffer(GL_FRAMEBUFFER, mId); }
 
-void Framebuffer::release() {
-    Global::functions().glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
+void Framebuffer::release() { Global::functions().glBindFramebuffer(GL_FRAMEBUFFER, 0); }
 
-GLuint Framebuffer::colorAttachment(int aAttachIndex) const {
-    return mColors.at(aAttachIndex);
-}
+GLuint Framebuffer::colorAttachment(int aAttachIndex) const { return mColors.at(aAttachIndex); }
 
 } // namespace gl

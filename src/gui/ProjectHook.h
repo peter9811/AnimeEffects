@@ -14,22 +14,14 @@ public:
 
     void grabObjectTrees(QVector<QTreeWidgetItem*>* aTrees);
     QVector<QTreeWidgetItem*>* releaseObjectTrees();
-    bool hasObjectTrees() const {
-        return mObjectTrees;
-    }
+    bool hasObjectTrees() const { return mObjectTrees; }
 
     void grabResourceTrees(QVector<QTreeWidgetItem*>* aTrees);
     QVector<QTreeWidgetItem*>* releaseResourceTrees();
-    bool hasResourceTrees() const {
-        return mResourceTrees;
-    }
+    bool hasResourceTrees() const { return mResourceTrees; }
 
-    core::RenderInfo& renderInfo() {
-        return mRenderInfo;
-    }
-    const core::RenderInfo& renderInfo() const {
-        return mRenderInfo;
-    }
+    core::RenderInfo& renderInfo() { return mRenderInfo; }
+    const core::RenderInfo& renderInfo() const { return mRenderInfo; }
 
 private:
     void deleteObjectTrees();

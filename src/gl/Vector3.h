@@ -43,15 +43,9 @@ struct Vector3 {
     GLfloat x;
     GLfloat y;
     GLfloat z;
-    QVector3D pos() const {
-        return QVector3D(x, y, z);
-    }
-    QVector2D pos2D() const {
-        return QVector2D(x, y);
-    }
-    Vector2 vec2() const {
-        return Vector2::make(x, y);
-    }
+    QVector3D pos() const { return QVector3D(x, y, z); }
+    QVector2D pos2D() const { return QVector2D(x, y); }
+    Vector2 vec2() const { return Vector2::make(x, y); }
 
 
     Vector3 operator+(const Vector3& aRhs) const {

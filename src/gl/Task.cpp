@@ -8,9 +8,7 @@ namespace gl {
 
 Task::Task(): mSync(0) {}
 
-Task::~Task() {
-    deleteSync();
-}
+Task::~Task() { deleteSync(); }
 
 void Task::request() {
     deleteSync();

@@ -33,11 +33,11 @@ public:
 
     static void setEdgeColor(uint8* aImage, const QSize& aSize, const QColor& aColor);
 
-    static void copyImage(
-        uint8* aDst, const QSize& aDstSize, const QPoint& aTopLeft, const uint8* aSrc, const QSize& aSrcSize);
+    static void
+    copyImage(uint8* aDst, const QSize& aDstSize, const QPoint& aTopLeft, const uint8* aSrc, const QSize& aSrcSize);
 
-    static std::pair<XCMemBlock, QRect> createTextureImage(
-        const PSDFormat::Header& aHeader, const PSDFormat::Layer& aLayer);
+    static std::pair<XCMemBlock, QRect>
+    createTextureImage(const PSDFormat::Header& aHeader, const PSDFormat::Layer& aLayer);
     static std::pair<XCMemBlock, QRect> createTextureImage(const QImage& aImage);
 
     static ResourceNode* createResourceNodes(PSDFormat& aFormat, bool aLoadImage);

@@ -52,24 +52,12 @@ public:
                 edge[i] = 0;
         }
         int edge[4]; // t, l, b, r
-        int width() const {
-            return edge[3] - edge[1];
-        }
-        int height() const {
-            return edge[2] - edge[0];
-        }
-        int left() const {
-            return edge[1];
-        }
-        int top() const {
-            return edge[0];
-        }
-        int right() const {
-            return edge[3];
-        }
-        int bottom() const {
-            return edge[2];
-        }
+        int width() const { return edge[3] - edge[1]; }
+        int height() const { return edge[2] - edge[0]; }
+        int left() const { return edge[1]; }
+        int top() const { return edge[0]; }
+        int right() const { return edge[3]; }
+        int bottom() const { return edge[2]; }
     };
 
     struct BlendingRange {
@@ -147,12 +135,15 @@ public:
     class Layer {
     public:
         Layer():
-            entryType(LayerEntryType_Layer), entryKey(), channelCount(), opacity(), clipping(), flagsOffset(), flags() {
-        }
+            entryType(LayerEntryType_Layer),
+            entryKey(),
+            channelCount(),
+            opacity(),
+            clipping(),
+            flagsOffset(),
+            flags() {}
 
-        bool isVisible() const {
-            return (flags & 0x02) == 0;
-        }
+        bool isVisible() const { return (flags & 0x02) == 0; }
         LayerEntryType entryType; // doesn't ref in writer
         std::string entryKey; // doesn't ref in writer
         Rect rect;
@@ -199,40 +190,20 @@ public:
 
     PSDFormat(): mHeader(), mColorModeData(), mImageResources(), mLayerAndMaskInfo(), mImageData() {}
 
-    Header& header() {
-        return mHeader;
-    }
-    const Header& header() const {
-        return mHeader;
-    }
+    Header& header() { return mHeader; }
+    const Header& header() const { return mHeader; }
 
-    ColorModeData& colorModeData() {
-        return mColorModeData;
-    }
-    const ColorModeData& colorModeData() const {
-        return mColorModeData;
-    }
+    ColorModeData& colorModeData() { return mColorModeData; }
+    const ColorModeData& colorModeData() const { return mColorModeData; }
 
-    ImageResources& imageResources() {
-        return mImageResources;
-    }
-    const ImageResources& imageResources() const {
-        return mImageResources;
-    }
+    ImageResources& imageResources() { return mImageResources; }
+    const ImageResources& imageResources() const { return mImageResources; }
 
-    LayerAndMaskInfo& layerAndMaskInfo() {
-        return mLayerAndMaskInfo;
-    }
-    const LayerAndMaskInfo& layerAndMaskInfo() const {
-        return mLayerAndMaskInfo;
-    }
+    LayerAndMaskInfo& layerAndMaskInfo() { return mLayerAndMaskInfo; }
+    const LayerAndMaskInfo& layerAndMaskInfo() const { return mLayerAndMaskInfo; }
 
-    ImageData& imageData() {
-        return mImageData;
-    }
-    const ImageData& imageData() const {
-        return mImageData;
-    }
+    ImageData& imageData() { return mImageData; }
+    const ImageData& imageData() const { return mImageData; }
 
 private:
     Header mHeader;

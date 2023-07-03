@@ -6,17 +6,34 @@
 namespace core {
 
 Bone2::Bone2():
-    TreeNodeBase(this), mOrigin(), mLocalPos(), mLocalAngle(), mRange(), mShape(), mBindingNodes(), mWorldPos(),
-    mWorldAngle(), mRotate(), mFocus(), mSelect() {}
+    TreeNodeBase(this),
+    mOrigin(),
+    mLocalPos(),
+    mLocalAngle(),
+    mRange(),
+    mShape(),
+    mBindingNodes(),
+    mWorldPos(),
+    mWorldAngle(),
+    mRotate(),
+    mFocus(),
+    mSelect() {}
 
 Bone2::Bone2(const Bone2& aRhs):
-    TreeNodeBase(this), mOrigin(aRhs.mOrigin), mLocalPos(aRhs.mLocalPos), mLocalAngle(aRhs.mLocalAngle),
-    mRange(aRhs.mRange), mShape(aRhs.mShape), mBindingNodes(aRhs.mBindingNodes), mWorldPos(aRhs.mWorldPos),
-    mWorldAngle(aRhs.mWorldAngle), mRotate(aRhs.mRotate), mFocus(), mSelect() {}
+    TreeNodeBase(this),
+    mOrigin(aRhs.mOrigin),
+    mLocalPos(aRhs.mLocalPos),
+    mLocalAngle(aRhs.mLocalAngle),
+    mRange(aRhs.mRange),
+    mShape(aRhs.mShape),
+    mBindingNodes(aRhs.mBindingNodes),
+    mWorldPos(aRhs.mWorldPos),
+    mWorldAngle(aRhs.mWorldAngle),
+    mRotate(aRhs.mRotate),
+    mFocus(),
+    mSelect() {}
 
-Bone2::~Bone2() {
-    qDeleteAll(children().begin(), children().end());
-}
+Bone2::~Bone2() { qDeleteAll(children().begin(), children().end()); }
 
 void Bone2::setWorldPos(const QVector2D& aWorldPos, const Bone2* aParent) {
     XC_ASSERT(!mOrigin);
@@ -37,9 +54,7 @@ void Bone2::setShape(const BoneShape& aShape) {
     mShape = aShape;
 }
 
-const BoneShape& Bone2::shape() const {
-    return mOrigin ? mOrigin->mShape : mShape;
-}
+const BoneShape& Bone2::shape() const { return mOrigin ? mOrigin->mShape : mShape; }
 
 QList<ObjectNode*>& Bone2::bindingNodes() {
     XC_ASSERT(!mOrigin);
@@ -58,21 +73,13 @@ bool Bone2::isBinding(const ObjectNode& aNode) const {
     return false;
 }
 
-void Bone2::setRotate(float aRotate) {
-    mRotate = aRotate;
-}
+void Bone2::setRotate(float aRotate) { mRotate = aRotate; }
 
-float Bone2::rotate() const {
-    return mRotate;
-}
+float Bone2::rotate() const { return mRotate; }
 
-const QVector2D& Bone2::localPos() const {
-    return mOrigin ? mOrigin->mLocalPos : mLocalPos;
-}
+const QVector2D& Bone2::localPos() const { return mOrigin ? mOrigin->mLocalPos : mLocalPos; }
 
-float Bone2::localAngle() const {
-    return mOrigin ? mOrigin->mLocalAngle : mLocalAngle;
-}
+float Bone2::localAngle() const { return mOrigin ? mOrigin->mLocalAngle : mLocalAngle; }
 
 void Bone2::setRange(int aIndex, const QVector2D& aRange) {
     XC_ASSERT(!mOrigin);
@@ -108,13 +115,9 @@ void Bone2::updateWorldTransform() {
     }
 }
 
-const QVector2D& Bone2::worldPos() const {
-    return mWorldPos;
-}
+const QVector2D& Bone2::worldPos() const { return mWorldPos; }
 
-float Bone2::worldAngle() const {
-    return mWorldAngle;
-}
+float Bone2::worldAngle() const { return mWorldAngle; }
 
 QMatrix4x4 Bone2::transformationMatrix(const QVector2D& aToPos, float aToAngle) const {
     static const QVector3D kRotateAxis(0.0f, 0.0f, 1.0f);
@@ -190,7 +193,8 @@ bool Bone2::serialize(Serializer& aOut) const {
     return aOut.checkStream();
 }
 
-template<typename vec2d> void addVecToJson(vec2d vector, QJsonObject* json, QString varName) {
+template<typename vec2d>
+void addVecToJson(vec2d vector, QJsonObject* json, QString varName) {
     json->insert(varName + "X", vector.x());
     json->insert(varName + "Y", vector.y());
 }

@@ -9,7 +9,11 @@ static const int kAttachmentId = 0;
 namespace core {
 
 ClippingFrame::ClippingFrame():
-    mFramebuffer(), mTexture(), mClippingId(0), mSingulationShader(), mIndices(GL_ELEMENT_ARRAY_BUFFER),
+    mFramebuffer(),
+    mTexture(),
+    mClippingId(0),
+    mSingulationShader(),
+    mIndices(GL_ELEMENT_ARRAY_BUFFER),
     mRenderStamp() {
     mFramebuffer.reset(new gl::Framebuffer());
     mTexture.reset(new gl::Texture());
@@ -162,13 +166,9 @@ void ClippingFrame::singulate(uint8 aId) {
     XC_ASSERT(ggl.glGetError() == GL_NO_ERROR);
 }
 
-void ClippingFrame::bind() {
-    mFramebuffer->bind();
-}
+void ClippingFrame::bind() { mFramebuffer->bind(); }
 
-void ClippingFrame::release() {
-    mFramebuffer->release();
-}
+void ClippingFrame::release() { mFramebuffer->release(); }
 
 void ClippingFrame::setupDrawBuffers() {
     const GLenum attachments[] = {GL_COLOR_ATTACHMENT0};

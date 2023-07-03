@@ -33,8 +33,17 @@ namespace ctrl {
 
 //-------------------------------------------------------------------------------------------------
 TimeLineEditor::TimeLineEditor():
-    mProject(), mRows(), mSelectingRow(), mTimeMax(), mState(State_Standby), mTimeCurrent(kTimeLineMargin),
-    mTimeScale(), mFocus(mRows, mTimeScale, kTimeLineMargin), mMoveRef(), mMoveFrame(), mOnUpdatingKey(false),
+    mProject(),
+    mRows(),
+    mSelectingRow(),
+    mTimeMax(),
+    mState(State_Standby),
+    mTimeCurrent(kTimeLineMargin),
+    mTimeScale(),
+    mFocus(mRows, mTimeScale, kTimeLineMargin),
+    mMoveRef(),
+    mMoveFrame(),
+    mOnUpdatingKey(false),
     mShowSelectionRange(false) {
     mRows.reserve(64);
 
@@ -540,7 +549,8 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
     }
     if (!(frameLessThanZero == 0) || !(timelineHasKey == 0) || !(nullLog == 0)) {
         returnString.append(
-            "\nNumber of errors is [" + QString::number(frameLessThanZero + timelineHasKey + nullLog) + "]");
+            "\nNumber of errors is [" + QString::number(frameLessThanZero + timelineHasKey + nullLog) + "]"
+        );
         // Error logging
         if (frameLessThanZero != 0) {
             returnString.append("\nError: Frame is less than zero [" + QString::number(frameLessThanZero) + "]");
@@ -726,13 +736,9 @@ void TimeLineEditor::updateWheel(int aDelta, bool aInvertScaling) {
     }
 }
 
-void TimeLineEditor::setFrame(core::Frame aFrame) {
-    mTimeCurrent.setFrame(mTimeScale, aFrame);
-}
+void TimeLineEditor::setFrame(core::Frame aFrame) { mTimeCurrent.setFrame(mTimeScale, aFrame); }
 
-core::Frame TimeLineEditor::currentFrame() const {
-    return mTimeCurrent.frame();
-}
+core::Frame TimeLineEditor::currentFrame() const { return mTimeCurrent.frame(); }
 
 QSize TimeLineEditor::modelSpaceSize() const {
     int height = kHeaderHeight;
@@ -746,12 +752,11 @@ QSize TimeLineEditor::modelSpaceSize() const {
     return QSize(width, height);
 }
 
-QPoint TimeLineEditor::currentTimeCursorPos() const {
-    return mTimeCurrent.handlePos();
-}
+QPoint TimeLineEditor::currentTimeCursorPos() const { return mTimeCurrent.handlePos(); }
 
 void TimeLineEditor::render(
-    QPainter& aPainter, const CameraInfo& aCamera, theme::TimeLine& aTheme, const QRect& aCullRect) {
+    QPainter& aPainter, const CameraInfo& aCamera, theme::TimeLine& aTheme, const QRect& aCullRect
+) {
     if (aCamera.screenWidth() < 2 * kTimeLineMargin)
         return;
 

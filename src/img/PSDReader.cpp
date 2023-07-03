@@ -3,10 +3,10 @@
 #include "img/PSDReader.h"
 
 
-//#define PSDREADER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
+// #define PSDREADER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define PSDREADER_DUMP(...)
 
-//#define PSDREADER_VERBOSE(...) XC_DEBUG_REPORT(__VA_ARGS__)
+// #define PSDREADER_VERBOSE(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define PSDREADER_VERBOSE(...)
 
 namespace img {
@@ -565,7 +565,8 @@ bool PSDReader::loadLayerAndMaskInfo() {
 // additional layer info
 //------------------------------------------------------------//
 bool PSDReader::loadAdditionalLayerInfo(
-    std::list<PSDFormat::AdditionalLayerInfoPtr>& aList, PSDFormat::Layer* aLayer, std::ios::pos_type aEndPos) {
+    std::list<PSDFormat::AdditionalLayerInfoPtr>& aList, PSDFormat::Layer* aLayer, std::ios::pos_type aEndPos
+) {
     int length = aEndPos - tellg();
     std::string dumpKeys; // for dump
     while (length >= 12) {
@@ -631,8 +632,8 @@ bool PSDReader::loadAdditionalLayerInfo(
             }
 
             skipTo(dataBeginPos);
-        } else if (aLayer && info->key == "lsdk" &&
-            info->dataLength >= 4) { // Nested Section divider setting (Undocumented option)
+        } else if (aLayer && info->key == "lsdk" && info->dataLength >= 4) { // Nested Section divider setting
+                                                                             // (Undocumented option)
 
             std::ios::pos_type dataBeginPos = tellg();
             // entry

@@ -3,7 +3,11 @@
 namespace gui {
 
 TargetWidget::TargetWidget(ViaPoint& aViaPoint, GUIResources& aResources, QWidget* aParent, const QSize& aSizeHint):
-    QSplitter(Qt::Vertical, aParent), mProject(), mResources(aResources), mSizeHint(aSizeHint), mIsFirstTime(true),
+    QSplitter(Qt::Vertical, aParent),
+    mProject(),
+    mResources(aResources),
+    mSizeHint(aSizeHint),
+    mIsFirstTime(true),
     mSuspendCount(0) {
     mHorizontalSplitter = new QSplitter(this);
     mObjTree = new ObjectTreeWidget(aViaPoint, aResources, this);
@@ -45,26 +49,18 @@ void TargetWidget::setProject(core::Project* aProject) {
     mInfoLabel->setProject(aProject);
 }
 
-core::Frame TargetWidget::currentFrame() const {
-    return mTimeLine->currentFrame();
-}
+core::Frame TargetWidget::currentFrame() const { return mTimeLine->currentFrame(); }
 
-void TargetWidget::stop() {
-    mPlayBack->pushPauseButton();
-}
+void TargetWidget::stop() { mPlayBack->pushPauseButton(); }
 
-void TargetWidget::suspend() {
-    ++mSuspendCount;
-}
+void TargetWidget::suspend() { ++mSuspendCount; }
 
 void TargetWidget::resume() {
     XC_ASSERT(mSuspendCount > 0);
     --mSuspendCount;
 }
 
-bool TargetWidget::isSuspended() const {
-    return mSuspendCount > 0;
-}
+bool TargetWidget::isSuspended() const { return mSuspendCount > 0; }
 
 void TargetWidget::onPlayBackButtonPushed(PlayBackWidget::PushType aType) {
     if (!mProject)

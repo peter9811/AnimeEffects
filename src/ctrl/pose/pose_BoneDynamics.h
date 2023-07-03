@@ -13,12 +13,8 @@ namespace pose {
 
         void setConduction(float aRate);
 
-        RigidBone& rigidTopBone() {
-            return *mRigidTopBone;
-        }
-        const RigidBone& rigidTopBone() const {
-            return *mRigidTopBone;
-        }
+        RigidBone& rigidTopBone() { return *mRigidTopBone; }
+        const RigidBone& rigidTopBone() const { return *mRigidTopBone; }
         QVector<float> rotationDifferences() const;
 
         void pullBone(RigidBone& aTarget, const QVector2D& aPull, float aPullPos);

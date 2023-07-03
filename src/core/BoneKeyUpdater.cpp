@@ -73,7 +73,8 @@ void BoneKeyUpdater::onTimeLineModified(TimeLineEvent& aEvent) {
 }
 
 void BoneKeyUpdater::onTimeLineModified(
-    Project& aProject, ObjectNode& aNode, const QVector<ObjectNode*>& aUniqueRoots, bool aResetCacheList) {
+    Project& aProject, ObjectNode& aNode, const QVector<ObjectNode*>& aUniqueRoots, bool aResetCacheList
+) {
     if (!aNode.timeLine())
         return;
     auto& map = aNode.timeLine()->map(TimeKeyType_Bone);
@@ -159,9 +160,7 @@ class Unbinder {
 public:
     Unbinder(): mNode(), mPositions() {}
 
-    void initNode(ObjectNode& aNode) {
-        mNode = &aNode;
-    }
+    void initNode(ObjectNode& aNode) { mNode = &aNode; }
 
     bool add(Bone2& aBone) {
         if (!aBone.bindingNodes().contains(mNode))
@@ -206,9 +205,7 @@ cmnd::Base* BoneKeyUpdater::createNodeUnbinderForDelete(ObjectNode& aNode) {
         Unbinder mUnbinder;
 
     public:
-        UnbinderForDelete(ObjectNode& aNode): mNode(aNode), mUnbinder() {
-            mUnbinder.initNode(aNode);
-        }
+        UnbinderForDelete(ObjectNode& aNode): mNode(aNode), mUnbinder() { mUnbinder.initNode(aNode); }
 
         virtual void exec() {
             for (ObjectNode* node = mNode.parent(); node; node = node->parent()) {
@@ -226,13 +223,9 @@ cmnd::Base* BoneKeyUpdater::createNodeUnbinderForDelete(ObjectNode& aNode) {
             redo();
         }
 
-        virtual void redo() {
-            mUnbinder.exec();
-        }
+        virtual void redo() { mUnbinder.exec(); }
 
-        virtual void undo() {
-            mUnbinder.undo();
-        }
+        virtual void undo() { mUnbinder.undo(); }
     };
 
     return new UnbinderForDelete(aNode);
@@ -311,9 +304,7 @@ cmnd::Base* BoneKeyUpdater::createNodesUnbinderForMove(ObjectTree& aTree, const 
         NodesUnbinderForMove(ObjectTree& aTree, const BoneUnbindWorkspacePtr& aWorkspace):
             mTree(aTree), mWorkspace(aWorkspace), mUnbinders() {}
 
-        ~NodesUnbinderForMove() {
-            qDeleteAll(mUnbinders);
-        }
+        ~NodesUnbinderForMove() { qDeleteAll(mUnbinders); }
 
         virtual void exec() {
             using util::TreeUtil;

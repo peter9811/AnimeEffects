@@ -10,8 +10,17 @@ namespace gui {
 namespace tool {
 
     FFDPanel::FFDPanel(QWidget* aParent, GUIResources& aResources):
-        QGroupBox(aParent), mResources(aResources), mParam(), mTypeGroup(), mHardnessGroup(), mRadius(), mPressure(),
-        mBlur(), mEraseHardnessGroup(), mEraseRadius(), mErasePressure() {
+        QGroupBox(aParent),
+        mResources(aResources),
+        mParam(),
+        mTypeGroup(),
+        mHardnessGroup(),
+        mRadius(),
+        mPressure(),
+        mBlur(),
+        mEraseHardnessGroup(),
+        mEraseRadius(),
+        mErasePressure() {
         this->setTitle(tr("Free Form Deform"));
         createBrush();
         updateTypeParam(mParam.type);
@@ -27,7 +36,8 @@ namespace tool {
         mTypeGroup->setChoice(mParam.type);
         mTypeGroup->setToolTips(QStringList() << tr("Move vertex") << tr("Deform mesh") << tr("Erase deformations"));
         mTypeGroup->setIcons(
-            QVector<QIcon>() << mResources.icon("move") << mResources.icon("pencil") << mResources.icon("eraser"));
+            QVector<QIcon>() << mResources.icon("move") << mResources.icon("pencil") << mResources.icon("eraser")
+        );
         mTypeGroup->connect([=](int aIndex) {
             this->mParam.type = (ctrl::FFDParam::Type)aIndex;
             this->updateTypeParam(this->mParam.type);
@@ -38,8 +48,10 @@ namespace tool {
         mHardnessGroup.reset(new SingleOutItem(3, QSize(kButtonSpace, kButtonSpace), this));
         mHardnessGroup->setChoice(mParam.hardness);
         mHardnessGroup->setToolTips(QStringList() << tr("Soft") << tr("Normal") << tr("Hard"));
-        mHardnessGroup->setIcons(QVector<QIcon>()
-            << mResources.icon("hardness1") << mResources.icon("hardness2") << mResources.icon("hardness3"));
+        mHardnessGroup->setIcons(
+            QVector<QIcon>() << mResources.icon("hardness1") << mResources.icon("hardness2")
+                             << mResources.icon("hardness3")
+        );
         mHardnessGroup->connect([=](int aIndex) {
             this->mParam.hardness = aIndex;
             this->onParamUpdated(false);
@@ -75,8 +87,10 @@ namespace tool {
         mEraseHardnessGroup.reset(new SingleOutItem(3, QSize(kButtonSpace, kButtonSpace), this));
         mEraseHardnessGroup->setChoice(mParam.eraseHardness);
         mEraseHardnessGroup->setToolTips(QStringList() << tr("Soft") << tr("Normal") << tr("Hard"));
-        mEraseHardnessGroup->setIcons(QVector<QIcon>()
-            << mResources.icon("hardness1") << mResources.icon("hardness2") << mResources.icon("hardness3"));
+        mEraseHardnessGroup->setIcons(
+            QVector<QIcon>() << mResources.icon("hardness1") << mResources.icon("hardness2")
+                             << mResources.icon("hardness3")
+        );
         mEraseHardnessGroup->connect([=](int aIndex) {
             this->mParam.eraseHardness = aIndex;
             this->onParamUpdated(false);

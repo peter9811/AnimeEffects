@@ -12,9 +12,7 @@ namespace ctrl {
 MeshEditor::MeshEditor(Project& aProject, UILogger& aUILogger):
     mProject(aProject), mUILogger(aUILogger), mParam(), mCurrent(), mTarget(), mKeyOwner() {}
 
-MeshEditor::~MeshEditor() {
-    finalize();
-}
+MeshEditor::~MeshEditor() { finalize(); }
 
 bool MeshEditor::setTarget(core::ObjectNode* aTarget) {
     auto prev = mTarget.node;
@@ -63,9 +61,7 @@ bool MeshEditor::updateCursor(const core::CameraInfo& aCamera, const core::Abstr
     return false;
 }
 
-void MeshEditor::updateEvent(EventType) {
-    resetCurrentTarget();
-}
+void MeshEditor::updateEvent(EventType) { resetCurrentTarget(); }
 
 void MeshEditor::renderQt(const core::RenderInfo& aInfo, QPainter& aPainter) {
     if (mCurrent) {
@@ -108,9 +104,7 @@ void MeshEditor::resetTarget(ObjectNode* aPrev, ObjectNode* aNext, QString* aMes
     }
 }
 
-void MeshEditor::resetCurrentTarget() {
-    resetTarget(mTarget.node, mTarget.node);
-}
+void MeshEditor::resetCurrentTarget() { resetTarget(mTarget.node, mTarget.node); }
 
 void MeshEditor::createMode() {
     mCurrent.reset();

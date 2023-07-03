@@ -41,8 +41,15 @@ namespace bone {
 
     //-------------------------------------------------------------------------------------------------
     DeleteBoneImpl::DeleteBoneImpl(QList<core::Bone2*>& aTopBones, core::Bone2& aBone, bool aIsOrigin):
-        mTopBones(aTopBones), mBone(aBone), mParent(), mParentIndex(), mChildrenCount(), mChildrenPos(),
-        mGrandChildrenPos(), mIsOrigin(aIsOrigin), mDone() {}
+        mTopBones(aTopBones),
+        mBone(aBone),
+        mParent(),
+        mParentIndex(),
+        mChildrenCount(),
+        mChildrenPos(),
+        mGrandChildrenPos(),
+        mIsOrigin(aIsOrigin),
+        mDone() {}
 
     DeleteBoneImpl::~DeleteBoneImpl() {
         if (mDone) {

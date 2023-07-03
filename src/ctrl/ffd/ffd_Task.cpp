@@ -14,24 +14,39 @@ namespace ffd {
 
     //-------------------------------------------------------------------------------------------------
     Task::Task(TaskResource& aResource, core::MeshTransformerResource& aMeshRes):
-        mResource(aResource), mType(Type_TERM), mMeshTransformer(aMeshRes), mMeshBuffer(), mSrcMesh(), mSrcExpans(),
-        mSrcOriginOffset(), mArrayedConnectionList(), mSrcBlurPositions(gl::ComputeTexture1D::CompoType_F32, 2),
-        mWorkInMesh(GL_ARRAY_BUFFER), mWorkInWeight(GL_ARRAY_BUFFER), mOutMesh(GL_TRANSFORM_FEEDBACK_BUFFER),
-        mOutWeight(GL_TRANSFORM_FEEDBACK_BUFFER), mOriginMesh(), mDstMesh(), mDstWeight(), mVtxCount(),
-        mDstBufferCount(), mParam(), mBrushCenter(), mBrushVel(), mUseBlur(), mFocusIndex(-1), mDragIndex(-1),
+        mResource(aResource),
+        mType(Type_TERM),
+        mMeshTransformer(aMeshRes),
+        mMeshBuffer(),
+        mSrcMesh(),
+        mSrcExpans(),
+        mSrcOriginOffset(),
+        mArrayedConnectionList(),
+        mSrcBlurPositions(gl::ComputeTexture1D::CompoType_F32, 2),
+        mWorkInMesh(GL_ARRAY_BUFFER),
+        mWorkInWeight(GL_ARRAY_BUFFER),
+        mOutMesh(GL_TRANSFORM_FEEDBACK_BUFFER),
+        mOutWeight(GL_TRANSFORM_FEEDBACK_BUFFER),
+        mOriginMesh(),
+        mDstMesh(),
+        mDstWeight(),
+        mVtxCount(),
+        mDstBufferCount(),
+        mParam(),
+        mBrushCenter(),
+        mBrushVel(),
+        mUseBlur(),
+        mFocusIndex(-1),
+        mDragIndex(-1),
         mDragMove() {
         // GLint val;
         // glGetIntegerv(GL_MAX_TEXTURE_SIZE, &val);
         // qDebug() << val;
     }
 
-    void Task::setType(Type aType) {
-        mType = aType;
-    }
+    void Task::setType(Type aType) { mType = aType; }
 
-    void Task::setDragIndex(int aIndex) {
-        mDragIndex = aIndex;
-    }
+    void Task::setDragIndex(int aIndex) { mDragIndex = aIndex; }
 
     void Task::resetDst(int aVtxCount) {
         XC_ASSERT(aVtxCount > 0);
@@ -48,8 +63,12 @@ namespace ffd {
         }
     }
 
-    void Task::writeSrc(const TimeKeyExpans& aSrcExpans, const gl::Vector3* aSrcMesh, const LayerMesh& aOriginMesh,
-        const FFDParam& aParam) {
+    void Task::writeSrc(
+        const TimeKeyExpans& aSrcExpans,
+        const gl::Vector3* aSrcMesh,
+        const LayerMesh& aOriginMesh,
+        const FFDParam& aParam
+    ) {
         XC_PTR_ASSERT(aSrcMesh);
 
         const int vtxCount = aOriginMesh.vertexCount();
@@ -203,8 +222,13 @@ namespace ffd {
                     program.setUniformValue("uBlurPressure", (float)mParam.blur);
 
                     // ggl.glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mOutMesh.id());
-                    ggl.glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mOutMesh.id(), begin * sizeof(GLfloat) * 3,
-                        count * sizeof(GLfloat) * 3);
+                    ggl.glBindBufferRange(
+                        GL_TRANSFORM_FEEDBACK_BUFFER,
+                        0,
+                        mOutMesh.id(),
+                        begin * sizeof(GLfloat) * 3,
+                        count * sizeof(GLfloat) * 3
+                    );
 
                     ggl.glBeginTransformFeedback(GL_POINTS);
                     ggl.glDrawArrays(GL_POINTS, begin, count);
@@ -233,18 +257,21 @@ namespace ffd {
             if (mDragIndex >= 0) {
                 mMeshTransformer.positions().bind();
                 ggl.glGetBufferSubData(
-                    GL_ARRAY_BUFFER, sizeof(gl::Vector3) * mDragIndex, sizeof(gl::Vector3), mDstMesh.data());
+                    GL_ARRAY_BUFFER, sizeof(gl::Vector3) * mDragIndex, sizeof(gl::Vector3), mDstMesh.data()
+                );
                 mMeshTransformer.positions().release();
 
                 mMeshTransformer.xArrows().bind();
                 ggl.glGetBufferSubData(
-                    GL_ARRAY_BUFFER, sizeof(gl::Vector3) * mDragIndex, sizeof(gl::Vector3), mDstMesh.data());
+                    GL_ARRAY_BUFFER, sizeof(gl::Vector3) * mDragIndex, sizeof(gl::Vector3), mDstMesh.data()
+                );
                 mMeshTransformer.xArrows().release();
                 auto xArrow = mDstMesh[0].pos2D();
 
                 mMeshTransformer.yArrows().bind();
                 ggl.glGetBufferSubData(
-                    GL_ARRAY_BUFFER, sizeof(gl::Vector3) * mDragIndex, sizeof(gl::Vector3), mDstMesh.data());
+                    GL_ARRAY_BUFFER, sizeof(gl::Vector3) * mDragIndex, sizeof(gl::Vector3), mDstMesh.data()
+                );
                 mMeshTransformer.yArrows().release();
                 auto yArrow = mDstMesh[0].pos2D();
 
@@ -253,8 +280,10 @@ namespace ffd {
                 auto lenX = std::max(xArrow.length(), Constant::dividable());
                 auto lenY = std::max(yArrow.length(), Constant::dividable());
 
-                mDragMove = QVector2D(QVector2D::dotProduct(mBrushVel, xArrow) / (lenX * lenX),
-                    QVector2D::dotProduct(mBrushVel, yArrow) / (lenY * lenY));
+                mDragMove = QVector2D(
+                    QVector2D::dotProduct(mBrushVel, xArrow) / (lenX * lenX),
+                    QVector2D::dotProduct(mBrushVel, yArrow) / (lenY * lenY)
+                );
             }
         } else if (mType == Type_Focuser) {
             mDstWeight.reset(new GLfloat[mVtxCount]);

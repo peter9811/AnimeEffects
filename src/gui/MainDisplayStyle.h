@@ -14,17 +14,11 @@ public:
     MainDisplayStyle(const QFont& aFont, GUIResources& aResources):
         mFont(aFont), mFontMetrics(aFont), mResources(aResources) {}
 
-    virtual QFont font() const {
-        return mFont;
-    }
+    virtual QFont font() const { return mFont; }
 
-    virtual QRect boundingRect(const QString& aText) const {
-        return mFontMetrics.boundingRect(aText);
-    }
+    virtual QRect boundingRect(const QString& aText) const { return mFontMetrics.boundingRect(aText); }
 
-    virtual QIcon icon(const QString& aName) const {
-        return mResources.icon(aName);
-    }
+    virtual QIcon icon(const QString& aName) const { return mResources.icon(aName); }
 
 private:
     QFont mFont;

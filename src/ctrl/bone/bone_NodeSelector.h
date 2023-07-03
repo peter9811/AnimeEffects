@@ -26,8 +26,9 @@ namespace bone {
         core::ObjectNode* selectingNode();
         void clearSelection();
 
-        void renderBindings(const core::RenderInfo& aInfo, QPainter& aPainter, const QMatrix4x4& aTargetMtx,
-            const core::Bone2* aTopBone);
+        void renderBindings(
+            const core::RenderInfo& aInfo, QPainter& aPainter, const QMatrix4x4& aTargetMtx, const core::Bone2* aTopBone
+        );
         void renderTags(const core::RenderInfo& aInfo, QPainter& aPainter);
 
     private:
@@ -41,9 +42,7 @@ namespace bone {
             QRectF sortedRect;
             bool isDir;
             bool isOpened;
-            bool invisibleTop() const {
-                return !parent;
-            }
+            bool invisibleTop() const { return !parent; }
         };
 
         static bool compareNodeTagHeight(Tag* a, Tag* b);
@@ -52,7 +51,8 @@ namespace bone {
         QRectF getNodeRectF(core::ObjectNode& aNode) const;
         bool updateIntersection(Tag& aTag, const QPointF& aPos);
         void renderOneNode(
-            const Tag& aTag, QPixmap& aIconPix, int aColorType, const core::RenderInfo& aInfo, QPainter& aPainter);
+            const Tag& aTag, QPixmap& aIconPix, int aColorType, const core::RenderInfo& aInfo, QPainter& aPainter
+        );
         Tag* findVisibleTag(const core::ObjectNode& aNode) const;
 
         const GraphicStyle& mGraphicStyle;

@@ -44,20 +44,12 @@ QMatrix4x4 SRTExpans::getLocalSRMatrix(float aRotate, const QVector2D& aScale) {
     return mtx;
 }
 
-void SRTExpans::setParentMatrix(const QMatrix4x4& aWorldCSRTMtx) {
-    mParentMatrix = aWorldCSRTMtx;
-}
+void SRTExpans::setParentMatrix(const QMatrix4x4& aWorldCSRTMtx) { mParentMatrix = aWorldCSRTMtx; }
 
-const QMatrix4x4& SRTExpans::parentMatrix() const {
-    return mParentMatrix;
-}
+const QMatrix4x4& SRTExpans::parentMatrix() const { return mParentMatrix; }
 
-QMatrix4x4 SRTExpans::worldCSRTMatrix() const {
-    return mParentMatrix * localCSRTMatrix();
-}
+QMatrix4x4 SRTExpans::worldCSRTMatrix() const { return mParentMatrix * localCSRTMatrix(); }
 
-QMatrix4x4 SRTExpans::worldSRTMatrix() const {
-    return mParentMatrix * localSRTMatrix();
-}
+QMatrix4x4 SRTExpans::worldSRTMatrix() const { return mParentMatrix * localSRTMatrix(); }
 
 } // namespace core

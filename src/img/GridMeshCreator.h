@@ -14,9 +14,7 @@ class GridMeshCreator {
 public:
     struct HexaConnection {
         int id[6];
-        bool has(int aIndex) const {
-            return id[aIndex] != -1;
-        }
+        bool has(int aIndex) const { return id[aIndex] != -1; }
         void clear();
     };
 
@@ -24,12 +22,8 @@ public:
 
     GridMeshCreator(const uint8* aPtr, const QSize& aSize, int aCellPx);
 
-    int vertexCount() const {
-        return mVertexCount;
-    }
-    int indexCount() const {
-        return mIndexCount;
-    }
+    int vertexCount() const { return mVertexCount; }
+    int indexCount() const { return mIndexCount; }
     QRect vertexRect() const;
 
     void writeVertices(GLfloat* aPosVec3, GLfloat* aTexVec2);
@@ -47,12 +41,8 @@ private:
         float maxReduce;
         float reduceRate;
 
-        QVector2D pos() const {
-            return QVector2D(x, y);
-        }
-        QVector2D posReduced() const {
-            return QVector2D(x, y) + (reduceVec * maxReduce * reduceRate);
-        }
+        QVector2D pos() const { return QVector2D(x, y); }
+        QVector2D posReduced() const { return QVector2D(x, y) + (reduceVec * maxReduce * reduceRate); }
     };
 
     struct Cell {
@@ -73,12 +63,8 @@ private:
     public:
         Image(const uint8* aPtr, const QSize& aSize);
 
-        QSize size() const {
-            return mSize;
-        }
-        bool hasRawAlpha(int aX, int aY) const {
-            return mData[(aX + aY * mSize.width()) * 4 + 3] > 10;
-        }
+        QSize size() const { return mSize; }
+        bool hasRawAlpha(int aX, int aY) const { return mData[(aX + aY * mSize.width()) * 4 + 3] > 10; }
         bool hasAlpha(int aX, int aY) const {
             if (aX < 0 || mSize.width() <= aX || aY < 0 || mSize.height() <= aY)
                 return false;
@@ -96,12 +82,8 @@ private:
     public:
         VertexTable(int aWidth, int aHeight);
 
-        int width() const {
-            return mSize.width();
-        }
-        int height() const {
-            return mSize.height();
-        }
+        int width() const { return mSize.width(); }
+        int height() const { return mSize.height(); }
 
         Vertex& vertex(int aX, int aY) {
             XC_MSG_ASSERT(0 <= aX && aX < mSize.width(), "x=%d", aX);
@@ -150,21 +132,11 @@ private:
         void connectCellsToVertices(VertexTable& aTable);
         Cell& cell(int aX, int aY);
         Cell* findExistingCell(int aX, int aY);
-        QSizeF cellSize() const {
-            return mCellSize;
-        }
-        float cellWidth() const {
-            return mCellSize.width();
-        }
-        float cellHeight() const {
-            return mCellSize.height();
-        }
-        int tableWidth() const {
-            return mWidth;
-        }
-        int tableHeight() const {
-            return mHeight;
-        }
+        QSizeF cellSize() const { return mCellSize; }
+        float cellWidth() const { return mCellSize.width(); }
+        float cellHeight() const { return mCellSize.height(); }
+        int tableWidth() const { return mWidth; }
+        int tableHeight() const { return mHeight; }
     };
 
     void execute(const uint8* aPtr, const QSize& aSize, int aCellPx);

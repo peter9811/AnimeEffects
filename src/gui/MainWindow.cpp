@@ -40,9 +40,24 @@ public:
 namespace gui {
 
 MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const LocaleParam& aLocaleParam):
-    QMainWindow(nullptr), mSystem(aSystem), mGUIResources(aResources), mViaPoint(this), mKeyCommandMap(),
-    mKeyCommandInvoker(), mMouseSetting(), mMainMenuBar(), mMainViewSetting(), mMainDisplayStyle(), mMainDisplay(),
-    mProjectTabBar(), mTarget(), mProperty(), mTool(), mResourceDialog(), mDriverHolder(), mCurrent(),
+    QMainWindow(nullptr),
+    mSystem(aSystem),
+    mGUIResources(aResources),
+    mViaPoint(this),
+    mKeyCommandMap(),
+    mKeyCommandInvoker(),
+    mMouseSetting(),
+    mMainMenuBar(),
+    mMainViewSetting(),
+    mMainDisplayStyle(),
+    mMainDisplay(),
+    mProjectTabBar(),
+    mTarget(),
+    mProperty(),
+    mTool(),
+    mResourceDialog(),
+    mDriverHolder(),
+    mCurrent(),
     mLocaleParam(aLocaleParam) {
     // setup default opengl format
     {
@@ -79,8 +94,12 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     {
         mKeyCommandMap.reset(new KeyCommandMap(*this));
 
-        QSettings settings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(),
-            QApplication::applicationName());
+        QSettings settings(
+            QSettings::IniFormat,
+            QSettings::UserScope,
+            QApplication::organizationName(),
+            QApplication::applicationName()
+        );
         settings.beginGroup("keybindings");
         mKeyCommandMap->readFrom(settings);
         settings.endGroup();
@@ -320,9 +339,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     }
 }
 
-MainWindow::~MainWindow() {
-    closeAllProjects();
-}
+MainWindow::~MainWindow() { closeAllProjects(); }
 
 void MainWindow::autoSave() {
     QSettings settings;
@@ -332,7 +349,8 @@ void MainWindow::autoSave() {
     autosaveTimer->setInterval(autoDelay * 60000);
     if (mCurrent && !mCurrent->isNameless() && mCurrent->isModified()) {
         mViaPoint.pushLog(
-            "Automatically saved project: " + QFileInfo(mCurrent->fileName()).fileName(), ctrl::UILogType_Info);
+            "Automatically saved project: " + QFileInfo(mCurrent->fileName()).fileName(), ctrl::UILogType_Info
+        );
         // qDebug() << "Interval of " + QString(std::to_string(autoDelay*60000).c_str()) + " milliseconds has elapsed.";
         processProjectSaving(*mCurrent);
     }
@@ -416,9 +434,7 @@ void MainWindow::resetProjectRefs(core::Project* aProject) {
     mTool->setDriver(mDriverHolder->driver());
 }
 
-void MainWindow::onProjectTabChanged(core::Project& aProject) {
-    resetProjectRefs(&aProject);
-}
+void MainWindow::onProjectTabChanged(core::Project& aProject) { resetProjectRefs(&aProject); }
 
 void MainWindow::onThemeUpdated(theme::Theme& aTheme) {
     QFile stylesheet(aTheme.path() + "/stylesheet/standard.ssa");
@@ -741,12 +757,11 @@ void MainWindow::onNewProjectTriggered() {
 
 QFileSystemWatcher* globalWatcher = new QFileSystemWatcher();
 
-QFileSystemWatcher* MainWindow::getWatcher() {
-    return globalWatcher;
-}
+QFileSystemWatcher* MainWindow::getWatcher() { return globalWatcher; }
 
 void MainWindow::showInfoPopup(
-    const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed) {
+    const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed
+) {
     QMessageBox box;
     if (aIcon == "Info") {
         box.setIcon(QMessageBox::Information);
@@ -874,10 +889,12 @@ void MainWindow::onCloseProjectTriggered() {
         // Sneaky potential crash
         QFileSystemWatcher* watcher = MainWindow::getWatcher();
         for (unsigned int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1) {
-            if (watcher->files().contains(mCurrent->resourceHolder().findAbsoluteFilePath(
-                    *mCurrent->resourceHolder().imageTree(x).topNode))) {
+            if (watcher->files().contains(
+                    mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode)
+                )) {
                 watcher->removePath(
-                    mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode));
+                    mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode)
+                );
             }
         }
 
@@ -1039,9 +1056,12 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
     const bool isGif = (suffix == "gif");
 
     // get export file name
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Export File"),
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        tr("Export File"),
         QString(), // dir
-        targetVideos);
+        targetVideos
+    );
     const QFileInfo fileInfo(fileName);
 
     // make sure existing

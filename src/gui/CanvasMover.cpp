@@ -12,8 +12,14 @@ static const float kMinScale = 0.00001f;
 namespace gui {
 
 CanvasMover::CanvasMover():
-    mCamera(), mMoving(), mRotating(), mResetRotationOrigin(true), mOriginDraggingAngle(), mOriginCanvasCenter(),
-    mOriginCanvasAngle(), mScaleIndex(0) {}
+    mCamera(),
+    mMoving(),
+    mRotating(),
+    mResetRotationOrigin(true),
+    mOriginDraggingAngle(),
+    mOriginCanvasCenter(),
+    mOriginCanvasAngle(),
+    mScaleIndex(0) {}
 
 void CanvasMover::setCamera(core::CameraInfo* aCamera) {
     mCamera = aCamera;
@@ -41,9 +47,7 @@ void CanvasMover::setCamera(core::CameraInfo* aCamera) {
     }
 }
 
-void CanvasMover::onScreenResized() {
-    mResetRotationOrigin = true;
-}
+void CanvasMover::onScreenResized() { mResetRotationOrigin = true; }
 
 void CanvasMover::setDragAndMove(bool aIsActive) {
     if (!mMoving && aIsActive) {
@@ -60,7 +64,8 @@ void CanvasMover::setDragAndRotate(bool aIsActive) {
 }
 
 bool CanvasMover::updateByMove(
-    const QVector2D& aCursorPos, const QVector2D& aMoved, bool aPressedL, bool aPressedM, bool aPressedR) {
+    const QVector2D& aCursorPos, const QVector2D& aMoved, bool aPressedL, bool aPressedM, bool aPressedR
+) {
     if (mCamera) {
         // translate canvas
         if (mMoving && (aPressedL || aPressedM)) {

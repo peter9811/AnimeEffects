@@ -15,9 +15,7 @@ void Global::setFunctions(Functions& aFunctions) {
     gGLGlobalFunctions = &aFunctions;
 }
 
-void Global::clearFunctions() {
-    gGLGlobalFunctions = nullptr;
-}
+void Global::clearFunctions() { gGLGlobalFunctions = nullptr; }
 
 Global::Functions& Global::functions() {
     XC_PTR_ASSERT(gGLGlobalFunctions);
@@ -54,9 +52,7 @@ void Global::setContext(QOpenGLWidget& aWidget) {
     gGLGlobalWidget = &aWidget;
 }
 
-void Global::clearContext() {
-    gGLGlobalWidget = nullptr;
-}
+void Global::clearContext() { gGLGlobalWidget = nullptr; }
 
 void Global::makeCurrent() {
     XC_PTR_ASSERT(gGLGlobalWidget);

@@ -17,9 +17,7 @@ namespace core {
 
 //-------------------------------------------------------------------------------------------------
 class SortAndRenderCall {
-    static bool compareDepth(Renderer::SortUnit a, Renderer::SortUnit b) {
-        return a.depth < b.depth;
-    }
+    static bool compareDepth(Renderer::SortUnit a, Renderer::SortUnit b) { return a.depth < b.depth; }
 
     void pushNodeRecursive(ObjectNode* aNode, bool aPush) {
         if (!aNode || !aNode->isVisible())
@@ -155,8 +153,8 @@ cmnd::Vector ObjectTree::createNodeMover(
 }
 #endif
 
-cmnd::Vector ObjectTree::createNodesMover(
-    const QVector<util::TreePos>& aRemoved, const QVector<util::TreePos>& aInserted) {
+cmnd::Vector
+ObjectTree::createNodesMover(const QVector<util::TreePos>& aRemoved, const QVector<util::TreePos>& aInserted) {
     class MoveNodesCommand: public cmnd::Stable {
         util::LinkPointer<ObjectTree> mTree;
         QVector<util::TreePos> mRemoved;
@@ -164,10 +162,13 @@ cmnd::Vector ObjectTree::createNodesMover(
         BoneUnbindWorkspacePtr mWorkspace;
 
     public:
-        MoveNodesCommand(ObjectTree& aTree, const QVector<util::TreePos>& aRemoved,
-            const QVector<util::TreePos>& aInserted, const BoneUnbindWorkspacePtr& aWorkspace):
-            mTree(aTree.pointee()),
-            mRemoved(aRemoved), mInserted(aInserted), mWorkspace(aWorkspace) {}
+        MoveNodesCommand(
+            ObjectTree& aTree,
+            const QVector<util::TreePos>& aRemoved,
+            const QVector<util::TreePos>& aInserted,
+            const BoneUnbindWorkspacePtr& aWorkspace
+        ):
+            mTree(aTree.pointee()), mRemoved(aRemoved), mInserted(aInserted), mWorkspace(aWorkspace) {}
 
         virtual void exec() {
             redo();
@@ -295,17 +296,11 @@ cmnd::Vector ObjectTree::createResourceUpdater(const ResourceEvent& aEvent) {
     return result;
 }
 
-void ObjectTree::onTimeLineModified(TimeLineEvent& aEvent, bool) {
-    BoneKeyUpdater::onTimeLineModified(aEvent);
-}
+void ObjectTree::onTimeLineModified(TimeLineEvent& aEvent, bool) { BoneKeyUpdater::onTimeLineModified(aEvent); }
 
-void ObjectTree::onTreeRestructured(ObjectTreeEvent& aEvent, bool) {
-    BoneKeyUpdater::onTreeRestructured(aEvent);
-}
+void ObjectTree::onTreeRestructured(ObjectTreeEvent& aEvent, bool) { BoneKeyUpdater::onTreeRestructured(aEvent); }
 
-void ObjectTree::onResourceModified(ResourceEvent& aEvent, bool) {
-    BoneKeyUpdater::onResourceModified(aEvent);
-}
+void ObjectTree::onResourceModified(ResourceEvent& aEvent, bool) { BoneKeyUpdater::onResourceModified(aEvent); }
 
 void ObjectTree::onProjectAttributeModified(ProjectEvent& aEvent, bool) {
     BoneKeyUpdater::onProjectAttributeModified(aEvent);

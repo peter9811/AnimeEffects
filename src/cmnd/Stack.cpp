@@ -4,8 +4,15 @@
 namespace cmnd {
 
 Stack::Stack():
-    mLimit(32), mCommands(), mCurrent(mCommands.end()), mMacro(), mSuspendCount(0), mModifiable(), mEditingOrigin(0),
-    mIsEdited(), mOnEditStatusChanged() {}
+    mLimit(32),
+    mCommands(),
+    mCurrent(mCommands.end()),
+    mMacro(),
+    mSuspendCount(0),
+    mModifiable(),
+    mEditingOrigin(0),
+    mIsEdited(),
+    mOnEditStatusChanged() {}
 
 Stack::~Stack() {
     XC_PTR_ASSERT(!mMacro);
@@ -164,13 +171,9 @@ void Stack::resetEditingOrigin() {
     updateEditStatus();
 }
 
-bool Stack::isEdited() const {
-    return mIsEdited;
-}
+bool Stack::isEdited() const { return mIsEdited; }
 
-void Stack::setOnEditStatusChanged(const std::function<void(bool)>& aFunction) {
-    mOnEditStatusChanged = aFunction;
-}
+void Stack::setOnEditStatusChanged(const std::function<void(bool)>& aFunction) { mOnEditStatusChanged = aFunction; }
 
 void Stack::updateEditStatus() {
     const bool isEdited = (mEditingOrigin != 0);
@@ -221,9 +224,7 @@ void Stack::Macro::grabListener(Listener* aListener) {
     }
 }
 
-QString Stack::Macro::name() const {
-    return mName;
-}
+QString Stack::Macro::name() const { return mName; }
 
 bool Stack::Macro::tryExec() {
     bool succeed = false;

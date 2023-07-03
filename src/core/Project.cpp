@@ -15,8 +15,15 @@ Project::Attribute::Attribute(): mImageSize(), mMaxFrame(kDefaultMaxFrame), mFps
 
 //-------------------------------------------------------------------------------------------------
 Project::Project(QString aFileName, Animator& aAnimator, Hook* aHookGrabbed):
-    mLifeLink(), mFileName(aFileName), mAttribute(), mParalleler(new thr::Paralleler(kParaThreadCount)),
-    mResourceHolder(), mCommandStack(), mObjectTree(), mAnimator(aAnimator), mHook(aHookGrabbed) {
+    mLifeLink(),
+    mFileName(aFileName),
+    mAttribute(),
+    mParalleler(new thr::Paralleler(kParaThreadCount)),
+    mResourceHolder(),
+    mCommandStack(),
+    mObjectTree(),
+    mAnimator(aAnimator),
+    mHook(aHookGrabbed) {
     if (!aFileName.isEmpty()) {
         setFileName(aFileName);
     }

@@ -63,9 +63,8 @@ void PlayBackWidget::checkLoop(bool checkStatus) {
 
 void PlayBackWidget::PlayPause() {
     PlayBackWidget* owner = this;
-    bool isChecked =
-        owner->mButtons.at(2)
-            ->isChecked(); // There are no functions currently available to check for playback, this'll do for now
+    bool isChecked = owner->mButtons.at(2)->isChecked(
+    ); // There are no functions currently available to check for playback, this'll do for now
     if (!isChecked) {
         auto name = "pause";
         owner->mButtons.at(2)->setIcon(owner->mGUIResources.icon(name));
@@ -81,9 +80,7 @@ void PlayBackWidget::PlayPause() {
     }
 }
 
-int PlayBackWidget::constantWidth() const {
-    return kButtonSize + 10;
-}
+int PlayBackWidget::constantWidth() const { return kButtonSize + 10; }
 
 void PlayBackWidget::pushPauseButton() {
     QPushButton* button = mButtons.at(2);
@@ -94,8 +91,8 @@ void PlayBackWidget::pushPauseButton() {
     }
 }
 
-QPushButton* PlayBackWidget::createButton(
-    const QString& aName, bool aIsCheckable, int aColumn, const QString& aToolTip) {
+QPushButton*
+PlayBackWidget::createButton(const QString& aName, bool aIsCheckable, int aColumn, const QString& aToolTip) {
     QPushButton* button = new QPushButton(this);
     XC_PTR_ASSERT(button);
     button->setObjectName(aName);

@@ -24,8 +24,14 @@ bool fBuildShader(gl::EasyShaderProgram& aProgram, const char* aVertex, const ch
     return true;
 }
 
-bool fMakeLinePolygon(const QPointF& aFrom, const QPointF& aTo, float aWidth, gl::Vector2* aPositions,
-    gl::Vector2* aStyleCoords, float* aStyleBegin = nullptr) {
+bool fMakeLinePolygon(
+    const QPointF& aFrom,
+    const QPointF& aTo,
+    float aWidth,
+    gl::Vector2* aPositions,
+    gl::Vector2* aStyleCoords,
+    float* aStyleBegin = nullptr
+) {
     const QVector2D dir(aTo - aFrom);
     const float length = dir.length();
     if (length < FLT_EPSILON)
@@ -57,8 +63,14 @@ namespace gl {
 
 //-------------------------------------------------------------------------------------------------
 PrimitiveDrawer::State::State():
-    brushColor(QColor(0, 0, 0, 255).rgba()), penColor(QColor(0, 0, 0, 255).rgba()), penWidth(1.0f),
-    penStyle(PenStyle_Solid), texture(0), textureColor(QColor(255, 255, 255, 255).rgba()), hasBrush(true), hasPen(true),
+    brushColor(QColor(0, 0, 0, 255).rgba()),
+    penColor(QColor(0, 0, 0, 255).rgba()),
+    penWidth(1.0f),
+    penStyle(PenStyle_Solid),
+    texture(0),
+    textureColor(QColor(255, 255, 255, 255).rgba()),
+    hasBrush(true),
+    hasPen(true),
     hasMSAA(false) {}
 
 bool PrimitiveDrawer::State::operator==(const State& aRhs) const {
@@ -67,9 +79,7 @@ bool PrimitiveDrawer::State::operator==(const State& aRhs) const {
         hasBrush == aRhs.hasBrush && hasPen == aRhs.hasPen && hasMSAA == aRhs.hasMSAA;
 }
 
-bool PrimitiveDrawer::State::operator!=(const State& aRhs) const {
-    return !(*this == aRhs);
-}
+bool PrimitiveDrawer::State::operator!=(const State& aRhs) const { return !(*this == aRhs); }
 
 void PrimitiveDrawer::State::set(const Command& aCommand) {
     switch (aCommand.type) {
@@ -219,10 +229,25 @@ bool PrimitiveDrawer::TextureShader::init() {
 
 //-------------------------------------------------------------------------------------------------
 PrimitiveDrawer::PrimitiveDrawer(int aVtxCountOfSlot, int aSlotCount):
-    mPlaneShader(), mStippleShader(), mTextureShader(), mCurrentShader(ShaderType_TERM),
-    mVtxCountOfSlot(std::max(aVtxCountOfSlot, kMinVtxCountOfSlot)), mSlotCount(std::max(aSlotCount, 1)), mPosSlotIds(),
-    mSubSlotIds(), mCurrentSlotIndex(0), mCurrentSlotSize(0), mViewMtx(), mScreenSize(), mPixelScale(1.0f),
-    mScheduledCommands(), mInDrawing(false), mAppliedState(), mScheduledState(), mPosBuffer(), mSubBuffer() {
+    mPlaneShader(),
+    mStippleShader(),
+    mTextureShader(),
+    mCurrentShader(ShaderType_TERM),
+    mVtxCountOfSlot(std::max(aVtxCountOfSlot, kMinVtxCountOfSlot)),
+    mSlotCount(std::max(aSlotCount, 1)),
+    mPosSlotIds(),
+    mSubSlotIds(),
+    mCurrentSlotIndex(0),
+    mCurrentSlotSize(0),
+    mViewMtx(),
+    mScreenSize(),
+    mPixelScale(1.0f),
+    mScheduledCommands(),
+    mInDrawing(false),
+    mAppliedState(),
+    mScheduledState(),
+    mPosBuffer(),
+    mSubBuffer() {
     // create shader
     mPlaneShader.init();
     mStippleShader.init();
@@ -366,7 +391,8 @@ void PrimitiveDrawer::drawOutline(const std::function<QPointF(int)>& aGetPos, in
         auto currPos = aGetPos(i);
 
         if (!fMakeLinePolygon(
-                prevPos, currPos, width, posPtr + bufferingVtxCount, stylePtr + bufferingVtxCount, &styleBegin)) {
+                prevPos, currPos, width, posPtr + bufferingVtxCount, stylePtr + bufferingVtxCount, &styleBegin
+            )) {
             continue;
         }
         bufferingVtxCount += 4;
@@ -413,9 +439,7 @@ void PrimitiveDrawer::drawLine(const QPointF& aFrom, const QPointF& aTo) {
     pushDrawCommand(command, positions, styleCoords);
 }
 
-void PrimitiveDrawer::drawRect(const QRect& aRect) {
-    drawRect(QRectF(aRect));
-}
+void PrimitiveDrawer::drawRect(const QRect& aRect) { drawRect(QRectF(aRect)); }
 
 void PrimitiveDrawer::drawRect(const QRectF& aRect) {
     Command command;
@@ -423,8 +447,10 @@ void PrimitiveDrawer::drawRect(const QRectF& aRect) {
     command.attr.draw.prim = GL_TRIANGLE_STRIP;
     command.attr.draw.count = 4;
     command.attr.draw.usePen = false;
-    gl::Vector2 positions[4] = {gl::Vector2::make(aRect.left(), aRect.top()),
-        gl::Vector2::make(aRect.left(), aRect.bottom()), gl::Vector2::make(aRect.right(), aRect.top()),
+    gl::Vector2 positions[4] = {
+        gl::Vector2::make(aRect.left(), aRect.top()),
+        gl::Vector2::make(aRect.left(), aRect.bottom()),
+        gl::Vector2::make(aRect.right(), aRect.top()),
         gl::Vector2::make(aRect.right(), aRect.bottom())};
     pushDrawCommand(command, positions);
 
@@ -556,13 +582,9 @@ void PrimitiveDrawer::drawPolygon(const QPointF* aPoints, int aCount) {
     drawOutline([=](int aIndex) { return aPoints[aIndex]; }, aCount);
 }
 
-void PrimitiveDrawer::drawPolygon(const QPolygonF& aPolygon) {
-    drawPolygon(aPolygon.data(), aPolygon.size());
-}
+void PrimitiveDrawer::drawPolygon(const QPolygonF& aPolygon) { drawPolygon(aPolygon.data(), aPolygon.size()); }
 
-void PrimitiveDrawer::drawTexture(const QRectF& aRect, gl::Texture& aTexture) {
-    drawTexture(aRect, aTexture.id());
-}
+void PrimitiveDrawer::drawTexture(const QRectF& aRect, gl::Texture& aTexture) { drawTexture(aRect, aTexture.id()); }
 
 void PrimitiveDrawer::drawTexture(const QRectF& aRect, gl::Texture& aTexture, const QRectF& aSrcRect) {
     drawTexture(aRect, aTexture.id(), aTexture.size(), aSrcRect);
@@ -588,8 +610,10 @@ void PrimitiveDrawer::drawTexture(const QRectF& aRect, GLuint aTexture, const QS
         command.attr.draw.prim = GL_TRIANGLE_STRIP;
         command.attr.draw.count = 4;
         command.attr.draw.usePen = false;
-        gl::Vector2 positions[4] = {gl::Vector2::make(aRect.left(), aRect.top()),
-            gl::Vector2::make(aRect.left(), aRect.bottom()), gl::Vector2::make(aRect.right(), aRect.top()),
+        gl::Vector2 positions[4] = {
+            gl::Vector2::make(aRect.left(), aRect.top()),
+            gl::Vector2::make(aRect.left(), aRect.bottom()),
+            gl::Vector2::make(aRect.right(), aRect.top()),
             gl::Vector2::make(aRect.right(), aRect.bottom())};
         const float tl = aSrcRect.left() / aTexSize.width();
         const float tt = 1.0f - aSrcRect.top() / aTexSize.height();
@@ -640,7 +664,8 @@ void PrimitiveDrawer::pushStateCommand(const Command& aCommand) {
 }
 
 void PrimitiveDrawer::pushDrawCommand(
-    const Command& aCommand, const gl::Vector2* aPositions, const gl::Vector2* aSubCoords) {
+    const Command& aCommand, const gl::Vector2* aPositions, const gl::Vector2* aSubCoords
+) {
     XC_ASSERT(aCommand.type == Type_Draw);
 
     const bool usePen = aCommand.attr.draw.usePen;
@@ -662,14 +687,22 @@ void PrimitiveDrawer::pushDrawCommand(
     Global::Functions& ggl = Global::functions();
     if (aPositions) {
         ggl.glBindBuffer(GL_ARRAY_BUFFER, mPosSlotIds[mCurrentSlotIndex]);
-        ggl.glBufferSubData(GL_ARRAY_BUFFER, sizeof(gl::Vector2) * mCurrentSlotSize,
-            (GLsizeiptr)(sizeof(gl::Vector2) * vtxCount), aPositions);
+        ggl.glBufferSubData(
+            GL_ARRAY_BUFFER,
+            sizeof(gl::Vector2) * mCurrentSlotSize,
+            (GLsizeiptr)(sizeof(gl::Vector2) * vtxCount),
+            aPositions
+        );
         GL_CHECK_ERROR();
     }
     if (aSubCoords) {
         ggl.glBindBuffer(GL_ARRAY_BUFFER, mSubSlotIds[mCurrentSlotIndex]);
-        ggl.glBufferSubData(GL_ARRAY_BUFFER, sizeof(gl::Vector2) * mCurrentSlotSize,
-            (GLsizeiptr)(sizeof(gl::Vector2) * vtxCount), aSubCoords);
+        ggl.glBufferSubData(
+            GL_ARRAY_BUFFER,
+            sizeof(gl::Vector2) * mCurrentSlotSize,
+            (GLsizeiptr)(sizeof(gl::Vector2) * vtxCount),
+            aSubCoords
+        );
         GL_CHECK_ERROR();
     }
     ggl.glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -770,8 +803,10 @@ void PrimitiveDrawer::bindAppositeShader(int aSlotIndex) {
         mStippleShader.program.setAttributeBuffer(mStippleShader.locLength, GL_FLOAT, 2);
         mStippleShader.program.setUniformValue(mStippleShader.locViewMtx, mViewMtx);
         mStippleShader.program.setUniformValue(mStippleShader.locScreenSize, scrHalfSize);
-        mStippleShader.program.setUniformValue(mStippleShader.locWave,
-            (mAppliedState.penStyle == PenStyle_Dash) ? QVector2D(0.3f, 1.0f) : QVector2D(0.5f, 0.75f));
+        mStippleShader.program.setUniformValue(
+            mStippleShader.locWave,
+            (mAppliedState.penStyle == PenStyle_Dash) ? QVector2D(0.3f, 1.0f) : QVector2D(0.5f, 0.75f)
+        );
         mCurrentShader = ShaderType_Stipple;
     } else {
         mPlaneShader.program.bind();

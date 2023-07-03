@@ -14,12 +14,8 @@ namespace bone {
 
         static void build(QList<core::Bone2*>& aTopBones);
         GeoBuilder(QList<core::Bone2*>& aTopBones);
-        const QPolygonF& outlines() const {
-            return mOutlines;
-        }
-        const PolygonList& influence() const {
-            return mInfluenceList;
-        }
+        const QPolygonF& outlines() const { return mOutlines; }
+        const PolygonList& influence() const { return mInfluenceList; }
 
     private:
         static void eraseUselessCloser(QPolygonF& aTarget);

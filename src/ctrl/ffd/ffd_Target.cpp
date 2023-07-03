@@ -16,9 +16,7 @@ namespace ffd {
         task.reset();
     }
 
-    bool Target::isValid() const {
-        return (bool)node && (bool)keyOwner;
-    }
+    bool Target::isValid() const { return (bool)node && (bool)keyOwner; }
 
     //-------------------------------------------------------------------------------------------------
     bool Targets::hasValidTarget() const {

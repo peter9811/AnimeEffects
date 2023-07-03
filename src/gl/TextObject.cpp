@@ -10,9 +10,7 @@ TextObject::MapKey TextObject::getMapKey(const QString& aText) {
 
 TextObject::TextObject(): mText(), mCRC16(), mTexture(), mWorkCache() {}
 
-TextObject::TextObject(const QString& aText): mText(), mCRC16(), mTexture(), mWorkCache() {
-    setText(aText);
-}
+TextObject::TextObject(const QString& aText): mText(), mCRC16(), mTexture(), mWorkCache() { setText(aText); }
 
 void TextObject::setText(const QString& aText) {
     mText = aText;
@@ -20,8 +18,6 @@ void TextObject::setText(const QString& aText) {
     mCRC16 = qChecksum(bytes.data(), bytes.size());
 }
 
-int TextObject::pixelCount() const {
-    return mTexture.size().width() * mTexture.size().height();
-}
+int TextObject::pixelCount() const { return mTexture.size().width() * mTexture.size().height(); }
 
 } // namespace gl

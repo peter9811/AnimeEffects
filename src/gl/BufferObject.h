@@ -11,7 +11,8 @@ public:
     BufferObject(GLenum aType);
     ~BufferObject();
 
-    template<typename tValue> void resetData(int aDataCount, GLenum aUsage, const tValue* aDataPtr = NULL) {
+    template<typename tValue>
+    void resetData(int aDataCount, GLenum aUsage, const tValue* aDataPtr = NULL) {
         resetRawData(sizeof(tValue), aDataPtr, aDataCount, aUsage);
     }
 
@@ -21,21 +22,11 @@ public:
 
     void copyFrom(const BufferObject& aFrom);
 
-    explicit operator bool() const {
-        return mId != 0;
-    }
-    int dataCount() const {
-        return mUsingDataCount;
-    }
-    GLenum type() const {
-        return mType;
-    }
-    GLuint id() const {
-        return mId;
-    }
-    GLsizeiptr typeSize() const {
-        return mTypeSize;
-    }
+    explicit operator bool() const { return mId != 0; }
+    int dataCount() const { return mUsingDataCount; }
+    GLenum type() const { return mType; }
+    GLuint id() const { return mId; }
+    GLsizeiptr typeSize() const { return mTypeSize; }
 
     void bind();
     void release();

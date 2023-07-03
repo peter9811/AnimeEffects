@@ -56,9 +56,7 @@ class ProjectCanvasSizeSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     ProjectCanvasSizeSettingDialog(ViaPoint& aViaPoint, core::Project& aProject, QWidget* aParent);
-    QSize canvasSize() const {
-        return QSize(mWidthBox->value(), mHeightBox->value());
-    }
+    QSize canvasSize() const { return QSize(mWidthBox->value(), mHeightBox->value()); }
 
 private:
     ViaPoint& mViaPoint;
@@ -72,9 +70,7 @@ class ProjectMaxFrameSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     ProjectMaxFrameSettingDialog(core::Project& aProject, QWidget* aParent);
-    int maxFrame() const {
-        return mMaxFrameBox->value();
-    }
+    int maxFrame() const { return mMaxFrameBox->value(); }
 
 private:
     bool confirmMaxFrameUpdating(int aNewMaxFrame) const;
@@ -87,9 +83,7 @@ class ProjectFPSSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     ProjectFPSSettingDialog(core::Project& aProject, QWidget* aParent);
-    int fps() const {
-        return mFPSBox->value();
-    }
+    int fps() const { return mFPSBox->value(); }
 
 private:
     bool confirmFPSUpdating(int aNewMaxFrame) const;
@@ -102,9 +96,7 @@ class ProjectLoopSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     ProjectLoopSettingDialog(core::Project& aProject, QWidget* aParent);
-    bool isCheckedLoopBox() const {
-        return mLoopBox->isChecked();
-    }
+    bool isCheckedLoopBox() const { return mLoopBox->isChecked(); }
 
 private:
     QCheckBox* mLoopBox;

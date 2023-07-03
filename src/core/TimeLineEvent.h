@@ -28,9 +28,7 @@ public:
 
     TimeLineEvent();
 
-    void setType(Type aType) {
-        mType = aType;
-    }
+    void setType(Type aType) { mType = aType; }
 
     void pushTarget(ObjectNode& aNode, const TimeKeyPos& aPos);
     void pushTarget(ObjectNode& aNode, const TimeKeyPos& aPos, int aSubIndex);
@@ -39,31 +37,17 @@ public:
 
     void pushDefaultTarget(ObjectNode& aNode, TimeKeyType aType);
 
-    Type type() const {
-        return mType;
-    }
-    QVector<Target>& targets() {
-        return mTargets;
-    }
-    const QVector<Target>& targets() const {
-        return mTargets;
-    }
+    Type type() const { return mType; }
+    QVector<Target>& targets() { return mTargets; }
+    const QVector<Target>& targets() const { return mTargets; }
 
-    QVector<Target>& defaultTargets() {
-        return mDefaultTargets;
-    }
-    const QVector<Target>& detaulTargets() const {
-        return mDefaultTargets;
-    }
+    QVector<Target>& defaultTargets() { return mDefaultTargets; }
+    const QVector<Target>& detaulTargets() const { return mDefaultTargets; }
 
-    bool hasAnyTargets() const {
-        return !mTargets.empty() || !mDefaultTargets.empty();
-    }
+    bool hasAnyTargets() const { return !mTargets.empty() || !mDefaultTargets.empty(); }
 
     // set a project by a project
-    void setProject(Project& aProject) {
-        mProject = &aProject;
-    }
+    void setProject(Project& aProject) { mProject = &aProject; }
     Project& project() const {
         XC_PTR_ASSERT(mProject);
         return *mProject;

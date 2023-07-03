@@ -21,9 +21,7 @@ namespace bone {
             BoneParent();
             explicit BoneParent(QList<core::Bone2*>* aTopBones);
             explicit BoneParent(core::Bone2::Children* aBoneTree);
-            explicit operator bool() const {
-                return mIsTopBone ? (bool)mTopBones : (bool)mBoneTree;
-            }
+            explicit operator bool() const { return mIsTopBone ? (bool)mTopBones : (bool)mBoneTree; }
             void insert(int aIndex, core::Bone2& aBone);
             core::Bone2* removeAt(int aIndex);
         };

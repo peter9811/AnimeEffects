@@ -21,7 +21,8 @@ private:
     bool initShader();
     void updateWorkTextureCache(TextObject& aTextObj, const QSize& aNeedSize);
     void createCascadePolygons(
-        const QFont& aFont, const QFontMetrics& aMetrics, const QString& aText, QVector<gl::Vector2>& aDest);
+        const QFont& aFont, const QFontMetrics& aMetrics, const QString& aText, QVector<gl::Vector2>& aDest
+    );
 
     gl::Framebuffer mFramebuffer;
     gl::EasyShaderProgram mShader;

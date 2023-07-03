@@ -17,12 +17,17 @@ namespace ffd {
 
     //-------------------------------------------------------------------------------------------------
     DragMode::DragMode(core::Project& aProject, Targets& aTargets):
-        mProject(aProject), mTargets(aTargets), mParam(), mState(State_Idle), mFocusing(), mFocusTarget(),
-        mFocusIndex(), mFocusPos(), mCommandRef() {}
+        mProject(aProject),
+        mTargets(aTargets),
+        mParam(),
+        mState(State_Idle),
+        mFocusing(),
+        mFocusTarget(),
+        mFocusIndex(),
+        mFocusPos(),
+        mCommandRef() {}
 
-    void DragMode::updateParam(const FFDParam& aParam) {
-        mParam = aParam;
-    }
+    void DragMode::updateParam(const FFDParam& aParam) { mParam = aParam; }
 
     bool DragMode::updateCursor(const core::CameraInfo& aCamera, const core::AbstractCursor& aCursor) {
         bool modified = false;

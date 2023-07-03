@@ -18,12 +18,8 @@ class ExportDiag: public EasyDialog {
     Q_OBJECT
 public:
     ExportDiag(core::Project& aProject, QWidget* aParent);
-    const ctrl::Exporter::CommonParam& commonParam() const {
-        return mCommonParam;
-    }
-    ctrl::Exporter::CommonParam& commonParam() {
-        return mCommonParam;
-    }
+    const ctrl::Exporter::CommonParam& commonParam() const { return mCommonParam; }
+    ctrl::Exporter::CommonParam& commonParam() { return mCommonParam; }
 
 protected:
     void pushSizeBox(QFormLayout& aLayout);
@@ -46,9 +42,7 @@ class ExportClasses: public ExportDiag {
     Q_OBJECT
 public:
     ExportClasses(core::Project& aProject, const QString& aSuffix, QWidget* aParent);
-    const ctrl::Exporter::ImageParam& imageParam() const {
-        return mImageParam;
-    }
+    const ctrl::Exporter::ImageParam& imageParam() const { return mImageParam; }
 
 private:
     QLayout* createExporter();

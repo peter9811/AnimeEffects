@@ -19,7 +19,8 @@
 #include "exportdiag.h"
 
 namespace {
-template<class tEdit> void setMinMaxOptionWidth(tEdit* aEdit) {
+template<class tEdit>
+void setMinMaxOptionWidth(tEdit* aEdit) {
     aEdit->setMaximumWidth(200);
     aEdit->setMinimumWidth(50);
 }
@@ -29,8 +30,13 @@ template<class tEdit> void setMinMaxOptionWidth(tEdit* aEdit) {
 namespace gui {
 //-------------------------------------------------------------------------------------------------
 ExportDiag::ExportDiag(core::Project& aProject, QWidget* aParent):
-    EasyDialog(tr("Export Animation..."), aParent), mProject(aProject), mCommonParam(), mSize(), mFrameMax(),
-    mFixAspect(true), mSizeUpdating(false) {
+    EasyDialog(tr("Export Animation..."), aParent),
+    mProject(aProject),
+    mCommonParam(),
+    mSize(),
+    mFrameMax(),
+    mFixAspect(true),
+    mSizeUpdating(false) {
     mCommonParam.size = mProject.attribute().imageSize();
     XC_ASSERT(mCommonParam.size.width() > 0);
     XC_ASSERT(mCommonParam.size.height() > 0);
@@ -52,10 +58,12 @@ void ExportDiag::pushSizeBox(QFormLayout& aLayout) {
         x->setRange(1, 32767);
         y->setRange(1, 32767);
         if (!(mCommonParam.size.width() % 2 == 0) || !(mCommonParam.size.height() % 2 == 0)) {
-            MainWindow::showInfoPopup(tr("Value is Odd"),
+            MainWindow::showInfoPopup(
+                tr("Value is Odd"),
                 tr("The width or height of the image ends with an odd number. "
                    "Please change these parameters to an even number as they may cause the export to fail."),
-                "Warn");
+                "Warn"
+            );
             mWarningShown = true;
         }
         x->setValue(mCommonParam.size.width());
@@ -68,10 +76,12 @@ void ExportDiag::pushSizeBox(QFormLayout& aLayout) {
             if (mSizeUpdating)
                 return;
             if (!(aValue % 2 == 0) && !mWarningShown) {
-                MainWindow::showInfoPopup(tr("Value is Odd"),
+                MainWindow::showInfoPopup(
+                    tr("Value is Odd"),
                     tr("A width or height ending in an odd number"
                        " may make the exporting process fail, please try another value."),
-                    "Warn");
+                    "Warn"
+                );
                 mWarningShown = true;
                 return;
             }
@@ -90,10 +100,12 @@ void ExportDiag::pushSizeBox(QFormLayout& aLayout) {
                 return;
 
             if (!(aValue % 2 == 0) && !mWarningShown) {
-                MainWindow::showInfoPopup(tr("Value is Odd"),
+                MainWindow::showInfoPopup(
+                    tr("Value is Odd"),
                     tr("A height or width ending in an odd number"
                        " may make the exporting process fail, please try another value."),
-                    "Warn");
+                    "Warn"
+                );
                 mWarningShown = true;
                 return;
             }

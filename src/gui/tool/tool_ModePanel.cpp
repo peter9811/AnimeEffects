@@ -6,8 +6,12 @@ namespace gui {
 namespace tool {
 
     ModePanel::ModePanel(QWidget* aParent, GUIResources& aResources, const PushDelegate& aOnPushed):
-        QGroupBox(aParent), mGUIResources(aResources), mGroup(new QButtonGroup(this)), mButtons(),
-        mLayout(this, 0, 2, 2), mOnPushed(aOnPushed) {
+        QGroupBox(aParent),
+        mGUIResources(aResources),
+        mGroup(new QButtonGroup(this)),
+        mButtons(),
+        mLayout(this, 0, 2, 2),
+        mOnPushed(aOnPushed) {
         this->setTitle(tr("ToolBox"));
         mGroup->setExclusive(true);
         this->setLayout(&mLayout);
@@ -46,9 +50,7 @@ namespace tool {
         }
     }
 
-    void ModePanel::pushButton(ctrl::ToolType aId) {
-        mButtons.at(aId)->click();
-    }
+    void ModePanel::pushButton(ctrl::ToolType aId) { mButtons.at(aId)->click(); }
 
     int ModePanel::updateGeometry(const QPoint& aPos, int aWidth) {
         QMargins margins = this->contentsMargins();

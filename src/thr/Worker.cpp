@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "thr/Worker.h"
 
-//#define THR_WORKER_DUMP(...) qDebug(__VA_ARGS__)
+// #define THR_WORKER_DUMP(...) qDebug(__VA_ARGS__)
 #define THR_WORKER_DUMP(...)
 
 namespace thr {
@@ -44,8 +44,6 @@ bool Worker::Thread::isExit() {
 //-------------------------------------------------------------------------------------------------
 Worker::Worker(TaskQueue& aQueue): mThread(aQueue) {}
 
-void Worker::start(QThread::Priority aPriority) {
-    mThread.start(aPriority);
-}
+void Worker::start(QThread::Priority aPriority) { mThread.start(aPriority); }
 
 } // namespace thr

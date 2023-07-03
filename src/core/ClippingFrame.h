@@ -20,27 +20,15 @@ public:
     void release();
     void setupDrawBuffers();
 
-    void resetClippingId() {
-        mClippingId = 0;
-    }
+    void resetClippingId() { mClippingId = 0; }
     uint8 forwardClippingId();
-    uint8 clippingId() const {
-        return mClippingId;
-    }
+    uint8 clippingId() const { return mClippingId; }
 
-    gl::Texture& texture() {
-        return *mTexture;
-    }
-    const gl::Texture& texture() const {
-        return *mTexture;
-    }
+    gl::Texture& texture() { return *mTexture; }
+    const gl::Texture& texture() const { return *mTexture; }
 
-    uint32 renderStamp() const {
-        return mRenderStamp;
-    }
-    void updateRenderStamp() {
-        ++mRenderStamp;
-    }
+    uint32 renderStamp() const { return mRenderStamp; }
+    void updateRenderStamp() { ++mRenderStamp; }
 
 private:
     void createSingulationShader();

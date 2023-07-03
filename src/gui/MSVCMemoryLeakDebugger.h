@@ -19,9 +19,7 @@ struct MyMemoryFooter {
         sign = 0xfa00cc8b;
         id = aId;
     }
-    bool hasValidSign() const {
-        return sign == 0xfa00cc8b;
-    }
+    bool hasValidSign() const { return sign == 0xfa00cc8b; }
 };
 
 class MemoryRegister {
@@ -32,9 +30,7 @@ public:
         const void* ptr;
         uint64 size;
         uint32 id;
-        explicit operator bool() const {
-            return ptr;
-        }
+        explicit operator bool() const { return ptr; }
     };
 
     MemoryRegister();
@@ -63,7 +59,8 @@ void* operator new[](size_t aSize);
 void operator delete[](void* aPtr);
 
 int myAllocHook(
-    int aAllocType, void* aData, size_t aSize, int aBlockUse, long aRequest, const unsigned char* aFileName, int aLine);
+    int aAllocType, void* aData, size_t aSize, int aBlockUse, long aRequest, const unsigned char* aFileName, int aLine
+);
 
 #endif // USE_MSVC_MEMORYLEAK_DEBUG
 

@@ -11,9 +11,7 @@ public:
     VertexArrayObject();
     ~VertexArrayObject();
 
-    GLuint id() const {
-        return mId;
-    }
+    GLuint id() const { return mId; }
 
     void bind();
     void release();

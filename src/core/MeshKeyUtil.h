@@ -20,9 +20,7 @@ public:
     public:
         CreateFace(QList<MeshFace*>& aFaceList, MeshEdge& aEdge0, MeshEdge& aEdge1, MeshEdge& aEdge2);
 
-        MeshFace* newFace() {
-            return mNewFace.get();
-        }
+        MeshFace* newFace() { return mNewFace.get(); }
 
         virtual void exec();
         virtual void redo();
@@ -38,9 +36,7 @@ public:
     public:
         CreateEdge(QList<MeshEdge*>& aEdgeList, MeshVtx& aVtx0, MeshVtx& aVtx1);
 
-        MeshEdge* newEdge() {
-            return mNewEdge.get();
-        }
+        MeshEdge* newEdge() { return mNewEdge.get(); }
 
         virtual void exec();
         virtual void redo();
@@ -57,9 +53,7 @@ public:
     public:
         CreateVtx(MeshKey& aKey, QList<MeshVtx*>& aVtxList, const QVector2D& aPos);
 
-        MeshVtx* newVtx() {
-            return mNewVtx.get();
-        }
+        MeshVtx* newVtx() { return mNewVtx.get(); }
 
         virtual void exec();
         virtual void redo();

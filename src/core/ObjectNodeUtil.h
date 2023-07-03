@@ -18,7 +18,8 @@ namespace ObjectNodeUtil {
     bool thereAreSomeKeysExceedingFrame(const ObjectNode* aRootNode, int aMaxFrame);
 
     void collectRenderClippees(
-        ObjectNode& aNode, std::vector<Renderer::SortUnit>& aDest, const TimeCacheAccessor& aAccessor);
+        ObjectNode& aNode, std::vector<Renderer::SortUnit>& aDest, const TimeCacheAccessor& aAccessor
+    );
 
     class AttributeNotifier: public cmnd::Listener {
         Project& mProject;

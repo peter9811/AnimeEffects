@@ -5,9 +5,14 @@ namespace ctrl {
 #if USE_GL_CORE_PROFILE
 //-------------------------------------------------------------------------------------------------
 GLCorePaintEngine::GLCorePaintEngine():
-    QPaintEngine(QPaintEngine::AlphaBlend | QPaintEngine::Antialiasing | QPaintEngine::ConstantOpacity |
-        QPaintEngine::PrimitiveTransform),
-    mDrawer(), mFontDrawer(), mTextureCaches(), mTextCaches() {}
+    QPaintEngine(
+        QPaintEngine::AlphaBlend | QPaintEngine::Antialiasing | QPaintEngine::ConstantOpacity |
+        QPaintEngine::PrimitiveTransform
+    ),
+    mDrawer(),
+    mFontDrawer(),
+    mTextureCaches(),
+    mTextCaches() {}
 
 bool GLCorePaintEngine::begin(QPaintDevice* aDevPtr) {
     // qDebug() << "begin";
@@ -118,9 +123,7 @@ void GLCorePaintEngine::drawEllipse(const QRectF& aRect) {
     mDrawer.drawEllipse(aRect.center(), 0.5f * aRect.width(), 0.5f * aRect.height());
 }
 
-void GLCorePaintEngine::drawPath(const QPainterPath& aPath) {
-    (void)aPath;
-}
+void GLCorePaintEngine::drawPath(const QPainterPath& aPath) { (void)aPath; }
 
 void GLCorePaintEngine::drawPolygon(const QPoint* aPoints, int aCount, PolygonDrawMode aMode) {
     switch (aMode) {
@@ -151,7 +154,8 @@ void GLCorePaintEngine::drawPolygon(const QPointF* aPoints, int aCount, PolygonD
 }
 
 void GLCorePaintEngine::drawImage(
-    const QRectF& aRect, const QImage& aImage, const QRectF& aSrcRect, Qt::ImageConversionFlags aFlags) {
+    const QRectF& aRect, const QImage& aImage, const QRectF& aSrcRect, Qt::ImageConversionFlags aFlags
+) {
     (void)aFlags;
     const QImage* ptr = &aImage;
     const qint64 key = aImage.cacheKey();

@@ -21,9 +21,9 @@ TimeKey* TimeKeyGatherer::findLastKey(const TimeLine::MapType& aMap, Frame aFram
 TimeKeyGatherer::TimeKeyGatherer(): mPoints(), mFrame() {}
 
 TimeKeyGatherer::TimeKeyGatherer(
-    const TimeLine::MapType& aMap, const TimeInfo& aTimeInfo, ForceType aForceType, TimeKey* aAssignedParent):
-    mPoints(),
-    mFrame(aTimeInfo.frame.get()), mForceType(aForceType), mParent() {
+    const TimeLine::MapType& aMap, const TimeInfo& aTimeInfo, ForceType aForceType, TimeKey* aAssignedParent
+):
+    mPoints(), mFrame(aTimeInfo.frame.get()), mForceType(aForceType), mParent() {
     const bool forced = mForceType == ForceType_SameParent || mForceType == ForceType_AssignedParent;
 
     // forced assigned parent

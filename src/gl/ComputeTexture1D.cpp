@@ -9,9 +9,7 @@ ComputeTexture1D::ComputeTexture1D(CompoType aCompoType, int aCompoCount):
     XC_ASSERT(0 <= aCompoType && aCompoType < CompoType_TERM);
 }
 
-ComputeTexture1D::~ComputeTexture1D() {
-    destroy();
-}
+ComputeTexture1D::~ComputeTexture1D() { destroy(); }
 
 void ComputeTexture1D::create(const void* aData, GLsizei aSize) {
     // XC_PTR_ASSERT(aData);
@@ -60,9 +58,7 @@ void ComputeTexture1D::create(const void* aData, GLsizei aSize) {
     XC_ASSERT(ggl.glGetError() == GL_NO_ERROR);
 }
 
-void ComputeTexture1D::update(const void* aData) {
-    update(aData, 0, mSize);
-}
+void ComputeTexture1D::update(const void* aData) { update(aData, 0, mSize); }
 
 void ComputeTexture1D::update(const void* aData, GLint aOffset, GLsizei aSize) {
     XC_PTR_ASSERT(aData);
@@ -91,9 +87,7 @@ void ComputeTexture1D::destroy() {
 ComputeTexture1DList::ComputeTexture1DList(ComputeTexture1D::CompoType aCompoType, int aCompoCount):
     mCompoType(aCompoType), mCompoCount(aCompoCount), mList(), mSize() {}
 
-ComputeTexture1DList::~ComputeTexture1DList() {
-    destroy();
-}
+ComputeTexture1DList::~ComputeTexture1DList() { destroy(); }
 
 void ComputeTexture1DList::reset(int aCount, GLsizei aSize, const void* aData) {
     const int prevCount = count();

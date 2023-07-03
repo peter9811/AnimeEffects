@@ -33,9 +33,7 @@ public:
     void drawPoint(const QPointF& aCenter);
 
     void drawLine(const QPointF& aFrom, const QPointF& aTo);
-    void drawLine(const QLineF& aLine) {
-        drawLine(aLine.p1(), aLine.p2());
-    }
+    void drawLine(const QLineF& aLine) { drawLine(aLine.p1(), aLine.p2()); }
 
     void drawRect(const QRect& aRect);
     void drawRect(const QRectF& aRect);
@@ -148,8 +146,8 @@ private:
     void drawEllipseImpl(const QPointF& aCenter, float aRadiusX, float aRadiusY, int aDivision);
 
     void pushStateCommand(const Command& aCommand);
-    void pushDrawCommand(
-        const Command& aCommand, const gl::Vector2* aPositions, const gl::Vector2* aSubCoords = nullptr);
+    void
+    pushDrawCommand(const Command& aCommand, const gl::Vector2* aPositions, const gl::Vector2* aSubCoords = nullptr);
     void flushCommands();
 
     void bindAppositeShader(int aSlotIndex);

@@ -44,7 +44,8 @@ public:
     qint64 lastPress;
     qint64 lastRelease;
     static void showInfoPopup(
-        const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed = "nullptr");
+        const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed = "nullptr"
+    );
     QTimer* autosaveTimer;
 public slots:
     void autoSave();

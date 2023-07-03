@@ -12,17 +12,11 @@ class SignalNotifier: public Listener {
 public:
     SignalNotifier(util::Signaler<void()>& aSignaler): mSignaler(aSignaler) {}
 
-    virtual void onExecuted() {
-        mSignaler();
-    }
+    virtual void onExecuted() { mSignaler(); }
 
-    virtual void onUndone() {
-        mSignaler();
-    }
+    virtual void onUndone() { mSignaler(); }
 
-    virtual void onRedone() {
-        mSignaler();
-    }
+    virtual void onRedone() { mSignaler(); }
 };
 
 } // namespace cmnd

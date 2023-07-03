@@ -77,16 +77,15 @@ void ResourceDialog::updateResourcePath() {
     }
 }
 
-bool ResourceDialog::hasValidNode() const {
-    return this->result() == QDialog::Accepted && !mNodeList.isEmpty();
-}
+bool ResourceDialog::hasValidNode() const { return this->result() == QDialog::Accepted && !mNodeList.isEmpty(); }
 
 void ResourceDialog::onAddResourceTriggered(bool) {
     if (!mProject)
         return;
 
     const QStringList fileName = QFileDialog::getOpenFileNames(
-        this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
+        this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
+    );
     if (fileName.isEmpty())
         return;
 

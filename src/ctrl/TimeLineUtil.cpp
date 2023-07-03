@@ -163,7 +163,8 @@ namespace TimeLineUtil {
     //---------------------------------------------------------------------------------------
     template<class tKey, TimeKeyType tType>
     void assignKeyData(
-        Project& aProject, ObjectNode& aTarget, int aFrame, const typename tKey::Data& aNewData, const QString& aText) {
+        Project& aProject, ObjectNode& aTarget, int aFrame, const typename tKey::Data& aNewData, const QString& aText
+    ) {
         XC_ASSERT(aTarget.timeLine());
         tKey* key = (tKey*)(aFrame == TimeLine::kDefaultKeyIndex ? aTarget.timeLine()->defaultKey(tType)
                                                                  : aTarget.timeLine()->timeKey(tType, aFrame));
@@ -189,7 +190,8 @@ namespace TimeLineUtil {
     //---------------------------------------------------------------------------------------
     template<class tKey, TimeKeyType tType>
     void assignKeyEasing(
-        Project& aProject, ObjectNode& aTarget, int aFrame, const util::Easing::Param& aNewData, const QString& aText) {
+        Project& aProject, ObjectNode& aTarget, int aFrame, const util::Easing::Param& aNewData, const QString& aText
+    ) {
         XC_ASSERT(aTarget.timeLine());
         tKey* key = (tKey*)(aFrame == TimeLine::kDefaultKeyIndex ? aTarget.timeLine()->defaultKey(tType)
                                                                  : aTarget.timeLine()->timeKey(tType, aFrame));
@@ -214,8 +216,13 @@ namespace TimeLineUtil {
 
     //---------------------------------------------------------------------------------------
     template<class tKey, TimeKeyType tType>
-    void assignKeyBy(Project& aProject, ObjectNode& aTarget, int aFrame, const QString& aText,
-        const std::function<void(tKey*)>& aFunc) {
+    void assignKeyBy(
+        Project& aProject,
+        ObjectNode& aTarget,
+        int aFrame,
+        const QString& aText,
+        const std::function<void(tKey*)>& aFunc
+    ) {
         XC_ASSERT(aTarget.timeLine());
         tKey* key = (tKey*)(aFrame == TimeLine::kDefaultKeyIndex ? aTarget.timeLine()->defaultKey(tType)
                                                                  : aTarget.timeLine()->timeKey(tType, aFrame));
@@ -239,107 +246,168 @@ namespace TimeLineUtil {
 
     //---------------------------------------------------------------------------------------
     void assignMoveKeyData(Project& aProject, ObjectNode& aTarget, int aFrame, const MoveKey::Data& aNewData) {
-        assignKeyData<MoveKey, TimeKeyType_Move>(aProject, aTarget, aFrame, aNewData,
+        assignKeyData<MoveKey, TimeKeyType_Move>(
+            aProject,
+            aTarget,
+            aFrame,
+            aNewData,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default movement key")
-                                                 : CmndName::tr("Update movement key"));
+                                                 : CmndName::tr("Update movement key")
+        );
     }
 
     void assignRotateKeyData(Project& aProject, ObjectNode& aTarget, int aFrame, const RotateKey::Data& aNewData) {
-        assignKeyData<RotateKey, TimeKeyType_Rotate>(aProject, aTarget, aFrame, aNewData,
+        assignKeyData<RotateKey, TimeKeyType_Rotate>(
+            aProject,
+            aTarget,
+            aFrame,
+            aNewData,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default rotation key")
-                                                 : CmndName::tr("Update rotation key"));
+                                                 : CmndName::tr("Update rotation key")
+        );
     }
 
     void assignScaleKeyData(Project& aProject, ObjectNode& aTarget, int aFrame, const ScaleKey::Data& aNewData) {
-        assignKeyData<ScaleKey, TimeKeyType_Scale>(aProject, aTarget, aFrame, aNewData,
+        assignKeyData<ScaleKey, TimeKeyType_Scale>(
+            aProject,
+            aTarget,
+            aFrame,
+            aNewData,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default scaling key")
-                                                 : CmndName::tr("Update scaling key"));
+                                                 : CmndName::tr("Update scaling key")
+        );
     }
 
     void assignDepthKeyData(Project& aProject, ObjectNode& aTarget, int aFrame, const DepthKey::Data& aNewData) {
-        assignKeyData<DepthKey, TimeKeyType_Depth>(aProject, aTarget, aFrame, aNewData,
+        assignKeyData<DepthKey, TimeKeyType_Depth>(
+            aProject,
+            aTarget,
+            aFrame,
+            aNewData,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default depth key")
-                                                 : CmndName::tr("Update depth key"));
+                                                 : CmndName::tr("Update depth key")
+        );
     }
 
     void assignOpaKeyData(Project& aProject, ObjectNode& aTarget, int aFrame, const OpaKey::Data& aNewData) {
-        assignKeyData<OpaKey, TimeKeyType_Opa>(aProject, aTarget, aFrame, aNewData,
+        assignKeyData<OpaKey, TimeKeyType_Opa>(
+            aProject,
+            aTarget,
+            aFrame,
+            aNewData,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default opacity key")
-                                                 : CmndName::tr("Update opacity key"));
+                                                 : CmndName::tr("Update opacity key")
+        );
     }
 
     void assignHSVKeyData(Project& aProject, ObjectNode& aTarget, int aFrame, const HSVKey::Data& aNewData) {
-        assignKeyData<HSVKey, TimeKeyType_HSV>(aProject, aTarget, aFrame, aNewData,
+        assignKeyData<HSVKey, TimeKeyType_HSV>(
+            aProject,
+            aTarget,
+            aFrame,
+            aNewData,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default HSV key")
-                                                 : CmndName::tr("Update HSV key"));
+                                                 : CmndName::tr("Update HSV key")
+        );
     }
 
     void assignPoseKeyEasing(Project& aProject, ObjectNode& aTarget, int aFrame, const util::Easing::Param& aNewData) {
-        assignKeyEasing<PoseKey, TimeKeyType_Pose>(aProject, aTarget, aFrame, aNewData,
+        assignKeyEasing<PoseKey, TimeKeyType_Pose>(
+            aProject,
+            aTarget,
+            aFrame,
+            aNewData,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default pose key")
-                                                 : CmndName::tr("Update pose key"));
+                                                 : CmndName::tr("Update pose key")
+        );
     }
 
     void assignFFDKeyEasing(Project& aProject, ObjectNode& aTarget, int aFrame, const util::Easing::Param& aNewData) {
-        assignKeyEasing<FFDKey, TimeKeyType_FFD>(aProject, aTarget, aFrame, aNewData,
+        assignKeyEasing<FFDKey, TimeKeyType_FFD>(
+            aProject,
+            aTarget,
+            aFrame,
+            aNewData,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default FFD key")
-                                                 : CmndName::tr("Update FFD key"));
+                                                 : CmndName::tr("Update FFD key")
+        );
     }
 
     void assignImageKeyResource(Project& aProject, ObjectNode& aTarget, int aFrame, img::ResourceNode& aNewData) {
         ResourceUpdatingWorkspacePtr workspace = std::make_shared<ResourceUpdatingWorkspace>();
         const bool createTransitions = !aTarget.timeLine()->isEmpty(TimeKeyType_FFD);
 
-        assignKeyBy<ImageKey, TimeKeyType_Image>(aProject, aTarget, aFrame,
+        assignKeyBy<ImageKey, TimeKeyType_Image>(
+            aProject,
+            aTarget,
+            aFrame,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update default image resource key")
                                                  : CmndName::tr("update image resource key"),
             [&](ImageKey* aKey) {
                 // image key
                 aProject.commandStack().push(
-                    ImageKeyUpdater::createResourceUpdater(*aKey, aNewData, workspace, createTransitions));
+                    ImageKeyUpdater::createResourceUpdater(*aKey, aNewData, workspace, createTransitions)
+                );
 
                 // ffd key should be called finally
                 if (createTransitions) {
                     aProject.commandStack().push(FFDKeyUpdater::createResourceUpdater(aTarget, workspace));
                 }
-            });
+            }
+        );
     }
 
     void assignImageKeyOffset(Project& aProject, ObjectNode& aTarget, int aFrame, const QVector2D& aNewData) {
-        assignKeyBy<ImageKey, TimeKeyType_Image>(aProject, aTarget, aFrame,
+        assignKeyBy<ImageKey, TimeKeyType_Image>(
+            aProject,
+            aTarget,
+            aFrame,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update the image's default offset key")
                                                  : CmndName::tr("Update the image's offset key"),
             [&](ImageKey* aKey) {
                 auto prevOffset = aKey->data().imageOffset();
 
-                aProject.commandStack().push(new cmnd::Delegatable([=]() { aKey->data().setImageOffset(aNewData); },
-                    [=]() { aKey->data().setImageOffset(prevOffset); }));
-            });
+                aProject.commandStack().push(new cmnd::Delegatable(
+                    [=]() { aKey->data().setImageOffset(aNewData); }, [=]() { aKey->data().setImageOffset(prevOffset); }
+                ));
+            }
+        );
     }
 
     void assignImageKeyCellSize(core::Project& aProject, core::ObjectNode& aTarget, int aFrame, int aNewData) {
         ResourceUpdatingWorkspacePtr workspace = std::make_shared<ResourceUpdatingWorkspace>();
         const bool createTransitions = !aTarget.timeLine()->isEmpty(TimeKeyType_FFD);
 
-        assignKeyBy<ImageKey, TimeKeyType_Image>(aProject, aTarget, aFrame,
+        assignKeyBy<ImageKey, TimeKeyType_Image>(
+            aProject,
+            aTarget,
+            aFrame,
             aFrame == TimeLine::kDefaultKeyIndex ? CmndName::tr("Update the default mesh size key")
                                                  : CmndName::tr("Update mesh size key"),
             [&](ImageKey* aKey) {
                 // image key
                 aProject.commandStack().push(
-                    ImageKeyUpdater::createGridMeshUpdater(*aKey, aNewData, workspace, createTransitions));
+                    ImageKeyUpdater::createGridMeshUpdater(*aKey, aNewData, workspace, createTransitions)
+                );
 
                 // ffd key should be called finally
                 if (createTransitions) {
                     aProject.commandStack().push(FFDKeyUpdater::createResourceUpdater(aTarget, workspace));
                 }
-            });
+            }
+        );
     }
 
     //---------------------------------------------------------------------------------------
     template<class tKey, TimeKeyType tType>
-    void pushNewKey(Project& aProject, ObjectNode& aTarget, int aFrame, tKey* aKey, const QString& aText,
-        TimeKey* aParentKey = nullptr) {
+    void pushNewKey(
+        Project& aProject,
+        ObjectNode& aTarget,
+        int aFrame,
+        tKey* aKey,
+        const QString& aText,
+        TimeKey* aParentKey = nullptr
+    ) {
         XC_PTR_ASSERT(aKey);
         XC_ASSERT(aTarget.timeLine());
 
@@ -368,7 +436,8 @@ namespace TimeLineUtil {
     }
     void pushNewRotateKey(Project& aProject, ObjectNode& aTarget, int aFrame, RotateKey* aKey) {
         pushNewKey<RotateKey, TimeKeyType_Rotate>(
-            aProject, aTarget, aFrame, aKey, CmndName::tr("Add new rotation key"));
+            aProject, aTarget, aFrame, aKey, CmndName::tr("Add new rotation key")
+        );
     }
 
     void pushNewScaleKey(Project& aProject, ObjectNode& aTarget, int aFrame, ScaleKey* aKey) {
@@ -390,13 +459,15 @@ namespace TimeLineUtil {
     void pushNewPoseKey(Project& aProject, ObjectNode& aTarget, int aFrame, PoseKey* aKey, BoneKey* aParentKey) {
         XC_PTR_ASSERT(aParentKey);
         pushNewKey<PoseKey, TimeKeyType_Pose>(
-            aProject, aTarget, aFrame, aKey, CmndName::tr("Add new pose key"), aParentKey);
+            aProject, aTarget, aFrame, aKey, CmndName::tr("Add new pose key"), aParentKey
+        );
     }
 
     void pushNewFFDKey(Project& aProject, ObjectNode& aTarget, int aFrame, FFDKey* aKey, TimeKey* aParentKey) {
         XC_ASSERT(!aParentKey || aParentKey->type() == TimeKeyType_Mesh || aParentKey->type() == TimeKeyType_Image);
         pushNewKey<FFDKey, TimeKeyType_FFD>(
-            aProject, aTarget, aFrame, aKey, CmndName::tr("Add new FFD key"), aParentKey);
+            aProject, aTarget, aFrame, aKey, CmndName::tr("Add new FFD key"), aParentKey
+        );
     }
 
     void pushNewImageKey(Project& aProject, ObjectNode& aTarget, int aFrame, ImageKey* aKey) {

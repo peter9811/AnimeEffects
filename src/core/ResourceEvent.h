@@ -17,41 +17,23 @@ public:
 
     ResourceEvent(Project& aProject);
 
-    void setType(Type aType) {
-        mType = aType;
-    }
+    void setType(Type aType) { mType = aType; }
 
-    void setRoot(img::ResourceNode& aNode) {
-        mRoot = &aNode;
-    }
+    void setRoot(img::ResourceNode& aNode) { mRoot = &aNode; }
 
-    void pushTarget(img::ResourceNode& aNode) {
-        mTargets.push_back(&aNode);
-    }
+    void pushTarget(img::ResourceNode& aNode) { mTargets.push_back(&aNode); }
 
     void setSingleTarget(img::ResourceNode& aNode);
 
-    Project& project() const {
-        return mProject;
-    }
+    Project& project() const { return mProject; }
 
-    Type type() const {
-        return mType;
-    }
+    Type type() const { return mType; }
 
-    img::ResourceNode* root() {
-        return mRoot;
-    }
-    const img::ResourceNode* root() const {
-        return mRoot;
-    }
+    img::ResourceNode* root() { return mRoot; }
+    const img::ResourceNode* root() const { return mRoot; }
 
-    Targets& targets() {
-        return mTargets;
-    }
-    const Targets& targets() const {
-        return mTargets;
-    }
+    Targets& targets() { return mTargets; }
+    const Targets& targets() const { return mTargets; }
 
     bool contains(const void* aSerialAddress) const;
     const img::ResourceNode* findTarget(const void* aSerialAddress) const;

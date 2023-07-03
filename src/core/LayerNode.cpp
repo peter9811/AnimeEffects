@@ -22,12 +22,18 @@
 namespace core {
 
 LayerNode::LayerNode(const QString& aName, ShaderHolder& aShaderHolder):
-    mName(aName), mIsVisible(true), mIsSlimmedDown(), mInitialRect(), mTimeLine(), mShaderHolder(aShaderHolder),
-    mIsClipped(), mMeshTransformer("./data/shader/MeshTransformVert.glsl"), mCurrentMesh(), mClippees() {}
+    mName(aName),
+    mIsVisible(true),
+    mIsSlimmedDown(),
+    mInitialRect(),
+    mTimeLine(),
+    mShaderHolder(aShaderHolder),
+    mIsClipped(),
+    mMeshTransformer("./data/shader/MeshTransformVert.glsl"),
+    mCurrentMesh(),
+    mClippees() {}
 
-void LayerNode::setDefaultImage(const img::ResourceHandle& aHandle) {
-    setDefaultImage(aHandle, aHandle->blendMode());
-}
+void LayerNode::setDefaultImage(const img::ResourceHandle& aHandle) { setDefaultImage(aHandle, aHandle->blendMode()); }
 
 void LayerNode::setDefaultImage(const img::ResourceHandle& aHandle, img::BlendMode aBlendMode) {
     XC_ASSERT(aHandle);
@@ -105,9 +111,7 @@ float LayerNode::initialDepth() const {
     return key ? key->depth() : 0.0f;
 }
 
-void LayerNode::setClipped(bool aIsClipped) {
-    mIsClipped = aIsClipped;
-}
+void LayerNode::setClipped(bool aIsClipped) { mIsClipped = aIsClipped; }
 
 bool LayerNode::isClipper() const {
     if (mIsClipped)
@@ -294,13 +298,15 @@ void LayerNode::transformShape(const RenderInfo& aInfo, const TimeCacheAccessor&
         useInfluence = (mesh == expans.bone().targetMesh());
         positions = util::ArrayBlock<const gl::Vector3>(expans.ffd().positions(), expans.ffd().count());
         XC_MSG_ASSERT(
-            mesh->vertexCount() == positions.count(), "vtx count = %d, %d", mesh->vertexCount(), positions.count());
+            mesh->vertexCount() == positions.count(), "vtx count = %d, %d", mesh->vertexCount(), positions.count()
+        );
     }
     XC_ASSERT(positions);
 
     // transform
     mMeshTransformer.callGL(
-        expans, mesh->getMeshBuffer(), mesh->originOffset(), positions, aInfo.nonPosed, useInfluence);
+        expans, mesh->getMeshBuffer(), mesh->originOffset(), positions, aInfo.nonPosed, useInfluence
+    );
 
     mCurrentMesh = mesh;
 }
@@ -330,7 +336,8 @@ void LayerNode::renderShape(const RenderInfo& aInfo, const TimeCacheAccessor& aA
     auto destTextureId = aInfo.destTexturizer->texture().id();
     if (!aInfo.isGrid && blendMode != img::BlendMode_Normal) {
         aInfo.destTexturizer->update(
-            aInfo.framebuffer, aInfo.dest, viewMatrix, *mCurrentMesh, mMeshTransformer.positions());
+            aInfo.framebuffer, aInfo.dest, viewMatrix, *mCurrentMesh, mMeshTransformer.positions()
+        );
     }
 
     if (aInfo.isGrid) {
@@ -416,7 +423,8 @@ void LayerNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAcc
 
     if (!aInfo.isGrid && blendMode != img::BlendMode_Normal) {
         aInfo.destTexturizer->update(
-            aInfo.framebuffer, aInfo.dest, viewMatrix, *mCurrentMesh, mMeshTransformer.positions());
+            aInfo.framebuffer, aInfo.dest, viewMatrix, *mCurrentMesh, mMeshTransformer.positions()
+        );
     }
 
     if (aInfo.isGrid) {

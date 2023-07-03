@@ -6,7 +6,8 @@
 
 namespace util {
 
-template<typename tData, typename tAddress> class TreeSeekIterator {
+template<typename tData, typename tAddress>
+class TreeSeekIterator {
 public:
     typedef ITreeSeeker<tData, tAddress> SeekerType;
     typedef typename SeekerType::Data DataType;
@@ -18,9 +19,7 @@ public:
         }
     }
 
-    bool hasNext() const {
-        return !mPositions.empty();
-    }
+    bool hasNext() const { return !mPositions.empty(); }
 
     PositionType next() {
         XC_PTR_ASSERT(!mPositions.empty());
@@ -29,9 +28,7 @@ public:
         return next;
     }
 
-    DataType data(PositionType aPos) {
-        return mSeeker.data(aPos);
-    }
+    DataType data(PositionType aPos) { return mSeeker.data(aPos); }
 
 private:
     void toNext() {

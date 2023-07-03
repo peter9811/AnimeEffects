@@ -5,12 +5,8 @@ namespace {
 
 struct ScopeCounter {
     int& count;
-    ScopeCounter(int& aCount): count(aCount) {
-        ++count;
-    }
-    ~ScopeCounter() {
-        --count;
-    }
+    ScopeCounter(int& aCount): count(aCount) { ++count; }
+    ~ScopeCounter() { --count; }
 };
 
 } // namespace
@@ -18,8 +14,15 @@ struct ScopeCounter {
 namespace ctrl {
 
 Driver::Driver(core::Project& aProject, DriverResources& aResources, GraphicStyle& aGraphicStyle, UILogger& aUILogger):
-    mProject(aProject), mResources(aResources), mGraphicStyle(aGraphicStyle), mUILogger(aUILogger),
-    mToolType(ToolType_TERM), mBlender(aProject.objectTree()), mEditor(), mCurrentNode(), mOnUpdating(0),
+    mProject(aProject),
+    mResources(aResources),
+    mGraphicStyle(aGraphicStyle),
+    mUILogger(aUILogger),
+    mToolType(ToolType_TERM),
+    mBlender(aProject.objectTree()),
+    mEditor(),
+    mCurrentNode(),
+    mOnUpdating(0),
     mRejectedTarget() {
     // initialize blending
     mBlender.updateCurrents(mProject.objectTree().topNode(), mProject.currentTimeInfo());

@@ -32,12 +32,17 @@ public:
     typedef std::istream::pos_type PosType;
     typedef util::IDSolver<void*> IDSolverType;
 
-    Deserializer(util::LEStreamReader& aIn, IDSolverType& aSolver, size_t aMaxFileSize, QVersionNumber aVersion,
-        const gl::DeviceInfo& aGLDeviceInfo, util::IProgressReporter& aRepoter, int aRShiftCount);
+    Deserializer(
+        util::LEStreamReader& aIn,
+        IDSolverType& aSolver,
+        size_t aMaxFileSize,
+        QVersionNumber aVersion,
+        const gl::DeviceInfo& aGLDeviceInfo,
+        util::IProgressReporter& aRepoter,
+        int aRShiftCount
+    );
 
-    QVersionNumber version() const {
-        return mVersion;
-    }
+    QVersionNumber version() const { return mVersion; }
 
     void read(bool& aValue);
     void read(int& aValue);
@@ -72,7 +77,8 @@ public:
     bool readImage(XCMemBlock& aEmptyValue);
     void readFixedString(QString& aValue, int aSize);
 
-    template<typename tValue> tValue getRead() {
+    template<typename tValue>
+    tValue getRead() {
         tValue value = tValue();
         read(value);
         return value;
@@ -87,9 +93,7 @@ public:
     void popLogScope();
     void setLog(const QString& aLog);
     const QVector<QString>& logScopes() const;
-    const QStringList& log() const {
-        return mLog;
-    }
+    const QStringList& log() const { return mLog; }
 
     bool errored(const QString& aLog) {
         if (!mValue.isEmpty()) {

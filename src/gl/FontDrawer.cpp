@@ -51,9 +51,7 @@ bool FontDrawer::initShader() {
     return true;
 }
 
-void FontDrawer::setColor(const QColor& aColor) {
-    mColor = aColor;
-}
+void FontDrawer::setColor(const QColor& aColor) { mColor = aColor; }
 
 void FontDrawer::draw(const QFont& aFont, TextObject& aTextObj) {
     QFontMetrics metrics(aFont);
@@ -139,8 +137,13 @@ void FontDrawer::draw(const QFont& aFont, TextObject& aTextObj) {
         const GLuint clearColorU[] = {(GLuint)mColor.red(), (GLuint)mColor.green(), (GLuint)mColor.blue(), 255};
         ggl.glClearBufferuiv(GL_COLOR, kAttachmentId, clearColorU);
 
-        mResizer.draw(mTextureCache->id(), QRect(QPoint(0.0f, 0.0f), textureSize), textureSize,
-            QRect(QPoint(0.0f, 0.0f), workSize), mTextureCache->size());
+        mResizer.draw(
+            mTextureCache->id(),
+            QRect(QPoint(0.0f, 0.0f), textureSize),
+            textureSize,
+            QRect(QPoint(0.0f, 0.0f), workSize),
+            mTextureCache->size()
+        );
 
         mFramebuffer.release();
     }
@@ -196,7 +199,8 @@ void FontDrawer::updateWorkTextureCache(TextObject& aTextObj, const QSize& aNeed
 }
 
 void FontDrawer::createCascadePolygons(
-    const QFont& aFont, const QFontMetrics& aMetrics, const QString& aText, QVector<gl::Vector2>& aDest) {
+    const QFont& aFont, const QFontMetrics& aMetrics, const QString& aText, QVector<gl::Vector2>& aDest
+) {
     QPainterPath path;
     path.addText(0.0f, aMetrics.ascent(), aFont, aText);
     auto polygons = path.toSubpathPolygons();

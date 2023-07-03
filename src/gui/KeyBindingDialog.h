@@ -20,21 +20,11 @@ private:
     public:
         KeyEdit(KeyCommandMap::KeyCommand& aOrigin, KeyBindingDialog& aParent);
 
-        const QString& label() const {
-            return mOrigin.label;
-        }
-        const QString& text() const {
-            return mText;
-        }
-        ctrl::KeyBinding& keyBinding() {
-            return mBinding;
-        }
-        const ctrl::KeyBinding& keyBinding() const {
-            return mBinding;
-        }
-        const QString& group() const {
-            return mOrigin.group;
-        }
+        const QString& label() const { return mOrigin.label; }
+        const QString& text() const { return mText; }
+        ctrl::KeyBinding& keyBinding() { return mBinding; }
+        const ctrl::KeyBinding& keyBinding() const { return mBinding; }
+        const QString& group() const { return mOrigin.group; }
         void updateText(const QString& aConflictInfo);
         void flushToOrigin();
 

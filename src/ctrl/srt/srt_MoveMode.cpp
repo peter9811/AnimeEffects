@@ -12,15 +12,22 @@ namespace ctrl {
 namespace srt {
 
     MoveMode::MoveMode(Project& aProject, ObjectNode& aTarget, KeyOwner& aKeyOwner):
-        mProject(aProject), mTarget(aTarget), mKeyOwner(aKeyOwner), mSRTParam(), mSymbol(),
-        mFocus(FocusType_TERM, QVector2D()), mAssignMoveRef(), mAssignRotateRef(), mAssignScaleRef(), mSuspend(),
-        mBaseVec(), mBaseValue() {
+        mProject(aProject),
+        mTarget(aTarget),
+        mKeyOwner(aKeyOwner),
+        mSRTParam(),
+        mSymbol(),
+        mFocus(FocusType_TERM, QVector2D()),
+        mAssignMoveRef(),
+        mAssignRotateRef(),
+        mAssignScaleRef(),
+        mSuspend(),
+        mBaseVec(),
+        mBaseValue() {
         XC_PTR_ASSERT(mTarget.timeLine());
     }
 
-    void MoveMode::updateParam(const SRTParam& aParam) {
-        mSRTParam = aParam;
-    }
+    void MoveMode::updateParam(const SRTParam& aParam) { mSRTParam = aParam; }
 
     bool MoveMode::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aCursor) {
         auto keyLocalMtx = mKeyOwner.getLocalSRTMatrixFromKeys();

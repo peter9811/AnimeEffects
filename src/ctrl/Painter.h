@@ -14,7 +14,8 @@ namespace ctrl {
 
 #ifdef USE_GL_CORE_PROFILE
 
-template<typename tKey, typename tCacheObj> class CacheHolder {
+template<typename tKey, typename tCacheObj>
+class CacheHolder {
 public:
     struct Cache {
         Cache(): obj(), size(), key(), used(false) {}
@@ -26,9 +27,7 @@ public:
 
     CacheHolder(): mCaches(), mUsedCacheLog(), mStorageSize() {}
 
-    ~CacheHolder() {
-        deleteAll();
-    }
+    ~CacheHolder() { deleteAll(); }
 
     tCacheObj* get(tKey aKey, const std::function<Cache*()>& aCreator) {
         Cache*& cache = mCaches[aKey];
@@ -95,13 +94,9 @@ class GLCorePaintEngine: public QPaintEngine {
 public:
     GLCorePaintEngine();
 
-    void setViewMatrix(const QMatrix4x4& aMtx) {
-        mDrawer.setViewMatrix(aMtx);
-    }
+    void setViewMatrix(const QMatrix4x4& aMtx) { mDrawer.setViewMatrix(aMtx); }
 
-    virtual QPaintEngine::Type type() const {
-        return QPaintEngine::OpenGL2;
-    }
+    virtual QPaintEngine::Type type() const { return QPaintEngine::OpenGL2; }
 
     virtual bool begin(QPaintDevice* aDevPtr);
     virtual bool end();
@@ -124,8 +119,12 @@ public:
     virtual void drawPolygon(const QPoint* aPoints, int aCount, PolygonDrawMode aMode);
     virtual void drawPolygon(const QPointF* aPoints, int aCount, PolygonDrawMode aMode);
 
-    virtual void drawImage(const QRectF& aRect, const QImage& aImage, const QRectF& aSrcRect,
-        Qt::ImageConversionFlags aFlags = Qt::AutoColor);
+    virtual void drawImage(
+        const QRectF& aRect,
+        const QImage& aImage,
+        const QRectF& aSrcRect,
+        Qt::ImageConversionFlags aFlags = Qt::AutoColor
+    );
 
     virtual void drawPixmap(const QRectF& aRect, const QPixmap& aPixmap, const QRectF& aSrcRect);
 
@@ -152,9 +151,7 @@ public:
     GLCorePaintDevice(const QPaintDevice& aOriginDevice, GLCorePaintEngine& aEngine):
         mOrigin(aOriginDevice), mEngine(aEngine) {}
     virtual ~GLCorePaintDevice() {}
-    virtual QPaintEngine* paintEngine() const {
-        return &mEngine;
-    }
+    virtual QPaintEngine* paintEngine() const { return &mEngine; }
     virtual int metric(PaintDeviceMetric aMetric) const;
 
 private:

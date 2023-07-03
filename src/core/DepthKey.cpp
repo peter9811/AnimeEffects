@@ -5,9 +5,7 @@ namespace core {
 //-------------------------------------------------------------------------------------------------
 DepthKey::Data::Data(): mEasing(), mDepth(0.0f) {}
 
-void DepthKey::Data::clamp() {
-    mDepth = xc_clamp(mDepth, Constant::transMin(), Constant::transMax());
-}
+void DepthKey::Data::clamp() { mDepth = xc_clamp(mDepth, Constant::transMin(), Constant::transMax()); }
 
 //-------------------------------------------------------------------------------------------------
 DepthKey::DepthKey(): mData() {}

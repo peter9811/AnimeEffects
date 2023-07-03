@@ -7,7 +7,8 @@
 namespace util {
 
 // If you control this class from multiple threads, you need to synchronize it yourself.
-template<typename tObject> class LinkPointer: public LifeLink::Node {
+template<typename tObject>
+class LinkPointer: public LifeLink::Node {
     typedef void (LinkPointer::*SafeBoolType)() const;
     void dummyFuncForSafeBoolIdiom() const {}
 
@@ -19,7 +20,8 @@ public:
         mAddress = aOther.mAddress;
     }
 
-    template<typename tPointeeObject> explicit LinkPointer(const LifeLink::Pointee<tPointeeObject>& aPointee) {
+    template<typename tPointeeObject>
+    explicit LinkPointer(const LifeLink::Pointee<tPointeeObject>& aPointee) {
         if (aPointee) {
             LifeLink::Node::operator=(*aPointee.lifeLink);
         } else {
@@ -28,7 +30,8 @@ public:
         mAddress = aPointee.address;
     }
 
-    template<typename tPointeeObject> LinkPointer& operator=(const LifeLink::Pointee<tPointeeObject>& aPointee) {
+    template<typename tPointeeObject>
+    LinkPointer& operator=(const LifeLink::Pointee<tPointeeObject>& aPointee) {
         if (aPointee) {
             LifeLink::Node::operator=(*aPointee.lifeLink);
         } else {
@@ -43,26 +46,18 @@ public:
         mAddress = NULL;
     }
 
-    bool isLink() const {
-        return LifeLink::Node::isLinking() && mAddress != NULL;
-    }
+    bool isLink() const { return LifeLink::Node::isLinking() && mAddress != NULL; }
 
-    operator SafeBoolType() const {
-        return isLinking() ? &LinkPointer::dummyFuncForSafeBoolIdiom : 0;
-    }
+    operator SafeBoolType() const { return isLinking() ? &LinkPointer::dummyFuncForSafeBoolIdiom : 0; }
 
-    tObject* operator->() const {
-        return isLinking() ? mAddress : NULL;
-    }
+    tObject* operator->() const { return isLinking() ? mAddress : NULL; }
 
     tObject& operator*() const {
         XC_ASSERT(isLinking());
         return isLinking() ? *mAddress : *static_cast<tObject*>(NULL);
     }
 
-    tObject* get() const {
-        return isLinking() ? mAddress : NULL;
-    }
+    tObject* get() const { return isLinking() ? mAddress : NULL; }
 
 private:
     tObject* mAddress;

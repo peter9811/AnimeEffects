@@ -11,8 +11,12 @@ namespace ctrl {
 
 ProjectLoader::ProjectLoader(): mLog(), mVersion() {}
 
-bool ProjectLoader::load(const QString& aPath, core::Project& aProject, const gl::DeviceInfo& aGLDeviceInfo,
-    util::IProgressReporter& aReporter) {
+bool ProjectLoader::load(
+    const QString& aPath,
+    core::Project& aProject,
+    const gl::DeviceInfo& aGLDeviceInfo,
+    util::IProgressReporter& aReporter
+) {
     XC_DEBUG_REPORT() << "project path =" << aPath;
     std::ifstream file(aPath.toLocal8Bit(), /*std::ios::in |*/ std::ios::binary);
 
@@ -27,7 +31,8 @@ bool ProjectLoader::load(const QString& aPath, core::Project& aProject, const gl
             qInfo() << recentfiles;
             mLog.push_back(
                 "Project removed, renamed or otherwise unavailable, please open it manually.\n"
-                "This path has been removed from your recents.");
+                "This path has been removed from your recents."
+            );
             settings.sync();
         }
 
@@ -129,12 +134,11 @@ bool ProjectLoader::readHeader(util::LEStreamReader& aIn) {
     const int minorVersion = aIn.readUInt32();
 
     if (majorVersion < AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION ||
-        (majorVersion == AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION &&
-            minorVersion < AE_PROJECT_FORMAT_OLDEST_MINOR_VERSION)) {
+        (majorVersion == AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION && minorVersion < AE_PROJECT_FORMAT_OLDEST_MINOR_VERSION
+        )) {
         mLog.push_back("The file version is too old to read properly.");
         return false;
-    } else if (majorVersion > AE_PROJECT_FORMAT_MAJOR_VERSION ||
-        (majorVersion == AE_PROJECT_FORMAT_MAJOR_VERSION && minorVersion > AE_PROJECT_FORMAT_MINOR_VERSION)) {
+    } else if (majorVersion > AE_PROJECT_FORMAT_MAJOR_VERSION || (majorVersion == AE_PROJECT_FORMAT_MAJOR_VERSION && minorVersion > AE_PROJECT_FORMAT_MINOR_VERSION)) {
         mLog.push_back("This file has been made with a new version of AnimeEffects, unable to read.");
         return false;
     }

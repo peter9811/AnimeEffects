@@ -9,13 +9,9 @@ class ScopedUndoSuspender {
     Stack& mStack;
 
 public:
-    ScopedUndoSuspender(Stack& aStack): mStack(aStack) {
-        mStack.suspendUndo();
-    }
+    ScopedUndoSuspender(Stack& aStack): mStack(aStack) { mStack.suspendUndo(); }
 
-    ~ScopedUndoSuspender() {
-        mStack.resumeUndo();
-    }
+    ~ScopedUndoSuspender() { mStack.resumeUndo(); }
 };
 
 } // namespace cmnd

@@ -46,12 +46,10 @@ public:
 
     void setMaxBoneCount(int aBoneCount);
     void allocate(int aVertexCount, bool aInitialize = true);
-    int vertexCount() const {
-        return mVertexCount;
-    }
+    int vertexCount() const { return mVertexCount; }
 
-    void writeAsync(
-        Project& aProject, const QList<Bone2*>& aTopBones, const QMatrix4x4& aGroupMtx, const LayerMesh& aMesh);
+    void
+    writeAsync(Project& aProject, const QList<Bone2*>& aTopBones, const QMatrix4x4& aGroupMtx, const LayerMesh& aMesh);
 
     Accessor accessor() const;
 

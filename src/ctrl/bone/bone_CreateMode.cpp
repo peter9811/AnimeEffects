@@ -15,8 +15,13 @@ namespace ctrl {
 namespace bone {
 
     CreateMode::CreateMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mDangledTop(), mFocuser() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mDangledTop(),
+        mFocuser() {
         XC_PTR_ASSERT(mKeyOwner.key);
         mFocuser.setTopBones(mKeyOwner.key->data().topBones());
         mFocuser.setTargetMatrix(mTargetMtx);

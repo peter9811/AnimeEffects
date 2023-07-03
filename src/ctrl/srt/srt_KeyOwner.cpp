@@ -9,12 +9,21 @@ namespace ctrl {
 namespace srt {
 
     KeyOwner::KeyOwner():
-        moveKey(), rotateKey(), scaleKey(), ownsMoveKey(), ownsRotateKey(), ownsScaleKey(), parentMtx(), invParentMtx(),
-        invParentSRMtx(), locSRMtx(), locSRTMtx(), locCSRTMtx(), hasInv() {}
+        moveKey(),
+        rotateKey(),
+        scaleKey(),
+        ownsMoveKey(),
+        ownsRotateKey(),
+        ownsScaleKey(),
+        parentMtx(),
+        invParentMtx(),
+        invParentSRMtx(),
+        locSRMtx(),
+        locSRTMtx(),
+        locCSRTMtx(),
+        hasInv() {}
 
-    KeyOwner::~KeyOwner() {
-        deleteOwningKeys();
-    }
+    KeyOwner::~KeyOwner() { deleteOwningKeys(); }
 
     void KeyOwner::pushOwningMoveKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame) {
         if (ownsMoveKey) {

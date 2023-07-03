@@ -41,30 +41,14 @@ public:
     public:
         Cache();
         void setNode(ObjectNode& aNode);
-        ObjectNode* node() {
-            return mNode.get();
-        }
-        const ObjectNode* node() const {
-            return mNode.get();
-        }
-        BoneInfluenceMap& influence() {
-            return mInfluence;
-        }
-        const BoneInfluenceMap& influence() const {
-            return mInfluence;
-        }
-        void setInnerMatrix(const QMatrix4x4& aMtx) {
-            mInnerMtx = aMtx;
-        }
-        const QMatrix4x4& innerMatrix() const {
-            return mInnerMtx;
-        }
-        void setFrameSign(const Frame& aFrame) {
-            mFrameSign = aFrame;
-        }
-        const Frame& frameSign() const {
-            return mFrameSign;
-        }
+        ObjectNode* node() { return mNode.get(); }
+        const ObjectNode* node() const { return mNode.get(); }
+        BoneInfluenceMap& influence() { return mInfluence; }
+        const BoneInfluenceMap& influence() const { return mInfluence; }
+        void setInnerMatrix(const QMatrix4x4& aMtx) { mInnerMtx = aMtx; }
+        const QMatrix4x4& innerMatrix() const { return mInnerMtx; }
+        void setFrameSign(const Frame& aFrame) { mFrameSign = aFrame; }
+        const Frame& frameSign() const { return mFrameSign; }
     };
     typedef QList<Cache*> CacheList;
 
@@ -80,35 +64,21 @@ public:
     BoneKey();
     ~BoneKey();
 
-    Data& data() {
-        return mData;
-    }
-    const Data& data() const {
-        return mData;
-    }
+    Data& data() { return mData; }
+    const Data& data() const { return mData; }
 
-    ObjectNode* cacheOwner() const {
-        return mCacheOwner.get();
-    }
-    const CacheList& caches() const {
-        return mCaches;
-    }
+    ObjectNode* cacheOwner() const { return mCacheOwner.get(); }
+    const CacheList& caches() const { return mCaches; }
     Cache* findCache(const ObjectNode& aNode) const;
-    const BindingCacheList& bindingCaches() const {
-        return mBindingCaches;
-    }
+    const BindingCacheList& bindingCaches() const { return mBindingCaches; }
 
     // reset cache list and rewrite influences
     void resetCaches(Project& aProject, ObjectNode& aOwner);
     // rewrite influences of unique roots specified
     void updateCaches(Project& aProject, ObjectNode& aOwner, const QVector<ObjectNode*>& aUniqueRoots);
 
-    virtual TimeKeyType type() const {
-        return TimeKeyType_Bone;
-    }
-    virtual bool canHoldChild() const {
-        return true;
-    }
+    virtual TimeKeyType type() const { return TimeKeyType_Bone; }
+    virtual bool canHoldChild() const { return true; }
     virtual TimeKey* createClone(); ///@note a new key have to reset caches.
     virtual bool serialize(Serializer& aOut) const;
     virtual bool deserialize(Deserializer& aIn);

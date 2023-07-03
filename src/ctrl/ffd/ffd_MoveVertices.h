@@ -16,9 +16,7 @@ namespace ffd {
         cmnd::AssignMemory* assign(int aIndex);
 
     private:
-        virtual void initialize() {
-            mFixed = true;
-        }
+        virtual void initialize() { mFixed = true; }
         bool mFixed;
     };
 

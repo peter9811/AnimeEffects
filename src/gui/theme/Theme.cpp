@@ -9,21 +9,13 @@ Theme::Theme(QString aResourceDir): mId("default"), mFileInfo(aResourceDir + "/t
 Theme::Theme(QString aResourceDir, QString aId): mId(aId), mFileInfo(aResourceDir + "/themes/" + mId) {}
 
 //-------------------------------------------------------------------------------------------------
-QString Theme::id() const {
-    return mId;
-}
+QString Theme::id() const { return mId; }
 
-QString Theme::path() const {
-    return mFileInfo.absoluteFilePath();
-}
+QString Theme::path() const { return mFileInfo.absoluteFilePath(); }
 
-QFileInfo Theme::fileInfo() const {
-    return mFileInfo;
-}
+QFileInfo Theme::fileInfo() const { return mFileInfo; }
 
-bool Theme::isDefault() const {
-    return mId == "default";
-}
+bool Theme::isDefault() const { return mId == "default"; }
 
 bool Theme::isDark() const {
     QPalette palette;

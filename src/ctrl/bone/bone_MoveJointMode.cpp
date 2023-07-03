@@ -11,8 +11,13 @@ namespace ctrl {
 namespace bone {
 
     MoveJointMode::MoveJointMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mFocuser(), mCommandRef() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mFocuser(),
+        mCommandRef() {
         XC_PTR_ASSERT(mKeyOwner.key);
         mFocuser.setTopBones(mKeyOwner.key->data().topBones());
         mFocuser.setTargetMatrix(mTargetMtx);

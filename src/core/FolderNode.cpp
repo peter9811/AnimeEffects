@@ -10,12 +10,16 @@
 namespace core {
 
 FolderNode::FolderNode(const QString& aName):
-    mName(aName), mIsVisible(true), mIsSlimmedDown(), mInitialRect(), mHeightMap(), mTimeLine(), mIsClipped(),
+    mName(aName),
+    mIsVisible(true),
+    mIsSlimmedDown(),
+    mInitialRect(),
+    mHeightMap(),
+    mTimeLine(),
+    mIsClipped(),
     mClippees() {}
 
-FolderNode::~FolderNode() {
-    qDeleteAll(children());
-}
+FolderNode::~FolderNode() { qDeleteAll(children()); }
 
 void FolderNode::setDefaultPosture(const QVector2D& aPos) {
     {
@@ -69,9 +73,7 @@ void FolderNode::setDefaultHSV(QList<int> aValue) {
     key->setHSV(aValue);
 }
 
-void FolderNode::grabHeightMap(HeightMap* aNode) {
-    mHeightMap.reset(aNode);
-}
+void FolderNode::grabHeightMap(HeightMap* aNode) { mHeightMap.reset(aNode); }
 
 bool FolderNode::isClipper() const {
     if (mIsClipped)
@@ -146,12 +148,14 @@ void FolderNode::renderClipper(const RenderInfo& aInfo, const TimeCacheAccessor&
 }
 
 // TODO: Fix this nonsense
-bool fCompareRenderDepth(core::Renderer::SortUnit a, core::Renderer::SortUnit b) {
-    return a.depth < b.depth;
-}
+bool fCompareRenderDepth(core::Renderer::SortUnit a, core::Renderer::SortUnit b) { return a.depth < b.depth; }
 
-void pushRenderRecursive(core::ObjectNode& aNode, std::vector<core::Renderer::SortUnit>& aDest,
-    const core::TimeCacheAccessor& aAccessor, const core::RenderInfo aInfo) {
+void pushRenderRecursive(
+    core::ObjectNode& aNode,
+    std::vector<core::Renderer::SortUnit>& aDest,
+    const core::TimeCacheAccessor& aAccessor,
+    const core::RenderInfo aInfo
+) {
     if (!aNode.isVisible()) {
         return;
     }
@@ -201,9 +205,7 @@ float FolderNode::initialDepth() const {
     return key ? key->depth() : 0.0f;
 }
 
-void FolderNode::setClipped(bool aIsClipped) {
-    mIsClipped = aIsClipped;
-}
+void FolderNode::setClipped(bool aIsClipped) { mIsClipped = aIsClipped; }
 
 bool FolderNode::serialize(Serializer& aOut) const {
     static const std::array<uint8, 8> kSignature = {'F', 'o', 'l', 'd', 'e', 'r', 'N', 'd'};

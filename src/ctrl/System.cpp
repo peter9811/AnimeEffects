@@ -41,16 +41,17 @@ QString System::LoadResult::messages() const {
 System::System(const QString& aResourceDir, const QString& aCacheDir):
     mResourceDir(aResourceDir), mCacheDir(aCacheDir), mProjects(), mAnimator() {}
 
-System::~System() {
-    closeAllProjects();
-}
+System::~System() { closeAllProjects(); }
 
-void System::setAnimator(Animator& aAnimator) {
-    mAnimator = &aAnimator;
-}
+void System::setAnimator(Animator& aAnimator) { mAnimator = &aAnimator; }
 
-System::LoadResult System::newProject(const QString& aFileName, const core::Project::Attribute& aAttr,
-    core::Project::Hook* aHookGrabbed, util::IProgressReporter& aReporter, bool aSpecifiesCanvasSize) {
+System::LoadResult System::newProject(
+    const QString& aFileName,
+    const core::Project::Attribute& aAttr,
+    core::Project::Hook* aHookGrabbed,
+    util::IProgressReporter& aReporter,
+    bool aSpecifiesCanvasSize
+) {
     QScopedPointer<core::Project::Hook> hookScope(aHookGrabbed);
 
     XC_ASSERT(mAnimator);
@@ -77,8 +78,8 @@ System::LoadResult System::newProject(const QString& aFileName, const core::Proj
     return result;
 }
 
-System::LoadResult System::openProject(
-    const QString& aFileName, Project::Hook* aHookGrabbed, util::IProgressReporter& aReporter) {
+System::LoadResult
+System::openProject(const QString& aFileName, Project::Hook* aHookGrabbed, util::IProgressReporter& aReporter) {
     QScopedPointer<core::Project::Hook> hookScope(aHookGrabbed);
 
     XC_ASSERT(mAnimator);

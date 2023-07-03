@@ -16,12 +16,8 @@ public:
     public:
         Data();
 
-        util::Easing::Param& easing() {
-            return mEasing;
-        }
-        const util::Easing::Param& easing() const {
-            return mEasing;
-        }
+        util::Easing::Param& easing() { return mEasing; }
+        const util::Easing::Param& easing() const { return mEasing; }
 
         void setScale(const QVector2D& aScale) {
             mScale = aScale;
@@ -35,30 +31,18 @@ public:
             mScale.setY(aScaleY);
             clamp();
         }
-        const QVector2D& scale() const {
-            return mScale;
-        }
+        const QVector2D& scale() const { return mScale; }
     };
 
     ScaleKey();
 
-    void setScale(const QVector2D& aScale) {
-        mData.setScale(aScale);
-    }
-    const QVector2D& scale() const {
-        return mData.scale();
-    }
+    void setScale(const QVector2D& aScale) { mData.setScale(aScale); }
+    const QVector2D& scale() const { return mData.scale(); }
 
-    Data& data() {
-        return mData;
-    }
-    const Data& data() const {
-        return mData;
-    }
+    Data& data() { return mData; }
+    const Data& data() const { return mData; }
 
-    virtual TimeKeyType type() const {
-        return TimeKeyType_Scale;
-    }
+    virtual TimeKeyType type() const { return TimeKeyType_Scale; }
     virtual TimeKey* createClone();
     virtual bool serialize(Serializer& aOut) const;
     virtual bool deserialize(Deserializer& aIn);

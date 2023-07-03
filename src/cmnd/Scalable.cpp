@@ -10,9 +10,7 @@ Scalable::~Scalable() {
     qDeleteAll(mListeners);
 }
 
-void Scalable::grabListener(Listener* aListener) {
-    mListeners.push_back(aListener);
-}
+void Scalable::grabListener(Listener* aListener) { mListeners.push_back(aListener); }
 
 bool Scalable::isUseless() const {
     if (!mExecuted)

@@ -18,52 +18,26 @@ public:
     void reset(const QSize& aScreenSize, double aDpr, const QSize& aImageSize, const QPoint& aLeftTopPos);
 
     void setDevicePixelRatio(double aRatio);
-    inline void setScreenWidth(int aWidth) {
-        mScreenSize.setWidth(aWidth);
-    }
-    inline void setScreenHeight(int aHeight) {
-        mScreenSize.setHeight(aHeight);
-    }
-    inline void setScreenSize(const QSize& aSize) {
-        mScreenSize = aSize;
-    }
-    inline void setImageSize(const QSize& aSize) {
-        mImageSize = aSize;
-    }
+    inline void setScreenWidth(int aWidth) { mScreenSize.setWidth(aWidth); }
+    inline void setScreenHeight(int aHeight) { mScreenSize.setHeight(aHeight); }
+    inline void setScreenSize(const QSize& aSize) { mScreenSize = aSize; }
+    inline void setImageSize(const QSize& aSize) { mImageSize = aSize; }
     void setLeftTopPos(const QVector2D& aPos);
     void setCenter(const QVector2D& aPos);
     void setScale(float aScale);
     void setRotate(float aRadian);
 
-    inline double devicePixelRatio() const {
-        return mDevicePixelRatio;
-    }
-    inline int screenWidth() const {
-        return mScreenSize.width();
-    }
-    inline int screenHeight() const {
-        return mScreenSize.height();
-    }
-    inline QSize screenSize() const {
-        return mScreenSize;
-    }
-    inline QSize deviceScreenSize() const {
-        return mScreenSize * mDevicePixelRatio;
-    }
+    inline double devicePixelRatio() const { return mDevicePixelRatio; }
+    inline int screenWidth() const { return mScreenSize.width(); }
+    inline int screenHeight() const { return mScreenSize.height(); }
+    inline QSize screenSize() const { return mScreenSize; }
+    inline QSize deviceScreenSize() const { return mScreenSize * mDevicePixelRatio; }
     QVector2D screenCenter() const;
 
-    inline QSize imageSize() const {
-        return mImageSize;
-    }
-    inline QVector2D center() const {
-        return mCenter;
-    }
-    inline float scale() const {
-        return mScale;
-    }
-    inline float rotate() const {
-        return mRotate;
-    }
+    inline QSize imageSize() const { return mImageSize; }
+    inline QVector2D center() const { return mCenter; }
+    inline float scale() const { return mScale; }
+    inline float rotate() const { return mRotate; }
     QVector2D leftTopPos() const;
 
     QVector2D toScreenPos(const QVector2D& aWorldPos) const;
@@ -91,9 +65,7 @@ public:
     QMatrix4x4 viewMatrix() const;
 
 private:
-    QVector2D centerOffset() const {
-        return 0.5f * QVector2D(mImageSize.width(), mImageSize.height());
-    }
+    QVector2D centerOffset() const { return 0.5f * QVector2D(mImageSize.width(), mImageSize.height()); }
 
     double mDevicePixelRatio;
     QSize mScreenSize;

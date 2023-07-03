@@ -15,12 +15,11 @@ QRectF fGetContainedRect(const QRectF& aLhs, const QRectF& aRhs)
 }
 #endif
 
-bool fCompareRenderDepth(core::Renderer::SortUnit a, core::Renderer::SortUnit b) {
-    return a.depth < b.depth;
-}
+bool fCompareRenderDepth(core::Renderer::SortUnit a, core::Renderer::SortUnit b) { return a.depth < b.depth; }
 
 void fPushRenderClippeeRecursive(
-    core::ObjectNode& aNode, std::vector<core::Renderer::SortUnit>& aDest, const core::TimeCacheAccessor& aAccessor) {
+    core::ObjectNode& aNode, std::vector<core::Renderer::SortUnit>& aDest, const core::TimeCacheAccessor& aAccessor
+) {
     core::Renderer::SortUnit unit;
     unit.renderer = aNode.renderer();
     unit.depth = aAccessor.get(aNode).worldDepth();
@@ -72,7 +71,8 @@ namespace ObjectNodeUtil {
     }
 
     void collectRenderClippees(
-        ObjectNode& aNode, std::vector<Renderer::SortUnit>& aDest, const TimeCacheAccessor& aAccessor) {
+        ObjectNode& aNode, std::vector<Renderer::SortUnit>& aDest, const TimeCacheAccessor& aAccessor
+    ) {
         aDest.clear();
 
         auto p = aNode.prevSib();
@@ -90,17 +90,11 @@ namespace ObjectNodeUtil {
     AttributeNotifier::AttributeNotifier(Project& aProject, ObjectNode& aTarget):
         mProject(aProject), mTarget(aTarget) {}
 
-    void AttributeNotifier::onExecuted() {
-        mProject.onNodeAttributeModified(mTarget, false);
-    }
+    void AttributeNotifier::onExecuted() { mProject.onNodeAttributeModified(mTarget, false); }
 
-    void AttributeNotifier::onUndone() {
-        mProject.onNodeAttributeModified(mTarget, true);
-    }
+    void AttributeNotifier::onUndone() { mProject.onNodeAttributeModified(mTarget, true); }
 
-    void AttributeNotifier::onRedone() {
-        mProject.onNodeAttributeModified(mTarget, false);
-    }
+    void AttributeNotifier::onRedone() { mProject.onNodeAttributeModified(mTarget, false); }
 
 
 } // namespace ObjectNodeUtil

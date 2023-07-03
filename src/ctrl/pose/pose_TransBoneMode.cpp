@@ -13,8 +13,14 @@ namespace ctrl {
 namespace pose {
 
     TransBoneMode::TransBoneMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mTargetMtx(aTarget.mtx), mTargetInvMtx(aTarget.invMtx),
-        mKeyOwner(aKey), mFocuser(), mCommandRef(), mMoveOffset() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mKeyOwner(aKey),
+        mFocuser(),
+        mCommandRef(),
+        mMoveOffset() {
         XC_PTR_ASSERT(mKeyOwner.key);
         mFocuser.setTopBones(mKeyOwner.key->data().topBones());
         mFocuser.setFocusConnector(true);
@@ -98,7 +104,8 @@ namespace pose {
             {
                 auto notifier = new TimeLineUtil::Notifier(mProject);
                 notifier->event().setType(
-                    mKeyOwner.owns() ? TimeLineEvent::Type_PushKey : TimeLineEvent::Type_ChangeKeyValue);
+                    mKeyOwner.owns() ? TimeLineEvent::Type_PushKey : TimeLineEvent::Type_ChangeKeyValue
+                );
                 notifier->event().pushTarget(mTarget, TimeKeyType_Pose, frame);
                 macro.grabListener(notifier);
             }

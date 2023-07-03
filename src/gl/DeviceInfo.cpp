@@ -13,13 +13,9 @@ const DeviceInfo& DeviceInfo::instance() {
     return *sDeviceInfoPtr;
 }
 
-void DeviceInfo::setInstance(const DeviceInfo* aInstance) {
-    sDeviceInfoPtr = aInstance;
-}
+void DeviceInfo::setInstance(const DeviceInfo* aInstance) { sDeviceInfoPtr = aInstance; }
 
-bool DeviceInfo::validInstanceExists() {
-    return sDeviceInfoPtr && sDeviceInfoPtr->isValid();
-}
+bool DeviceInfo::validInstanceExists() { return sDeviceInfoPtr && sDeviceInfoPtr->isValid(); }
 
 DeviceInfo::DeviceInfo(): vender(), renderer(), version(), maxTextureSize(0), maxRenderBufferSize(0) {}
 
@@ -63,8 +59,6 @@ void DeviceInfo::load() {
 #endif
 }
 
-bool DeviceInfo::isValid() const {
-    return maxTextureSize > 0 && maxRenderBufferSize > 0;
-}
+bool DeviceInfo::isValid() const { return maxTextureSize > 0 && maxRenderBufferSize > 0; }
 
 } // namespace gl

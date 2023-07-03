@@ -58,9 +58,7 @@ namespace res {
         this->setSizeHint(kItemColumn, QSize(kItemSize, kItemSize));
     }
 
-    util::TreePos Item::treePos() {
-        return getTreePos(this);
-    }
+    util::TreePos Item::treePos() { return getTreePos(this); }
 
 } // namespace res
 } // namespace gui

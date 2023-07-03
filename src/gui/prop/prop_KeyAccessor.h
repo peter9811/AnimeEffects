@@ -72,15 +72,9 @@ namespace prop {
         void knockNewImage(const img::ResourceHandle& aHandle);
 
     private:
-        bool isValid() const {
-            return mProject && mTarget && mTarget->timeLine();
-        }
-        int getFrame() const {
-            return mProject->animator().currentFrame().get();
-        }
-        core::TimeLine& currline() {
-            return *mTarget->timeLine();
-        }
+        bool isValid() const { return mProject && mTarget && mTarget->timeLine(); }
+        int getFrame() const { return mProject->animator().currentFrame().get(); }
+        core::TimeLine& currline() { return *mTarget->timeLine(); }
 
         core::Project* mProject;
         core::ObjectNode* mTarget;

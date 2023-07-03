@@ -22,9 +22,7 @@ namespace tool {
 
         int updateGeometry(const QPoint& aPos, int aWidth);
 
-        const ctrl::FFDParam& param() const {
-            return mParam;
-        }
+        const ctrl::FFDParam& param() const { return mParam; }
 
         // boost like signals
         util::Signaler<void(bool)> onParamUpdated;

@@ -14,9 +14,7 @@ void Paralleler::start(QThread::Priority aPriority) {
     }
 }
 
-void Paralleler::push(Task& aTask) {
-    mQueue.push(aTask);
-}
+void Paralleler::push(Task& aTask) { mQueue.push(aTask); }
 
 void Paralleler::cancel(Task& aTask) {
     mQueue.removeAll(aTask);
@@ -24,8 +22,6 @@ void Paralleler::cancel(Task& aTask) {
     aTask.wait();
 }
 
-void Paralleler::wakeAll() {
-    mQueue.wakeAll();
-}
+void Paralleler::wakeAll() { mQueue.wakeAll(); }
 
 } // namespace thr

@@ -84,8 +84,10 @@ bool CollDetect::isInside(const QVector2D* aConvexPolygon, int aVertexNum, const
 bool CollDetect::isInside(const QPointF* aConvexPolygon, int aVertexNum, const QPointF& aPoint) {
     for (int i = 0; i < aVertexNum; ++i) {
         int k = (i + 1) % aVertexNum;
-        if (getPosSide(Segment2D(QVector2D(aConvexPolygon[i]), QVector2D(aConvexPolygon[k] - aConvexPolygon[i])),
-                QVector2D(aPoint)) == -1) {
+        if (getPosSide(
+                Segment2D(QVector2D(aConvexPolygon[i]), QVector2D(aConvexPolygon[k] - aConvexPolygon[i])),
+                QVector2D(aPoint)
+            ) == -1) {
             return false;
         }
     }

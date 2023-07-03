@@ -9,15 +9,9 @@ namespace pose {
     struct Target {
         Target(): node(), mtx(), invMtx() {}
 
-        explicit operator bool() const {
-            return node;
-        }
-        core::ObjectNode* operator->() {
-            return node;
-        }
-        void clear() {
-            node = nullptr;
-        }
+        explicit operator bool() const { return node; }
+        core::ObjectNode* operator->() { return node; }
+        void clear() { node = nullptr; }
 
         core::ObjectNode* node;
         QMatrix4x4 mtx;

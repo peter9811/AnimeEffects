@@ -29,9 +29,7 @@ struct Vector4 {
     GLfloat y;
     GLfloat z;
     GLfloat w;
-    QVector4D pos() const {
-        return QVector4D(x, y, z, w);
-    }
+    QVector4D pos() const { return QVector4D(x, y, z, w); }
 };
 
 } // namespace gl

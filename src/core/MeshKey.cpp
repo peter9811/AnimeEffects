@@ -21,9 +21,7 @@ MeshVtx::MeshVtx(float aX, float aY): x(aX), y(aY), mEdges() {}
 
 MeshVtx::MeshVtx(const QVector2D& aPos): x(aPos.x()), y(aPos.y()), mEdges(), mIndex(-1) {}
 
-MeshVtx::~MeshVtx() {
-    XC_ASSERT(!hasParent());
-}
+MeshVtx::~MeshVtx() { XC_ASSERT(!hasParent()); }
 
 void MeshVtx::link(MeshEdgeLinkNode& aEdge) {
     MeshEdgeLink current = mEdges;
@@ -100,12 +98,11 @@ void MeshEdge::clear() {
 
 bool MeshEdge::isEquals(const MeshVtx& aVp0, const MeshVtx& aVp1) const {
     return (
-        (&aVp0 == mLink[0].child && &aVp1 == mLink[1].child) || (&aVp0 == mLink[1].child && &aVp1 == mLink[0].child));
+        (&aVp0 == mLink[0].child && &aVp1 == mLink[1].child) || (&aVp0 == mLink[1].child && &aVp1 == mLink[0].child)
+    );
 }
 
-bool MeshEdge::hasMultiParents() const {
-    return mFaces && mFaces->next;
-}
+bool MeshEdge::hasMultiParents() const { return mFaces && mFaces->next; }
 
 bool MeshEdge::hasOtherParents(const QVector<MeshFace*>& aFaces) const {
     // each face
@@ -159,9 +156,7 @@ MeshFace::MeshFace() {
     }
 }
 
-MeshFace::~MeshFace() {
-    clear();
-}
+MeshFace::~MeshFace() { clear(); }
 
 bool MeshFace::has(const MeshEdge& aEdge) const {
     for (int i = 0; i < 3; ++i) {
@@ -180,9 +175,7 @@ bool MeshFace::has(const MeshVtx& aVtx) const {
     return false;
 }
 
-bool MeshFace::hasChildren() const {
-    return mLink[0].child || mLink[1].child || mLink[2].child;
-}
+bool MeshFace::hasChildren() const { return mLink[0].child || mLink[1].child || mLink[2].child; }
 
 void MeshFace::set(MeshEdge& aEp0, MeshEdge& aEp1, MeshEdge& aEp2) {
     clear();
@@ -267,9 +260,7 @@ QVector2D MeshFace::vnorm(int aIndex) const {
     }
 }
 
-bool MeshFace::isClockwise() const {
-    return mClockwise;
-}
+bool MeshFace::isClockwise() const { return mClockwise; }
 
 bool MeshFace::containsPoint(const QVector2D& aPoint) const {
     auto vtx = vertices();
@@ -342,12 +333,28 @@ void MeshFace::rawInit(MeshEdge& aEp0, MeshEdge& aEp1, MeshEdge& aEp2) {
 
 //-------------------------------------------------------------------------------------------------
 MeshKey::Data::Data():
-    mOriginOffset(), mVertices(), mEdges(), mFaces(), mPositions(), mTexCoords(), mIndices(), mMeshBuffer(),
-    mIndexBuffer(), mOwner() {}
+    mOriginOffset(),
+    mVertices(),
+    mEdges(),
+    mFaces(),
+    mPositions(),
+    mTexCoords(),
+    mIndices(),
+    mMeshBuffer(),
+    mIndexBuffer(),
+    mOwner() {}
 
 MeshKey::Data::Data(const Data& aRhs):
-    mOriginOffset(aRhs.mOriginOffset), mVertices(), mEdges(), mFaces(), mPositions(aRhs.mPositions),
-    mTexCoords(aRhs.mTexCoords), mIndices(aRhs.mIndices), mMeshBuffer(), mIndexBuffer(), mOwner(aRhs.mOwner) {
+    mOriginOffset(aRhs.mOriginOffset),
+    mVertices(),
+    mEdges(),
+    mFaces(),
+    mPositions(aRhs.mPositions),
+    mTexCoords(aRhs.mTexCoords),
+    mIndices(aRhs.mIndices),
+    mMeshBuffer(),
+    mIndexBuffer(),
+    mOwner(aRhs.mOwner) {
     // copy geo
     copyVerticesEdgesAndFaces(aRhs);
     // initialize index buffer
@@ -374,9 +381,7 @@ MeshKey::Data& MeshKey::Data::operator=(const Data& aRhs) {
     return *this;
 }
 
-MeshKey::Data::~Data() {
-    destroy();
-}
+MeshKey::Data::~Data() { destroy(); }
 
 void MeshKey::Data::copyVerticesEdgesAndFaces(const Data& aRhs) {
     // vertices
@@ -564,7 +569,8 @@ bool MeshKey::Data::serialize(Serializer& aOut) const {
     return aOut.checkStream();
 }
 
-template<typename vec2d> QJsonObject vecToObject(vec2d vector) {
+template<typename vec2d>
+QJsonObject vecToObject(vec2d vector) {
     QJsonObject vectors;
     vectors["X"] = vector.x();
     vectors["Y"] = vector.y();
@@ -611,9 +617,7 @@ QJsonObject MeshKey::Data::serializeToJson() const {
     return mesh;
 }
 
-QVector2D objToVec(QJsonObject obj) {
-    return QVector2D(obj["X"].toDouble(), obj["Y"].toDouble());
-}
+QVector2D objToVec(QJsonObject obj) { return QVector2D(obj["X"].toDouble(), obj["Y"].toDouble()); }
 
 bool MeshKey::Data::deserializeFromJson(QJsonObject json) {
     destroy();
@@ -761,9 +765,7 @@ bool MeshKey::Data::deserialize(Deserializer& aIn) {
 }
 
 //-------------------------------------------------------------------------------------------------
-MeshKey::MeshKey(): mData() {
-    mData.mOwner = this;
-}
+MeshKey::MeshKey(): mData() { mData.mOwner = this; }
 
 TimeKey* MeshKey::createClone() {
     auto newKey = new MeshKey();
@@ -772,9 +774,7 @@ TimeKey* MeshKey::createClone() {
     return newKey;
 }
 
-bool MeshKey::serialize(Serializer& aOut) const {
-    return mData.serialize(aOut);
-}
+bool MeshKey::serialize(Serializer& aOut) const { return mData.serialize(aOut); }
 
 bool MeshKey::deserialize(Deserializer& aIn) {
     aIn.pushLogScope("MeshKey");
@@ -786,8 +786,8 @@ bool MeshKey::deserialize(Deserializer& aIn) {
     return aIn.checkStream();
 }
 
-cmnd::Vector MeshKey::createTrianglePusher(
-    const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, MeshFace** aDst) {
+cmnd::Vector
+MeshKey::createTrianglePusher(const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, MeshFace** aDst) {
     class TrianglePusher: public cmnd::Scalable {
         MeshKey& mKey;
         QVector<QVector2D> mPos;
@@ -809,8 +809,8 @@ cmnd::Vector MeshKey::createTrianglePusher(
     return result;
 }
 
-MeshFace* MeshKey::createTriangle(
-    const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, cmnd::Vector& aCommands) {
+MeshFace*
+MeshKey::createTriangle(const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, cmnd::Vector& aCommands) {
     XC_ASSERT(aPos.count() >= 3 && aRef.count() >= 3);
 
     MeshVtx* vtx[3] = {aRef[0], aRef[1], aRef[2]};
@@ -993,8 +993,8 @@ void MeshKey::listNeedToRemove(MeshFace& aStartingFace, cmnd::Vector& aCommands)
     }
 }
 
-cmnd::Vector MeshKey::createSplitter(
-    MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, MeshVtx** aTail) {
+cmnd::Vector
+MeshKey::createSplitter(MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, MeshVtx** aTail) {
     class TrianglePusher: public cmnd::Scalable {
         MeshKey& mKey;
         MeshFace& mFace;
@@ -1004,9 +1004,9 @@ cmnd::Vector MeshKey::createSplitter(
 
     public:
         TrianglePusher(
-            MeshKey& aKey, MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, MeshVtx** aTail):
-            mKey(aKey),
-            mFace(aFace), mEdgeSide(aEdgeSide), mPosOnEdge(aPosOnEdge), mTail(aTail) {}
+            MeshKey& aKey, MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, MeshVtx** aTail
+        ):
+            mKey(aKey), mFace(aFace), mEdgeSide(aEdgeSide), mPosOnEdge(aPosOnEdge), mTail(aTail) {}
 
         virtual bool initializeAndExecute() {
             *mTail = mKey.splitTriangle(mFace, mEdgeSide, mPosOnEdge, this->commands());
@@ -1019,8 +1019,9 @@ cmnd::Vector MeshKey::createSplitter(
     return result;
 }
 
-cmnd::Vector MeshKey::createSplitter(MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0, MeshEdge& aEdge1,
-    const QVector2D& aPos1, MeshVtx** aTail) {
+cmnd::Vector MeshKey::createSplitter(
+    MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0, MeshEdge& aEdge1, const QVector2D& aPos1, MeshVtx** aTail
+) {
     class TrianglePusher: public cmnd::Scalable {
         MeshKey& mKey;
         MeshFace& mFace;
@@ -1031,10 +1032,16 @@ cmnd::Vector MeshKey::createSplitter(MeshFace& aFace, MeshEdge& aEdge0, const QV
         MeshVtx** mTail;
 
     public:
-        TrianglePusher(MeshKey& aKey, MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0, MeshEdge& aEdge1,
-            const QVector2D& aPos1, MeshVtx** aTail):
-            mKey(aKey),
-            mFace(aFace), mEdge0(aEdge0), mEdge1(aEdge1), mPos0(aPos0), mPos1(aPos1), mTail(aTail) {}
+        TrianglePusher(
+            MeshKey& aKey,
+            MeshFace& aFace,
+            MeshEdge& aEdge0,
+            const QVector2D& aPos0,
+            MeshEdge& aEdge1,
+            const QVector2D& aPos1,
+            MeshVtx** aTail
+        ):
+            mKey(aKey), mFace(aFace), mEdge0(aEdge0), mEdge1(aEdge1), mPos0(aPos0), mPos1(aPos1), mTail(aTail) {}
 
         virtual bool initializeAndExecute() {
             *mTail = mKey.splitTriangle(mFace, mEdge0, mPos0, mEdge1, mPos1, this->commands());
@@ -1047,8 +1054,8 @@ cmnd::Vector MeshKey::createSplitter(MeshFace& aFace, MeshEdge& aEdge0, const QV
     return result;
 }
 
-MeshVtx* MeshKey::splitTriangle(
-    MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, cmnd::Vector& aCommands) {
+MeshVtx*
+MeshKey::splitTriangle(MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, cmnd::Vector& aCommands) {
     XC_ASSERT(aFace.has(aEdgeSide));
 
     QVector<MeshVtx*> oppositeVertices;
@@ -1141,8 +1148,14 @@ MeshVtx* MeshKey::splitTriangle(
     return centerVtx;
 }
 
-MeshVtx* MeshKey::splitTriangle(MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0, MeshEdge& aEdge1,
-    const QVector2D& aPos1, cmnd::Vector& aCommands) {
+MeshVtx* MeshKey::splitTriangle(
+    MeshFace& aFace,
+    MeshEdge& aEdge0,
+    const QVector2D& aPos0,
+    MeshEdge& aEdge1,
+    const QVector2D& aPos1,
+    cmnd::Vector& aCommands
+) {
     XC_ASSERT(aFace.has(aEdge0));
     XC_ASSERT(aFace.has(aEdge1));
     std::array<MeshEdge*, 2> edges = {&aEdge0, &aEdge1};
@@ -1302,12 +1315,8 @@ void MeshKey::moveVtx(MeshVtx& aVtx, const QVector2D& aPos) {
     mData.mPositions[index].set(aPos.toVector3D());
 }
 
-void MeshKey::updateVtxIndices() {
-    mData.updateVtxIndices();
-}
+void MeshKey::updateVtxIndices() { mData.updateVtxIndices(); }
 
-void MeshKey::updateGLAttribute() {
-    mData.updateGLAttribute();
-}
+void MeshKey::updateGLAttribute() { mData.updateGLAttribute(); }
 
 } // namespace core

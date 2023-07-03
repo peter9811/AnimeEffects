@@ -20,14 +20,20 @@ namespace ctrl {
 namespace srt {
 
     CentroidMode::CentroidMode(Project& aProject, ObjectNode& aTarget, KeyOwner& aKeyOwner):
-        mProject(aProject), mTarget(aTarget), mKeyOwner(aKeyOwner), mFocusing(), mMoving(), mBaseVec(), mBasePosition(),
-        mBaseCentroid(), mCommandRef(), mAdjustPosition() {
+        mProject(aProject),
+        mTarget(aTarget),
+        mKeyOwner(aKeyOwner),
+        mFocusing(),
+        mMoving(),
+        mBaseVec(),
+        mBasePosition(),
+        mBaseCentroid(),
+        mCommandRef(),
+        mAdjustPosition() {
         XC_PTR_ASSERT(mTarget.timeLine());
     }
 
-    void CentroidMode::updateParam(const SRTParam& aParam) {
-        mAdjustPosition = aParam.adjustPosition;
-    }
+    void CentroidMode::updateParam(const SRTParam& aParam) { mAdjustPosition = aParam.adjustPosition; }
 
     bool CentroidMode::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aCursor) {
         auto parentMtx = mKeyOwner.parentMtx;
@@ -114,7 +120,8 @@ namespace srt {
             {
                 auto notifier = new TimeLineUtil::Notifier(mProject);
                 notifier->event().setType(
-                    mKeyOwner.ownsMoveKey ? TimeLineEvent::Type_PushKey : TimeLineEvent::Type_ChangeKeyValue);
+                    mKeyOwner.ownsMoveKey ? TimeLineEvent::Type_PushKey : TimeLineEvent::Type_ChangeKeyValue
+                );
                 notifier->event().pushTarget(mTarget, TimeKeyType_Move, frame);
                 macro.grabListener(notifier);
             }

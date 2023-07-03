@@ -53,57 +53,31 @@ public:
     ~GridMesh();
 
     void swap(GridMesh& aRhs);
-    void setOriginOffset(const QVector2D& aOffset) {
-        mOriginOffset = aOffset;
-    }
+    void setOriginOffset(const QVector2D& aOffset) { mOriginOffset = aOffset; }
     void createFromImage(const void* aImagePtr, const QSize& aSize, int aCellPx);
     void writeHeightMap(const HeightMap& aMap, const QVector2D& aMinPos);
-    util::ArrayBlock<gl::Vector3> createFFD(
-        util::ArrayBlock<const gl::Vector3> aPrevFFD, const Transitions& aTrans) const;
+    util::ArrayBlock<gl::Vector3>
+    createFFD(util::ArrayBlock<const gl::Vector3> aPrevFFD, const Transitions& aTrans) const;
 
     // from LayerMesh
-    virtual GLenum primitiveMode() const {
-        return GL_TRIANGLES;
-    }
-    virtual const gl::Vector3* positions() const {
-        return mPositions.data();
-    }
-    virtual const gl::Vector2* texCoords() const {
-        return mTexCoords.data();
-    }
-    virtual int vertexCount() const {
-        return mVertexCount;
-    }
-    virtual const GLuint* indices() const {
-        return mIndices.data();
-    }
-    virtual GLsizei indexCount() const {
-        return (GLsizei)mIndexCount;
-    }
+    virtual GLenum primitiveMode() const { return GL_TRIANGLES; }
+    virtual const gl::Vector3* positions() const { return mPositions.data(); }
+    virtual const gl::Vector2* texCoords() const { return mTexCoords.data(); }
+    virtual int vertexCount() const { return mVertexCount; }
+    virtual const GLuint* indices() const { return mIndices.data(); }
+    virtual GLsizei indexCount() const { return (GLsizei)mIndexCount; }
     virtual gl::BufferObject& getIndexBuffer();
     virtual MeshBuffer& getMeshBuffer();
     virtual void resetArrayedConnection(ArrayedConnectionList& aDest, const gl::Vector3* aPositions) const;
     virtual Frame frameSign() const;
-    virtual QVector2D originOffset() const {
-        return mOriginOffset;
-    }
+    virtual QVector2D originOffset() const { return mOriginOffset; }
 
-    const gl::Vector3* offsets() const {
-        return mOffsets.data();
-    }
-    const gl::Vector3* normals() const {
-        return mNormals.data();
-    }
+    const gl::Vector3* offsets() const { return mOffsets.data(); }
+    const gl::Vector3* normals() const { return mNormals.data(); }
 
-    const QSize& size() const {
-        return mSize;
-    }
-    int cellSize() const {
-        return mCellPx;
-    }
-    const QRect& vertexRect() const {
-        return mVertexRect;
-    }
+    const QSize& size() const { return mSize; }
+    int cellSize() const { return mCellPx; }
+    const QRect& vertexRect() const { return mVertexRect; }
 
     bool serialize(Serializer& aOut) const;
     QJsonObject serializeToJson() const;
@@ -122,8 +96,8 @@ private:
     void initializeVertexBuffers(int aVertexCount);
     void freeBuffers();
     void resetIndexBuffer();
-    std::pair<bool, gl::Vector3> gatherValidPositions(
-        int aIndex, const gl::Vector3* aPositions, const bool* aValidity) const;
+    std::pair<bool, gl::Vector3>
+    gatherValidPositions(int aIndex, const gl::Vector3* aPositions, const bool* aValidity) const;
     bool hasConnection(int aArrayIndex, int aIdIndex) const;
     int connectionId(int aArrayIndex, int aIdIndex) const;
 

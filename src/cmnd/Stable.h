@@ -10,9 +10,7 @@ public:
     Stable() {}
     virtual ~Stable() {}
 
-    virtual void exec() {
-        redo();
-    }
+    virtual void exec() { redo(); }
     virtual void redo() {}
     virtual void undo() {}
 

@@ -63,13 +63,9 @@ namespace prop {
 
     KeyAccessor::KeyAccessor(): mProject(), mTarget() {}
 
-    void KeyAccessor::setProject(core::Project* aProject) {
-        mProject = aProject;
-    }
+    void KeyAccessor::setProject(core::Project* aProject) { mProject = aProject; }
 
-    void KeyAccessor::setTarget(core::ObjectNode* aTarget) {
-        mTarget = aTarget;
-    }
+    void KeyAccessor::setTarget(core::ObjectNode* aTarget) { mTarget = aTarget; }
 
 //-------------------------------------------------------------------------------------------------
 #define ASSERT_AND_RETURN_INVALID_TARGET() \
@@ -295,7 +291,8 @@ namespace prop {
 
     //-------------------------------------------------------------------------------------------------
 
-    template<typename T> void assignParam(T* key) {
+    template<typename T>
+    void assignParam(T* key) {
         QSettings settings;
         util::Easing::Param aNext;
         aNext.type = util::Easing::easingToEnum(QString());

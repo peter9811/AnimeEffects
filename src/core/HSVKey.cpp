@@ -4,9 +4,7 @@ namespace core {
 
 HSVKey::Data::Data(): mEasing(), mHue(0), mSaturation(100), mValue(100), mAbsolute(0), mHSV{0, 100, 100, 0} {}
 
-bool HSVKey::Data::isZero() const {
-    return mHSV == QList<int>{0, 0, 0, 0};
-}
+bool HSVKey::Data::isZero() const { return mHSV == QList<int>{0, 0, 0, 0}; }
 
 void HSVKey::Data::clamp(QString type) {
     if (type == "hue") {

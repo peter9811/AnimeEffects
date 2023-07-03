@@ -24,9 +24,7 @@ public:
     Driver(core::Project& aProject, DriverResources& aResources, GraphicStyle& aGraphicStyle, UILogger& aUILogger);
 
     void setTarget(core::ObjectNode* aNode);
-    core::ObjectNode* currentTarget() const {
-        return mCurrentNode;
-    }
+    core::ObjectNode* currentTarget() const { return mCurrentNode; }
     void setTool(ToolType aType);
     bool updateCursor(const core::AbstractCursor& aCursor, const core::CameraInfo& aCamera);
     void updateFrame();

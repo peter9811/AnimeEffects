@@ -3,7 +3,8 @@
 
 namespace util {
 
-template<typename tObject> class FixedObject {
+template<typename tObject>
+class FixedObject {
     typedef void (FixedObject::*SafeBoolType)() const;
     void dummyFuncForSafeBoolIdiom() const {}
 
@@ -49,12 +50,14 @@ public:
         return new (mObj) tObject();
     }
 
-    template<typename tArg0> tObject* construct(tArg0&& aArg0) {
+    template<typename tArg0>
+    tObject* construct(tArg0&& aArg0) {
         preConstruct();
         return new (mObj) tObject(aArg0);
     }
 
-    template<typename tArg0, typename tArg1> tObject* construct(tArg0&& aArg0, tArg1&& aArg1) {
+    template<typename tArg0, typename tArg1>
+    tObject* construct(tArg0&& aArg0, tArg1&& aArg1) {
         preConstruct();
         return new (mObj) tObject(aArg0, aArg1);
     }
@@ -79,21 +82,13 @@ public:
         }
     }
 
-    operator SafeBoolType() const {
-        return mObj ? &FixedObject::dummyFuncForSafeBoolIdiom : 0;
-    }
+    operator SafeBoolType() const { return mObj ? &FixedObject::dummyFuncForSafeBoolIdiom : 0; }
 
-    tObject* operator->() const {
-        return mObj;
-    }
+    tObject* operator->() const { return mObj; }
 
-    tObject& operator*() const {
-        return *mObj;
-    }
+    tObject& operator*() const { return *mObj; }
 
-    tObject* get() const {
-        return mObj;
-    }
+    tObject* get() const { return mObj; }
 };
 
 } // namespace util

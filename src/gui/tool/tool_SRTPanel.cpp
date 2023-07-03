@@ -9,7 +9,13 @@ namespace gui {
 namespace tool {
 
     SRTPanel::SRTPanel(QWidget* aParent, GUIResources& aResources):
-        QGroupBox(aParent), mResources(aResources), mParam(), mTypeGroup(), mAddMove(), mAddRotate(), mAddScale(),
+        QGroupBox(aParent),
+        mResources(aResources),
+        mParam(),
+        mTypeGroup(),
+        mAddMove(),
+        mAddRotate(),
+        mAddScale(),
         mAdjust() {
         this->setTitle(tr("Transform"));
         createMode();
@@ -52,8 +58,8 @@ namespace tool {
         });
 
         mAdjust.reset(new CheckBoxItem(tr("Adjust centroid position"), this));
-        mAdjust->setToolTip(
-            tr("Move the centroid in relation to the image, the opposite will be true when not toggled."));
+        mAdjust->setToolTip(tr("Move the centroid in relation to the image, the opposite will be true when not toggled."
+        ));
         mAdjust->setChecked(mParam.adjustPosition);
         mAdjust->connect([=](bool aChecked) {
             this->mParam.adjustPosition = aChecked;

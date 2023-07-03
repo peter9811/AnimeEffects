@@ -25,7 +25,8 @@ namespace bone {
         std::pair<float, float> getSink(const core::Bone2& aBone, const util::Circle& aBrush) const;
         bool updatePaint();
         void assignInfluence(
-            core::Bone2& aTarget, const std::array<QVector2D, 2>& aPrev, const std::array<QVector2D, 2>& aNext);
+            core::Bone2& aTarget, const std::array<QVector2D, 2>& aPrev, const std::array<QVector2D, 2>& aNext
+        );
         void notifyAssign();
 
         core::Project& mProject;

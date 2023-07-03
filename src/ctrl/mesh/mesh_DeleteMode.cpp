@@ -16,8 +16,13 @@ namespace mesh {
 
     //-------------------------------------------------------------------------------------------------
     DeleteMode::DeleteMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mFocuser(), mMeshAccessor() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mFocuser(),
+        mMeshAccessor() {
         XC_PTR_ASSERT(mKeyOwner.key);
         mMeshAccessor.setKey(*mKeyOwner.key);
         mFocuser.setMesh(mMeshAccessor);

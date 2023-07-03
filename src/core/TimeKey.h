@@ -23,37 +23,21 @@ public:
     virtual ~TimeKey() {}
 
     virtual TimeKeyType type() const = 0;
-    virtual bool canHoldChild() const {
-        return false;
-    }
+    virtual bool canHoldChild() const { return false; }
 
     virtual void sleep() {}
     virtual void awake() {}
 
-    int frame() const {
-        return mFrame;
-    }
-    void setFrame(int aFrame) {
-        mFrame = aFrame;
-    }
+    int frame() const { return mFrame; }
+    void setFrame(int aFrame) { mFrame = aFrame; }
 
-    bool isDefaultKey() const {
-        return mFrame == -1;
-    }
+    bool isDefaultKey() const { return mFrame == -1; }
 
-    bool isFocused() const {
-        return mFocus.isLinking();
-    }
-    void setFocus(util::LifeLink& aLink) {
-        mFocus = aLink;
-    }
+    bool isFocused() const { return mFocus.isLinking(); }
+    void setFocus(util::LifeLink& aLink) { mFocus = aLink; }
 
-    bool isSelected() const {
-        return mSelect.isLinking();
-    }
-    void setSelect(util::LifeLink& aLink) {
-        mSelect = aLink;
-    }
+    bool isSelected() const { return mSelect.isLinking(); }
+    void setSelect(util::LifeLink& aLink) { mSelect = aLink; }
 
     virtual TimeKey* createClone() = 0;
 

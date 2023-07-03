@@ -31,13 +31,9 @@ namespace res {
             mDoneOnce = true;
         }
 
-        void redo() {
-            mNode.swapData(mAnotherHandle);
-        }
+        void redo() { mNode.swapData(mAnotherHandle); }
 
-        void undo() {
-            mNode.swapData(mAnotherHandle);
-        }
+        void undo() { mNode.swapData(mAnotherHandle); }
     };
 
 } // namespace res

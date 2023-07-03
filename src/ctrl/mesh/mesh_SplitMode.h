@@ -33,9 +33,13 @@ namespace mesh {
         QVector2D getModelPos(const core::CameraInfo&, const QVector2D& aScreenPos) const;
         util::Segment2D getScreenSeg(const core::CameraInfo& aCamera, const util::Segment2D& aSeg) const;
 
-        RelayPoint getIntersection(const core::CameraInfo& aCamera, const core::MeshFace& aFace,
-            const util::Segment2D& aSeg, const core::MeshEdge* aIgnoreEdge = nullptr,
-            const core::MeshVtx* aIgnoreVtx = nullptr);
+        RelayPoint getIntersection(
+            const core::CameraInfo& aCamera,
+            const core::MeshFace& aFace,
+            const util::Segment2D& aSeg,
+            const core::MeshEdge* aIgnoreEdge = nullptr,
+            const core::MeshVtx* aIgnoreVtx = nullptr
+        );
         void updateRelayPoints(const core::CameraInfo&);
 
         core::Project& mProject;

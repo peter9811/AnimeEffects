@@ -17,7 +17,8 @@ namespace bone {
     class BindNodesMode: public IMode {
     public:
         BindNodesMode(
-            core::Project& aProject, const Target& aTarget, KeyOwner& aKey, const GraphicStyle& aGraphicStyle);
+            core::Project& aProject, const Target& aTarget, KeyOwner& aKey, const GraphicStyle& aGraphicStyle
+        );
         virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
         virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 

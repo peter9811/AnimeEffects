@@ -11,33 +11,17 @@ public:
 
     TimeKeyPos(TimeLine& aLine, TimeKeyType aType, int aIndex): mLine(&aLine), mType(aType), mIndex(aIndex) {}
 
-    void setLine(TimeLine* aLine) {
-        mLine = aLine;
-    }
-    void setType(TimeKeyType aType) {
-        mType = aType;
-    }
-    void setIndex(int aIndex) {
-        mIndex = aIndex;
-    }
+    void setLine(TimeLine* aLine) { mLine = aLine; }
+    void setType(TimeKeyType aType) { mType = aType; }
+    void setIndex(int aIndex) { mIndex = aIndex; }
 
-    bool isNull() const {
-        return mLine == NULL;
-    }
+    bool isNull() const { return mLine == NULL; }
 
-    TimeLine* line() {
-        return mLine;
-    }
-    const TimeLine* line() const {
-        return mLine;
-    }
+    TimeLine* line() { return mLine; }
+    const TimeLine* line() const { return mLine; }
 
-    TimeKeyType type() const {
-        return mType;
-    }
-    int index() const {
-        return mIndex;
-    }
+    TimeKeyType type() const { return mType; }
+    int index() const { return mIndex; }
 
     bool isExist() const {
         if (mLine)

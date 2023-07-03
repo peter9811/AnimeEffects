@@ -37,7 +37,8 @@ void MeshTransformerResource::loadFile(const QString& aPath, QString& aDstCode) 
 }
 
 void MeshTransformerResource::buildShader(
-    gl::EasyShaderProgram& aProgram, const QString& aCode, bool aUseSkinning, bool aUseDualQuaternion) {
+    gl::EasyShaderProgram& aProgram, const QString& aCode, bool aUseSkinning, bool aUseDualQuaternion
+) {
     gl::Global::Functions& ggl = gl::Global::functions();
 
     gl::ExtendShader source;

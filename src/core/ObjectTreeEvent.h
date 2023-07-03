@@ -25,26 +25,14 @@ public:
     void setType(Type aType);
     void pushTarget(ObjectNode* aParent, ObjectNode& aNode);
 
-    Project& project() const {
-        return mProject;
-    }
-    Type type() const {
-        return mType;
-    }
-    QVector<Target>& targets() {
-        return mTargets;
-    }
-    const QVector<Target>& targets() const {
-        return mTargets;
-    }
+    Project& project() const { return mProject; }
+    Type type() const { return mType; }
+    QVector<Target>& targets() { return mTargets; }
+    const QVector<Target>& targets() const { return mTargets; }
 
     // for ObjectTreeNotifier
-    QVector<ObjectNode*>& roots() {
-        return mRoots;
-    }
-    const QVector<ObjectNode*>& roots() const {
-        return mRoots;
-    }
+    QVector<ObjectNode*>& roots() { return mRoots; }
+    const QVector<ObjectNode*>& roots() const { return mRoots; }
 
 private:
     Project& mProject;

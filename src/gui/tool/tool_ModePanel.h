@@ -21,12 +21,8 @@ namespace tool {
         ModePanel(QWidget* aParent, GUIResources& aResources, const PushDelegate& aOnPushed);
 
         int updateGeometry(const QPoint& aPos, int aWidth);
-        QPushButton* button(ctrl::ToolType aId) {
-            return mButtons[aId];
-        }
-        const QPushButton* button(ctrl::ToolType aId) const {
-            return mButtons[aId];
-        }
+        QPushButton* button(ctrl::ToolType aId) { return mButtons[aId]; }
+        const QPushButton* button(ctrl::ToolType aId) const { return mButtons[aId]; }
 
         void pushButton(ctrl::ToolType aId);
 

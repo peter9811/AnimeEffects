@@ -13,8 +13,15 @@ namespace ctrl {
 namespace pose {
 
     ErasePoseMode::ErasePoseMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mTargetMtx(aTarget.mtx), mTargetInvMtx(aTarget.invMtx),
-        mKeyOwner(aKey), mCommandRef(), mBrush(), mBrushPressure(), mIsBrushDrawing() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mKeyOwner(aKey),
+        mCommandRef(),
+        mBrush(),
+        mBrushPressure(),
+        mIsBrushDrawing() {
         XC_PTR_ASSERT(mKeyOwner.key);
     }
 
@@ -80,7 +87,8 @@ namespace pose {
             {
                 auto notifier = new TimeLineUtil::Notifier(mProject);
                 notifier->event().setType(
-                    mKeyOwner.owns() ? TimeLineEvent::Type_PushKey : TimeLineEvent::Type_ChangeKeyValue);
+                    mKeyOwner.owns() ? TimeLineEvent::Type_PushKey : TimeLineEvent::Type_ChangeKeyValue
+                );
                 notifier->event().pushTarget(mTarget, TimeKeyType_Pose, frame);
                 macro.grabListener(notifier);
             }

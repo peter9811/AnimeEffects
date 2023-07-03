@@ -13,9 +13,7 @@ public:
     Triangle2DPos();
     Triangle2DPos(int aIndex, float aFirst, float aSecond);
 
-    bool isValid() const {
-        return mIndex >= 0;
-    }
+    bool isValid() const { return mIndex >= 0; }
     QVector2D get(const Triangle2D& aTriangle) const;
     QVector2D get(const std::array<QVector2D, 3>& aTriangle) const;
 

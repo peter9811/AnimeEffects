@@ -70,15 +70,9 @@ namespace tool {
         void setChecked(bool aChecked);
         void connect(const std::function<void(bool)>& aValueChanged);
         int updateGeometry(const QPoint& aPos, int aWidth);
-        void show() {
-            mCheckBox->show();
-        }
-        void hide() {
-            mCheckBox->hide();
-        }
-        void setVisible(bool aIsVisible) {
-            mCheckBox->setVisible(aIsVisible);
-        }
+        void show() { mCheckBox->show(); }
+        void hide() { mCheckBox->hide(); }
+        void setVisible(bool aIsVisible) { mCheckBox->setVisible(aIsVisible); }
 
     private:
         QCheckBox* mCheckBox;

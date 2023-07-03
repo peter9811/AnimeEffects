@@ -13,18 +13,15 @@ namespace ffd {
 
         TaskResource();
 
-        void setup(const QString& aBrushPath, const QString& aEraserPath, const QString& aFocuserPath,
-            const QString& aBlurPath);
+        void setup(
+            const QString& aBrushPath, const QString& aEraserPath, const QString& aFocuserPath, const QString& aBlurPath
+        );
 
         gl::EasyShaderProgram& program(int aType, int aHard);
         const gl::EasyShaderProgram& program(int aType, int aHard) const;
 
-        gl::EasyShaderProgram& blurProgram() {
-            return mBlurProgram;
-        }
-        const gl::EasyShaderProgram& blurProgram() const {
-            return mBlurProgram;
-        }
+        gl::EasyShaderProgram& blurProgram() { return mBlurProgram; }
+        const gl::EasyShaderProgram& blurProgram() const { return mBlurProgram; }
 
     private:
         void loadFile(const QString& aPath, QString& aDstCode);

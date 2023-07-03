@@ -13,9 +13,7 @@ namespace ctrl {
 SRTEditor::SRTEditor(Project& aProject, UILogger& aUILogger):
     mProject(aProject), mLifeLink(), mUILogger(aUILogger), mParam(), mTarget(), mKeyOwner() {}
 
-SRTEditor::~SRTEditor() {
-    finalize();
-}
+SRTEditor::~SRTEditor() { finalize(); }
 
 bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage) {
     const TimeLine::MapType& moveMap = aLine.map(TimeKeyType_Move);
@@ -147,9 +145,7 @@ bool SRTEditor::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aC
     return false;
 }
 
-void SRTEditor::updateEvent(EventType) {
-    resetCurrentTarget();
-}
+void SRTEditor::updateEvent(EventType) { resetCurrentTarget(); }
 
 void SRTEditor::resetCurrentTarget() {
     finalize();

@@ -13,14 +13,23 @@ namespace core {
 
 class ImageKeyUpdater {
 public:
-    static cmnd::Stable* createResourceUpdater(ObjectNode& aNode, const ResourceEvent& aEvent,
-        const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions);
+    static cmnd::Stable* createResourceUpdater(
+        ObjectNode& aNode,
+        const ResourceEvent& aEvent,
+        const ResourceUpdatingWorkspacePtr& aWorkspace,
+        bool aCreateTransitions
+    );
 
-    static cmnd::Stable* createResourceUpdater(ImageKey& aKey, img::ResourceNode& aNewResource,
-        const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions);
+    static cmnd::Stable* createResourceUpdater(
+        ImageKey& aKey,
+        img::ResourceNode& aNewResource,
+        const ResourceUpdatingWorkspacePtr& aWorkspace,
+        bool aCreateTransitions
+    );
 
     static cmnd::Stable* createGridMeshUpdater(
-        ImageKey& aKey, int aNewCellSize, const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions);
+        ImageKey& aKey, int aNewCellSize, const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions
+    );
 
     static cmnd::Base* createResourceSleeperForDelete(ObjectNode& aNode);
 };

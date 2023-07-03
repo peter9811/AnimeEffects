@@ -16,8 +16,12 @@ namespace ctrl {
 namespace bone {
 
     DeleteMode::DeleteMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mFocuser() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mFocuser() {
         XC_PTR_ASSERT(mKeyOwner.key);
         mFocuser.setTopBones(mKeyOwner.key->data().topBones());
         mFocuser.setTargetMatrix(mTargetMtx);

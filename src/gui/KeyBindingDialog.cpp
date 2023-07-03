@@ -15,7 +15,11 @@ namespace gui {
 
 //-------------------------------------------------------------------------------------------------
 KeyBindingDialog::KeyEdit::KeyEdit(KeyCommandMap::KeyCommand& aOrigin, KeyBindingDialog& aParent):
-    QLineEdit(&aParent), mParent(aParent), mOrigin(aOrigin), mBinding(aOrigin.binding), mText(aOrigin.binding.text()),
+    QLineEdit(&aParent),
+    mParent(aParent),
+    mOrigin(aOrigin),
+    mBinding(aOrigin.binding),
+    mText(aOrigin.binding.text()),
     mAllowsSubKey(false) {
     this->setAttribute(Qt::WA_InputMethodEnabled, false); // disable IME
 }
@@ -64,7 +68,10 @@ void KeyBindingDialog::KeyEdit::flushToOrigin() {
 
 //-------------------------------------------------------------------------------------------------
 KeyBindingDialog::KeyBindingDialog(KeyCommandMap& aMap, QWidget* aParent):
-    EasyDialog(tr("Key Bindings"), aParent), mKeyCommandMap(aMap), mKeys(), mTabs(new QTabWidget(this)),
+    EasyDialog(tr("Key Bindings"), aParent),
+    mKeyCommandMap(aMap),
+    mKeys(),
+    mTabs(new QTabWidget(this)),
     mCurrentGroup() {
     QMap<QString, QFormLayout*> groups;
 
@@ -144,7 +151,8 @@ void KeyBindingDialog::saveSettings() {
     }
 
     QSettings settings(
-        QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
+        QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName()
+    );
     settings.beginGroup("keybindings");
     mKeyCommandMap.writeTo(settings);
     settings.endGroup();

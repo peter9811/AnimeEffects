@@ -15,12 +15,8 @@ public:
 
     public:
         Data();
-        util::Easing::Param& easing() {
-            return mEasing;
-        }
-        const util::Easing::Param& easing() const {
-            return mEasing;
-        }
+        util::Easing::Param& easing() { return mEasing; }
+        const util::Easing::Param& easing() const { return mEasing; }
         void setDepth(float aDepth) {
             mDepth = aDepth;
             clamp();
@@ -29,30 +25,18 @@ public:
             mDepth += aAdd;
             clamp();
         }
-        const float& depth() const {
-            return mDepth;
-        }
+        const float& depth() const { return mDepth; }
     };
 
     DepthKey();
 
-    void setDepth(float aDepth) {
-        mData.setDepth(aDepth);
-    }
-    const float& depth() const {
-        return mData.depth();
-    }
+    void setDepth(float aDepth) { mData.setDepth(aDepth); }
+    const float& depth() const { return mData.depth(); }
 
-    Data& data() {
-        return mData;
-    }
-    const Data& data() const {
-        return mData;
-    }
+    Data& data() { return mData; }
+    const Data& data() const { return mData; }
 
-    virtual TimeKeyType type() const {
-        return TimeKeyType_Depth;
-    }
+    virtual TimeKeyType type() const { return TimeKeyType_Depth; }
     virtual TimeKey* createClone();
     virtual bool serialize(Serializer& aOut) const;
     virtual bool deserialize(Deserializer& aIn);

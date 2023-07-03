@@ -38,8 +38,11 @@ public:
             // create transition data
             if (mCreateTransitions) {
                 auto& trans = mWorkspace->makeSureTransitions(key, key->data().gridMesh());
-                trans = transer.create(key->data().gridMesh().positions(), key->data().gridMesh().vertexCount(),
-                    key->data().resource()->pos());
+                trans = transer.create(
+                    key->data().gridMesh().positions(),
+                    key->data().gridMesh().vertexCount(),
+                    key->data().resource()->pos()
+                );
             }
         }
         mWorkspace.reset(); // finish using
@@ -74,12 +77,8 @@ protected:
         int nextCellSize;
     };
 
-    QList<Target>& targets() {
-        return mTargets;
-    }
-    const QList<Target>& targets() const {
-        return mTargets;
-    }
+    QList<Target>& targets() { return mTargets; }
+    const QList<Target>& targets() const { return mTargets; }
 
 private:
     QList<Target> mTargets;
@@ -104,10 +103,13 @@ class ImageReloader: public ImageResourceUpdaterBase {
     }
 
 public:
-    ImageReloader(TimeLine& aTimeLine, const ResourceEvent& aEvent, const ResourceUpdatingWorkspacePtr& aWorkspace,
-        bool aCreateTransitions):
-        ImageResourceUpdaterBase(aWorkspace, aCreateTransitions),
-        mTimeLine(aTimeLine), mEvent(aEvent) {}
+    ImageReloader(
+        TimeLine& aTimeLine,
+        const ResourceEvent& aEvent,
+        const ResourceUpdatingWorkspacePtr& aWorkspace,
+        bool aCreateTransitions
+    ):
+        ImageResourceUpdaterBase(aWorkspace, aCreateTransitions), mTimeLine(aTimeLine), mEvent(aEvent) {}
 
     virtual void exec() {
         // push default key
@@ -129,8 +131,12 @@ public:
 //-------------------------------------------------------------------------------------------------
 class ImageChanger: public ImageResourceUpdaterBase {
 public:
-    ImageChanger(ImageKey& aKey, img::ResourceNode& aNewResource, const ResourceUpdatingWorkspacePtr& aWorkspace,
-        bool aCreateTransitions):
+    ImageChanger(
+        ImageKey& aKey,
+        img::ResourceNode& aNewResource,
+        const ResourceUpdatingWorkspacePtr& aWorkspace,
+        bool aCreateTransitions
+    ):
         ImageResourceUpdaterBase(aWorkspace, aCreateTransitions) {
         this->targets().push_back(Target(&aKey));
         this->targets().back().prevImage = aKey.data().resource();
@@ -142,7 +148,8 @@ public:
 class GridMeshUpdater: public ImageResourceUpdaterBase {
 public:
     GridMeshUpdater(
-        ImageKey& aKey, int aNewCellSize, const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions):
+        ImageKey& aKey, int aNewCellSize, const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions
+    ):
         ImageResourceUpdaterBase(aWorkspace, aCreateTransitions) {
         this->targets().push_back(Target(&aKey));
         this->targets().back().prevImage = aKey.data().resource();
@@ -152,20 +159,29 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-cmnd::Stable* ImageKeyUpdater::createResourceUpdater(ObjectNode& aNode, const ResourceEvent& aEvent,
-    const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions) {
+cmnd::Stable* ImageKeyUpdater::createResourceUpdater(
+    ObjectNode& aNode,
+    const ResourceEvent& aEvent,
+    const ResourceUpdatingWorkspacePtr& aWorkspace,
+    bool aCreateTransitions
+) {
     if (!aNode.timeLine())
         return nullptr;
     return new ImageReloader(*aNode.timeLine(), aEvent, aWorkspace, aCreateTransitions);
 }
 
-cmnd::Stable* ImageKeyUpdater::createResourceUpdater(ImageKey& aKey, img::ResourceNode& aNewResource,
-    const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions) {
+cmnd::Stable* ImageKeyUpdater::createResourceUpdater(
+    ImageKey& aKey,
+    img::ResourceNode& aNewResource,
+    const ResourceUpdatingWorkspacePtr& aWorkspace,
+    bool aCreateTransitions
+) {
     return new ImageChanger(aKey, aNewResource, aWorkspace, aCreateTransitions);
 }
 
 cmnd::Stable* ImageKeyUpdater::createGridMeshUpdater(
-    ImageKey& aKey, int aNewCellSize, const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions) {
+    ImageKey& aKey, int aNewCellSize, const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions
+) {
     return new GridMeshUpdater(aKey, aNewCellSize, aWorkspace, aCreateTransitions);
 }
 
@@ -216,8 +232,6 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-cmnd::Base* ImageKeyUpdater::createResourceSleeperForDelete(ObjectNode& aNode) {
-    return new ImageSleeper(aNode);
-}
+cmnd::Base* ImageKeyUpdater::createResourceSleeperForDelete(ObjectNode& aNode) { return new ImageSleeper(aNode); }
 
 } // namespace core

@@ -28,36 +28,18 @@ public:
     ObjectTree();
     ~ObjectTree();
 
-    util::LifeLink::Pointee<ObjectTree> pointee() {
-        return mLifeLink.pointee<ObjectTree>(this);
-    }
-    util::LifeLink::Pointee<const ObjectTree> constPointee() {
-        return mLifeLink.pointee<const ObjectTree>(this);
-    }
+    util::LifeLink::Pointee<ObjectTree> pointee() { return mLifeLink.pointee<ObjectTree>(this); }
+    util::LifeLink::Pointee<const ObjectTree> constPointee() { return mLifeLink.pointee<const ObjectTree>(this); }
 
-    void grabTopNode(ObjectNode* aNode) {
-        mTopNode.reset(aNode);
-    }
-    ObjectNode* topNode() {
-        return mTopNode.data();
-    }
-    const ObjectNode* topNode() const {
-        return mTopNode.data();
-    }
+    void grabTopNode(ObjectNode* aNode) { mTopNode.reset(aNode); }
+    ObjectNode* topNode() { return mTopNode.data(); }
+    const ObjectNode* topNode() const { return mTopNode.data(); }
 
-    ShaderHolder& shaderHolder() {
-        return mShaderHolder;
-    }
-    const ShaderHolder& shaderHolder() const {
-        return mShaderHolder;
-    }
+    ShaderHolder& shaderHolder() { return mShaderHolder; }
+    const ShaderHolder& shaderHolder() const { return mShaderHolder; }
 
-    TimeCacheLock& timeCacheLock() {
-        return mTimeCacheLock;
-    }
-    const TimeCacheLock& timeCacheLock() const {
-        return mTimeCacheLock;
-    }
+    TimeCacheLock& timeCacheLock() { return mTimeCacheLock; }
+    const TimeCacheLock& timeCacheLock() const { return mTimeCacheLock; }
 
     void render(const RenderInfo& aRenderInfo, bool aUseWorkingCache);
 

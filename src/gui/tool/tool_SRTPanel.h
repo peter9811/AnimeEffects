@@ -19,9 +19,7 @@ namespace tool {
 
         int updateGeometry(const QPoint& aPos, int aWidth);
 
-        const ctrl::SRTParam& param() const {
-            return mParam;
-        }
+        const ctrl::SRTParam& param() const { return mParam; }
 
         // boost like signals
         util::Signaler<void(bool)> onParamUpdated; // a argment will be true when the layout is changed.

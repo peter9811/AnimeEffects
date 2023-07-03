@@ -21,12 +21,8 @@ public:
     public:
         Data();
 
-        util::Easing::Param& easing() {
-            return mEasing;
-        }
-        const util::Easing::Param& easing() const {
-            return mEasing;
-        }
+        util::Easing::Param& easing() { return mEasing; }
+        const util::Easing::Param& easing() const { return mEasing; }
 
         void setHue(int aHue) {
             mHue = aHue;
@@ -56,49 +52,29 @@ public:
             mHSV = {mHue, mSaturation, mValue, mAbsolute};
         }
 
-        const QList<int>& hsv() const {
-            return mHSV;
-        }
+        const QList<int>& hsv() const { return mHSV; }
 
         bool isZero() const;
     };
 
     HSVKey();
 
-    Data& data() {
-        return mData;
-    }
-    const Data& data() const {
-        return mData;
-    }
+    Data& data() { return mData; }
+    const Data& data() const { return mData; }
 
-    void setHue(int aHue) {
-        mData.setHue(aHue);
-    }
-    void setSaturation(int aSaturation) {
-        mData.setSaturation(aSaturation);
-    }
-    void setValue(int aValue) {
-        mData.setValue(aValue);
-    }
-    void setAbsolute(int aAbsolute) {
-        mData.setAbsolute(aAbsolute);
-    }
+    void setHue(int aHue) { mData.setHue(aHue); }
+    void setSaturation(int aSaturation) { mData.setSaturation(aSaturation); }
+    void setValue(int aValue) { mData.setValue(aValue); }
+    void setAbsolute(int aAbsolute) { mData.setAbsolute(aAbsolute); }
     void setHSV(QList<int> aHSV) {
         mData.setHue(aHSV[0]);
         mData.setSaturation(aHSV[1]), mData.setValue(aHSV[2]), mData.setAbsolute(aHSV[3]);
     }
-    void updateHSV() {
-        mData.updateHSV();
-    }
+    void updateHSV() { mData.updateHSV(); }
 
-    const QList<int>& hsv() const {
-        return mData.hsv();
-    }
+    const QList<int>& hsv() const { return mData.hsv(); }
 
-    virtual TimeKeyType type() const {
-        return TimeKeyType_HSV;
-    }
+    virtual TimeKeyType type() const { return TimeKeyType_HSV; }
     virtual TimeKey* createClone();
     virtual bool serialize(Serializer& aOut) const;
     virtual bool deserialize(Deserializer& aIn);

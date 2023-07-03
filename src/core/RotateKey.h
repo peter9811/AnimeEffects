@@ -15,12 +15,8 @@ public:
 
     public:
         Data();
-        util::Easing::Param& easing() {
-            return mEasing;
-        }
-        const util::Easing::Param& easing() const {
-            return mEasing;
-        }
+        util::Easing::Param& easing() { return mEasing; }
+        const util::Easing::Param& easing() const { return mEasing; }
         void setRotate(float aRotate) {
             mRotate = aRotate;
             clamp();
@@ -29,30 +25,18 @@ public:
             mRotate += aAdd;
             clamp();
         }
-        const float& rotate() const {
-            return mRotate;
-        }
+        const float& rotate() const { return mRotate; }
     };
 
     RotateKey();
 
-    void setRotate(float aRotate) {
-        mData.setRotate(aRotate);
-    }
-    const float& rotate() const {
-        return mData.rotate();
-    }
+    void setRotate(float aRotate) { mData.setRotate(aRotate); }
+    const float& rotate() const { return mData.rotate(); }
 
-    Data& data() {
-        return mData;
-    }
-    const Data& data() const {
-        return mData;
-    }
+    Data& data() { return mData; }
+    const Data& data() const { return mData; }
 
-    virtual TimeKeyType type() const {
-        return TimeKeyType_Rotate;
-    }
+    virtual TimeKeyType type() const { return TimeKeyType_Rotate; }
     virtual TimeKey* createClone();
     virtual bool serialize(Serializer& aOut) const;
     virtual bool deserialize(Deserializer& aIn);

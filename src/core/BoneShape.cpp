@@ -19,9 +19,7 @@ BoneShape::BendRange::BendRange() {
     angle[1] = 1.0f;
 }
 
-bool BoneShape::BendRange::isValid() const {
-    return angle[0] >= 0.0f && angle[1] <= 0.0f;
-}
+bool BoneShape::BendRange::isValid() const { return angle[0] >= 0.0f && angle[1] <= 0.0f; }
 
 float BoneShape::BendRange::getWeight(float aBendAngle) const {
     if (!isValid())
@@ -45,7 +43,15 @@ float BoneShape::BendRange::getWeight(float aBendAngle) const {
 
 //-------------------------------------------------------------------------------------------------
 BoneShape::BoneShape():
-    mIsValid(), mSegment(), mVUnit(), mVDirAngle(), mLength(), mRadius(), mBounding(), mPolygon(), mRootBendRange(),
+    mIsValid(),
+    mSegment(),
+    mVUnit(),
+    mVDirAngle(),
+    mLength(),
+    mRadius(),
+    mBounding(),
+    mPolygon(),
+    mRootBendRange(),
     mTailBendRange() {}
 
 void BoneShape::updateValidity() {
@@ -132,7 +138,8 @@ float BoneShape::influence(const QVector2D& aPos) const {
 }
 
 float BoneShape::getBoneEllipseWeight(
-    const QVector2D& aCenter, const QVector2D& aVUnit, const QVector2D& aRadius, const QVector2D& aPoint) const {
+    const QVector2D& aCenter, const QVector2D& aVUnit, const QVector2D& aRadius, const QVector2D& aPoint
+) const {
     if (aRadius.x() >= kRangeMin && aRadius.y() >= kRangeMin) {
 #if 1
         const QVector2D dir = aPoint - aCenter;
@@ -343,8 +350,12 @@ QVector2D objToVect(QJsonObject obj, QString varName) {
 }
 
 QRectF objToRect(QJsonObject obj, QString varName) {
-    return QRectF(obj[varName + "Left"].toDouble(), obj[varName + "Top"].toDouble(), obj[varName + "Width"].toDouble(),
-        obj[varName + "Height"].toDouble());
+    return QRectF(
+        obj[varName + "Left"].toDouble(),
+        obj[varName + "Top"].toDouble(),
+        obj[varName + "Width"].toDouble(),
+        obj[varName + "Height"].toDouble()
+    );
 }
 
 QPolygonF objToPoly(QJsonObject obj, QString varName) {

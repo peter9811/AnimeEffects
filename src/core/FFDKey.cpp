@@ -40,17 +40,11 @@ void FFDKey::Data::swap(QVector<gl::Vector3>& aRhs) {
     mBuffer.swap(aRhs);
 }
 
-gl::Vector3* FFDKey::Data::positions() {
-    return mBuffer.data();
-}
+gl::Vector3* FFDKey::Data::positions() { return mBuffer.data(); }
 
-const gl::Vector3* FFDKey::Data::positions() const {
-    return mBuffer.data();
-}
+const gl::Vector3* FFDKey::Data::positions() const { return mBuffer.data(); }
 
-int FFDKey::Data::count() const {
-    return mVtxCount;
-}
+int FFDKey::Data::count() const { return mVtxCount; }
 
 void FFDKey::Data::insertVtx(int aIndex, const gl::Vector3& aPos) {
     XC_ASSERT(0 <= aIndex && aIndex <= count());

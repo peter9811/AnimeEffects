@@ -13,19 +13,22 @@ class StreamWriter {
 public:
     StreamWriter(std::ostream& aOut): mOut(aOut) {}
 
-    template<typename tValue> void write(tValue aValue) {
+    template<typename tValue>
+    void write(tValue aValue) {
         tValue value = XC_TO_LITTLE_ENDIAN(aValue);
         mOut.write((char*)(&value), sizeof(tValue));
     }
 
-    template<typename tValue, int tCount> void write(std::array<tValue, tCount> aValues) {
+    template<typename tValue, int tCount>
+    void write(std::array<tValue, tCount> aValues) {
         for (auto v : aValues) {
             tValue value = XC_TO_LITTLE_ENDIAN(v);
             mOut.write((char*)(&value), sizeof(tValue));
         }
     }
 
-    template<typename tValue> void writeTo(std::ios::pos_type aPos, tValue aValue) {
+    template<typename tValue>
+    void writeTo(std::ios::pos_type aPos, tValue aValue) {
         std::ios::pos_type current = mOut.tellp();
         mOut.seekp(aPos);
         write(aValue);
@@ -55,9 +58,7 @@ public:
             writeZero(aAlignment - (int)pad);
     }
 
-    std::ostream::pos_type currentPos() const {
-        return mOut.tellp();
-    }
+    std::ostream::pos_type currentPos() const { return mOut.tellp(); }
 
     std::ostream::pos_type reserveLength() {
         auto pos = mOut.tellp();
@@ -76,9 +77,7 @@ public:
         writeTo(aPos, (uint64)length);
     }
 
-    bool isFailed() const {
-        return mOut.fail();
-    }
+    bool isFailed() const { return mOut.fail(); }
 };
 
 } // namespace util

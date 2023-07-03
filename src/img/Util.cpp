@@ -25,7 +25,8 @@ QString Util::TextFilter::get(const std::string& aText) const {
 }
 
 void Util::copyImage(
-    uint8* aDst, const QSize& aDstSize, const QPoint& aTopLeft, const uint8* aSrc, const QSize& aSrcSize) {
+    uint8* aDst, const QSize& aDstSize, const QPoint& aTopLeft, const uint8* aSrc, const QSize& aSrcSize
+) {
     const int t = aTopLeft.y();
     const int l = aTopLeft.x();
     const int sw = aSrcSize.width();
@@ -186,8 +187,8 @@ void Util::setEdgeColor(uint8* aImage, const QSize& aSize, const QColor& aColor)
     }
 }
 
-std::pair<XCMemBlock, QRect> Util::createTextureImage(
-    const PSDFormat::Header& aHeader, const PSDFormat::Layer& aLayer) {
+std::pair<XCMemBlock, QRect>
+Util::createTextureImage(const PSDFormat::Header& aHeader, const PSDFormat::Layer& aLayer) {
     // empty image
     if (aLayer.rect.width() <= 0 || aLayer.rect.height() <= 0) {
         XCMemBlock block(new uint8[4], 4);

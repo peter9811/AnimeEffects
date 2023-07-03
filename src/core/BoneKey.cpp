@@ -25,17 +25,11 @@ BoneKey::Data& BoneKey::Data::operator=(const Data& aRhs) {
     return *this;
 }
 
-BoneKey::Data::~Data() {
-    deleteAll();
-}
+BoneKey::Data::~Data() { deleteAll(); }
 
-QList<Bone2*>& BoneKey::Data::topBones() {
-    return mTopBones;
-}
+QList<Bone2*>& BoneKey::Data::topBones() { return mTopBones; }
 
-const QList<Bone2*>& BoneKey::Data::topBones() const {
-    return mTopBones;
-}
+const QList<Bone2*>& BoneKey::Data::topBones() const { return mTopBones; }
 
 void BoneKey::Data::deleteAll() {
     qDeleteAll(mTopBones);
@@ -71,9 +65,7 @@ BoneKey::Cache::Cache(): mInfluence(), mNode(), mInnerMtx(), mFrameSign() {
     mInfluence.setMaxBoneCount(kMaxBoneCount);
 }
 
-void BoneKey::Cache::setNode(ObjectNode& aNode) {
-    mNode = aNode.pointee();
-}
+void BoneKey::Cache::setNode(ObjectNode& aNode) { mNode = aNode.pointee(); }
 
 //-------------------------------------------------------------------------------------------------
 BoneKey::BindingCache::BindingCache(): node(), boneIndex(), innerMtx() {}
@@ -81,9 +73,7 @@ BoneKey::BindingCache::BindingCache(): node(), boneIndex(), innerMtx() {}
 //-------------------------------------------------------------------------------------------------
 BoneKey::BoneKey(): mData(), mCaches(), mCacheOwner(), mBindingCaches() {}
 
-BoneKey::~BoneKey() {
-    destroyCaches();
-}
+BoneKey::~BoneKey() { destroyCaches(); }
 
 void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets) {
     auto time = aProject.currentTimeInfo();

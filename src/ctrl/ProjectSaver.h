@@ -11,9 +11,7 @@ class ProjectSaver {
 public:
     ProjectSaver();
     bool save(const QString& aFilePath, const core::Project& aProject);
-    QString log() const {
-        return mLog;
-    }
+    QString log() const { return mLog; }
 
 private:
     bool writeHeader(util::StreamWriter& aWriter);

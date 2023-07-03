@@ -8,9 +8,9 @@ namespace ctrl {
 namespace bone {
 
     Notifier::Notifier(
-        core::Project& aProject, core::ObjectNode& aTarget, core::BoneKey& aKey, core::TimeLineEvent::Type aType):
-        mProject(aProject),
-        mTarget(aTarget), mKey(aKey), mEvent() {
+        core::Project& aProject, core::ObjectNode& aTarget, core::BoneKey& aKey, core::TimeLineEvent::Type aType
+    ):
+        mProject(aProject), mTarget(aTarget), mKey(aKey), mEvent() {
         mEvent.setType(aType);
         mEvent.pushTarget(mTarget, TimeKeyType_Bone, mProject.animator().currentFrame().get());
     }

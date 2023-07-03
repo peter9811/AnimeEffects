@@ -25,36 +25,24 @@ public:
         Data& operator=(const Data& aRhs);
         ~Data();
 
-        util::Easing::Param& easing() {
-            return mEasing;
-        }
-        const util::Easing::Param& easing() const {
-            return mEasing;
-        }
+        util::Easing::Param& easing() { return mEasing; }
+        const util::Easing::Param& easing() const { return mEasing; }
 
         void createBonesBy(BoneKey& aAreaBone);
 
         QList<Bone2*>& topBones();
         const QList<Bone2*>& topBones() const;
 
-        bool isEmpty() const {
-            return mTopBones.empty();
-        }
+        bool isEmpty() const { return mTopBones.empty(); }
         void deleteAll();
     };
 
     PoseKey();
 
-    Data& data() {
-        return mData;
-    }
-    const Data& data() const {
-        return mData;
-    }
+    Data& data() { return mData; }
+    const Data& data() const { return mData; }
 
-    virtual TimeKeyType type() const {
-        return TimeKeyType_Pose;
-    }
+    virtual TimeKeyType type() const { return TimeKeyType_Pose; }
     virtual TimeKey* createClone();
     virtual bool serialize(Serializer& aOut) const;
     virtual bool deserialize(Deserializer& aIn);

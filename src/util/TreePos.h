@@ -11,27 +11,15 @@ public:
     explicit TreePos(const QModelIndex& aIndex);
     TreePos(const QModelIndex& aParentIndex, int aRow);
 
-    bool isValid() const {
-        return mIsValid;
-    }
+    bool isValid() const { return mIsValid; }
     TreePos parent() const;
-    int depth() const {
-        return (int)mRows.size();
-    }
-    int row(int aDepth) const {
-        return mRows.at(aDepth);
-    }
-    int tailRow() const {
-        return depth() > 0 ? mRows[depth() - 1] : 0;
-    }
-    const std::vector<int>& rows() const {
-        return mRows;
-    }
+    int depth() const { return (int)mRows.size(); }
+    int row(int aDepth) const { return mRows.at(aDepth); }
+    int tailRow() const { return depth() > 0 ? mRows[depth() - 1] : 0; }
+    const std::vector<int>& rows() const { return mRows; }
     bool contains(const TreePos& aRhs) const;
     bool operator==(const TreePos& aRhs) const;
-    bool operator!=(const TreePos& aRhs) const {
-        return !(*this == aRhs);
-    }
+    bool operator!=(const TreePos& aRhs) const { return !(*this == aRhs); }
 
     void updateByRemove(const TreePos& aRemovePos);
     void updateByInsert(const TreePos& aInsertPos);

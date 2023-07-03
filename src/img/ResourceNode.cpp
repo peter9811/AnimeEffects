@@ -6,9 +6,7 @@ namespace img {
 ResourceNode::ResourceNode(const QString& aIdentifier):
     TreeNodeBase(this), mHandle(new ResourceData(aIdentifier, this), new int(0)), mIsAbandoned() {}
 
-ResourceNode::~ResourceNode() {
-    qDeleteAll(children());
-}
+ResourceNode::~ResourceNode() { qDeleteAll(children()); }
 
 ResourceHandle ResourceNode::updateHandle(XCMemBlock aGrabbedImage, const QRect& aRect) {
     ResourceHandle oldHandle = mHandle;

@@ -18,9 +18,9 @@ namespace res {
 
     //-------------------------------------------------------------------------------------------------
     ModificationNotifier::ModificationNotifier(
-        ViaPoint& aViaPoint, core::Project& aProject, const util::TreePos& aRootPos):
-        mViaPoint(aViaPoint),
-        mProject(aProject), mRootPos(aRootPos), mEvent(aProject) {
+        ViaPoint& aViaPoint, core::Project& aProject, const util::TreePos& aRootPos
+    ):
+        mViaPoint(aViaPoint), mProject(aProject), mRootPos(aRootPos), mEvent(aProject) {
         XC_ASSERT(mRootPos.isValid());
         mEvent.setType(core::ResourceEvent::Type_Reload);
     }
@@ -36,9 +36,7 @@ namespace res {
         mEvent.setType(core::ResourceEvent::Type_AddTree);
     }
 
-    void AddNewOneNotifier::notify(bool aIsUndo) {
-        mProject.onResourceModified(mEvent, aIsUndo);
-    }
+    void AddNewOneNotifier::notify(bool aIsUndo) { mProject.onResourceModified(mEvent, aIsUndo); }
 
     //-------------------------------------------------------------------------------------------------
     DeleteNotifier::DeleteNotifier(ViaPoint& aViaPoint, core::Project& aProject):
@@ -46,9 +44,7 @@ namespace res {
         mEvent.setType(core::ResourceEvent::Type_Delete);
     }
 
-    void DeleteNotifier::notify(bool aIsUndo) {
-        mProject.onResourceModified(mEvent, aIsUndo);
-    }
+    void DeleteNotifier::notify(bool aIsUndo) { mProject.onResourceModified(mEvent, aIsUndo); }
 
     //-------------------------------------------------------------------------------------------------
     RenameNotifier::RenameNotifier(ViaPoint& aViaPoint, core::Project& aProject, const util::TreePos& aRootPos):
@@ -56,9 +52,7 @@ namespace res {
         mEvent.setType(core::ResourceEvent::Type_Rename);
     }
 
-    void RenameNotifier::notify(bool aIsUndo) {
-        mProject.onResourceModified(mEvent, aIsUndo);
-    }
+    void RenameNotifier::notify(bool aIsUndo) { mProject.onResourceModified(mEvent, aIsUndo); }
 
 } // namespace res
 } // namespace gui

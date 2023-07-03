@@ -15,15 +15,9 @@ namespace time {
         void setFrame(const Scaler& aScale, core::Frame aFrame);
         void setHandlePos(const Scaler& aScale, const QPoint& aPos);
         void update(const Scaler& aScale);
-        core::Frame frame() const {
-            return mFrame;
-        }
-        const QPoint& handlePos() const {
-            return mPos;
-        }
-        int handleRange() const {
-            return 5;
-        }
+        core::Frame frame() const { return mFrame; }
+        const QPoint& handlePos() const { return mPos; }
+        int handleRange() const { return 5; }
 
     private:
         const int mLeftMargin;

@@ -18,7 +18,8 @@
 namespace gui {
 namespace prop {
 
-    template<typename SpinBoxType> void stepByHelper(SpinBoxType* spinBox, int steps);
+    template<typename SpinBoxType>
+    void stepByHelper(SpinBoxType* spinBox, int steps);
 
     //-------------------------------------------------------------------------------------------------
     class SpinBox: public QSpinBox {
@@ -51,21 +52,13 @@ namespace prop {
 
         CheckItem(QWidget* aParent);
 
-        QCheckBox& box() {
-            return *mBox;
-        }
-        const QCheckBox& box() const {
-            return *mBox;
-        }
+        QCheckBox& box() { return *mBox; }
+        const QCheckBox& box() const { return *mBox; }
 
-        bool value() const {
-            return mBox->isChecked();
-        }
+        bool value() const { return mBox->isChecked(); }
         void setValue(bool aValue, bool aSignal);
 
-        virtual QWidget* itemWidget() {
-            return mBox;
-        }
+        virtual QWidget* itemWidget() { return mBox; }
         virtual void setItemEnabled(bool aEnable);
         virtual void setItemVisible(bool aVisible);
 
@@ -87,21 +80,13 @@ namespace prop {
 
         ComboItem(QWidget* aParent);
 
-        QComboBox& box() {
-            return *mBox;
-        }
-        const QComboBox& box() const {
-            return *mBox;
-        }
+        QComboBox& box() { return *mBox; }
+        const QComboBox& box() const { return *mBox; }
 
-        int value() const {
-            return mBox->currentIndex();
-        }
+        int value() const { return mBox->currentIndex(); }
         void setValue(int aValue, bool aSignal);
 
-        virtual QWidget* itemWidget() {
-            return mBox;
-        }
+        virtual QWidget* itemWidget() { return mBox; }
         virtual void setItemEnabled(bool aEnable);
         virtual void setItemVisible(bool aVisible);
 
@@ -122,19 +107,13 @@ namespace prop {
 
         Combo2DItem(QWidget* aParent);
 
-        QComboBox& box(int aIndex) {
-            return *mBox.at(aIndex);
-        }
-        const QComboBox& box(int aIndex) const {
-            return *mBox.at(aIndex);
-        }
+        QComboBox& box(int aIndex) { return *mBox.at(aIndex); }
+        const QComboBox& box(int aIndex) const { return *mBox.at(aIndex); }
 
         QPoint value() const;
         void setValue(QPoint aValue, bool aSignal);
 
-        virtual QLayout* itemLayout() {
-            return mLayout;
-        }
+        virtual QLayout* itemLayout() { return mLayout; }
         virtual void setItemEnabled(bool aEnable);
         virtual void setItemVisible(bool aVisible);
 
@@ -156,19 +135,13 @@ namespace prop {
 
         EasingItem(QWidget* aParent);
 
-        QComboBox& comboBox(int aIndex) {
-            return *mBox.at(aIndex);
-        }
-        const QComboBox& comboBox(int aIndex) const {
-            return *mBox.at(aIndex);
-        }
+        QComboBox& comboBox(int aIndex) { return *mBox.at(aIndex); }
+        const QComboBox& comboBox(int aIndex) const { return *mBox.at(aIndex); }
 
         util::Easing::Param value() const;
         void setValue(util::Easing::Param aValue, bool aSignal);
 
-        virtual QLayout* itemLayout() {
-            return mLayout;
-        }
+        virtual QLayout* itemLayout() { return mLayout; }
         virtual void setItemEnabled(bool aEnable);
         virtual void setItemVisible(bool aVisible);
 
@@ -191,25 +164,17 @@ namespace prop {
 
         IntegerItem(QWidget* aParent);
 
-        SpinBox& box() {
-            return *mBox;
-        }
-        const SpinBox& box() const {
-            return *mBox;
-        }
+        SpinBox& box() { return *mBox; }
+        const SpinBox& box() const { return *mBox; }
 
-        int value() const {
-            return mBox->value();
-        }
+        int value() const { return mBox->value(); }
         void setValue(int aValue) {
             mBox->setValue(aValue);
             mStamp = aValue;
         }
         void setRange(int aMin, int aMax);
 
-        virtual QWidget* itemWidget() {
-            return mBox;
-        }
+        virtual QWidget* itemWidget() { return mBox; }
         virtual void setItemEnabled(bool aEnable);
         virtual void setItemVisible(bool aVisible);
 
@@ -230,25 +195,17 @@ namespace prop {
 
         DecimalItem(QWidget* aParent);
 
-        DoubleSpinBox& box() {
-            return *mBox;
-        }
-        const DoubleSpinBox& box() const {
-            return *mBox;
-        }
+        DoubleSpinBox& box() { return *mBox; }
+        const DoubleSpinBox& box() const { return *mBox; }
 
-        double value() const {
-            return mBox->value();
-        }
+        double value() const { return mBox->value(); }
         void setValue(double aValue) {
             mBox->setValue(aValue);
             mStamp = aValue;
         }
         void setRange(double aMin, double aMax);
 
-        virtual QWidget* itemWidget() {
-            return mBox;
-        }
+        virtual QWidget* itemWidget() { return mBox; }
         virtual void setItemEnabled(bool aEnable);
         virtual void setItemVisible(bool aVisible);
 
@@ -273,9 +230,7 @@ namespace prop {
         void setValue(QVector2D aValue);
         void setRange(float aMin, float aMax);
 
-        virtual QLayout* itemLayout() {
-            return mLayout;
-        }
+        virtual QLayout* itemLayout() { return mLayout; }
         virtual void setItemEnabled(bool aEnable);
         virtual void setItemVisible(bool aVisible);
 
@@ -297,14 +252,10 @@ namespace prop {
 
         BrowseItem(QWidget* aParent);
 
-        QString value() const {
-            return mLine->text();
-        }
+        QString value() const { return mLine->text(); }
         void setValue(const QString& aValue);
 
-        virtual QLayout* itemLayout() {
-            return mLayout;
-        }
+        virtual QLayout* itemLayout() { return mLayout; }
         virtual void setItemEnabled(bool aEnable);
         virtual void setItemVisible(bool aVisible);
 

@@ -17,12 +17,8 @@ namespace srt {
         KeyOwner();
         ~KeyOwner();
 
-        explicit operator bool() const {
-            return moveKey && rotateKey && scaleKey;
-        }
-        bool ownsSomeKeys() const {
-            return ownsMoveKey || ownsRotateKey || ownsScaleKey;
-        }
+        explicit operator bool() const { return moveKey && rotateKey && scaleKey; }
+        bool ownsSomeKeys() const { return ownsMoveKey || ownsRotateKey || ownsScaleKey; }
         void deleteOwningKeys();
 
         void pushOwningMoveKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);

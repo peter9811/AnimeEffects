@@ -11,9 +11,7 @@ namespace ffd {
 
     KeyOwner::KeyOwner(): key(), ownsKey(), parentKey() {}
 
-    KeyOwner::~KeyOwner() {
-        deleteOwnsKey();
-    }
+    KeyOwner::~KeyOwner() { deleteOwnsKey(); }
 
     void KeyOwner::createKey(const TimeLine& aLine, const LayerMesh& aAreaMesh, TimeKey* aAreaKey, int aFrame) {
         // delete old holding key

@@ -6,7 +6,8 @@
 namespace util {
 
 //-------------------------------------------------------------------------------------------------
-template<typename tTreeNode> class TreeChildren {
+template<typename tTreeNode>
+class TreeChildren {
 public:
     typedef tTreeNode TreeNodeType;
     typedef std::list<TreeNodeType*> ListType;
@@ -18,51 +19,23 @@ public:
 
     TreeChildren(TreeNodeType* aOwner): mListImpl(), mOwner(aOwner) {}
 
-    Iterator begin() {
-        return mListImpl.begin();
-    }
-    ConstIterator begin() const {
-        return mListImpl.begin();
-    }
-    Iterator end() {
-        return mListImpl.end();
-    }
-    ConstIterator end() const {
-        return mListImpl.end();
-    }
+    Iterator begin() { return mListImpl.begin(); }
+    ConstIterator begin() const { return mListImpl.begin(); }
+    Iterator end() { return mListImpl.end(); }
+    ConstIterator end() const { return mListImpl.end(); }
 
-    ReverseIterator rbegin() {
-        return mListImpl.rbegin();
-    }
-    ConstReverseIterator rbegin() const {
-        return mListImpl.rbegin();
-    }
-    ReverseIterator rend() {
-        return mListImpl.rend();
-    }
-    ConstReverseIterator rend() const {
-        return mListImpl.rend();
-    }
+    ReverseIterator rbegin() { return mListImpl.rbegin(); }
+    ConstReverseIterator rbegin() const { return mListImpl.rbegin(); }
+    ReverseIterator rend() { return mListImpl.rend(); }
+    ConstReverseIterator rend() const { return mListImpl.rend(); }
 
-    bool empty() const {
-        return mListImpl.empty();
-    }
-    SizeType size() const {
-        return mListImpl.size();
-    }
+    bool empty() const { return mListImpl.empty(); }
+    SizeType size() const { return mListImpl.size(); }
 
-    TreeNodeType*& front() {
-        return mListImpl.front();
-    }
-    const TreeNodeType*& front() const {
-        return mListImpl.front();
-    }
-    TreeNodeType*& back() {
-        return mListImpl.back();
-    }
-    const TreeNodeType*& back() const {
-        return mListImpl.back();
-    }
+    TreeNodeType*& front() { return mListImpl.front(); }
+    const TreeNodeType*& front() const { return mListImpl.front(); }
+    TreeNodeType*& back() { return mListImpl.back(); }
+    const TreeNodeType*& back() const { return mListImpl.back(); }
 
     Iterator at(int aIndex) {
         int index = 0;
@@ -183,13 +156,9 @@ public:
         return next;
     }
 
-    void insert(int aIndex, TreeNodeType* aObj) {
-        insert(at(aIndex), aObj);
-    }
+    void insert(int aIndex, TreeNodeType* aObj) { insert(at(aIndex), aObj); }
 
-    void erase(int aIndex) {
-        erase(at(aIndex));
-    }
+    void erase(int aIndex) { erase(at(aIndex)); }
 
     void clear() {
         for (Iterator itr = begin(); itr != end(); ++itr) {
@@ -222,7 +191,8 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-template<class tTreeNode> class TreeNodeBase {
+template<class tTreeNode>
+class TreeNodeBase {
 public:
     typedef tTreeNode TreeNodeType;
     typedef TreeChildren<tTreeNode> Children;
@@ -232,33 +202,17 @@ public:
 
     virtual ~TreeNodeBase() {}
 
-    TreeNodeType* parent() {
-        return mParent;
-    }
-    const TreeNodeType* parent() const {
-        return mParent;
-    }
+    TreeNodeType* parent() { return mParent; }
+    const TreeNodeType* parent() const { return mParent; }
 
-    TreeNodeType* prevSib() {
-        return mPrevSib;
-    }
-    const TreeNodeType* prevSib() const {
-        return mPrevSib;
-    }
+    TreeNodeType* prevSib() { return mPrevSib; }
+    const TreeNodeType* prevSib() const { return mPrevSib; }
 
-    TreeNodeType* nextSib() {
-        return mNextSib;
-    }
-    const TreeNodeType* nextSib() const {
-        return mNextSib;
-    }
+    TreeNodeType* nextSib() { return mNextSib; }
+    const TreeNodeType* nextSib() const { return mNextSib; }
 
-    Children& children() {
-        return mChildren;
-    }
-    const Children& children() const {
-        return mChildren;
-    }
+    Children& children() { return mChildren; }
+    const Children& children() const { return mChildren; }
 
 
 private:
@@ -274,13 +228,9 @@ private:
         mNextSib = aNext;
     }
 
-    void setPrevSib(TreeNodeType* aSibling) {
-        mPrevSib = aSibling;
-    }
+    void setPrevSib(TreeNodeType* aSibling) { mPrevSib = aSibling; }
 
-    void setNextSib(TreeNodeType* aSibling) {
-        mNextSib = aSibling;
-    }
+    void setNextSib(TreeNodeType* aSibling) { mNextSib = aSibling; }
 
     TreeNodeType* mParent;
     TreeNodeType* mPrevSib;

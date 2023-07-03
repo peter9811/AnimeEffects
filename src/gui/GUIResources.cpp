@@ -114,9 +114,7 @@ QStringList GUIResources::themeList() {
     return kThemeList;
 }
 
-bool GUIResources::hasTheme(const QString& aThemeId) {
-    return mThemeMap.contains(aThemeId);
-}
+bool GUIResources::hasTheme(const QString& aThemeId) { return mThemeMap.contains(aThemeId); }
 
 void GUIResources::setTheme(const QString& aThemeId) {
     if (mTheme.id() != aThemeId && hasTheme(aThemeId)) {
@@ -126,8 +124,6 @@ void GUIResources::setTheme(const QString& aThemeId) {
     }
 }
 
-void GUIResources::triggerOnThemeChanged() {
-    onThemeChanged(mTheme);
-}
+void GUIResources::triggerOnThemeChanged() { onThemeChanged(mTheme); }
 
 } // namespace gui

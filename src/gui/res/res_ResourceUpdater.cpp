@@ -14,7 +14,7 @@
 #include "gui/res/res_ImageSetter.h"
 #include "gui/res/res_ResourceUpdater.h"
 
-//#define RESOURCE_UPDATER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
+// #define RESOURCE_UPDATER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define RESOURCE_UPDATER_DUMP(...)
 
 namespace gui {
@@ -140,9 +140,7 @@ namespace res {
             mTopItem = nullptr;
         }
 
-        virtual void redo() {
-            mTopItem = mTree.takeTopLevelItem(mIndex);
-        }
+        virtual void redo() { mTopItem = mTree.takeTopLevelItem(mIndex); }
     };
 
     //-------------------------------------------------------------------------------------------------
@@ -228,8 +226,8 @@ namespace res {
         }
     }
 
-    res::Item* ResourceUpdater::createGUITree(
-        const QTreeWidget& aTree, img::ResourceNode& aNode, const QString& aIdentifier) {
+    res::Item*
+    ResourceUpdater::createGUITree(const QTreeWidget& aTree, img::ResourceNode& aNode, const QString& aIdentifier) {
         auto item = new res::Item(aTree, aNode, aIdentifier);
         addTreeItemRecursive(aTree, *item, aNode);
         return item;
@@ -340,8 +338,8 @@ namespace res {
         RESOURCE_UPDATER_DUMP("end reload");
     }
 
-    std::pair<int, img::ResourceNode*> findCorrespondingNode(
-        const img::ResourceNode::Children& aSearchList, const img::ResourceNode& aNode) {
+    std::pair<int, img::ResourceNode*>
+    findCorrespondingNode(const img::ResourceNode::Children& aSearchList, const img::ResourceNode& aNode) {
         {
             const int count = aNode.getCountOfSameSiblings();
             if (count > 0)
@@ -366,8 +364,8 @@ namespace res {
         }
     }
 
-    std::pair<bool, QVector<img::ResourceNode*>> allChildrenCanBeIdentified(
-        img::ResourceNode& aCurNode, img::ResourceNode& aNewNode) {
+    std::pair<bool, QVector<img::ResourceNode*>>
+    allChildrenCanBeIdentified(img::ResourceNode& aCurNode, img::ResourceNode& aNewNode) {
         std::pair<bool, QVector<img::ResourceNode*>> result;
         result.first = true;
 
@@ -413,8 +411,13 @@ namespace res {
     }
 
     //-------------------------------------------------------------------------------------------------
-    bool ResourceUpdater::createImageReloaderRecursive(cmnd::Stack& aStack, ModificationNotifier& aNotifier,
-        QTreeWidgetItem& aCurItem, img::ResourceNode& aCurNode, img::ResourceNode& aNewNode) {
+    bool ResourceUpdater::createImageReloaderRecursive(
+        cmnd::Stack& aStack,
+        ModificationNotifier& aNotifier,
+        QTreeWidgetItem& aCurItem,
+        img::ResourceNode& aCurNode,
+        img::ResourceNode& aNewNode
+    ) {
         using img::PSDFormat;
 
         // This is to prevent a crash
@@ -489,7 +492,8 @@ namespace res {
 
     //-------------------------------------------------------------------------------------------------
     void ResourceUpdater::createAbandonedImageRemoverRecursive(
-        cmnd::Stack& aStack, QTreeWidgetItem& aItem, img::ResourceNode& aNode) {
+        cmnd::Stack& aStack, QTreeWidgetItem& aItem, img::ResourceNode& aNode
+    ) {
         bool isKeeped = aNode.isKeeped();
 
         if (!isKeeped) {
@@ -573,8 +577,11 @@ namespace res {
 
         // reload
         {
-            RESOURCE_UPDATER_DUMP("create reload command %s, %s", targetNode.data().identifier().toLatin1().data(),
-                newNode->data().identifier().toLatin1().data());
+            RESOURCE_UPDATER_DUMP(
+                "create reload command %s, %s",
+                targetNode.data().identifier().toLatin1().data(),
+                newNode->data().identifier().toLatin1().data()
+            );
 
             auto& stack = mProject.commandStack();
             cmnd::ScopedMacro macro(stack, CmndName::tr("Reload images"));
@@ -613,7 +620,8 @@ namespace res {
             while (itr.hasNext()) {
                 if (itr.next()->isKeeped()) {
                     QMessageBox::warning(
-                        nullptr, tr("Operation Error"), tr("Some layers are still referenced by objects."));
+                        nullptr, tr("Operation Error"), tr("Some layers are still referenced by objects.")
+                    );
                     return;
                 }
             }

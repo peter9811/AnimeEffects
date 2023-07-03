@@ -195,18 +195,24 @@ void NetworkUtil::checkForUpdate(QString url, NetworkUtil networking, QWidget* a
         if (latestVersion == "null") {
             qDebug() << "Failed to get version";
             updateBox.setWindowTitle(QApplication::translate("NetworkCheckForUpdate", "Failed"));
-            updateBox.setText(QApplication::translate("NetworkCheckForUpdate",
+            updateBox.setText(QApplication::translate(
+                "NetworkCheckForUpdate",
                 "<center>Unable to get latest version. <br>Please check your internet "
-                "connection and if you have curl or wget installed.</center>"));
+                "connection and if you have curl or wget installed.</center>"
+            ));
             failed = true;
         }
         // Latest version
         if (latestVersion == currentVersion) {
             qDebug() << "On latest version :" << latestVersion;
             updateBox.setWindowTitle(QApplication::translate("NetworkCheckForUpdate", "On latest"));
-            updateBox.setText(QApplication::translate("NetworkCheckForUpdate",
-                                  "<center>You already have the latest stable release available. <br>Version: ") +
-                currentVersion + "</center>");
+            updateBox.setText(
+                QApplication::translate(
+                    "NetworkCheckForUpdate",
+                    "<center>You already have the latest stable release available. <br>Version: "
+                ) +
+                currentVersion + "</center>"
+            );
             onLatest = true;
         }
         // Preview version
@@ -214,21 +220,29 @@ void NetworkUtil::checkForUpdate(QString url, NetworkUtil networking, QWidget* a
             qDebug() << "On preview version :" << currentVersion;
 
             updateBox.setWindowTitle(QApplication::translate("NetworkCheckForUpdate", "On preview"));
-            updateBox.setText(QApplication::translate("NetworkCheckForUpdate",
-                                  "<center>Your current version is higher than the latest stable release. "
-                                  "<br>Version: ") +
-                currentVersion + "</center>");
+            updateBox.setText(
+                QApplication::translate(
+                    "NetworkCheckForUpdate",
+                    "<center>Your current version is higher than the latest stable release. "
+                    "<br>Version: "
+                ) +
+                currentVersion + "</center>"
+            );
             onPreview = true;
         }
         // Old version
         else {
             qDebug() << "On version :" << currentVersion;
             updateBox.setWindowTitle(QApplication::translate("NetworkCheckForUpdate", "New release available"));
-            updateBox.setText(QApplication::translate(
-                                  "NetworkCheckForUpdate", "<center>A new stable release is available, version: ") +
+            updateBox.setText(
+                QApplication::translate(
+                    "NetworkCheckForUpdate", "<center>A new stable release is available, version: "
+                ) +
                 latestVersion +
                 QApplication::translate(
-                    "NetworkCheckForUpdate", ".<br>Do you wish to download it or to go to the GitHub page?</center>"));
+                    "NetworkCheckForUpdate", ".<br>Do you wish to download it or to go to the GitHub page?</center>"
+                )
+            );
         }
 
         if (onLatest || onPreview || failed) {
@@ -263,7 +277,8 @@ void NetworkUtil::checkForUpdate(QString url, NetworkUtil networking, QWidget* a
                     file = "AnimeEffects-MacOS.zip";
                 }
                 QFileInfo aeUpdate = networking.downloadGithubFile(
-                    "https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/releases/latest", file, 0, aParent);
+                    "https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/releases/latest", file, 0, aParent
+                );
                 QDesktopServices::openUrl(QUrl::fromLocalFile(aeUpdate.absoluteFilePath()));
             }
             qDebug("--------");

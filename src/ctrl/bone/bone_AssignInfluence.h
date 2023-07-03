@@ -18,9 +18,7 @@ namespace bone {
         AssignInfluence(core::Bone2* aTarget, int aIndex, const QVector2D& aNext):
             mTarget(aTarget), mPrev(), mNext(aNext), mIndex(aIndex), mDone(false) {}
 
-        int index() const {
-            return mIndex;
-        }
+        int index() const { return mIndex; }
         void modifyValue(const QVector2D& aNext) {
             mNext = aNext;
             if (mDone)

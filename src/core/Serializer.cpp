@@ -9,17 +9,11 @@ Serializer::Serializer(util::StreamWriter& aOut): mOut(aOut), mIDAssigner() {
     XC_ASSERT(id == 0);
 }
 
-void Serializer::write(bool aValue) {
-    mOut.write((uint32)aValue);
-}
+void Serializer::write(bool aValue) { mOut.write((uint32)aValue); }
 
-void Serializer::write(int aValue) {
-    mOut.write((sint32)aValue);
-}
+void Serializer::write(int aValue) { mOut.write((sint32)aValue); }
 
-void Serializer::write(float aValue) {
-    mOut.write((float32)aValue);
-}
+void Serializer::write(float aValue) { mOut.write((float32)aValue); }
 
 void Serializer::write(QList<int> aValue) {
     int size = aValue.size();
@@ -101,9 +95,7 @@ void Serializer::write(const QPolygonF& aValue) {
     }
 }
 
-void Serializer::write(const QString& aValue) {
-    mOut.writeString(aValue.toStdString(), 4);
-}
+void Serializer::write(const QString& aValue) { mOut.writeString(aValue.toStdString(), 4); }
 
 void Serializer::writeFixedString(const QString& aValue, int aSize) {
     const std::string value = aValue.toStdString();
@@ -238,12 +230,8 @@ Serializer::PosType Serializer::beginBlock(const std::array<uint8, 8>& aSignatur
     return mOut.reserveLength();
 }
 
-void Serializer::endBlock(PosType aPos) {
-    mOut.writeLength(aPos);
-}
+void Serializer::endBlock(PosType aPos) { mOut.writeLength(aPos); }
 
-bool Serializer::failure() const {
-    return mOut.isFailed();
-}
+bool Serializer::failure() const { return mOut.isFailed(); }
 
 } // namespace core

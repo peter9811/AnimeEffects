@@ -18,26 +18,14 @@ public:
     TargetWidget(ViaPoint& aViaPoint, GUIResources& aResources, QWidget* aParent, const QSize& aSizeHint);
     void setProject(core::Project* aProject);
 
-    ObjectTreeWidget& objectTreeWidget() {
-        return *mObjTree;
-    }
-    const ObjectTreeWidget& objectTreeWidget() const {
-        return *mObjTree;
-    }
+    ObjectTreeWidget& objectTreeWidget() { return *mObjTree; }
+    const ObjectTreeWidget& objectTreeWidget() const { return *mObjTree; }
 
-    TimeLineWidget& timeLineWidget() {
-        return *mTimeLine;
-    }
-    const TimeLineWidget& timeLineWidget() const {
-        return *mTimeLine;
-    }
+    TimeLineWidget& timeLineWidget() { return *mTimeLine; }
+    const TimeLineWidget& timeLineWidget() const { return *mTimeLine; }
 
-    PlayBackWidget& playBackWidget() {
-        return *mPlayBack;
-    }
-    const PlayBackWidget& playBackWidget() const {
-        return *mPlayBack;
-    }
+    PlayBackWidget& playBackWidget() { return *mPlayBack; }
+    const PlayBackWidget& playBackWidget() const { return *mPlayBack; }
 
     // InfoLabelWidget& infoLabelWidget() { return *mInfoLabel; }
     // const InfoLabelWidget& infoLabelWidget() const { return *mInfoLabel; }
@@ -51,9 +39,7 @@ public:
 
 private:
     virtual void resizeEvent(QResizeEvent* aEvent);
-    virtual QSize sizeHint() const {
-        return mSizeHint;
-    }
+    virtual QSize sizeHint() const { return mSizeHint; }
 
     void onPlayBackButtonPushed(PlayBackWidget::PushType aType);
 

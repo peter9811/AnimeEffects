@@ -20,8 +20,9 @@ using namespace core;
 namespace ctrl {
 
 //-------------------------------------------------------------------------------------------------
-img::ResourceNode* createLayerResource(const img::PSDFormat::Header& aHeader, const img::PSDFormat::Layer& aLayer,
-    const QString& aName, QRect& aInOutRect) {
+img::ResourceNode* createLayerResource(
+    const img::PSDFormat::Header& aHeader, const img::PSDFormat::Layer& aLayer, const QString& aName, QRect& aInOutRect
+) {
     // create texture image
     auto imagePair = img::Util::createTextureImage(aHeader, aLayer);
     aInOutRect = imagePair.second;

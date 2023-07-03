@@ -20,25 +20,13 @@ public:
         }
     }
 
-    inline QVector2D dir01() const {
-        return v[1] - v[0];
-    }
-    inline QVector2D dir12() const {
-        return v[2] - v[1];
-    }
-    inline QVector2D dir20() const {
-        return v[0] - v[2];
-    }
+    inline QVector2D dir01() const { return v[1] - v[0]; }
+    inline QVector2D dir12() const { return v[2] - v[1]; }
+    inline QVector2D dir20() const { return v[0] - v[2]; }
 
-    inline Segment2D seg01() const {
-        return Segment2D(v[0], dir01());
-    }
-    inline Segment2D seg12() const {
-        return Segment2D(v[1], dir12());
-    }
-    inline Segment2D seg20() const {
-        return Segment2D(v[2], dir20());
-    }
+    inline Segment2D seg01() const { return Segment2D(v[0], dir01()); }
+    inline Segment2D seg12() const { return Segment2D(v[1], dir12()); }
+    inline Segment2D seg20() const { return Segment2D(v[2], dir20()); }
 
     bool hasFace(float aEps) const;
 

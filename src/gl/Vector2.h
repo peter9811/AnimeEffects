@@ -30,12 +30,8 @@ struct Vector2 {
         x = aV.x();
         y = aV.y();
     }
-    inline bool isZero() const {
-        return x == 0.0f && y == 0.0f;
-    }
-    QVector2D pos() const {
-        return QVector2D(x, y);
-    }
+    inline bool isZero() const { return x == 0.0f && y == 0.0f; }
+    QVector2D pos() const { return QVector2D(x, y); }
 
     Vector2 operator+(const Vector2& aRhs) const {
         Vector2 result = {x + aRhs.x, y + aRhs.y};

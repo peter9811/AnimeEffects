@@ -56,13 +56,9 @@ namespace pose {
         mRigidTopBone = util::TreeUtil::createShadow<Bone2, RigidBone>(&mTopBone);
     }
 
-    BoneDynamics::~BoneDynamics() {
-        deleteAll();
-    }
+    BoneDynamics::~BoneDynamics() { deleteAll(); }
 
-    void BoneDynamics::setConduction(float aRate) {
-        mConduction = xc_clamp(aRate, 0.0f, 1.0f);
-    }
+    void BoneDynamics::setConduction(float aRate) { mConduction = xc_clamp(aRate, 0.0f, 1.0f); }
 
     QVector<float> BoneDynamics::rotationDifferences() const {
         using util::MathUtil;
@@ -75,7 +71,8 @@ namespace pose {
             if (rigidBone->parent()) {
                 auto rotate = rigidBone->angle - rigidBone->parent()->angle - rigidBone->ptr->localAngle();
                 diff = MathUtil::getAngleDifferenceRad(
-                    MathUtil::normalizeAngleRad(rigidBone->ptr->rotate()), MathUtil::normalizeAngleRad(rotate));
+                    MathUtil::normalizeAngleRad(rigidBone->ptr->rotate()), MathUtil::normalizeAngleRad(rotate)
+                );
             }
             differences.push_back(diff);
         }

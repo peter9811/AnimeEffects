@@ -13,7 +13,8 @@
 
 namespace cmnd {
 
-template<typename tObject> class GrabNewObject: public Stable {
+template<typename tObject>
+class GrabNewObject: public Stable {
     tObject* mObject;
     bool mIsCanceled;
 
@@ -23,15 +24,12 @@ public:
         if (mIsCanceled)
             delete mObject;
     }
-    virtual void undo() {
-        mIsCanceled = true;
-    }
-    virtual void redo() {
-        mIsCanceled = false;
-    }
+    virtual void undo() { mIsCanceled = true; }
+    virtual void redo() { mIsCanceled = false; }
 };
 
-template<typename tObject> class GrabDeleteObject: public Stable {
+template<typename tObject>
+class GrabDeleteObject: public Stable {
     tObject* mObject;
     bool mIsCanceled;
 
@@ -41,12 +39,8 @@ public:
         if (!mIsCanceled)
             delete mObject;
     }
-    virtual void undo() {
-        mIsCanceled = true;
-    }
-    virtual void redo() {
-        mIsCanceled = false;
-    }
+    virtual void undo() { mIsCanceled = true; }
+    virtual void redo() { mIsCanceled = false; }
 };
 
 class Awake: public Stable {
@@ -54,12 +48,8 @@ class Awake: public Stable {
 
 public:
     Awake(SleepableObject* aSleepable): mSleepable(aSleepable) {}
-    virtual void undo() {
-        mSleepable->sleep();
-    }
-    virtual void redo() {
-        mSleepable->awake();
-    }
+    virtual void undo() { mSleepable->sleep(); }
+    virtual void redo() { mSleepable->awake(); }
 };
 
 class Sleep: public Stable {
@@ -67,12 +57,8 @@ class Sleep: public Stable {
 
 public:
     Sleep(SleepableObject* aSleepable): mSleepable(aSleepable) {}
-    virtual void undo() {
-        mSleepable->awake();
-    }
-    virtual void redo() {
-        mSleepable->sleep();
-    }
+    virtual void undo() { mSleepable->awake(); }
+    virtual void redo() { mSleepable->sleep(); }
 };
 
 class Delegatable: public Stable {
@@ -86,18 +72,13 @@ public:
 
     Delegatable(const FuncType& aExec, const FuncType& aUndo, const FuncType& aRedo):
         mExec(aExec), mUndo(aUndo), mRedo(aRedo) {}
-    virtual void exec() {
-        mExec();
-    }
-    virtual void undo() {
-        mUndo();
-    }
-    virtual void redo() {
-        mRedo();
-    }
+    virtual void exec() { mExec(); }
+    virtual void undo() { mUndo(); }
+    virtual void redo() { mRedo(); }
 };
 
-template<typename tValue> class Assign: public Stable {
+template<typename tValue>
+class Assign: public Stable {
     tValue* mTarget;
     tValue mPrev;
     tValue mNext;
@@ -108,15 +89,12 @@ public:
         mPrev = *mTarget;
         redo();
     }
-    virtual void undo() {
-        *mTarget = mPrev;
-    }
-    virtual void redo() {
-        *mTarget = mNext;
-    }
+    virtual void undo() { *mTarget = mPrev; }
+    virtual void redo() { *mTarget = mNext; }
 };
 
-template<typename tTarget, typename tValue> class ConvertAssign: public Stable {
+template<typename tTarget, typename tValue>
+class ConvertAssign: public Stable {
     tTarget* mTarget;
     tValue mPrev;
     tValue mNext;
@@ -127,15 +105,12 @@ public:
         mPrev = *mTarget;
         redo();
     }
-    virtual void undo() {
-        *mTarget = mPrev;
-    }
-    virtual void redo() {
-        *mTarget = mNext;
-    }
+    virtual void undo() { *mTarget = mPrev; }
+    virtual void redo() { *mTarget = mNext; }
 };
 
-template<typename tTarget, typename tValue = tTarget> class ModifiableAssign: public Stable {
+template<typename tTarget, typename tValue = tTarget>
+class ModifiableAssign: public Stable {
     tTarget* mTarget;
     tValue mPrev;
     tValue mNext;
@@ -162,7 +137,8 @@ public:
     }
 };
 
-template<typename tObject> class AssignNewObject: public Stable {
+template<typename tObject>
+class AssignNewObject: public Stable {
     tObject** mTarget;
     tObject* mValue;
 
@@ -172,15 +148,12 @@ public:
         if (*mTarget != mValue)
             delete mValue;
     }
-    virtual void undo() {
-        *mTarget = NULL;
-    }
-    virtual void redo() {
-        *mTarget = mValue;
-    }
+    virtual void undo() { *mTarget = NULL; }
+    virtual void redo() { *mTarget = mValue; }
 };
 
-template<typename tVectorObj> class PushBackVector: public Stable {
+template<typename tVectorObj>
+class PushBackVector: public Stable {
     typedef QVector<tVectorObj> VectorType;
     VectorType* mTarget;
     tVectorObj mObj;
@@ -191,12 +164,11 @@ public:
         mObj = mTarget->back();
         mTarget->pop_back();
     }
-    virtual void redo() {
-        mTarget->push_back(mObj);
-    }
+    virtual void redo() { mTarget->push_back(mObj); }
 };
 
-template<typename tVectorObj> class RemoveVector: public Stable {
+template<typename tVectorObj>
+class RemoveVector: public Stable {
     typedef QVector<tVectorObj> VectorType;
     VectorType* mTarget;
     int mIndex;
@@ -204,16 +176,15 @@ template<typename tVectorObj> class RemoveVector: public Stable {
 
 public:
     RemoveVector(VectorType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {}
-    virtual void undo() {
-        mTarget->insert(mIndex, mObj);
-    }
+    virtual void undo() { mTarget->insert(mIndex, mObj); }
     virtual void redo() {
         mObj = mTarget->at(mIndex);
         mTarget->remove(mIndex);
     }
 };
 
-template<typename tListObj> class PushBackList: public Stable {
+template<typename tListObj>
+class PushBackList: public Stable {
     typedef QList<tListObj> ListType;
     ListType* mTarget;
     tListObj mObj;
@@ -224,12 +195,11 @@ public:
         mObj = mTarget->back();
         mTarget->pop_back();
     }
-    virtual void redo() {
-        mTarget->push_back(mObj);
-    }
+    virtual void redo() { mTarget->push_back(mObj); }
 };
 
-template<typename tListObj> class PopBackList: public Stable {
+template<typename tListObj>
+class PopBackList: public Stable {
     typedef QList<tListObj> ListType;
     ListType* mTarget;
     tListObj mObj;
@@ -249,7 +219,8 @@ public:
     }
 };
 
-template<typename tListObj> class RemoveList: public Stable {
+template<typename tListObj>
+class RemoveList: public Stable {
     typedef QList<tListObj> ListType;
     ListType* mTarget;
     int mIndex;
@@ -258,16 +229,15 @@ template<typename tListObj> class RemoveList: public Stable {
 public:
     RemoveList(ListType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {}
 
-    virtual void undo() {
-        mTarget->insert(mIndex, mObj);
-    }
+    virtual void undo() { mTarget->insert(mIndex, mObj); }
     virtual void redo() {
         mObj = mTarget->at(mIndex);
         mTarget->removeAt(mIndex);
     }
 };
 
-template<typename tListObj> class RemoveListByObj: public Stable {
+template<typename tListObj>
+class RemoveListByObj: public Stable {
     typedef QList<tListObj> ListType;
     ListType* mTarget;
     int mIndex;
@@ -276,47 +246,42 @@ template<typename tListObj> class RemoveListByObj: public Stable {
 public:
     RemoveListByObj(ListType* aTarget, tListObj aObj): mTarget(aTarget), mIndex(0), mObj(aObj) {}
 
-    virtual void undo() {
-        mTarget->insert(mIndex, mObj);
-    }
+    virtual void undo() { mTarget->insert(mIndex, mObj); }
     virtual void redo() {
         mIndex = mTarget->indexOf(mObj);
         mTarget->removeAt(mIndex);
     }
 };
 
-template<typename tTree> class PushBackTree: public Stable {
+template<typename tTree>
+class PushBackTree: public Stable {
     typedef typename tTree::Children TreeChildrenType;
     TreeChildrenType* mTarget;
     tTree* mObj;
 
 public:
     PushBackTree(TreeChildrenType* aTarget, tTree* aObj): mTarget(aTarget), mObj(aObj) {}
-    virtual void undo() {
-        mObj = mTarget->popBack();
-    }
+    virtual void undo() { mObj = mTarget->popBack(); }
     virtual void redo() {
         mTarget->pushBack(mObj);
         mObj = NULL;
     }
 };
 
-template<typename tTree> class PopBackTree: public Stable {
+template<typename tTree>
+class PopBackTree: public Stable {
     typedef typename tTree::Children TreeChildrenType;
     TreeChildrenType* mTarget;
     tTree* mObj;
 
 public:
     PopBackTree(TreeChildrenType* aTarget): mTarget(aTarget), mObj() {}
-    virtual void undo() {
-        mTarget->pushBack(mObj);
-    }
-    virtual void redo() {
-        mObj = mTarget->popBack();
-    }
+    virtual void undo() { mTarget->pushBack(mObj); }
+    virtual void redo() { mObj = mTarget->popBack(); }
 };
 
-template<typename tTree> class PushBackNewTreeObject: public Stable {
+template<typename tTree>
+class PushBackNewTreeObject: public Stable {
     typedef typename tTree::Children TreeChildrenType;
     TreeChildrenType* mTarget;
     tTree* mObj;
@@ -327,16 +292,15 @@ public:
         if (mObj != NULL)
             delete mObj;
     }
-    virtual void undo() {
-        mObj = mTarget->popBack();
-    }
+    virtual void undo() { mObj = mTarget->popBack(); }
     virtual void redo() {
         mTarget->pushBack(mObj);
         mObj = NULL;
     }
 };
 
-template<typename tTree> class InsertTree: public Stable {
+template<typename tTree>
+class InsertTree: public Stable {
     typedef typename tTree::Children ListType;
     ListType* mTarget;
     int mIndex;
@@ -345,15 +309,12 @@ template<typename tTree> class InsertTree: public Stable {
 public:
     InsertTree(ListType* aTarget, int aIndex, tTree* aObj): mTarget(aTarget), mIndex(aIndex), mObj(aObj) {}
 
-    virtual void undo() {
-        mTarget->erase(mIndex);
-    }
-    virtual void redo() {
-        mTarget->insert(mIndex, mObj);
-    }
+    virtual void undo() { mTarget->erase(mIndex); }
+    virtual void redo() { mTarget->insert(mIndex, mObj); }
 };
 
-template<typename tTree> class RemoveTree: public Stable {
+template<typename tTree>
+class RemoveTree: public Stable {
     typedef typename tTree::Children ListType;
     ListType* mTarget;
     int mIndex;
@@ -362,16 +323,15 @@ template<typename tTree> class RemoveTree: public Stable {
 public:
     RemoveTree(ListType* aTarget, int aIndex): mTarget(aTarget), mIndex(aIndex), mObj() {}
 
-    virtual void undo() {
-        mTarget->insert(mIndex, mObj);
-    }
+    virtual void undo() { mTarget->insert(mIndex, mObj); }
     virtual void redo() {
         mObj = *(mTarget->at(mIndex));
         mTarget->erase(mIndex);
     }
 };
 
-template<typename tTree> class RemoveTreeByObj: public Stable {
+template<typename tTree>
+class RemoveTreeByObj: public Stable {
     typedef typename tTree::Children ListType;
     ListType* mTarget;
     int mIndex;
@@ -380,9 +340,7 @@ template<typename tTree> class RemoveTreeByObj: public Stable {
 public:
     RemoveTreeByObj(ListType* aTarget, tTree* aObj): mTarget(aTarget), mIndex(-1), mObj(aObj) {}
 
-    virtual void undo() {
-        mTarget->insert(mIndex, mObj);
-    }
+    virtual void undo() { mTarget->insert(mIndex, mObj); }
     virtual void redo() {
         mIndex = mTarget->indexOf(mObj);
         XC_ASSERT(mIndex >= 0);
@@ -390,7 +348,8 @@ public:
     }
 };
 
-template<typename tKey, typename tValue> class InsertMap: public Stable {
+template<typename tKey, typename tValue>
+class InsertMap: public Stable {
     QMap<tKey, tValue>& mMap;
     tKey mKey;
     tValue mValue;
@@ -411,7 +370,8 @@ public:
     }
 };
 
-template<typename tKey, typename tValue> class RemoveMap: public Stable {
+template<typename tKey, typename tValue>
+class RemoveMap: public Stable {
     QMap<tKey, tValue>& mMap;
     tKey mKey;
     tValue mPrev;
@@ -441,12 +401,8 @@ class AssignMemory: public Stable {
     size_t mCopySize;
     bool mDone;
 
-    bool copiesOneTime() const {
-        return mCopySize == mSize;
-    }
-    uint8* assignData() {
-        return mAssign.get();
-    }
+    bool copiesOneTime() const { return mCopySize == mSize; }
+    uint8* assignData() { return mAssign.get(); }
 
     void exchange(uint8* aBuffer0, uint8* aBuffer1) {
         const uint8* block = mCopyBlock.get();
@@ -467,7 +423,11 @@ class AssignMemory: public Stable {
 
 public:
     AssignMemory(void* aTarget, const void* aAssign, size_t aSize, size_t aCopySize = 0):
-        mTarget(aTarget), mSize(aSize), mAssign(), mCopyBlock(), mCopySize(aCopySize > 0 ? aCopySize : aSize),
+        mTarget(aTarget),
+        mSize(aSize),
+        mAssign(),
+        mCopyBlock(),
+        mCopySize(aCopySize > 0 ? aCopySize : aSize),
         mDone(false) {
         XC_ASSERT(aSize > 0);
 
@@ -483,8 +443,12 @@ public:
     }
 
     AssignMemory(void* aTarget, std::unique_ptr<uint8[]>& aMovedAssign, size_t aSize, size_t aCopySize = 0):
-        mTarget(aTarget), mSize(aSize), mAssign(std::move(aMovedAssign)), mCopyBlock(),
-        mCopySize(aCopySize > 0 ? aCopySize : aSize), mDone(false) {
+        mTarget(aTarget),
+        mSize(aSize),
+        mAssign(std::move(aMovedAssign)),
+        mCopyBlock(),
+        mCopySize(aCopySize > 0 ? aCopySize : aSize),
+        mDone(false) {
         XC_ASSERT(aSize > 0);
         XC_ASSERT(aCopySize > 0);
 
@@ -496,12 +460,8 @@ public:
         }
     }
 
-    const void* target() const {
-        return mTarget;
-    }
-    size_t size() const {
-        return mSize;
-    }
+    const void* target() const { return mTarget; }
+    size_t size() const { return mSize; }
 
     void modifyValue(const void* aNewAssign) {
         if (copiesOneTime() || !mDone) {
@@ -544,21 +504,11 @@ class DebugDumper: public Stable {
     QString mText;
 
 public:
-    DebugDumper(const QString& aText): mText(aText) {
-        qDebug() << "cnst :" << mText;
-    }
-    ~DebugDumper() {
-        qDebug() << "dest :" << mText;
-    }
-    virtual void exec() {
-        qDebug() << "exec :" << mText;
-    }
-    virtual void redo() {
-        qDebug() << "redo :" << mText;
-    }
-    virtual void undo() {
-        qDebug() << "undo :" << mText;
-    }
+    DebugDumper(const QString& aText): mText(aText) { qDebug() << "cnst :" << mText; }
+    ~DebugDumper() { qDebug() << "dest :" << mText; }
+    virtual void exec() { qDebug() << "exec :" << mText; }
+    virtual void redo() { qDebug() << "redo :" << mText; }
+    virtual void undo() { qDebug() << "undo :" << mText; }
 };
 
 } // namespace cmnd

@@ -13,9 +13,7 @@ namespace ctrl {
 PoseEditor::PoseEditor(Project& aProject, UILogger& aUILogger):
     mProject(aProject), mUILogger(aUILogger), mParam(), mTarget(), mKeyOwner(), mCurrent() {}
 
-PoseEditor::~PoseEditor() {
-    finalize();
-}
+PoseEditor::~PoseEditor() { finalize(); }
 
 bool PoseEditor::setTarget(core::ObjectNode* aTarget) {
     finalize();
@@ -54,9 +52,7 @@ bool PoseEditor::updateCursor(const core::CameraInfo& aCamera, const core::Abstr
     return false;
 }
 
-void PoseEditor::updateEvent(EventType) {
-    resetCurrentTarget();
-}
+void PoseEditor::updateEvent(EventType) { resetCurrentTarget(); }
 
 void PoseEditor::renderQt(const core::RenderInfo& aInfo, QPainter& aPainter) {
     if (mTarget && mKeyOwner.key && mCurrent) {

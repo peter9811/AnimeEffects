@@ -16,12 +16,8 @@ public:
     Triangulator(const QPoint* aPoints, int aCount);
     Triangulator(const QPointF* aPoints, int aCount);
     Triangulator(const QPolygonF& aPolygon);
-    explicit operator bool() const {
-        return mIsSuccess;
-    }
-    const QVector<gl::Vector2>& triangles() const {
-        return mTriangles;
-    }
+    explicit operator bool() const { return mIsSuccess; }
+    const QVector<gl::Vector2>& triangles() const { return mTriangles; }
 
 private:
     struct Point {
@@ -31,7 +27,8 @@ private:
         Point* next;
     };
 
-    template<typename tPointType> void makeRoundChain(const tPointType* aPoints, int aCount);
+    template<typename tPointType>
+    void makeRoundChain(const tPointType* aPoints, int aCount);
 
     bool triangulate();
     bool isConvex(const Point& aPoint) const;
@@ -43,7 +40,8 @@ private:
     bool mIsSuccess;
 };
 
-template<typename tPointType> void Triangulator::makeRoundChain(const tPointType* aPoints, int aCount) {
+template<typename tPointType>
+void Triangulator::makeRoundChain(const tPointType* aPoints, int aCount) {
     mPoints.resize(aCount);
 
     // make round chain

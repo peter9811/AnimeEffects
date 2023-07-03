@@ -35,9 +35,7 @@ public:
 
     virtual ~ObjectNode() {}
 
-    util::LifeLink::Pointee<ObjectNode> pointee() {
-        return mLifeLink.pointee<ObjectNode>(this);
-    }
+    util::LifeLink::Pointee<ObjectNode> pointee() { return mLifeLink.pointee<ObjectNode>(this); }
 
     virtual ObjectType type() const = 0;
 
@@ -57,41 +55,23 @@ public:
     virtual void setInitialRect(const QRect&) = 0;
     virtual QRect initialRect() const = 0;
 
-    virtual Renderer* renderer() {
-        return NULL;
-    }
-    virtual const Renderer* renderer() const {
-        return NULL;
-    }
+    virtual Renderer* renderer() { return NULL; }
+    virtual const Renderer* renderer() const { return NULL; }
 
-    virtual TimeLine* timeLine() {
-        return NULL;
-    }
-    virtual const TimeLine* timeLine() const {
-        return NULL;
-    }
+    virtual TimeLine* timeLine() { return NULL; }
+    virtual const TimeLine* timeLine() const { return NULL; }
 
-    virtual bool hasAnyMesh() const {
-        return false;
-    }
-    virtual bool hasAnyImage() const {
-        return false;
-    }
+    virtual bool hasAnyMesh() const { return false; }
+    virtual bool hasAnyImage() const { return false; }
 
     virtual bool serialize(Serializer& aOut) const = 0;
     virtual bool deserialize(Deserializer& aIn) = 0;
 
-    virtual cmnd::Vector createResourceUpdater(const ResourceEvent&) {
-        return cmnd::Vector();
-    }
+    virtual cmnd::Vector createResourceUpdater(const ResourceEvent&) { return cmnd::Vector(); }
 
 protected:
-    util::LifeLink& lifeLink() {
-        return mLifeLink;
-    }
-    const util::LifeLink& lifeLink() const {
-        return mLifeLink;
-    }
+    util::LifeLink& lifeLink() { return mLifeLink; }
+    const util::LifeLink& lifeLink() const { return mLifeLink; }
 
 private:
     util::LifeLink mLifeLink;

@@ -42,12 +42,8 @@ public:
     void updateRender();
     void resetCamera();
 
-    QReadWriteLock& renderingLock() {
-        return mRenderingLock;
-    }
-    const QReadWriteLock& renderingLock() const {
-        return mRenderingLock;
-    }
+    QReadWriteLock& renderingLock() { return mRenderingLock; }
+    const QReadWriteLock& renderingLock() const { return mRenderingLock; }
 
 
     // boostlike signals
@@ -64,12 +60,8 @@ private:
 
     public:
         GLContextAccessor(MainDisplayWidget* aOwner): mOwner(aOwner) {}
-        virtual void makeCurrent() {
-            mOwner->makeCurrent();
-        }
-        virtual void doneCurrent() {
-            mOwner->doneCurrent();
-        }
+        virtual void makeCurrent() { mOwner->makeCurrent(); }
+        virtual void doneCurrent() { mOwner->doneCurrent(); }
     };
 
     // from QOpenGLWidget
@@ -84,9 +76,7 @@ private:
     virtual void tabletEvent(QTabletEvent* event);
 
     void updateCursor();
-    QSize deviceSize() const {
-        return this->size() * mDevicePixelRatio;
-    }
+    QSize deviceSize() const { return this->size() * mDevicePixelRatio; }
 
     ViaPoint& mViaPoint;
     gl::DeviceInfo mGLDeviceInfo;

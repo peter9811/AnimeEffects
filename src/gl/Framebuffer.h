@@ -18,12 +18,8 @@ public:
     void bind();
     void release();
 
-    explicit operator bool() const {
-        return mId != 0;
-    }
-    GLuint id() const {
-        return mId;
-    }
+    explicit operator bool() const { return mId != 0; }
+    GLuint id() const { return mId; }
     GLuint colorAttachment(int aAttachIndex) const;
 
 private:

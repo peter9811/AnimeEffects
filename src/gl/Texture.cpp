@@ -21,16 +21,10 @@ public:
         convert();
     }
 
-    ~PreMipmapImage() {
-        std::free(mData);
-    }
+    ~PreMipmapImage() { std::free(mData); }
 
-    void* data() {
-        return mData;
-    }
-    const void* data() const {
-        return mData;
-    }
+    void* data() { return mData; }
+    const void* data() const { return mData; }
 
 private:
     void convert() {
@@ -66,12 +60,11 @@ namespace gl {
 
 Texture::Texture(): mId(0), mSize() {}
 
-Texture::~Texture() {
-    destroy();
-}
+Texture::~Texture() { destroy(); }
 
 void Texture::create(
-    const QSize& aSize, const uint8* aData, GLenum aFormat, GLint aInternalFormat, GLenum aChannelType) {
+    const QSize& aSize, const uint8* aData, GLenum aFormat, GLint aInternalFormat, GLenum aChannelType
+) {
     destroy();
 
     XC_ASSERT(!aSize.isNull());
@@ -84,8 +77,17 @@ void Texture::create(
 
 #if F_MAKE_MIPMAP
     PreMipmapImage preMipmap(aData, mSize.width(), mSize.height());
-    ggl.glTexImage2D(GL_TEXTURE_2D, 0, aInternalFormat, mSize.width(), mSize.height(), 0, aFormat, aChannelType,
-        (uint8*)preMipmap.data());
+    ggl.glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        aInternalFormat,
+        mSize.width(),
+        mSize.height(),
+        0,
+        aFormat,
+        aChannelType,
+        (uint8*)preMipmap.data()
+    );
     ggl.glGenerateMipmap(GL_TEXTURE_2D);
     // ggl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
     // ggl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
@@ -112,8 +114,11 @@ void Texture::setWrap(GLint aParam, QColor aBorderColor) {
     ggl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, aParam);
 
     if (aParam == GL_CLAMP_TO_BORDER) {
-        const GLfloat colorF[] = {(GLfloat)aBorderColor.redF(), (GLfloat)aBorderColor.greenF(),
-            (GLfloat)aBorderColor.blueF(), (GLfloat)aBorderColor.alphaF()};
+        const GLfloat colorF[] = {
+            (GLfloat)aBorderColor.redF(),
+            (GLfloat)aBorderColor.greenF(),
+            (GLfloat)aBorderColor.blueF(),
+            (GLfloat)aBorderColor.alphaF()};
 
         ggl.glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, colorF);
     }

@@ -13,9 +13,7 @@ public:
         mAnimator.suspend();
     }
 
-    ~ScopedModifier() {
-        mAnimator.resume();
-    }
+    ~ScopedModifier() { mAnimator.resume(); }
 
 private:
     cmnd::ScopedUndoSuspender mUndoSuspend;

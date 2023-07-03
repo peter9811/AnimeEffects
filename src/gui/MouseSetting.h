@@ -8,9 +8,7 @@ public:
     MouseSetting();
 
     bool operator==(const MouseSetting& aRhs) const;
-    bool operator!=(const MouseSetting& aRhs) const {
-        return !(*this == aRhs);
-    }
+    bool operator!=(const MouseSetting& aRhs) const { return !(*this == aRhs); }
 
     void load();
     void save();

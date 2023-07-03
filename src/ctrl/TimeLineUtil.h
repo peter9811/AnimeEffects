@@ -47,24 +47,14 @@ namespace TimeLineUtil {
     public:
         Notifier(core::Project& aProject): mProject(aProject), mEvent() {}
 
-        core::TimeLineEvent& event() {
-            return mEvent;
-        }
-        const core::TimeLineEvent& event() const {
-            return mEvent;
-        }
+        core::TimeLineEvent& event() { return mEvent; }
+        const core::TimeLineEvent& event() const { return mEvent; }
 
-        virtual void onExecuted() {
-            mProject.onTimeLineModified(mEvent, false);
-        }
+        virtual void onExecuted() { mProject.onTimeLineModified(mEvent, false); }
 
-        virtual void onUndone() {
-            mProject.onTimeLineModified(mEvent, true);
-        }
+        virtual void onUndone() { mProject.onTimeLineModified(mEvent, true); }
 
-        virtual void onRedone() {
-            mProject.onTimeLineModified(mEvent, false);
-        }
+        virtual void onRedone() { mProject.onTimeLineModified(mEvent, false); }
 
     private:
         core::Project& mProject;
@@ -75,24 +65,14 @@ namespace TimeLineUtil {
     public:
         ResourceModificationNotifier(core::Project& aProject): mProject(aProject), mEvent(aProject) {}
 
-        core::ResourceEvent& event() {
-            return mEvent;
-        }
-        const core::ResourceEvent& event() const {
-            return mEvent;
-        }
+        core::ResourceEvent& event() { return mEvent; }
+        const core::ResourceEvent& event() const { return mEvent; }
 
-        virtual void onExecuted() {
-            mProject.onResourceModified(mEvent, false);
-        }
+        virtual void onExecuted() { mProject.onResourceModified(mEvent, false); }
 
-        virtual void onUndone() {
-            mProject.onResourceModified(mEvent, true);
-        }
+        virtual void onUndone() { mProject.onResourceModified(mEvent, true); }
 
-        virtual void onRedone() {
-            mProject.onResourceModified(mEvent, false);
-        }
+        virtual void onRedone() { mProject.onResourceModified(mEvent, false); }
 
     private:
         core::Project& mProject;
@@ -103,34 +83,42 @@ namespace TimeLineUtil {
     /// @note you can also set a data to default keys in following assignment functions.
     ///@{
     void assignMoveKeyData(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::MoveKey::Data& aNewData);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::MoveKey::Data& aNewData
+    );
 
     void assignRotateKeyData(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::RotateKey::Data& aNewData);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::RotateKey::Data& aNewData
+    );
 
     void assignScaleKeyData(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::ScaleKey::Data& aNewData);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::ScaleKey::Data& aNewData
+    );
 
     void assignDepthKeyData(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::DepthKey::Data& aNewData);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::DepthKey::Data& aNewData
+    );
 
     void assignOpaKeyData(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::OpaKey::Data& aNewData);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::OpaKey::Data& aNewData
+    );
 
     void assignHSVKeyData(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::HSVKey::Data& aNewData);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const core::HSVKey::Data& aNewData
+    );
 
     void assignPoseKeyEasing(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const util::Easing::Param& aNewData);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const util::Easing::Param& aNewData
+    );
 
     void assignFFDKeyEasing(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const util::Easing::Param& aNewData);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const util::Easing::Param& aNewData
+    );
 
-    void assignImageKeyResource(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, img::ResourceNode& aNewData);
+    void
+    assignImageKeyResource(core::Project& aProject, core::ObjectNode& aTarget, int aFrame, img::ResourceNode& aNewData);
 
-    void assignImageKeyOffset(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const QVector2D& aNewData);
+    void
+    assignImageKeyOffset(core::Project& aProject, core::ObjectNode& aTarget, int aFrame, const QVector2D& aNewData);
 
     void assignImageKeyCellSize(core::Project& aProject, core::ObjectNode& aTarget, int aFrame, int aNewData);
     ///@}
@@ -149,10 +137,12 @@ namespace TimeLineUtil {
     void pushNewHSVKey(core::Project& aProject, core::ObjectNode& aTarget, int aFrame, core::HSVKey* aKey);
 
     void pushNewPoseKey(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, core::PoseKey* aKey, core::BoneKey* aParentKey);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, core::PoseKey* aKey, core::BoneKey* aParentKey
+    );
 
     void pushNewFFDKey(
-        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, core::FFDKey* aKey, core::TimeKey* aParentKey);
+        core::Project& aProject, core::ObjectNode& aTarget, int aFrame, core::FFDKey* aKey, core::TimeKey* aParentKey
+    );
 
     void pushNewImageKey(core::Project& aProject, core::ObjectNode& aTarget, int aFrame, core::ImageKey* aKey);
 

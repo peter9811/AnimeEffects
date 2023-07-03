@@ -20,13 +20,9 @@ bool ExtendShader::openFromFile(const QString& aFilePath, QString& originalCode)
     return false;
 }
 
-bool ExtendShader::openFromFileVert(const QString& aFilePath) {
-    return openFromFile(aFilePath, mOriginalCodeVert);
-}
+bool ExtendShader::openFromFileVert(const QString& aFilePath) { return openFromFile(aFilePath, mOriginalCodeVert); }
 
-bool ExtendShader::openFromFileFrag(const QString& aFilePath) {
-    return openFromFile(aFilePath, mOriginalCodeFrag);
-}
+bool ExtendShader::openFromFileFrag(const QString& aFilePath) { return openFromFile(aFilePath, mOriginalCodeFrag); }
 
 void ExtendShader::openFromText(const QString& aText, QString& originalCode) {
     mVariation.clear();
@@ -34,13 +30,9 @@ void ExtendShader::openFromText(const QString& aText, QString& originalCode) {
     mLog = "";
 }
 
-void ExtendShader::openFromTextVert(const QString& aText) {
-    openFromText(aText, mOriginalCodeVert);
-}
+void ExtendShader::openFromTextVert(const QString& aText) { openFromText(aText, mOriginalCodeVert); }
 
-void ExtendShader::openFromTextFrag(const QString& aText) {
-    openFromText(aText, mOriginalCodeFrag);
-}
+void ExtendShader::openFromTextFrag(const QString& aText) { openFromText(aText, mOriginalCodeFrag); }
 
 void ExtendShader::setVariationValue(const QString& aName, const QString& aValue) {
     VariationUnit unit = {aName, aValue};

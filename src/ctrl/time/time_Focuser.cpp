@@ -8,14 +8,19 @@ namespace time {
     //-------------------------------------------------------------------------------------------------
     Focuser::SingleFocus::SingleFocus(): node(), pos() {}
 
-    bool Focuser::SingleFocus::isValid() const {
-        return node && !pos.isNull();
-    }
+    bool Focuser::SingleFocus::isValid() const { return node && !pos.isNull(); }
 
     //-------------------------------------------------------------------------------------------------
     Focuser::Focuser(const QVector<TimeLineRow>& aRows, const Scaler& aScale, int aMargin):
-        mRows(aRows), mScale(aScale), mFocusLink(), mPoint(), mRange(), mFoundFocus(false), mViewIsChanged(false),
-        mMargin(aMargin), mRadius(5) {}
+        mRows(aRows),
+        mScale(aScale),
+        mFocusLink(),
+        mPoint(),
+        mRange(),
+        mFoundFocus(false),
+        mViewIsChanged(false),
+        mMargin(aMargin),
+        mRadius(5) {}
 
     Focuser::SingleFocus Focuser::reset(const QPoint& aPoint) {
         mPoint = aPoint;
@@ -191,9 +196,7 @@ namespace time {
         return boundingBox.contains(aPoint);
     }
 
-    bool Focuser::hasRange() const {
-        return mRange.left() < mRange.right() && mRange.top() < mRange.bottom();
-    }
+    bool Focuser::hasRange() const { return mRange.left() < mRange.right() && mRange.top() < mRange.bottom(); }
 
     void Focuser::clear() {
         mPoint = QPoint();
@@ -203,9 +206,7 @@ namespace time {
         mViewIsChanged = true;
     }
 
-    bool Focuser::viewIsChanged() const {
-        return mViewIsChanged;
-    }
+    bool Focuser::viewIsChanged() const { return mViewIsChanged; }
 
 } // namespace time
 } // namespace ctrl

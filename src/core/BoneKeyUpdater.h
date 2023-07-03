@@ -46,7 +46,8 @@ public:
 
 private:
     static void onTimeLineModified(
-        Project& aProject, ObjectNode& aNode, const QVector<ObjectNode*>& aUniqueRoots, bool aResetCacheList);
+        Project& aProject, ObjectNode& aNode, const QVector<ObjectNode*>& aUniqueRoots, bool aResetCacheList
+    );
 
     static void resetInfluenceCachesOfChildren(Project& aProject, ObjectNode& aRoot);
     static void resetInfluenceCachesOfOneNode(Project& aProject, ObjectNode& aNode);

@@ -77,8 +77,14 @@ public:
         bool mDone;
 
     public:
-        CentroidMover(core::Project& aProject, core::ObjectNode& aTarget, const QVector2D& aCentroidMove,
-            const QVector2D& aPositionMove, int aFrame, bool aAdjustPos);
+        CentroidMover(
+            core::Project& aProject,
+            core::ObjectNode& aTarget,
+            const QVector2D& aCentroidMove,
+            const QVector2D& aPositionMove,
+            int aFrame,
+            bool aAdjustPos
+        );
 
         void modifyValue(const QVector2D& aNewCentroidMove, const QVector2D& aNewPositionMove);
         virtual void exec();

@@ -4,7 +4,9 @@ namespace gui {
 namespace prop {
 
     ProjectPanel::ProjectPanel(core::Project& aProject, QWidget* aParent):
-        Panel("Project", aParent), mProject(aProject), mAttributes(new AttrGroup("Time", 0))
+        Panel("Project", aParent),
+        mProject(aProject),
+        mAttributes(new AttrGroup("Time", 0))
 
     {}
 

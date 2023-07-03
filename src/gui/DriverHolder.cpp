@@ -5,9 +5,7 @@ namespace gui {
 DriverHolder::DriverHolder(ViaPoint& aViaPoint):
     mViaPoint(aViaPoint), mDriverResources(), mDriver(), mProject(), mTimeLineSlot(), mResourceSlot(), mTreeSlot() {}
 
-DriverHolder::~DriverHolder() {
-    destroy();
-}
+DriverHolder::~DriverHolder() { destroy(); }
 
 void DriverHolder::create(core::Project& aProject, ctrl::GraphicStyle& aGraphicStyle) {
     destroy();

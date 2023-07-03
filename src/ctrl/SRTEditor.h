@@ -29,9 +29,7 @@ public:
 
     virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-    util::LifeLink::Pointee<SRTEditor> pointee() {
-        return mLifeLink.pointee<SRTEditor>(this);
-    }
+    util::LifeLink::Pointee<SRTEditor> pointee() { return mLifeLink.pointee<SRTEditor>(this); }
 
 private:
     void resetCurrentTarget();

@@ -10,8 +10,15 @@ namespace bone {
     NodeSelector::Tag::Tag(): node(), parent(), children(), originRect(), sortedRect(), isDir(false), isOpened(false) {}
 
     NodeSelector::NodeSelector(ObjectNode& aTopNode, const GraphicStyle& aStyle):
-        mGraphicStyle(aStyle), mTopNode(aTopNode), mTopTag(), mCurrentTopTag(), mCurrentFocus(), mCurrentSelect(),
-        mIconFocused(false), mFocusChanged(false), mSortVector() {
+        mGraphicStyle(aStyle),
+        mTopNode(aTopNode),
+        mTopTag(),
+        mCurrentTopTag(),
+        mCurrentFocus(),
+        mCurrentSelect(),
+        mIconFocused(false),
+        mFocusChanged(false),
+        mSortVector() {
         resetTags(mTopNode, mTopTag);
         mTopTag.isOpened = true;
         mCurrentTopTag = &mTopTag;
@@ -29,9 +36,7 @@ namespace bone {
         }
     }
 
-    void NodeSelector::initGeometries() {
-        setGeometryRecursive(mTopTag);
-    }
+    void NodeSelector::initGeometries() { setGeometryRecursive(mTopTag); }
 
     void NodeSelector::setGeometryRecursive(Tag& aTag) {
         aTag.originRect = getNodeRectF(*aTag.node);
@@ -42,9 +47,7 @@ namespace bone {
         }
     }
 
-    bool NodeSelector::compareNodeTagHeight(Tag* a, Tag* b) {
-        return a->originRect.y() < b->originRect.y();
-    }
+    bool NodeSelector::compareNodeTagHeight(Tag* a, Tag* b) { return a->originRect.y() < b->originRect.y(); }
 
     void NodeSelector::sortCurrentGeometries(const core::CameraInfo& aCamera) {
         mSortVector.clear();
@@ -174,17 +177,11 @@ namespace bone {
         mFocusChanged = true;
     }
 
-    bool NodeSelector::focusChanged() const {
-        return mFocusChanged;
-    }
+    bool NodeSelector::focusChanged() const { return mFocusChanged; }
 
-    ObjectNode* NodeSelector::selectingNode() {
-        return mCurrentSelect ? mCurrentSelect->node : nullptr;
-    }
+    ObjectNode* NodeSelector::selectingNode() { return mCurrentSelect ? mCurrentSelect->node : nullptr; }
 
-    void NodeSelector::clearSelection() {
-        mCurrentSelect = nullptr;
-    }
+    void NodeSelector::clearSelection() { mCurrentSelect = nullptr; }
 
     NodeSelector::Tag* NodeSelector::findVisibleTag(const core::ObjectNode& aNode) const {
         if (!mCurrentTopTag->invisibleTop()) {
@@ -200,7 +197,8 @@ namespace bone {
     }
 
     void NodeSelector::renderBindings(
-        const RenderInfo& aInfo, QPainter& aPainter, const QMatrix4x4& aTargetMtx, const Bone2* aTopBone) {
+        const RenderInfo& aInfo, QPainter& aPainter, const QMatrix4x4& aTargetMtx, const Bone2* aTopBone
+    ) {
         Bone2::ConstIterator itr(aTopBone);
         while (itr.hasNext()) {
             auto bone = itr.next();
@@ -249,7 +247,8 @@ namespace bone {
     }
 
     void NodeSelector::renderOneNode(
-        const Tag& aTag, QPixmap& aIconPix, int aColorType, const RenderInfo& aInfo, QPainter& aPainter) {
+        const Tag& aTag, QPixmap& aIconPix, int aColorType, const RenderInfo& aInfo, QPainter& aPainter
+    ) {
         (void)aInfo;
         QBrush textBrush(QColor(255, 255, 255, 255));
         QBrush backBrush(QColor(0, 0, 0, 200));

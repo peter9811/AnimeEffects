@@ -5,24 +5,15 @@
 
 namespace util {
 
-template<typename tTree, typename tChildrenIterator> class TreeIterator {
+template<typename tTree, typename tChildrenIterator>
+class TreeIterator {
     struct Layer {
         Layer(tTree* aParent): parent(aParent), itr(aParent->children().begin()) {}
-        bool isEnd() const {
-            return itr == parent->children().end();
-        }
-        void forward() {
-            ++itr;
-        }
-        Layer dived() const {
-            return Layer(*itr);
-        }
-        bool canDive() const {
-            return !((*itr)->children().empty());
-        }
-        tTree* ptr() const {
-            return *itr;
-        }
+        bool isEnd() const { return itr == parent->children().end(); }
+        void forward() { ++itr; }
+        Layer dived() const { return Layer(*itr); }
+        bool canDive() const { return !((*itr)->children().empty()); }
+        tTree* ptr() const { return *itr; }
         tTree* parent;
         tChildrenIterator itr;
     };
@@ -68,9 +59,7 @@ template<typename tTree, typename tChildrenIterator> class TreeIterator {
 public:
     TreeIterator(tTree* aRoot): mLayers(), mRoot(aRoot), mNext(aRoot) {}
 
-    bool hasNext() const {
-        return mNext;
-    }
+    bool hasNext() const { return mNext; }
 
     tTree* next() {
         XC_PTR_ASSERT(mNext);

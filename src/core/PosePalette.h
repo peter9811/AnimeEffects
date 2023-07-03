@@ -25,9 +25,7 @@ public:
     struct DualQuaternion {
         gl::Vector4 real;
         gl::Vector4 dual;
-        const GLfloat* data() const {
-            return (const GLfloat*)(this);
-        }
+        const GLfloat* data() const { return (const GLfloat*)(this); }
     };
 
     static int getBoneIndex(const BoneKey::Data& aData, const Bone2& aBone);

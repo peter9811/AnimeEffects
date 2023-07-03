@@ -20,9 +20,7 @@ ByteBuffer& ByteBuffer::operator=(const ByteBuffer& aRhs) {
     return *this;
 }
 
-ByteBuffer::~ByteBuffer() {
-    free();
-}
+ByteBuffer::~ByteBuffer() { free(); }
 
 void ByteBuffer::grab(const XCMemBlock& aBlock) {
     free();

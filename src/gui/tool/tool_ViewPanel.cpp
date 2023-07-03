@@ -12,7 +12,8 @@ namespace tool {
     }
 
     void ViewPanel::addButton(
-        const QString& aIconName, bool aCheckable, const QString& aToolTip, const PushDelegate& aDelegate) {
+        const QString& aIconName, bool aCheckable, const QString& aToolTip, const PushDelegate& aDelegate
+    ) {
         QPushButton* button = new QPushButton();
         button->setObjectName(aIconName);
         button->setIcon(mGUIResources.icon(aIconName));

@@ -30,9 +30,7 @@ namespace prop {
         mGroups.push_back(aGroup);
     }
 
-    void Panel::addStretch() {
-        mLayout->addStretch();
-    }
+    void Panel::addStretch() { mLayout->addStretch(); }
 
     void Panel::onClicked(bool aChecked) {
         if (mChecked != aChecked) {

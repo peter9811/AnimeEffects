@@ -10,7 +10,8 @@ namespace ffd {
     TaskResource::TaskResource() {}
 
     void TaskResource::setup(
-        const QString& aBrushPath, const QString& aEraserPath, const QString& aFocuserPath, const QString& aBlurPath) {
+        const QString& aBrushPath, const QString& aEraserPath, const QString& aFocuserPath, const QString& aBlurPath
+    ) {
         // load brush shader
         {
             QString code;

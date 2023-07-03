@@ -17,8 +17,16 @@ namespace core {
 class RenderInfo {
 public:
     RenderInfo():
-        camera(), time(), framebuffer(), dest(0), isGrid(false), nonPosed(false), originMesh(false), clippingId(0),
-        clippingFrame(), destTexturizer() {}
+        camera(),
+        time(),
+        framebuffer(),
+        dest(0),
+        isGrid(false),
+        nonPosed(false),
+        originMesh(false),
+        clippingId(0),
+        clippingFrame(),
+        destTexturizer() {}
 
     CameraInfo camera;
     TimeInfo time;

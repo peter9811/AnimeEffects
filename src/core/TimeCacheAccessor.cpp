@@ -7,9 +7,9 @@
 namespace core {
 
 TimeCacheAccessor::TimeCacheAccessor(
-    ObjectNode& aRootNode, TimeCacheLock& aLock, const TimeInfo& aTime, bool aUseWorking):
-    mLockRef(aUseWorking ? aLock.working : aLock.current),
-    mUseWorking(aUseWorking) {
+    ObjectNode& aRootNode, TimeCacheLock& aLock, const TimeInfo& aTime, bool aUseWorking
+):
+    mLockRef(aUseWorking ? aLock.working : aLock.current), mUseWorking(aUseWorking) {
     TimeLine* timeLine = aRootNode.timeLine();
     TimeKeyExpans* expans = nullptr;
     if (timeLine) {
@@ -27,9 +27,7 @@ TimeCacheAccessor::TimeCacheAccessor(
     }
 }
 
-TimeCacheAccessor::~TimeCacheAccessor() {
-    mLockRef.unlock();
-}
+TimeCacheAccessor::~TimeCacheAccessor() { mLockRef.unlock(); }
 
 const TimeKeyExpans& TimeCacheAccessor::get(const ObjectNode& aNode) const {
     XC_PTR_ASSERT(aNode.timeLine());
@@ -40,8 +38,6 @@ const TimeKeyExpans& TimeCacheAccessor::get(const TimeLine& aLine) const {
     return mUseWorking ? aLine.working() : aLine.current();
 }
 
-TimeKeyExpans& TimeCacheAccessor::get(TimeLine& aLine) const {
-    return mUseWorking ? aLine.working() : aLine.current();
-}
+TimeKeyExpans& TimeCacheAccessor::get(TimeLine& aLine) const { return mUseWorking ? aLine.working() : aLine.current(); }
 
 } // namespace core

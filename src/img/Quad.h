@@ -8,43 +8,19 @@ namespace img {
 struct Quad {
     PixelPos pos[4]; // left top, right top, left bottom, right bottom
 
-    inline PixelPos& lt() {
-        return pos[0];
-    }
-    inline PixelPos& rt() {
-        return pos[1];
-    }
-    inline PixelPos& lb() {
-        return pos[2];
-    }
-    inline PixelPos& rb() {
-        return pos[3];
-    }
-    inline const PixelPos& lt() const {
-        return pos[0];
-    }
-    inline const PixelPos& rt() const {
-        return pos[1];
-    }
-    inline const PixelPos& lb() const {
-        return pos[2];
-    }
-    inline const PixelPos& rb() const {
-        return pos[3];
-    }
+    inline PixelPos& lt() { return pos[0]; }
+    inline PixelPos& rt() { return pos[1]; }
+    inline PixelPos& lb() { return pos[2]; }
+    inline PixelPos& rb() { return pos[3]; }
+    inline const PixelPos& lt() const { return pos[0]; }
+    inline const PixelPos& rt() const { return pos[1]; }
+    inline const PixelPos& lb() const { return pos[2]; }
+    inline const PixelPos& rb() const { return pos[3]; }
 
-    inline bool hasLRange() const {
-        return lt().id != lb().id;
-    }
-    inline bool hasTRange() const {
-        return lt().id != rt().id;
-    }
-    inline bool hasRRange() const {
-        return rt().id != rb().id;
-    }
-    inline bool hasBRange() const {
-        return lb().id != rb().id;
-    }
+    inline bool hasLRange() const { return lt().id != lb().id; }
+    inline bool hasTRange() const { return lt().id != rt().id; }
+    inline bool hasRRange() const { return rt().id != rb().id; }
+    inline bool hasBRange() const { return lb().id != rb().id; }
 
     inline void reset() {
         pos[0].set(0xffff, 0xffff);

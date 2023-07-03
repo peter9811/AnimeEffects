@@ -39,14 +39,10 @@ public:
     void setProject(core::Project* aProject);
 
     void setMainMenuBar(MainMenuBar* aMainMenuBar);
-    MainMenuBar* mainMenuBar() const {
-        return mMainMenuBar;
-    }
+    MainMenuBar* mainMenuBar() const { return mMainMenuBar; }
 
     void setResourceDialog(ResourceDialog* aResDialog);
-    ResourceDialog* resourceDialog() const {
-        return mResDialog;
-    }
+    ResourceDialog* resourceDialog() const { return mResDialog; }
 
     img::ResourceNode* requireOneResource();
 
@@ -59,9 +55,7 @@ public:
     const gl::DeviceInfo& glDeviceInfo() const;
 
     void setKeyCommandMap(KeyCommandMap* aMap);
-    KeyCommandMap* keyCommandMap() const {
-        return mKeyCommandMap;
-    }
+    KeyCommandMap* keyCommandMap() const { return mKeyCommandMap; }
 
     void setKeyCommandInvoker(KeyCommandInvoker* aInvoker);
     void throwKeyPressingToKeyCommandInvoker(const QKeyEvent* aEvent);

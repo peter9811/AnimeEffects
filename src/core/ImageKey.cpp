@@ -27,8 +27,10 @@ ImageKey::Data& ImageKey::Data::operator=(const Data& aRhs) {
 }
 
 void ImageKey::Data::setImageOffset(const QVector2D& aOffset) {
-    const QVector2D offset(xc_clamp(aOffset.x(), Constant::transMin(), Constant::transMax()),
-        xc_clamp(aOffset.y(), Constant::transMin(), Constant::transMax()));
+    const QVector2D offset(
+        xc_clamp(aOffset.x(), Constant::transMin(), Constant::transMax()),
+        xc_clamp(aOffset.y(), Constant::transMin(), Constant::transMax())
+    );
     mImageOffset = offset;
     mGridMesh.setOriginOffset(offset);
 }
@@ -37,9 +39,7 @@ void ImageKey::Data::setImageOffset(const QVector2D& aOffset) {
 ImageKey::Cache::Cache(): mTexture() {}
 
 //-------------------------------------------------------------------------------------------------
-ImageKey::ImageKey(): mData(), mCache(), mSleepCount(0) {
-    mData.resource().setOriginKeeping(true);
-}
+ImageKey::ImageKey(): mData(), mCache(), mSleepCount(0) { mData.resource().setOriginKeeping(true); }
 
 TimeKey* ImageKey::createClone() {
     auto newKey = new ImageKey();
@@ -58,9 +58,7 @@ void ImageKey::setImage(const img::ResourceHandle& aResource) {
     resetTextureCache();
 }
 
-void ImageKey::setImageOffset(const QVector2D& aOffset) {
-    mData.setImageOffset(aOffset);
-}
+void ImageKey::setImageOffset(const QVector2D& aOffset) { mData.setImageOffset(aOffset); }
 
 void ImageKey::setImageOffsetByCenter() {
     if (hasImage()) {

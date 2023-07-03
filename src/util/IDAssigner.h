@@ -5,7 +5,8 @@
 
 namespace util {
 
-template<typename tData> class IDAssigner {
+template<typename tData>
+class IDAssigner {
 public:
     typedef int IdType;
 

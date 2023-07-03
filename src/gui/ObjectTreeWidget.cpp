@@ -37,9 +37,23 @@ namespace gui {
 
 //-------------------------------------------------------------------------------------------------
 ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources, QWidget* aParent):
-    QTreeWidget(aParent), mViaPoint(aViaPoint), mGUIResources(aResources), mProject(), mTimeLineSlot(),
-    mStoreInsert(false), mRemovedPositions(), mInsertedPositions(), mMacroScope(), mObjTreeNotifier(), mDragIndex(),
-    mDropIndicatorPos(), mActionItem(), mSlimAction(), mRenameAction(), mObjectAction(), mFolderAction(),
+    QTreeWidget(aParent),
+    mViaPoint(aViaPoint),
+    mGUIResources(aResources),
+    mProject(),
+    mTimeLineSlot(),
+    mStoreInsert(false),
+    mRemovedPositions(),
+    mInsertedPositions(),
+    mMacroScope(),
+    mObjTreeNotifier(),
+    mDragIndex(),
+    mDropIndicatorPos(),
+    mActionItem(),
+    mSlimAction(),
+    mRenameAction(),
+    mObjectAction(),
+    mFolderAction(),
     mDeleteAction() {
     this->setObjectName("objectTree");
     this->setFocusPolicy(Qt::NoFocus);
@@ -250,9 +264,7 @@ void ObjectTreeWidget::endRenameEditor() {
         NameChanger(core::ObjectNode& aNode, QTreeWidgetItem& aItem, const QString& aName):
             mNode(aNode), mItem(aItem), mPrevName(), mNextName(aName) {}
 
-        virtual QString name() const {
-            return CmndName::tr("Rename object");
-        }
+        virtual QString name() const { return CmndName::tr("Rename object"); }
 
         virtual void exec() {
             mPrevName = mNode.name();
@@ -459,14 +471,17 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
         if (!aKeyErrored) {
             box.setText(tr("Successfully pasted ") + QString::number(successNum) + tr(" keys."));
         } else {
-            box.setText(tr("Successfully pasted ") + QString::number(successNum) + tr(" keys.\n") +
-                QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available bellow."));
+            box.setText(
+                tr("Successfully pasted ") + QString::number(successNum) + tr(" keys.\n") +
+                QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available bellow.")
+            );
         }
     } else {
         box.setText(tr("Failed to paste key(s)"));
         if (!aKeyErrored) {
-            box.setDetailedText(tr(
-                "Clipboard does not contain valid JSON information or timeline already has a key in the same frame."));
+            box.setDetailedText(
+                tr("Clipboard does not contain valid JSON information or timeline already has a key in the same frame.")
+            );
         }
     }
     if (aKeyErrored && errors.size() != 0 && nullLogs.size() != 0 && keyTypeErrors.size() != 0) {
@@ -488,7 +503,8 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
             if (objItem->node().timeLine()->hasTimeKey(core::TimeKeyType_Image, keys[x]->frame())) {
                 auto key = ((const core::ImageKey*)&keys[x]);
                 ctrl::TimeLineUtil::assignImageKeyCellSize(
-                    *mProject, objItem->node(), keys[x]->frame(), key->data().gridMesh().cellSize());
+                    *mProject, objItem->node(), keys[x]->frame(), key->data().gridMesh().cellSize()
+                );
             }
         }
     }
@@ -583,8 +599,8 @@ void ObjectTreeWidget::onObjectActionTriggered(bool) {
 
                 // create commands
                 mProject->commandStack().push(new cmnd::GrabNewObject<core::LayerNode>(ptr));
-                mProject->commandStack().push(
-                    new cmnd::InsertTree<core::ObjectNode>(&(parent->children()), index, ptr));
+                mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&(parent->children()), index, ptr)
+                );
 
                 // create gui commands
                 auto itemPtr = createFileItem(*ptr);
@@ -760,8 +776,14 @@ void ObjectTreeWidget::dragMoveEvent(QDragMoveEvent* aEvent) {
     QPoint cheatPos = aEvent->pos();
     mDragIndex = cheatDragDropPos(cheatPos);
 
-    QDragMoveEvent dummyEvent(cheatPos, aEvent->dropAction(), aEvent->mimeData(), aEvent->mouseButtons(),
-        aEvent->keyboardModifiers(), aEvent->type());
+    QDragMoveEvent dummyEvent(
+        cheatPos,
+        aEvent->dropAction(),
+        aEvent->mimeData(),
+        aEvent->mouseButtons(),
+        aEvent->keyboardModifiers(),
+        aEvent->type()
+    );
     QTreeWidget::dragMoveEvent(&dummyEvent);
 
     if (!dummyEvent.isAccepted()) {
@@ -778,8 +800,14 @@ void ObjectTreeWidget::dropEvent(QDropEvent* aEvent) {
     mDragIndex = QModelIndex();
     QPoint cheatPos = aEvent->pos();
     cheatDragDropPos(cheatPos);
-    QDropEvent dummyEvent(cheatPos, aEvent->dropAction(), aEvent->mimeData(), aEvent->mouseButtons(),
-        aEvent->keyboardModifiers(), aEvent->type());
+    QDropEvent dummyEvent(
+        cheatPos,
+        aEvent->dropAction(),
+        aEvent->mimeData(),
+        aEvent->mouseButtons(),
+        aEvent->keyboardModifiers(),
+        aEvent->type()
+    );
     QModelIndex cursorIndex = this->indexAt(aEvent->pos());
 
     if (this->visualRect(cursorIndex).contains(aEvent->pos())) {
@@ -797,8 +825,8 @@ void ObjectTreeWidget::dropEvent(QDropEvent* aEvent) {
             mProject->commandStack().push(new obj::MoveItems(*this, mRemovedPositions, mInsertedPositions));
 
             // node mover
-            mProject->commandStack().push(
-                mProject->objectTree().createNodesMover(mRemovedPositions, mInsertedPositions));
+            mProject->commandStack().push(mProject->objectTree().createNodesMover(mRemovedPositions, mInsertedPositions)
+            );
 
             mMacroScope->grabListener(new obj::RestructureNotifier(*this));
             mMacroScope.destruct();

@@ -19,8 +19,8 @@ void MoveKey::Data::clampCentroid() {
 }
 
 //-------------------------------------------------------------------------------------------------
-std::array<QVector2D, 2> MoveKey::getCatmullRomVels(
-    const MoveKey* aKey0, const MoveKey* aKey1, const MoveKey* aKey2, const MoveKey* aKey3) {
+std::array<QVector2D, 2>
+MoveKey::getCatmullRomVels(const MoveKey* aKey0, const MoveKey* aKey1, const MoveKey* aKey2, const MoveKey* aKey3) {
     XC_ASSERT(aKey1 && aKey2);
 
     std::array<QVector2D, 2> result;

@@ -50,19 +50,11 @@ public:
     TimeKey* defaultKey(TimeKeyType aType);
     const TimeKey* defaultKey(TimeKeyType aType) const;
 
-    TimeKeyExpans& current() {
-        return *mCurrent;
-    }
-    const TimeKeyExpans& current() const {
-        return *mCurrent;
-    }
+    TimeKeyExpans& current() { return *mCurrent; }
+    const TimeKeyExpans& current() const { return *mCurrent; }
 
-    TimeKeyExpans& working() {
-        return *mWorking;
-    }
-    const TimeKeyExpans& working() const {
-        return *mWorking;
-    }
+    TimeKeyExpans& working() { return *mWorking; }
+    const TimeKeyExpans& working() const { return *mWorking; }
 
     bool move(TimeKeyType aType, int aFrom, int aTo);
     cmnd::Base* createPusher(TimeKeyType aType, int aFrame, TimeKey* aTimeKey);

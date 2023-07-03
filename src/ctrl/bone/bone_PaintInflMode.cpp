@@ -14,8 +14,15 @@ namespace ctrl {
 namespace bone {
 
     PaintInflMode::PaintInflMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mCommandRef(), mBrush(), mBrushPressure(), mIsBrushDrawing() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mCommandRef(),
+        mBrush(),
+        mBrushPressure(),
+        mIsBrushDrawing() {
         XC_PTR_ASSERT(mKeyOwner.key);
     }
 
@@ -118,7 +125,8 @@ namespace bone {
     }
 
     void PaintInflMode::assignInfluence(
-        core::Bone2& aTarget, const std::array<QVector2D, 2>& aPrev, const std::array<QVector2D, 2>& aNext) {
+        core::Bone2& aTarget, const std::array<QVector2D, 2>& aPrev, const std::array<QVector2D, 2>& aNext
+    ) {
         XC_ASSERT(!mKeyOwner.owns());
         auto eventType = TimeLineEvent::Type_ChangeKeyValue;
         cmnd::Stack& stack = mProject.commandStack();

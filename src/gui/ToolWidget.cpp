@@ -3,11 +3,26 @@
 
 namespace gui {
 
-ToolWidget::ToolWidget(ViaPoint& aViaPoint, GUIResources& aResources, KeyCommandMap& aKeyCommandMap,
-    const QSize& aSizeHint, QWidget* aParent):
+ToolWidget::ToolWidget(
+    ViaPoint& aViaPoint,
+    GUIResources& aResources,
+    KeyCommandMap& aKeyCommandMap,
+    const QSize& aSizeHint,
+    QWidget* aParent
+):
     QWidget(aParent),
-    mViaPoint(aViaPoint), mResources(aResources), mKeyCommandMap(aKeyCommandMap), mSizeHint(aSizeHint), mViewPanel(),
-    mModePanel(), mDriver(), mToolType(ctrl::ToolType_TERM), mSRTPanel(), mFFDPanel(), mBonePanel(), mPosePanel(),
+    mViaPoint(aViaPoint),
+    mResources(aResources),
+    mKeyCommandMap(aKeyCommandMap),
+    mSizeHint(aSizeHint),
+    mViewPanel(),
+    mModePanel(),
+    mDriver(),
+    mToolType(ctrl::ToolType_TERM),
+    mSRTPanel(),
+    mFFDPanel(),
+    mBonePanel(),
+    mPosePanel(),
     mMeshPanel() {
     createViewPanel();
 
@@ -98,35 +113,48 @@ void ToolWidget::createViewPanel() {
 
     QString _rotateViewAntiClockwiseKeyBindingText =
         this->mKeyCommandMap.get("RotateCanvas15AntiClockwise")->binding.text();
-    mViewPanel->addButton("rotateac", false,
-        tr("Rotate the canvas counterclockwise (%1)").arg(_rotateViewAntiClockwiseKeyBindingText), [=](bool) {
+    mViewPanel->addButton(
+        "rotateac",
+        false,
+        tr("Rotate the canvas counterclockwise (%1)").arg(_rotateViewAntiClockwiseKeyBindingText),
+        [=](bool) {
             this->viewSetting().rotateViewACW = true;
             this->onViewSettingChanged(this->viewSetting());
             this->viewSetting().rotateViewACW = false;
-        });
+        }
+    );
 
     QString _rotateResetKeyBindingText = this->mKeyCommandMap.get("ResetCanvasAngle")->binding.text();
     mViewPanel->addButton(
-        "resetrot", false, tr("Reset rotation of the canvas (%1)").arg(_rotateResetKeyBindingText), [=](bool) {
+        "resetrot",
+        false,
+        tr("Reset rotation of the canvas (%1)").arg(_rotateResetKeyBindingText),
+        [=](bool) {
             this->viewSetting().resetRotateView = true;
             this->onViewSettingChanged(this->viewSetting());
             this->viewSetting().resetRotateView = false;
-        });
+        }
+    );
 
     QString _rotateViewClockwiseKeyBindingText = this->mKeyCommandMap.get("RotateCanvas15Clockwise")->binding.text();
     mViewPanel->addButton(
-        "rotatecw", false, tr("Rotate the canvas clockwise (%1)").arg(_rotateViewClockwiseKeyBindingText), [=](bool) {
+        "rotatecw",
+        false,
+        tr("Rotate the canvas clockwise (%1)").arg(_rotateViewClockwiseKeyBindingText),
+        [=](bool) {
             this->viewSetting().rotateViewCW = true;
             this->onViewSettingChanged(this->viewSetting());
             this->viewSetting().rotateViewCW = false;
-        });
+        }
+    );
 }
 
 void ToolWidget::createModePanel() {
     if (mModePanel)
         delete mModePanel;
-    mModePanel = new tool::ModePanel(
-        this, mResources, [=](ctrl::ToolType aType, bool aChecked) { this->onModePanelPushed(aType, aChecked); });
+    mModePanel = new tool::ModePanel(this, mResources, [=](ctrl::ToolType aType, bool aChecked) {
+        this->onModePanelPushed(aType, aChecked);
+    });
 }
 
 void ToolWidget::setPanelActivity(bool aIsActive) {

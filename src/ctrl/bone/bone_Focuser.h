@@ -19,9 +19,7 @@ namespace bone {
         core::Bone2* update(const core::CameraInfo& aCamera, const QVector2D& aPos);
         void clearFocus();
         bool focusChanged() const;
-        float focusRate() const {
-            return mFocusRate;
-        }
+        float focusRate() const { return mFocusRate; }
 
         void select(core::Bone2& aBone);
         core::Bone2* selectingBone();

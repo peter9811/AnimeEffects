@@ -14,8 +14,16 @@ namespace ctrl {
 namespace bone {
 
     InfluenceMode::InfluenceMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mFocuser(), mFocusHAxis(), mFocusVAxis(), mFocusChild(), mCommandRef() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mFocuser(),
+        mFocusHAxis(),
+        mFocusVAxis(),
+        mFocusChild(),
+        mCommandRef() {
         XC_PTR_ASSERT(mKeyOwner.key);
         mFocuser.setTopBones(mKeyOwner.key->data().topBones());
         mFocuser.setFocusConnector(true);

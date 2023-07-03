@@ -40,7 +40,8 @@ private:
     void updateValidity();
     float getBoneWeight(const QVector2D& aPoint) const;
     float getBoneEllipseWeight(
-        const QVector2D& aCenter, const QVector2D& aVUnit, const QVector2D& aRadius, const QVector2D& aPoint) const;
+        const QVector2D& aCenter, const QVector2D& aVUnit, const QVector2D& aRadius, const QVector2D& aPoint
+    ) const;
     float getWeakness(float aRate) const;
 
     bool mIsValid;

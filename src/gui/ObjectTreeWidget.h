@@ -68,9 +68,7 @@ private:
     obj::Item* createFileItem(core::ObjectNode& aNode);
     QModelIndex cheatDragDropPos(QPoint& aPos);
     QPoint treeTopLeftPosition() const;
-    int scrollHeight() const {
-        return -treeTopLeftPosition().y();
-    }
+    int scrollHeight() const { return -treeTopLeftPosition().y(); }
     void endRenameEditor();
     int itemHeight(const core::ObjectNode& aNode) const;
     bool updateItemHeights(QTreeWidgetItem* aItem);

@@ -14,19 +14,11 @@ public:
     HeightMap(const QString& aName);
 
     void grabImage(const XCMemBlock& aBlock, const QRect& aRect);
-    img::Buffer& image() {
-        return mImage;
-    }
-    const img::Buffer& image() const {
-        return mImage;
-    }
+    img::Buffer& image() { return mImage; }
+    const img::Buffer& image() const { return mImage; }
 
-    void setHeightRate(float aRate) {
-        mHeightRate = aRate;
-    }
-    void setBaseHeight(float aBase) {
-        mBaseHeight = aBase;
-    }
+    void setHeightRate(float aRate) { mHeightRate = aRate; }
+    void setBaseHeight(float aBase) { mBaseHeight = aBase; }
 
     float readHeight(const QVector2D& aPos) const;
 

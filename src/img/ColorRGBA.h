@@ -20,31 +20,15 @@ struct ColorRGBA {
         v[2] = aRhs.v[2];
     }
 
-    uint8& r() {
-        return v[0];
-    }
-    uint8& g() {
-        return v[1];
-    }
-    uint8& b() {
-        return v[2];
-    }
-    uint8& a() {
-        return v[3];
-    }
+    uint8& r() { return v[0]; }
+    uint8& g() { return v[1]; }
+    uint8& b() { return v[2]; }
+    uint8& a() { return v[3]; }
 
-    const uint8& r() const {
-        return v[0];
-    }
-    const uint8& g() const {
-        return v[1];
-    }
-    const uint8& b() const {
-        return v[2];
-    }
-    const uint8& a() const {
-        return v[3];
-    }
+    const uint8& r() const { return v[0]; }
+    const uint8& g() const { return v[1]; }
+    const uint8& b() const { return v[2]; }
+    const uint8& a() const { return v[3]; }
 
     uint8 v[4];
 };

@@ -58,20 +58,12 @@ public:
     QMatrix4x4 transformationMatrix(const QMatrix4x4& aToMtx) const;
 
     // focus
-    bool isFocused() const {
-        return mFocus.isLinking();
-    }
-    void setFocus(util::LifeLink& aLink) {
-        mFocus = aLink;
-    }
+    bool isFocused() const { return mFocus.isLinking(); }
+    void setFocus(util::LifeLink& aLink) { mFocus = aLink; }
 
     // select
-    bool isSelected() const {
-        return mSelect.isLinking();
-    }
-    void setSelect(util::LifeLink& aLink) {
-        mSelect = aLink;
-    }
+    bool isSelected() const { return mSelect.isLinking(); }
+    void setSelect(util::LifeLink& aLink) { mSelect = aLink; }
 
     // serialize
     bool serialize(Serializer& aOut) const;

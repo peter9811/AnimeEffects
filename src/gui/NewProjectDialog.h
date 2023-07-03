@@ -10,15 +10,9 @@ class NewProjectDialog: public EasyDialog {
     Q_OBJECT
 public:
     NewProjectDialog(QWidget* aParent);
-    QString fileName() const {
-        return mFileName;
-    }
-    const core::Project::Attribute& attribute() const {
-        return mAttribute;
-    }
-    bool specifiesCanvasSize() const {
-        return mSpecifiesCanvasSize;
-    }
+    QString fileName() const { return mFileName; }
+    const core::Project::Attribute& attribute() const { return mAttribute; }
+    bool specifiesCanvasSize() const { return mSpecifiesCanvasSize; }
 
 private:
     QWidget* createOption();

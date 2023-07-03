@@ -14,12 +14,14 @@ class ProjectLoader {
 public:
     ProjectLoader();
 
-    bool load(const QString& aPath, core::Project& aProject, const gl::DeviceInfo& aGLDeviceInfo,
-        util::IProgressReporter& aReporter);
+    bool load(
+        const QString& aPath,
+        core::Project& aProject,
+        const gl::DeviceInfo& aGLDeviceInfo,
+        util::IProgressReporter& aReporter
+    );
 
-    const QStringList& log() const {
-        return mLog;
-    }
+    const QStringList& log() const { return mLog; }
 
 private:
     bool readHeader(util::LEStreamReader& aReader);

@@ -19,9 +19,7 @@ namespace tool {
         }
     }
 
-    void FlowLayout::addItem(QLayoutItem* aItem) {
-        mItemList.append(aItem);
-    }
+    void FlowLayout::addItem(QLayoutItem* aItem) { mItemList.append(aItem); }
 
     int FlowLayout::horizontalSpacing() const {
         return mHSpace >= 0 ? mHSpace : smartSpacing(QStyle::PM_LayoutHorizontalSpacing);
@@ -31,13 +29,9 @@ namespace tool {
         return mVSpace >= 0 ? mVSpace : smartSpacing(QStyle::PM_LayoutVerticalSpacing);
     }
 
-    int FlowLayout::count() const {
-        return mItemList.size();
-    }
+    int FlowLayout::count() const { return mItemList.size(); }
 
-    QLayoutItem* FlowLayout::itemAt(int aIndex) const {
-        return mItemList.value(aIndex);
-    }
+    QLayoutItem* FlowLayout::itemAt(int aIndex) const { return mItemList.value(aIndex); }
 
     QLayoutItem* FlowLayout::takeAt(int aIndex) {
         if (aIndex < 0 || count() <= aIndex)
@@ -45,9 +39,7 @@ namespace tool {
         return mItemList.takeAt(aIndex);
     }
 
-    bool FlowLayout::hasHeightForWidth() const {
-        return true;
-    }
+    bool FlowLayout::hasHeightForWidth() const { return true; }
 
     int FlowLayout::heightForWidth(int aWidth) const {
         const int height = doLayout(QRect(0, 0, aWidth, 0), true);
@@ -59,9 +51,7 @@ namespace tool {
         doLayout(aRect, false);
     }
 
-    QSize FlowLayout::sizeHint() const {
-        return minimumSize();
-    }
+    QSize FlowLayout::sizeHint() const { return minimumSize(); }
 
     QSize FlowLayout::minimumSize() const {
         QSize size;
@@ -88,13 +78,15 @@ namespace tool {
             int spaceX = horizontalSpacing();
             if (spaceX == -1) {
                 spaceX = item->widget()->style()->layoutSpacing(
-                    QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal);
+                    QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal
+                );
             }
 
             int spaceY = verticalSpacing();
             if (spaceY == -1) {
                 spaceY = item->widget()->style()->layoutSpacing(
-                    QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical);
+                    QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical
+                );
             }
 
             int nextX = x + itemSize.width() + spaceX;

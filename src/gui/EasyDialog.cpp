@@ -16,9 +16,7 @@ EasyDialog::EasyDialog(const QString& aTitle, QWidget* aParent, bool aIsModal):
     this->setLayout(mLayout);
 }
 
-void EasyDialog::setMenuBar(QMenuBar* aMenuBar) {
-    mLayout->setMenuBar(aMenuBar);
-}
+void EasyDialog::setMenuBar(QMenuBar* aMenuBar) { mLayout->setMenuBar(aMenuBar); }
 
 void EasyDialog::setMainWidget(QWidget* aWidget, bool aAlignLeft) {
     mLayout->addWidget(aWidget);

@@ -42,13 +42,9 @@ namespace prop {
         }
     }
 
-    void KeyGroup::makeSureExpand() {
-        setExpansion(true);
-    }
+    void KeyGroup::makeSureExpand() { setExpansion(true); }
 
-    void KeyGroup::onClicked(bool aChecked) {
-        setExpansion(aChecked);
-    }
+    void KeyGroup::onClicked(bool aChecked) { setExpansion(aChecked); }
 
     void KeyGroup::setExpansion(bool aChecked) {
         if (mChecked != aChecked) {

@@ -20,16 +20,10 @@ public:
     void setVariationValue(const QString& aName, const QString& aValue);
     bool resolveVariation();
 
-    const QString& vertexCode() const {
-        return mVertexCode;
-    }
-    const QString& fragmentCode() const {
-        return mFragmentCode;
-    }
+    const QString& vertexCode() const { return mVertexCode; }
+    const QString& fragmentCode() const { return mFragmentCode; }
 
-    const QString& log() const {
-        return mLog;
-    }
+    const QString& log() const { return mLog; }
 
 private:
     struct VariationUnit {

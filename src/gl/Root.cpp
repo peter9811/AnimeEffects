@@ -5,13 +5,9 @@ namespace gl {
 
 Root::Root(): mContextAccessor(), mFunctions() {}
 
-void Root::setContextAccessor(ContextAccessor& aAccessor) {
-    mContextAccessor = &aAccessor;
-}
+void Root::setContextAccessor(ContextAccessor& aAccessor) { mContextAccessor = &aAccessor; }
 
-void Root::clearContextAccessor() {
-    mContextAccessor = nullptr;
-}
+void Root::clearContextAccessor() { mContextAccessor = nullptr; }
 
 void Root::makeCurrent() {
     XC_PTR_ASSERT(mContextAccessor);
@@ -28,9 +24,7 @@ void Root::setFunctions(Global::Functions& aFunctions) {
     mFunctions = &aFunctions;
 }
 
-void Root::clearFunctions() {
-    mFunctions = nullptr;
-}
+void Root::clearFunctions() { mFunctions = nullptr; }
 
 Global::Functions& Root::functions() {
     XC_PTR_ASSERT(mFunctions);

@@ -19,9 +19,7 @@ int PosePalette::getBoneIndex(const BoneKey::Data& aData, const Bone2& aBone) {
     return -1;
 }
 
-PosePalette::PosePalette(): mData(), mIsUnit(true) {
-    clearDualQuaternions();
-}
+PosePalette::PosePalette(): mData(), mIsUnit(true) { clearDualQuaternions(); }
 
 int PosePalette::makeBoneOrigins(const KeyPairs& aSrc, BonePairs& aDst) {
     int count = 0;

@@ -53,8 +53,13 @@ void DestinationTexturizer::clearTexture() {
     GL_CHECK_ERROR();
 }
 
-void DestinationTexturizer::update(GLuint aFramebuffer, GLuint aFrameTexture, const QMatrix4x4& aViewMatrix,
-    LayerMesh& aMesh, gl::BufferObject& aPositions) {
+void DestinationTexturizer::update(
+    GLuint aFramebuffer,
+    GLuint aFrameTexture,
+    const QMatrix4x4& aViewMatrix,
+    LayerMesh& aMesh,
+    gl::BufferObject& aPositions
+) {
     XC_ASSERT(mTexture->size().isValid());
 
     auto& ggl = gl::Global::functions();

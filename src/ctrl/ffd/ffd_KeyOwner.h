@@ -15,15 +15,11 @@ namespace ffd {
         KeyOwner();
         ~KeyOwner();
 
-        explicit operator bool() const {
-            return key;
-        }
-        bool owns() const {
-            return ownsKey;
-        }
+        explicit operator bool() const { return key; }
+        bool owns() const { return ownsKey; }
 
-        void createKey(
-            const core::TimeLine& aLine, const core::LayerMesh& aAreaMesh, core::TimeKey* aAreaKey, int aFrame);
+        void
+        createKey(const core::TimeLine& aLine, const core::LayerMesh& aAreaMesh, core::TimeKey* aAreaKey, int aFrame);
 
         void pushOwnsKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);
         void deleteOwnsKey();

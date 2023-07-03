@@ -12,9 +12,7 @@ class Finally {
 public:
     Finally(FunctionType aDest): mDest(aDest) {}
 
-    ~Finally() {
-        mDest();
-    }
+    ~Finally() { mDest(); }
 };
 
 } // namespace util

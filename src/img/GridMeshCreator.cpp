@@ -335,9 +335,12 @@ GridMeshCreator::GridMeshCreator(const uint8* aPtr, const QSize& aSize, int aCel
 
 QRect GridMeshCreator::vertexRect() const {
     const float halfwidth = mCells->cellWidth() * 0.5f;
-    return QRect(QPoint((int)(-halfwidth - 1.0f), 0),
-        QPoint((int)(halfwidth * mCells->tableWidth() + 1.0f),
-            (int)(mCells->cellHeight() * mCells->tableHeight() + 1.0f)));
+    return QRect(
+        QPoint((int)(-halfwidth - 1.0f), 0),
+        QPoint(
+            (int)(halfwidth * mCells->tableWidth() + 1.0f), (int)(mCells->cellHeight() * mCells->tableHeight() + 1.0f)
+        )
+    );
 }
 
 void GridMeshCreator::writeVertices(GLfloat* aPosVec3, GLfloat* aTexVec2) {
@@ -627,7 +630,8 @@ void GridMeshCreator::reduceBurrs(VertexTable& aTable, const Image& aImage) {
                     continue;
 
                 util::TriangleRasterizer rasterizer(
-                    cell.vtx[0]->posReduced(), cell.vtx[1]->posReduced(), cell.vtx[2]->posReduced());
+                    cell.vtx[0]->posReduced(), cell.vtx[1]->posReduced(), cell.vtx[2]->posReduced()
+                );
 
                 while (rasterizer.hasNext()) {
                     auto scan = rasterizer.nextLine();
@@ -693,7 +697,9 @@ void GridMeshCreator::reduceBurrs(VertexTable& aTable, const Image& aImage) {
                         cell->vtx[2]->reduceRate = nextRate;
                     }
     #else
-                    Cell* arounds[4] = {cell, mCells->findExistingCell(cellX - 1, cellY),
+                    Cell* arounds[4] = {
+                        cell,
+                        mCells->findExistingCell(cellX - 1, cellY),
                         mCells->findExistingCell(cellX + 1, cellY),
                         mCells->findExistingCell(cellX, cellY + (cell->inverted ? -1 : 1))};
 

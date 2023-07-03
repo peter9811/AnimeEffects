@@ -7,13 +7,9 @@ namespace mesh {
 
     Renderer::Renderer(QPainter& aPainter, const RenderInfo& aInfo): mPainter(aPainter), mInfo(aInfo), mTargetMtx() {}
 
-    void Renderer::setAntialiasing(bool aFlag) {
-        mPainter.setRenderHint(QPainter::Antialiasing, aFlag);
-    }
+    void Renderer::setAntialiasing(bool aFlag) { mPainter.setRenderHint(QPainter::Antialiasing, aFlag); }
 
-    void Renderer::setTargetMatrix(const QMatrix4x4& aMtx) {
-        mTargetMtx = aMtx;
-    }
+    void Renderer::setTargetMatrix(const QMatrix4x4& aMtx) { mTargetMtx = aMtx; }
 
     void Renderer::renderMesh(const MeshAccessor& aMesh) {
         // draw faces
@@ -52,7 +48,9 @@ namespace mesh {
         auto count = aDangling.size();
 
         if (count >= 2) {
-            const QPointF vtx[3] = {getScreenPointF(aDangling[0]), getScreenPointF(aDangling[1]),
+            const QPointF vtx[3] = {
+                getScreenPointF(aDangling[0]),
+                getScreenPointF(aDangling[1]),
                 (count >= 3 ? getScreenPointF(aDangling[2]) : getScreenPointF(aCursor))};
 
             setFaceBrush(1);

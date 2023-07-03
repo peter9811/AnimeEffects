@@ -10,7 +10,8 @@ namespace gui {
 namespace prop {
 
     //-------------------------------------------------------------------------------------------------
-    template<typename SpinBoxType> void stepByHelper(SpinBoxType* spinBox, int steps) {
+    template<typename SpinBoxType>
+    void stepByHelper(SpinBoxType* spinBox, int steps) {
         spinBox->mTriggeredByArrows = true;
         int stepRate = (QApplication::keyboardModifiers() == Qt::ShiftModifier) ? 10 : 1;
         spinBox->QAbstractSpinBox::stepBy(steps * stepRate);
@@ -18,22 +19,16 @@ namespace prop {
         spinBox->mTriggeredByArrows = false;
     }
 
-    SpinBox::SpinBox(QWidget* parent): QSpinBox(parent), mTriggeredByArrows(false) {
-        setAccelerated(true);
-    }
+    SpinBox::SpinBox(QWidget* parent): QSpinBox(parent), mTriggeredByArrows(false) { setAccelerated(true); }
 
-    void SpinBox::stepBy(int steps) {
-        stepByHelper(this, steps);
-    }
+    void SpinBox::stepBy(int steps) { stepByHelper(this, steps); }
 
     //-------------------------------------------------------------------------------------------------
     DoubleSpinBox::DoubleSpinBox(QWidget* parent): QDoubleSpinBox(parent), mTriggeredByArrows(false) {
         setAccelerated(true);
     }
 
-    void DoubleSpinBox::stepBy(int steps) {
-        stepByHelper(this, steps);
-    }
+    void DoubleSpinBox::stepBy(int steps) { stepByHelper(this, steps); }
 
     //-------------------------------------------------------------------------------------------------
     CheckItem::CheckItem(QWidget* aParent): mBox(), mStamp(), mSignal(true), mIsEnable(true) {
@@ -61,9 +56,7 @@ namespace prop {
         }
     }
 
-    void CheckItem::setItemVisible(bool aVisible) {
-        mBox->setVisible(aVisible);
-    }
+    void CheckItem::setItemVisible(bool aVisible) { mBox->setVisible(aVisible); }
 
     void CheckItem::setValue(bool aValue, bool aSignal) {
         mSignal = aSignal;
@@ -92,13 +85,9 @@ namespace prop {
         }
     }
 
-    void ComboItem::setItemEnabled(bool aEnable) {
-        mBox->setEnabled(aEnable);
-    }
+    void ComboItem::setItemEnabled(bool aEnable) { mBox->setEnabled(aEnable); }
 
-    void ComboItem::setItemVisible(bool aVisible) {
-        mBox->setVisible(aVisible);
-    }
+    void ComboItem::setItemVisible(bool aVisible) { mBox->setVisible(aVisible); }
 
     void ComboItem::setValue(int aValue, bool aSignal) {
         mSignal = aSignal;
@@ -144,9 +133,7 @@ namespace prop {
         }
     }
 
-    QPoint Combo2DItem::value() const {
-        return QPoint(mBox[0]->currentIndex(), mBox[1]->currentIndex());
-    }
+    QPoint Combo2DItem::value() const { return QPoint(mBox[0]->currentIndex(), mBox[1]->currentIndex()); }
 
     void Combo2DItem::setValue(QPoint aValue, bool aSignal) {
         mSignal = aSignal;
@@ -179,9 +166,11 @@ namespace prop {
         });
 
         mBox[0]->addItems(util::Easing::getTypeNameList());
-        mBox[1]->addItems(QStringList() << "In"
-                                        << "Out"
-                                        << "All");
+        mBox[1]->addItems(
+            QStringList() << "In"
+                          << "Out"
+                          << "All"
+        );
         mDBox->setRange(0.0f, 1.0f);
         mDBox->setSingleStep(0.1);
 
@@ -242,9 +231,7 @@ namespace prop {
         });
     }
 
-    void IntegerItem::setRange(int aMin, int aMax) {
-        mBox->setRange(aMin, aMax);
-    }
+    void IntegerItem::setRange(int aMin, int aMax) { mBox->setRange(aMin, aMax); }
 
     void IntegerItem::onEditingFinished() {
         if (mStamp != value()) {
@@ -261,9 +248,7 @@ namespace prop {
         mSignal = true;
     }
 
-    void IntegerItem::setItemVisible(bool aVisible) {
-        mBox->setVisible(aVisible);
-    }
+    void IntegerItem::setItemVisible(bool aVisible) { mBox->setVisible(aVisible); }
 
     //-------------------------------------------------------------------------------------------------
     DecimalItem::DecimalItem(QWidget* aParent): mBox(), mStamp(), mSignal(true) {
@@ -280,9 +265,7 @@ namespace prop {
         });
     }
 
-    void DecimalItem::setRange(double aMin, double aMax) {
-        mBox->setRange(aMin, aMax);
-    }
+    void DecimalItem::setRange(double aMin, double aMax) { mBox->setRange(aMin, aMax); }
 
     void DecimalItem::onEditingFinished() {
         if (mStamp != value()) {
@@ -299,9 +282,7 @@ namespace prop {
         mSignal = true;
     }
 
-    void DecimalItem::setItemVisible(bool aVisible) {
-        mBox->setVisible(aVisible);
-    }
+    void DecimalItem::setItemVisible(bool aVisible) { mBox->setVisible(aVisible); }
 
     //-------------------------------------------------------------------------------------------------
     Vector2DItem::Vector2DItem(QWidget* aParent): mLayout(), mStamp(), mSignal(true) {
@@ -327,9 +308,7 @@ namespace prop {
         mStamp = QVector2D(mBox[0]->value(), mBox[1]->value());
     }
 
-    QVector2D Vector2DItem::value() const {
-        return QVector2D(mBox[0]->value(), mBox[1]->value());
-    }
+    QVector2D Vector2DItem::value() const { return QVector2D(mBox[0]->value(), mBox[1]->value()); }
 
     void Vector2DItem::setValue(QVector2D aValue) {
         mBox[0]->setValue(aValue.x());
@@ -382,9 +361,7 @@ namespace prop {
         mLayout->addWidget(mButton);
     }
 
-    void BrowseItem::setValue(const QString& aValue) {
-        mLine->setText(aValue);
-    }
+    void BrowseItem::setValue(const QString& aValue) { mLine->setText(aValue); }
 
     void BrowseItem::setItemEnabled(bool aEnable) {
         mLine->setEnabled(aEnable);

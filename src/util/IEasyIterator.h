@@ -3,7 +3,8 @@
 
 namespace util {
 
-template<typename tObj> class IEasyIterator {
+template<typename tObj>
+class IEasyIterator {
 public:
     virtual ~IEasyIterator() {}
     virtual bool hasNext() const = 0;

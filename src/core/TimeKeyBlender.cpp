@@ -16,9 +16,7 @@ class ObjectTreeSeeker: public util::ITreeSeeker<TimeKeyBlender::SeekData, Objec
 public:
     ObjectTreeSeeker(bool aUseCache): mUseCache(aUseCache) {}
 
-    virtual Position position(ObjectNode* aNode) const {
-        return aNode;
-    }
+    virtual Position position(ObjectNode* aNode) const { return aNode; }
 
     virtual Data data(Position aPos) const {
         TimeKeyBlender::SeekData data = {};
@@ -304,7 +302,8 @@ void TimeKeyBlender::clearCaches(ObjectNode* aRootNode) {
     }
 }
 
-template<class tKey> float getEasingRateFromTwoKeys(const TimeKeyGatherer& aGatherer) {
+template<class tKey>
+float getEasingRateFromTwoKeys(const TimeKeyGatherer& aGatherer) {
     // blend keys
     auto p0 = aGatherer.point(0);
     auto p1 = aGatherer.point(1);
@@ -318,7 +317,8 @@ template<class tKey> float getEasingRateFromTwoKeys(const TimeKeyGatherer& aGath
     return util::Easing::calculate(k0->data().easing(), -p0.relativeFrame, 0.0f, 1.0f, frame);
 }
 
-template<class tKey, TimeKeyType tType> typename tKey::Data getDefaultKeyData(const ObjectNode& aNode) {
+template<class tKey, TimeKeyType tType>
+typename tKey::Data getDefaultKeyData(const ObjectNode& aNode) {
     if (aNode.timeLine()) {
         auto key = (tKey*)aNode.timeLine()->defaultKey(tType);
         if (key)
@@ -653,7 +653,8 @@ void TimeKeyBlender::blendPoseKey(PositionType aPos, const TimeInfo& aTime) {
 
     // get blend info
     TimeKeyGatherer blend(
-        node.timeLine()->map(TimeKeyType_Pose), aTime, TimeKeyGatherer::ForceType_AssignedParent, areaBoneKey);
+        node.timeLine()->map(TimeKeyType_Pose), aTime, TimeKeyGatherer::ForceType_AssignedParent, areaBoneKey
+    );
 
     // no key is exists
     if (blend.isEmpty()) {
@@ -760,7 +761,8 @@ void TimeKeyBlender::blendFFDKey(PositionType aPos, const TimeInfo& aTime) {
 
     // get blend info
     TimeKeyGatherer blend(
-        node.timeLine()->map(TimeKeyType_FFD), aTime, TimeKeyGatherer::ForceType_AssignedParent, areaKey);
+        node.timeLine()->map(TimeKeyType_FFD), aTime, TimeKeyGatherer::ForceType_AssignedParent, areaKey
+    );
 
     // no key is exists
     if (blend.isEmpty()) {
@@ -773,7 +775,8 @@ void TimeKeyBlender::blendFFDKey(PositionType aPos, const TimeInfo& aTime) {
         // perfect following
         XC_ASSERT(blend.singlePoint().key->parent() == areaKey);
         expans.ffd().allocAndWrite(
-            ((const FFDKey*)(blend.singlePoint().key))->data().positions(), areaMesh->vertexCount());
+            ((const FFDKey*)(blend.singlePoint().key))->data().positions(), areaMesh->vertexCount()
+        );
     } else {
         // blend keys
         auto p0 = blend.point(0);
@@ -955,8 +958,12 @@ void TimeKeyBlender::setBinderBones(ObjectNode& aRootNode) {
     {
         auto root = mSeeker->data(mSeeker->position(&aRootNode));
         if (root.expans) {
-            setBindingMatrices(aRootNode, root.expans->bone().isAffectedByBinding(),
-                root.expans->bone().isUnderOfBinding(), root.expans->bone().outerMatrix());
+            setBindingMatrices(
+                aRootNode,
+                root.expans->bone().isAffectedByBinding(),
+                root.expans->bone().isUnderOfBinding(),
+                root.expans->bone().outerMatrix()
+            );
         } else {
             setBindingMatrices(aRootNode, false, false, QMatrix4x4());
         }
@@ -964,7 +971,8 @@ void TimeKeyBlender::setBinderBones(ObjectNode& aRootNode) {
 }
 
 void TimeKeyBlender::setBindingMatrices(
-    ObjectNode& aNode, bool aAffectedByBinding, bool aUnderOfBinding, QMatrix4x4 aBindingMtx) {
+    ObjectNode& aNode, bool aAffectedByBinding, bool aUnderOfBinding, QMatrix4x4 aBindingMtx
+) {
     auto seekData = mSeeker->data(mSeeker->position(&aNode));
     if (seekData.objNode && seekData.expans) {
         auto& expans = *seekData.expans;

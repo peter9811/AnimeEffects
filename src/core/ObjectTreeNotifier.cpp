@@ -60,12 +60,8 @@ void ObjectTreeNotifier::onExecuted() {
     onRedone();
 }
 
-void ObjectTreeNotifier::onUndone() {
-    mEvent.project().onTreeRestructured(mEvent, true);
-}
+void ObjectTreeNotifier::onUndone() { mEvent.project().onTreeRestructured(mEvent, true); }
 
-void ObjectTreeNotifier::onRedone() {
-    mEvent.project().onTreeRestructured(mEvent, false);
-}
+void ObjectTreeNotifier::onRedone() { mEvent.project().onTreeRestructured(mEvent, false); }
 
 } // namespace core

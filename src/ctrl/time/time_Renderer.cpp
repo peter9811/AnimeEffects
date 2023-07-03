@@ -59,7 +59,9 @@ namespace time {
                     const float h = static_cast<float>(rect.height()) / sepa;
                     mPainter.drawText(
                         QRect(textLeft, rect.top() + static_cast<int>(i * h), textWidth, static_cast<int>(h)),
-                        TimeLine::getTimeKeyName(type), QTextOption(Qt::AlignCenter));
+                        TimeLine::getTimeKeyName(type),
+                        QTextOption(Qt::AlignCenter)
+                    );
                     ++i;
                 }
             }
@@ -188,8 +190,11 @@ namespace time {
                         mPainter.drawConvexPolygon(poly, 3);
                         */
                         // mPainter.drawEllipse(pos, 3.0f, 1.5f);
-                        const QPointF poly[] = {pos + QPointF(-3.0, -2.0), pos + QPointF(3.0, -2.0),
-                            pos + QPointF(3.0, 2.0), pos + QPointF(-3.0, 2.0)};
+                        const QPointF poly[] = {
+                            pos + QPointF(-3.0, -2.0),
+                            pos + QPointF(3.0, -2.0),
+                            pos + QPointF(3.0, 2.0),
+                            pos + QPointF(-3.0, 2.0)};
                         mPainter.drawConvexPolygon(poly, 4);
                     } else if (itr.value()->canHoldChild()) {
                         const QPointF poly[4] = {pos + holder[0], pos + holder[1], pos + holder[2], pos + holder[3]};

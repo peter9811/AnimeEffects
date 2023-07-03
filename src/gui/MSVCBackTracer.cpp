@@ -83,13 +83,29 @@ void BackTracer::getSymbolText(void* aAddress, char* aOutBuffer, int aLength) co
     IMAGEHLP_LINE imageLine = {sizeof(IMAGEHLP_LINE)};
     DWORD disp32 = (DWORD)displacement;
     if (!SymGetLineFromAddr((HANDLE)mProcess, (XDWord)aAddress, &disp32, &imageLine)) {
-        _snprintf_s(aOutBuffer, aLength, _TRUNCATE, "%s @ %s @ %s+%d", imageModule.ModuleName, imageSymbol.Name,
-            imageSymbol.Name, (int)((char*)aAddress - (char*)imageLine.Address));
+        _snprintf_s(
+            aOutBuffer,
+            aLength,
+            _TRUNCATE,
+            "%s @ %s @ %s+%d",
+            imageModule.ModuleName,
+            imageSymbol.Name,
+            imageSymbol.Name,
+            (int)((char*)aAddress - (char*)imageLine.Address)
+        );
         return;
     }
 
-    _snprintf_s(aOutBuffer, aLength, _TRUNCATE, "%s @ %s @ %s:%d", imageModule.ModuleName, imageSymbol.Name,
-        imageLine.FileName, imageLine.LineNumber);
+    _snprintf_s(
+        aOutBuffer,
+        aLength,
+        _TRUNCATE,
+        "%s @ %s @ %s:%d",
+        imageModule.ModuleName,
+        imageSymbol.Name,
+        imageLine.FileName,
+        imageLine.LineNumber
+    );
 }
 
 #endif // USE_MSVC_BACKTRACE

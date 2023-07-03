@@ -10,7 +10,13 @@ namespace gui {
 namespace tool {
 
     BonePanel::BonePanel(QWidget* aParent, GUIResources& aResources):
-        QGroupBox(aParent), mResources(aResources), mParam(), mTypeGroup(), mPIRadius(), mPIPressure(), mEIRadius(),
+        QGroupBox(aParent),
+        mResources(aResources),
+        mParam(),
+        mTypeGroup(),
+        mPIRadius(),
+        mPIPressure(),
+        mEIRadius(),
         mEIPressure() {
         this->setTitle(tr("Bone Building"));
         createMode();
@@ -26,12 +32,15 @@ namespace tool {
         // type
         mTypeGroup.reset(new SingleOutItem(ctrl::BoneEditMode_TERM, QSize(kButtonSpace, kButtonSpace), this));
         mTypeGroup->setChoice(mParam.mode);
-        mTypeGroup->setToolTips(QStringList()
-            << tr("Add bones") << tr("Remove bones") << tr("Move joints") << tr("Bind bone to node")
-            << tr("Adjust influence") << tr("Paint influence") << tr("Erase influence"));
-        mTypeGroup->setIcons(QVector<QIcon>()
-            << mResources.icon("plus") << mResources.icon("minus") << mResources.icon("move") << mResources.icon("bind")
-            << mResources.icon("influence") << mResources.icon("pencil") << mResources.icon("eraser"));
+        mTypeGroup->setToolTips(
+            QStringList() << tr("Add bones") << tr("Remove bones") << tr("Move joints") << tr("Bind bone to node")
+                          << tr("Adjust influence") << tr("Paint influence") << tr("Erase influence")
+        );
+        mTypeGroup->setIcons(
+            QVector<QIcon>() << mResources.icon("plus") << mResources.icon("minus") << mResources.icon("move")
+                             << mResources.icon("bind") << mResources.icon("influence") << mResources.icon("pencil")
+                             << mResources.icon("eraser")
+        );
 
         mTypeGroup->connect([=](int aIndex) {
             this->mParam.mode = (ctrl::BoneEditMode)aIndex;

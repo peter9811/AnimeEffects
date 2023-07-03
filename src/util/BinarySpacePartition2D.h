@@ -10,7 +10,8 @@
 
 namespace util {
 
-template<typename tData> class BinarySpacePartition2D {
+template<typename tData>
+class BinarySpacePartition2D {
 public:
     struct Object {
         Object(const tData& aData, const Triangle2D& aTri, const QRectF& aBox): data(aData), tri(aTri), box(aBox) {}
@@ -23,9 +24,7 @@ public:
     struct Node {
         explicit Node(const QRectF& aBox): box(aBox), child(), objects() {}
 
-        bool hasChild() const {
-            return child[0];
-        }
+        bool hasChild() const { return child[0]; }
 
         QRectF box;
         std::array<Node*, 2> child;
@@ -50,9 +49,7 @@ public:
         return true;
     }
 
-    Object* findOne(const QPointF& aPoint) const {
-        return findImpl(*mTopNode, aPoint);
-    }
+    Object* findOne(const QPointF& aPoint) const { return findImpl(*mTopNode, aPoint); }
 
 private:
     void writeObject(Node& aNode, Object& aObject, int aDepth) {

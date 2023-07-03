@@ -12,9 +12,7 @@ public:
 
     Segment2D(const QVector2D& aStart, const QVector2D& aDir): start(aStart), dir(aDir) {}
 
-    inline QVector2D end() const {
-        return start + dir;
-    }
+    inline QVector2D end() const { return start + dir; }
 
     QRectF boundingRect() const {
         if (dir.x() >= 0) {

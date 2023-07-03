@@ -6,8 +6,12 @@ namespace gui {
 
 //-------------------------------------------------------------------------------------------------
 MouseSettingDialog::MouseSettingDialog(ViaPoint& aViaPoint, QWidget* aParent):
-    EasyDialog(tr("Mouse Settings"), aParent), mViaPoint(aViaPoint), mInitialValues(), mInvertMainViewScalingBox(),
-    mInvertTimeLineScalingBox(), mMiddleMouseMoveCanvas() {
+    EasyDialog(tr("Mouse Settings"), aParent),
+    mViaPoint(aViaPoint),
+    mInitialValues(),
+    mInvertMainViewScalingBox(),
+    mInvertTimeLineScalingBox(),
+    mMiddleMouseMoveCanvas() {
     // read current settings
     mInitialValues.load();
 

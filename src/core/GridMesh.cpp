@@ -20,17 +20,39 @@ namespace core {
 
 //-------------------------------------------------------------------------------------------------
 GridMesh::GridMesh():
-    mSize(), mOriginOffset(), mCellPx(0), mIndexCount(0), mVertexCount(0), mVertexRect(), mIndices(), mPositions(),
-    mOffsets(), mTexCoords(), mNormals(), mHexaConnections(), mMeshBuffer(), mIndexBuffer() {
+    mSize(),
+    mOriginOffset(),
+    mCellPx(0),
+    mIndexCount(0),
+    mVertexCount(0),
+    mVertexRect(),
+    mIndices(),
+    mPositions(),
+    mOffsets(),
+    mTexCoords(),
+    mNormals(),
+    mHexaConnections(),
+    mMeshBuffer(),
+    mIndexBuffer() {
     // initialize mesh buffer
     getMeshBuffer();
 }
 
 GridMesh::GridMesh(const GridMesh& aRhs):
-    mSize(aRhs.mSize), mOriginOffset(aRhs.mOriginOffset), mCellPx(aRhs.mCellPx), mIndexCount(aRhs.mIndexCount),
-    mVertexCount(aRhs.mVertexCount), mVertexRect(aRhs.mVertexRect), mIndices(aRhs.mIndices),
-    mPositions(aRhs.mPositions), mOffsets(aRhs.mOffsets), mTexCoords(aRhs.mTexCoords), mNormals(aRhs.mNormals),
-    mHexaConnections(aRhs.mHexaConnections), mMeshBuffer(), mIndexBuffer() {
+    mSize(aRhs.mSize),
+    mOriginOffset(aRhs.mOriginOffset),
+    mCellPx(aRhs.mCellPx),
+    mIndexCount(aRhs.mIndexCount),
+    mVertexCount(aRhs.mVertexCount),
+    mVertexRect(aRhs.mVertexRect),
+    mIndices(aRhs.mIndices),
+    mPositions(aRhs.mPositions),
+    mOffsets(aRhs.mOffsets),
+    mTexCoords(aRhs.mTexCoords),
+    mNormals(aRhs.mNormals),
+    mHexaConnections(aRhs.mHexaConnections),
+    mMeshBuffer(),
+    mIndexBuffer() {
     // initialize mesh buffer
     getMeshBuffer();
 }
@@ -60,9 +82,7 @@ GridMesh& GridMesh::operator=(const GridMesh& aRhs) {
     return *this;
 }
 
-GridMesh::~GridMesh() {
-    freeBuffers();
-}
+GridMesh::~GridMesh() { freeBuffers(); }
 
 void GridMesh::swap(GridMesh& aRhs) {
     std::swap(mSize, aRhs.mSize);
@@ -112,9 +132,7 @@ void GridMesh::allocVertexBuffers(int aVertexCount) {
     mHexaConnections.construct(aVertexCount);
 }
 
-void GridMesh::allocIndices(int aIndexCount) {
-    mIndices.construct(aIndexCount);
-}
+void GridMesh::allocIndices(int aIndexCount) { mIndices.construct(aIndexCount); }
 
 void GridMesh::initializeVertexBuffers(int aVertexCount) {
     for (int i = 0; i < aVertexCount; ++i) {
@@ -284,12 +302,10 @@ void GridMesh::resetArrayedConnection(ArrayedConnectionList& aDest, const gl::Ve
     }
 }
 
-Frame GridMesh::frameSign() const {
-    return Frame(TimeLine::kDefaultKeyIndex);
-}
+Frame GridMesh::frameSign() const { return Frame(TimeLine::kDefaultKeyIndex); }
 
-util::ArrayBlock<gl::Vector3> GridMesh::createFFD(
-    util::ArrayBlock<const gl::Vector3> aPrevFFD, const Transitions& aTrans) const {
+util::ArrayBlock<gl::Vector3>
+GridMesh::createFFD(util::ArrayBlock<const gl::Vector3> aPrevFFD, const Transitions& aTrans) const {
     XC_ASSERT(aTrans.data.count() > 0);
     XC_ASSERT(aTrans.data.count() == mVertexCount);
 
@@ -361,13 +377,11 @@ bool GridMesh::hasConnection(int aArrayIndex, int aIdIndex) const {
     return mHexaConnections[aArrayIndex].has(aIdIndex);
 }
 
-int GridMesh::connectionId(int aArrayIndex, int aIdIndex) const {
-    return mHexaConnections[aArrayIndex].id[aIdIndex];
-}
+int GridMesh::connectionId(int aArrayIndex, int aIdIndex) const { return mHexaConnections[aArrayIndex].id[aIdIndex]; }
 
 
-std::pair<bool, gl::Vector3> GridMesh::gatherValidPositions(
-    int aIndex, const gl::Vector3* aPositions, const bool* aValidity) const {
+std::pair<bool, gl::Vector3>
+GridMesh::gatherValidPositions(int aIndex, const gl::Vector3* aPositions, const bool* aValidity) const {
     const int connectionCount = kHexaConnectionCount;
 
     std::array<QVector2D, kMaxConnectionCount> result;
@@ -451,9 +465,7 @@ QJsonObject posToJson(QSize size) {
 QVector2D jsonToPos(QJsonObject json) {
     return QVector2D{static_cast<float>(json["X"].toDouble()), static_cast<float>(json["Y"].toDouble())};
 }
-QSize jsonToSize(QJsonObject json) {
-    return QSize{json["W"].toInt(), json["H"].toInt()};
-}
+QSize jsonToSize(QJsonObject json) { return QSize{json["W"].toInt(), json["H"].toInt()}; }
 util::ArrayBuffer<GLuint> arrayToGL(QJsonArray json, int count) {
     util::ArrayBuffer<GLuint> GL;
     for (int i = 0; i < count; ++i) {
@@ -728,8 +740,8 @@ GridMesh::TransitionCreater::TransitionCreater(const GridMesh& aPrev, const QPoi
     }
 }
 
-GridMesh::Transitions GridMesh::TransitionCreater::create(
-    const gl::Vector3* aNext, int aCount, const QPoint& aTopLeft) {
+GridMesh::Transitions
+GridMesh::TransitionCreater::create(const gl::Vector3* aNext, int aCount, const QPoint& aTopLeft) {
     if (mIndexCount == 0 || mPositions.isNull() || !aNext || aCount == 0) {
         return Transitions();
     }

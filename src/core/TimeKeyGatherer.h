@@ -18,9 +18,7 @@ public:
 
     struct Point {
         Point();
-        explicit operator bool() const {
-            return key != NULL;
-        }
+        explicit operator bool() const { return key != NULL; }
         TimeKey* key;
         int frame;
         float relativeFrame;
@@ -30,34 +28,26 @@ public:
     static TimeKey* findLastKey(const TimeLine::MapType& aMap, Frame aFrame);
 
     TimeKeyGatherer();
-    TimeKeyGatherer(const TimeLine::MapType& aMap, const TimeInfo& aTimeInfo, ForceType aForceType = ForceType_None,
-        TimeKey* aAssignedParent = nullptr);
+    TimeKeyGatherer(
+        const TimeLine::MapType& aMap,
+        const TimeInfo& aTimeInfo,
+        ForceType aForceType = ForceType_None,
+        TimeKey* aAssignedParent = nullptr
+    );
 
-    bool hasSameFrame() const {
-        return (bool)point(0) && point(0).frame == mFrame;
-    }
-    bool isEmpty() const {
-        return !(bool)point(0) && !(bool)point(1);
-    }
-    bool isSingle() const {
-        return !isEmpty() && !isSandwiched();
-    }
-    bool isSandwiched() const {
-        return (bool)point(0) && (bool)point(1);
-    }
+    bool hasSameFrame() const { return (bool)point(0) && point(0).frame == mFrame; }
+    bool isEmpty() const { return !(bool)point(0) && !(bool)point(1); }
+    bool isSingle() const { return !isEmpty() && !isSandwiched(); }
+    bool isSandwiched() const { return (bool)point(0) && (bool)point(1); }
 
     //@param [in] aIndex (-1...2)
-    const Point& point(int aIndex) const {
-        return mPoints[aIndex + 1];
-    }
+    const Point& point(int aIndex) const { return mPoints[aIndex + 1]; }
     const Point& singlePoint() const {
         XC_ASSERT(isSingle());
         return (bool)point(0) ? point(0) : point(1);
     }
 
-    TimeKey* parent() const {
-        return mParent;
-    }
+    TimeKey* parent() const { return mParent; }
 
 private:
     std::array<Point, 4> mPoints;

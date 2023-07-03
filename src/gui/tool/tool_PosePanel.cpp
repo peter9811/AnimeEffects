@@ -26,7 +26,8 @@ namespace tool {
         mTypeGroup->setChoice(mParam.mode);
         mTypeGroup->setToolTips(QStringList() << tr("Move Bones") << tr("Pull Bones") << tr("Erase Poses"));
         mTypeGroup->setIcons(
-            QVector<QIcon>() << mResources.icon("move") << mResources.icon("pencil") << mResources.icon("eraser"));
+            QVector<QIcon>() << mResources.icon("move") << mResources.icon("pencil") << mResources.icon("eraser")
+        );
 
         mTypeGroup->connect([=](int aIndex) {
             this->mParam.mode = (ctrl::PoseEditMode)aIndex;

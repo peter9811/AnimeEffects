@@ -22,33 +22,19 @@ public:
     ResourceNode(const QString& aIdentifier);
     virtual ~ResourceNode();
 
-    ResourceData& data() {
-        return *mHandle;
-    }
-    const ResourceData& data() const {
-        return *mHandle;
-    }
+    ResourceData& data() { return *mHandle; }
+    const ResourceData& data() const { return *mHandle; }
     void swapData(ResourceHandle& aRhs);
     ResourceHandle updateHandle(XCMemBlock aGrabbedImage, const QRect& aRect);
 
-    ResourceHandle handle() const {
-        return mHandle;
-    }
+    ResourceHandle handle() const { return mHandle; }
 
-    bool isReferenced() const {
-        return mHandle.referenceCount() > 1;
-    }
-    bool isKeeped() const {
-        return mHandle.originKeepingCount() > 0;
-    }
+    bool isReferenced() const { return mHandle.referenceCount() > 1; }
+    bool isKeeped() const { return mHandle.originKeepingCount() > 0; }
     int getCountOfSameSiblings() const;
 
-    void setAbandon(bool aIsAbandoned) {
-        mIsAbandoned = aIsAbandoned;
-    }
-    bool isAbandoned() const {
-        return mIsAbandoned;
-    }
+    void setAbandon(bool aIsAbandoned) { mIsAbandoned = aIsAbandoned; }
+    bool isAbandoned() const { return mIsAbandoned; }
 
     QString treePath() const;
 

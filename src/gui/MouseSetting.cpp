@@ -13,7 +13,8 @@ bool MouseSetting::operator==(const MouseSetting& aRhs) const {
 
 void MouseSetting::load() {
     QSettings settings(
-        QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
+        QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName()
+    );
     settings.beginGroup("mousesettings");
 
     auto invMVScale = settings.value("InvertMainViewScaling");
@@ -27,7 +28,8 @@ void MouseSetting::load() {
 
 void MouseSetting::save() {
     QSettings settings(
-        QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
+        QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName()
+    );
     settings.beginGroup("mousesettings");
 
     settings.setValue("InvertMainViewScaling", invertMainViewScaling);

@@ -36,13 +36,10 @@ public:
             */
 
             :
-            type(Type_Linear),
-            range(Range_InOut), weight(1.0f) {}
+            type(Type_Linear), range(Range_InOut), weight(1.0f) {}
         bool isValidParam() const;
         bool operator==(const Param& aRhs) const;
-        inline bool operator!=(const Param& aRhs) const {
-            return !(*this == aRhs);
-        }
+        inline bool operator!=(const Param& aRhs) const { return !(*this == aRhs); }
         Type type;
         Range range;
         float weight;

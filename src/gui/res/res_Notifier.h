@@ -19,17 +19,11 @@ namespace res {
 
         void notify(bool aIsUndo = false);
 
-        virtual void onExecuted() {
-            notify();
-        }
+        virtual void onExecuted() { notify(); }
 
-        virtual void onUndone() {
-            notify(true);
-        }
+        virtual void onUndone() { notify(true); }
 
-        virtual void onRedone() {
-            notify();
-        }
+        virtual void onRedone() { notify(); }
 
     private:
         ViaPoint& mViaPoint;
@@ -40,26 +34,16 @@ namespace res {
     public:
         ModificationNotifier(ViaPoint& aViaPoint, core::Project& aProject, const util::TreePos& aRootPos);
 
-        core::ResourceEvent& event() {
-            return mEvent;
-        }
-        const core::ResourceEvent& event() const {
-            return mEvent;
-        }
+        core::ResourceEvent& event() { return mEvent; }
+        const core::ResourceEvent& event() const { return mEvent; }
 
         void notify(bool aIsUndo = false);
 
-        virtual void onExecuted() {
-            notify();
-        }
+        virtual void onExecuted() { notify(); }
 
-        virtual void onUndone() {
-            notify(true);
-        }
+        virtual void onUndone() { notify(true); }
 
-        virtual void onRedone() {
-            notify();
-        }
+        virtual void onRedone() { notify(); }
 
     private:
         ViaPoint& mViaPoint;
@@ -72,26 +56,16 @@ namespace res {
     public:
         AddNewOneNotifier(ViaPoint& aViaPoint, core::Project& aProject);
 
-        core::ResourceEvent& event() {
-            return mEvent;
-        }
-        const core::ResourceEvent& event() const {
-            return mEvent;
-        }
+        core::ResourceEvent& event() { return mEvent; }
+        const core::ResourceEvent& event() const { return mEvent; }
 
         void notify(bool aIsUndo = false);
 
-        virtual void onExecuted() {
-            notify();
-        }
+        virtual void onExecuted() { notify(); }
 
-        virtual void onUndone() {
-            notify(true);
-        }
+        virtual void onUndone() { notify(true); }
 
-        virtual void onRedone() {
-            notify();
-        }
+        virtual void onRedone() { notify(); }
 
     private:
         ViaPoint& mViaPoint;
@@ -103,26 +77,16 @@ namespace res {
     public:
         DeleteNotifier(ViaPoint& aViaPoint, core::Project& aProject);
 
-        core::ResourceEvent& event() {
-            return mEvent;
-        }
-        const core::ResourceEvent& event() const {
-            return mEvent;
-        }
+        core::ResourceEvent& event() { return mEvent; }
+        const core::ResourceEvent& event() const { return mEvent; }
 
         void notify(bool aIsUndo = false);
 
-        virtual void onExecuted() {
-            notify();
-        }
+        virtual void onExecuted() { notify(); }
 
-        virtual void onUndone() {
-            notify(true);
-        }
+        virtual void onUndone() { notify(true); }
 
-        virtual void onRedone() {
-            notify();
-        }
+        virtual void onRedone() { notify(); }
 
     private:
         ViaPoint& mViaPoint;
@@ -134,26 +98,16 @@ namespace res {
     public:
         RenameNotifier(ViaPoint& aViaPoint, core::Project& aProject, const util::TreePos& aRootPos);
 
-        core::ResourceEvent& event() {
-            return mEvent;
-        }
-        const core::ResourceEvent& event() const {
-            return mEvent;
-        }
+        core::ResourceEvent& event() { return mEvent; }
+        const core::ResourceEvent& event() const { return mEvent; }
 
         void notify(bool aIsUndo = false);
 
-        virtual void onExecuted() {
-            notify();
-        }
+        virtual void onExecuted() { notify(); }
 
-        virtual void onUndone() {
-            notify(true);
-        }
+        virtual void onUndone() { notify(true); }
 
-        virtual void onRedone() {
-            notify();
-        }
+        virtual void onRedone() { notify(); }
 
     private:
         ViaPoint& mViaPoint;

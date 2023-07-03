@@ -29,24 +29,20 @@ namespace ffd {
         void setDragIndex(int aIndex); // for Dragger
 
         void resetDst(int aVtxCount);
-        void writeSrc(const core::TimeKeyExpans& aSrcExpans, const gl::Vector3* aSrcMesh,
-            const core::LayerMesh& aOriginMesh, const FFDParam& aBrushParam);
+        void writeSrc(
+            const core::TimeKeyExpans& aSrcExpans,
+            const gl::Vector3* aSrcMesh,
+            const core::LayerMesh& aOriginMesh,
+            const FFDParam& aBrushParam
+        );
 
         void setBrush(const QVector2D& aBrushCenter, const QVector2D& aBrushVel);
 
-        gl::Vector3* dstMesh() const {
-            return mDstMesh.data();
-        }
-        size_t dstSize() const {
-            return sizeof(gl::Vector3) * mVtxCount;
-        }
+        gl::Vector3* dstMesh() const { return mDstMesh.data(); }
+        size_t dstSize() const { return sizeof(gl::Vector3) * mVtxCount; }
 
-        QVector2D dragMove() const {
-            return mDragMove;
-        } // for Dragger
-        int focusIndex() const {
-            return mFocusIndex;
-        } // for Focuser
+        QVector2D dragMove() const { return mDragMove; } // for Dragger
+        int focusIndex() const { return mFocusIndex; } // for Focuser
 
     private:
         virtual void onRequested();

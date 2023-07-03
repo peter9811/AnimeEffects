@@ -18,12 +18,8 @@ class ExportDialog: public EasyDialog {
     Q_OBJECT
 public:
     ExportDialog(core::Project& aProject, const QString& aPath, QWidget* aParent);
-    const ctrl::Exporter::CommonParam& commonParam() const {
-        return mCommonParam;
-    }
-    ctrl::Exporter::CommonParam& commonParam() {
-        return mCommonParam;
-    }
+    const ctrl::Exporter::CommonParam& commonParam() const { return mCommonParam; }
+    ctrl::Exporter::CommonParam& commonParam() { return mCommonParam; }
 
 protected:
     void pushSizeBox(QFormLayout& aLayout);
@@ -45,9 +41,7 @@ class ImageExportDialog: public ExportDialog {
     Q_OBJECT
 public:
     ImageExportDialog(core::Project& aProject, const QString& aDirPath, const QString& aSuffix, QWidget* aParent);
-    const ctrl::Exporter::ImageParam& imageParam() const {
-        return mImageParam;
-    }
+    const ctrl::Exporter::ImageParam& imageParam() const { return mImageParam; }
 
 private:
     QLayout* createImageOption();
@@ -60,9 +54,7 @@ class GifExportDialog: public ExportDialog {
     Q_OBJECT
 public:
     GifExportDialog(core::Project& aProject, const QString& aFilePath, QWidget* aParent);
-    const ctrl::Exporter::GifParam& gifParam() const {
-        return mGifParam;
-    }
+    const ctrl::Exporter::GifParam& gifParam() const { return mGifParam; }
 
 private:
     QLayout* createGifOption();
@@ -75,10 +67,9 @@ class VideoExportDialog: public ExportDialog {
     Q_OBJECT
 public:
     VideoExportDialog(
-        core::Project& aProject, const QString& aFilePath, const ctrl::VideoFormat& aFormat, QWidget* aParent);
-    const ctrl::Exporter::VideoParam& videoParam() const {
-        return mVideoParam;
-    }
+        core::Project& aProject, const QString& aFilePath, const ctrl::VideoFormat& aFormat, QWidget* aParent
+    );
+    const ctrl::Exporter::VideoParam& videoParam() const { return mVideoParam; }
 
 private:
     QLayout* createVideoOption();

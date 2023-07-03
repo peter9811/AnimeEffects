@@ -34,19 +34,11 @@ public:
     void deleteFrom(const QSettings& aSrc);
     void writeTo(QSettings& aDest);
 
-    KeyCommand* get(const QString& aIdentifier) {
-        return mSearchMap[aIdentifier];
-    }
-    const KeyCommand* get(const QString& aIdentifier) const {
-        return mSearchMap[aIdentifier];
-    }
+    KeyCommand* get(const QString& aIdentifier) { return mSearchMap[aIdentifier]; }
+    const KeyCommand* get(const QString& aIdentifier) const { return mSearchMap[aIdentifier]; }
 
-    const ListType& commands() const {
-        return mCommands;
-    }
-    const ListType& subKeyCommands() const {
-        return mSubKeyCommands;
-    }
+    const ListType& commands() const { return mCommands; }
+    const ListType& subKeyCommands() const { return mSubKeyCommands; }
 
 private:
     void addNewKey(const QString& aKey, const QString& aGroup, const QString& aName, const ctrl::KeyBinding& aBinding);

@@ -44,9 +44,7 @@ public:
     void render(QPainter& aPainter, const core::CameraInfo& aCamera, theme::TimeLine& aTheme, const QRect& aCullRect);
 
     core::Frame currentFrame() const;
-    int maxFrame() const {
-        return mTimeMax;
-    }
+    int maxFrame() const { return mTimeMax; }
     QSize modelSpaceSize() const;
     QPoint currentTimeCursorPos() const;
     bool checkContactWithKeyFocus(core::TimeLineEvent& aEvent, const QPoint& aPos);

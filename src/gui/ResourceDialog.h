@@ -21,9 +21,7 @@ public:
     void updateResourcePath();
 
     bool hasValidNode() const;
-    const NodeList& nodeList() const {
-        return mNodeList;
-    }
+    const NodeList& nodeList() const { return mNodeList; }
 
 private:
     virtual void keyPressEvent(QKeyEvent* aEvent);

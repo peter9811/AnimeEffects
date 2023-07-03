@@ -13,18 +13,24 @@ static const std::array<const char*, core::TimeKeyType_TERM> kTimeKeyNames = {
     "Move", "Rotate", "Scale", "Depth", "Opa", "Bone", "Pose", "Mesh", "FFD", "Image", "HSV"};
 
 static const std::array<core::TimeKeyType, core::TimeKeyType_TERM> kTimeKeyTypeInOrderOfOperations = {
-    core::TimeKeyType_Image, core::TimeKeyType_Mesh, core::TimeKeyType_FFD, core::TimeKeyType_Bone,
-    core::TimeKeyType_Pose, core::TimeKeyType_Move, core::TimeKeyType_Rotate, core::TimeKeyType_Scale,
-    core::TimeKeyType_Depth, core::TimeKeyType_Opa, core::TimeKeyType_HSV};
+    core::TimeKeyType_Image,
+    core::TimeKeyType_Mesh,
+    core::TimeKeyType_FFD,
+    core::TimeKeyType_Bone,
+    core::TimeKeyType_Pose,
+    core::TimeKeyType_Move,
+    core::TimeKeyType_Rotate,
+    core::TimeKeyType_Scale,
+    core::TimeKeyType_Depth,
+    core::TimeKeyType_Opa,
+    core::TimeKeyType_HSV};
 
 } // namespace
 
 namespace core {
 
 //---------------------------------------------------------------------------------------
-QString TimeLine::getTimeKeyName(TimeKeyType aType) {
-    return QString(kTimeKeyNames.at(aType));
-}
+QString TimeLine::getTimeKeyName(TimeKeyType aType) { return QString(kTimeKeyNames.at(aType)); }
 
 TimeKeyType TimeLine::getTimeKeyType(const QString& aName) {
     for (int i = 0; i < TimeKeyType_TERM; ++i) {
@@ -41,9 +47,7 @@ TimeKeyType TimeLine::getTimeKeyTypeInOrderOfOperations(int aIndex) {
 
 TimeLine::TimeLine(): mMap(), mCurrent(new TimeKeyExpans()), mWorking(new TimeKeyExpans()), mDefaultKeys() {}
 
-TimeLine::~TimeLine() {
-    clear();
-}
+TimeLine::~TimeLine() { clear(); }
 
 bool TimeLine::hasTimeKey(int aIndex) const {
     for (int i = 0; i < TimeKeyType_TERM; ++i) {
@@ -53,9 +57,7 @@ bool TimeLine::hasTimeKey(int aIndex) const {
     return false;
 }
 
-bool TimeLine::hasTimeKey(TimeKeyType aType, int aIndex) const {
-    return mMap.at(aType).contains(aIndex);
-}
+bool TimeLine::hasTimeKey(TimeKeyType aType, int aIndex) const { return mMap.at(aType).contains(aIndex); }
 
 bool TimeLine::isEmpty() const {
     for (int i = 0; i < TimeKeyType_TERM; ++i) {
@@ -65,9 +67,7 @@ bool TimeLine::isEmpty() const {
     return true;
 }
 
-bool TimeLine::isEmpty(TimeKeyType aType) const {
-    return mMap.at(aType).isEmpty();
-}
+bool TimeLine::isEmpty(TimeKeyType aType) const { return mMap.at(aType).isEmpty(); }
 
 int TimeLine::validTypeCount() const {
     int count = 0;
@@ -78,9 +78,7 @@ int TimeLine::validTypeCount() const {
     return count;
 }
 
-const TimeLine::MapType& TimeLine::map(TimeKeyType aType) const {
-    return mMap.at(aType);
-}
+const TimeLine::MapType& TimeLine::map(TimeKeyType aType) const { return mMap.at(aType); }
 
 TimeKey* TimeLine::timeKey(TimeKeyType aType, int aIndex) {
     if (mMap.at(aType).contains(aIndex)) {
@@ -103,13 +101,9 @@ void TimeLine::grabDefaultKey(TimeKeyType aType, TimeKey* aKey) {
     mDefaultKeys.at(aType).reset(aKey);
 }
 
-TimeKey* TimeLine::defaultKey(TimeKeyType aType) {
-    return mDefaultKeys.at(aType).data();
-}
+TimeKey* TimeLine::defaultKey(TimeKeyType aType) { return mDefaultKeys.at(aType).data(); }
 
-const TimeKey* TimeLine::defaultKey(TimeKeyType aType) const {
-    return mDefaultKeys.at(aType).data();
-}
+const TimeKey* TimeLine::defaultKey(TimeKeyType aType) const { return mDefaultKeys.at(aType).data(); }
 
 void TimeLine::clear() {
     for (int i = 0; i < TimeKeyType_TERM; ++i) {

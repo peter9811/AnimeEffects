@@ -25,7 +25,8 @@ namespace tool {
         mTypeGroup->setChoice(mParam.mode);
         mTypeGroup->setToolTips(QStringList() << tr("Add a vertex") << tr("Delete a vertex") << tr("Split a polygon"));
         mTypeGroup->setIcons(
-            QVector<QIcon>() << mResources.icon("plus") << mResources.icon("minus") << mResources.icon("pencil"));
+            QVector<QIcon>() << mResources.icon("plus") << mResources.icon("minus") << mResources.icon("pencil")
+        );
         mTypeGroup->connect([=](int aIndex) {
             this->mParam.mode = aIndex;
             this->onParamUpdated(true);

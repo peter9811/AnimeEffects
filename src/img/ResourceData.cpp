@@ -6,24 +6,24 @@
 namespace img {
 
 ResourceData::ResourceData(const QString& aIdentifier, const ResourceNode* aSerialAddress):
-    mBuffer(), mPos(), mUserData(), mIsLayer(), mIdentifier(aIdentifier), mBlendMode(BlendMode_Normal), mImageLoader(),
+    mBuffer(),
+    mPos(),
+    mUserData(),
+    mIsLayer(),
+    mIdentifier(aIdentifier),
+    mBlendMode(BlendMode_Normal),
+    mImageLoader(),
     mSerialAddress(aSerialAddress) {}
 
 void ResourceData::grabImage(const XCMemBlock& aBlock, const QSize& aSize, Format aFormat) {
     mBuffer.grab(aFormat, aBlock, aSize);
 }
 
-XCMemBlock ResourceData::releaseImage() {
-    return mBuffer.release();
-}
+XCMemBlock ResourceData::releaseImage() { return mBuffer.release(); }
 
-void ResourceData::freeImage() {
-    mBuffer.free();
-}
+void ResourceData::freeImage() { mBuffer.free(); }
 
-void ResourceData::setPos(const QPoint& aPos) {
-    mPos = aPos;
-}
+void ResourceData::setPos(const QPoint& aPos) { mPos = aPos; }
 
 void ResourceData::setBlendMode(BlendMode aMode) {
     if (aMode != BlendMode_TERM) {
@@ -43,13 +43,9 @@ void ResourceData::copyFrom(const ResourceData& aData) {
     mImageLoader = aData.mImageLoader;
 }
 
-QRect ResourceData::rect() const {
-    return QRect(mPos, mBuffer.pixelSize());
-}
+QRect ResourceData::rect() const { return QRect(mPos, mBuffer.pixelSize()); }
 
-QVector2D ResourceData::center() const {
-    return util::MathUtil::getCenter(rect());
-}
+QVector2D ResourceData::center() const { return util::MathUtil::getCenter(rect()); }
 
 bool ResourceData::hasSameLayerDataWith(const ResourceData& aData) {
     if (!isLayer() || !aData.isLayer())

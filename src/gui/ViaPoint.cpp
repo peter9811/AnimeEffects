@@ -5,20 +5,21 @@
 namespace gui {
 
 ViaPoint::ViaPoint(QWidget* aParent):
-    mParent(aParent), mProject(), mResDialog(), mLogView(), mGLDeviceInfo(), mKeyCommandMap(), mKeyCommandInvoker(),
-    mMainViewSetting(), mMouseSetting() {}
+    mParent(aParent),
+    mProject(),
+    mResDialog(),
+    mLogView(),
+    mGLDeviceInfo(),
+    mKeyCommandMap(),
+    mKeyCommandInvoker(),
+    mMainViewSetting(),
+    mMouseSetting() {}
 
-void ViaPoint::setProject(core::Project* aProject) {
-    mProject = aProject;
-}
+void ViaPoint::setProject(core::Project* aProject) { mProject = aProject; }
 
-void ViaPoint::setMainMenuBar(MainMenuBar* aMainMenuBar) {
-    mMainMenuBar = aMainMenuBar;
-}
+void ViaPoint::setMainMenuBar(MainMenuBar* aMainMenuBar) { mMainMenuBar = aMainMenuBar; }
 
-void ViaPoint::setResourceDialog(ResourceDialog* aResDialog) {
-    mResDialog = aResDialog;
-}
+void ViaPoint::setResourceDialog(ResourceDialog* aResDialog) { mResDialog = aResDialog; }
 
 img::ResourceNode* ViaPoint::requireOneResource() {
     QScopedPointer<ResourceDialog> dialog(new ResourceDialog(*this, true, mParent));
@@ -31,9 +32,7 @@ img::ResourceNode* ViaPoint::requireOneResource() {
     return nullptr;
 }
 
-void ViaPoint::setLogView(QPlainTextEdit* aLogView) {
-    mLogView = aLogView;
-}
+void ViaPoint::setLogView(QPlainTextEdit* aLogView) { mLogView = aLogView; }
 
 void ViaPoint::pushLog(const QString& aText, ctrl::UILogType aType) {
     (void)aType;
@@ -54,22 +53,16 @@ void ViaPoint::pushRedoneLog(const QString& aText) {
     }
 }
 
-void ViaPoint::setGLDeviceInfo(const gl::DeviceInfo& aInfo) {
-    mGLDeviceInfo = aInfo;
-}
+void ViaPoint::setGLDeviceInfo(const gl::DeviceInfo& aInfo) { mGLDeviceInfo = aInfo; }
 
 const gl::DeviceInfo& ViaPoint::glDeviceInfo() const {
     XC_ASSERT(mGLDeviceInfo.isValid());
     return mGLDeviceInfo;
 }
 
-void ViaPoint::setKeyCommandMap(KeyCommandMap* aMap) {
-    mKeyCommandMap = aMap;
-}
+void ViaPoint::setKeyCommandMap(KeyCommandMap* aMap) { mKeyCommandMap = aMap; }
 
-void ViaPoint::setKeyCommandInvoker(KeyCommandInvoker* aInvoker) {
-    mKeyCommandInvoker = aInvoker;
-}
+void ViaPoint::setKeyCommandInvoker(KeyCommandInvoker* aInvoker) { mKeyCommandInvoker = aInvoker; }
 
 void ViaPoint::throwKeyPressingToKeyCommandInvoker(const QKeyEvent* aEvent) {
     if (mKeyCommandInvoker) {
@@ -83,9 +76,7 @@ void ViaPoint::throwKeyReleasingToKeyCommandInvoker(const QKeyEvent* aEvent) {
     }
 }
 
-void ViaPoint::setMainViewSetting(MainViewSetting& aSetting) {
-    mMainViewSetting = &aSetting;
-}
+void ViaPoint::setMainViewSetting(MainViewSetting& aSetting) { mMainViewSetting = &aSetting; }
 
 MainViewSetting& ViaPoint::mainViewSetting() {
     XC_PTR_ASSERT(mMainViewSetting);
@@ -97,9 +88,7 @@ const MainViewSetting& ViaPoint::mainViewSetting() const {
     return *mMainViewSetting;
 }
 
-void ViaPoint::setMouseSetting(MouseSetting& aSetting) {
-    mMouseSetting = &aSetting;
-}
+void ViaPoint::setMouseSetting(MouseSetting& aSetting) { mMouseSetting = &aSetting; }
 
 MouseSetting& ViaPoint::mouseSetting() {
     XC_PTR_ASSERT(mMouseSetting);

@@ -16,12 +16,8 @@ core::MeshTransformerResource* DriverResources::meshTransformerResource() const 
     return mMeshTransformerResource.data();
 }
 
-void DriverResources::grabFFDTaskResource(ffd::TaskResource* aResource) {
-    mFFDTaskResource.reset(aResource);
-}
+void DriverResources::grabFFDTaskResource(ffd::TaskResource* aResource) { mFFDTaskResource.reset(aResource); }
 
-ffd::TaskResource* DriverResources::ffdTaskResource() const {
-    return mFFDTaskResource.data();
-}
+ffd::TaskResource* DriverResources::ffdTaskResource() const { return mFFDTaskResource.data(); }
 
 } // namespace ctrl

@@ -13,10 +13,16 @@ namespace ctrl {
 namespace bone {
 
     BindNodesMode::BindNodesMode(
-        Project& aProject, const Target& aTarget, KeyOwner& aKey, const GraphicStyle& aGraphicStyle):
+        Project& aProject, const Target& aTarget, KeyOwner& aKey, const GraphicStyle& aGraphicStyle
+    ):
         mProject(aProject),
-        mGraphicStyle(aGraphicStyle), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mFocuser(), mNodeSelector(*aTarget.node, aGraphicStyle) {
+        mGraphicStyle(aGraphicStyle),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mFocuser(),
+        mNodeSelector(*aTarget.node, aGraphicStyle) {
         XC_PTR_ASSERT(mKeyOwner.key);
         mFocuser.setTopBones(mKeyOwner.key->data().topBones());
         mFocuser.setTargetMatrix(mTargetMtx);

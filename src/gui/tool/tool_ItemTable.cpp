@@ -21,9 +21,7 @@ namespace tool {
         ++mColIndex;
     }
 
-    int ItemTable::height() const {
-        return (mRowIndex + 1) * (mItemSize.height() + mGap.height()) - mGap.height();
-    }
+    int ItemTable::height() const { return (mRowIndex + 1) * (mItemSize.height() + mGap.height()) - mGap.height(); }
 
 } // namespace tool
 } // namespace gui

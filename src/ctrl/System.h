@@ -16,9 +16,7 @@ public:
         QString message;
         SaveResult();
         SaveResult(bool, const QString&);
-        explicit operator bool() const {
-            return success;
-        }
+        explicit operator bool() const { return success; }
     };
 
     struct LoadResult {
@@ -28,9 +26,7 @@ public:
         LoadResult(core::Project*, const QString&);
         LoadResult(core::Project*, const QStringList&);
         QString messages() const;
-        explicit operator bool() const {
-            return project;
-        }
+        explicit operator bool() const { return project; }
     };
 
     System(const QString& aResourceDir, const QString& aCacheDir);
@@ -38,11 +34,16 @@ public:
 
     void setAnimator(core::Animator& aAnimator);
 
-    LoadResult newProject(const QString& aFileName, const core::Project::Attribute& aAttr,
-        core::Project::Hook* aHookGrabbed, util::IProgressReporter& aReporter, bool aSpecifiesCanvasSize);
+    LoadResult newProject(
+        const QString& aFileName,
+        const core::Project::Attribute& aAttr,
+        core::Project::Hook* aHookGrabbed,
+        util::IProgressReporter& aReporter,
+        bool aSpecifiesCanvasSize
+    );
 
-    LoadResult openProject(
-        const QString& aFileName, core::Project::Hook* aHookGrabbed, util::IProgressReporter& aReporter);
+    LoadResult
+    openProject(const QString& aFileName, core::Project::Hook* aHookGrabbed, util::IProgressReporter& aReporter);
 
     SaveResult saveProject(core::Project& aProject);
 
@@ -50,12 +51,8 @@ public:
 
     void closeAllProjects();
 
-    bool hasProject() const {
-        return !mProjects.isEmpty();
-    }
-    int projectCount() const {
-        return mProjects.count();
-    }
+    bool hasProject() const { return !mProjects.isEmpty(); }
+    int projectCount() const { return mProjects.count(); }
     bool hasModifiedProject() const;
 
     core::Project* project(int aIndex);

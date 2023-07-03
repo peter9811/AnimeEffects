@@ -5,20 +5,18 @@
 
 namespace util {
 
-template<typename tObj> class DealtList;
+template<typename tObj>
+class DealtList;
 
 //-----------------------------------------------------------------
-template<typename tObj> class DealtListNode {
+template<typename tObj>
+class DealtListNode {
 public:
     DealtListNode(): obj(), mPrev(0), mNext(0) {}
     tObj obj;
 
-    DealtListNode<tObj>* prev() const {
-        return mPrev;
-    }
-    DealtListNode<tObj>* next() const {
-        return mNext;
-    }
+    DealtListNode<tObj>* prev() const { return mPrev; }
+    DealtListNode<tObj>* next() const { return mNext; }
 
 private:
     friend class DealtList<tObj>;
@@ -29,7 +27,8 @@ private:
 
 //-----------------------------------------------------------------
 // The list which doesn't allocate any nodes.
-template<typename tObj> class DealtList {
+template<typename tObj>
+class DealtList {
 public:
     typedef DealtListNode<tObj> NodeType;
 
@@ -39,9 +38,7 @@ public:
 
         Iterator(NodeType& aFirst): mNext(&aFirst) {}
 
-        bool hasNext() {
-            return mNext != 0 ? true : false;
-        }
+        bool hasNext() { return mNext != 0 ? true : false; }
 
         tObj next() {
             XC_PTR_ASSERT(mNext);
@@ -56,9 +53,7 @@ public:
 
     DealtList(): mFirst(0), mLast(0) {}
 
-    ~DealtList() {
-        clear();
-    }
+    ~DealtList() { clear(); }
 
     void clear() {
         NodeType* next = mFirst;
@@ -105,9 +100,7 @@ public:
         aNode.mNext = 0;
     }
 
-    Iterator iterator() {
-        return Iterator(*mFirst);
-    }
+    Iterator iterator() { return Iterator(*mFirst); }
 
 private:
     NodeType* mFirst;

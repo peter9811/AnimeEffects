@@ -48,7 +48,8 @@ bool EasyTextureDrawer::init() {
     return true;
 }
 void EasyTextureDrawer::draw(
-    GLuint aTexture, const QRectF& aPosRect, const QSize& aPosCoord, const QRectF& aTexRect, const QSize& aTexCoord) {
+    GLuint aTexture, const QRectF& aPosRect, const QSize& aPosCoord, const QRectF& aTexRect, const QSize& aTexCoord
+) {
     std::array<gl::Vector2, 4> positions;
     {
         const float x1 = -1.0f + 2.0f * (aPosRect.left() / aPosCoord.width());
@@ -91,8 +92,13 @@ void EasyTextureDrawer::draw(GLuint aTexture) {
     draw(aTexture, positions, texCoords);
 }
 
-void EasyTextureDrawer::draw(GLuint aTexture, const std::array<QVector2D, 4>& aPosQuad, const QSize& aPosCoord,
-    const std::array<QVector2D, 4>& aTexQuad, const QSize& aTexCoord) {
+void EasyTextureDrawer::draw(
+    GLuint aTexture,
+    const std::array<QVector2D, 4>& aPosQuad,
+    const QSize& aPosCoord,
+    const std::array<QVector2D, 4>& aTexQuad,
+    const QSize& aTexCoord
+) {
     std::array<gl::Vector2, 4> positions;
     std::array<gl::Vector2, 4> texCoords;
     const QVector2D posdiv(aPosCoord.width(), aPosCoord.height());
@@ -108,7 +114,8 @@ void EasyTextureDrawer::draw(GLuint aTexture, const std::array<QVector2D, 4>& aP
 }
 
 void EasyTextureDrawer::draw(
-    GLuint aTexture, const std::array<gl::Vector2, 4>& aPositions, const std::array<gl::Vector2, 4>& aTexCoords) {
+    GLuint aTexture, const std::array<gl::Vector2, 4>& aPositions, const std::array<gl::Vector2, 4>& aTexCoords
+) {
     Global::Functions& ggl = Global::functions();
 
     Util::resetRenderState();

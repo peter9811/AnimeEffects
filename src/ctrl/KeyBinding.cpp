@@ -33,37 +33,23 @@ KeyBinding::KeyBinding(int aKeyCode, Qt::KeyboardModifiers aModifiers, int aSubK
         (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier | Qt::MetaModifier | Qt::KeypadModifier);
 }
 
-void KeyBinding::setSubKeyCode(int aSubKeyCode) {
-    mSubKeyCode = getKeyValidity(aSubKeyCode) ? aSubKeyCode : -1;
-}
+void KeyBinding::setSubKeyCode(int aSubKeyCode) { mSubKeyCode = getKeyValidity(aSubKeyCode) ? aSubKeyCode : -1; }
 
 bool KeyBinding::isValidBinding() const {
     return getKeyValidity(mKeyCode) && (mSubKeyCode == -1 || getKeyValidity(mSubKeyCode));
 }
 
-bool KeyBinding::hasKeypadModifier() const {
-    return mModifiers & Qt::KeypadModifier;
-}
+bool KeyBinding::hasKeypadModifier() const { return mModifiers & Qt::KeypadModifier; }
 
-bool KeyBinding::hasControlModifier() const {
-    return mModifiers & Qt::ControlModifier;
-}
+bool KeyBinding::hasControlModifier() const { return mModifiers & Qt::ControlModifier; }
 
-bool KeyBinding::hasShiftModifier() const {
-    return mModifiers & Qt::ShiftModifier;
-}
+bool KeyBinding::hasShiftModifier() const { return mModifiers & Qt::ShiftModifier; }
 
-bool KeyBinding::hasAltModifier() const {
-    return mModifiers & Qt::AltModifier;
-}
+bool KeyBinding::hasAltModifier() const { return mModifiers & Qt::AltModifier; }
 
-bool KeyBinding::hasMetaModifier() const {
-    return mModifiers & Qt::MetaModifier;
-}
+bool KeyBinding::hasMetaModifier() const { return mModifiers & Qt::MetaModifier; }
 
-bool KeyBinding::hasAnyModifiers() const {
-    return mModifiers != Qt::NoModifier;
-}
+bool KeyBinding::hasAnyModifiers() const { return mModifiers != Qt::NoModifier; }
 
 QString KeyBinding::text() const {
     QString t;

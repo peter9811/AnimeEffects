@@ -11,9 +11,7 @@ namespace ffd {
         commands().push(aCommand);
     }
 
-    cmnd::AssignMemory* MoveVertices::assign(int aIndex) {
-        return (cmnd::AssignMemory*)commands().at(aIndex);
-    }
+    cmnd::AssignMemory* MoveVertices::assign(int aIndex) { return (cmnd::AssignMemory*)commands().at(aIndex); }
 
 } // namespace ffd
 } // namespace ctrl

@@ -5,9 +5,7 @@ namespace core {
 //-------------------------------------------------------------------------------------------------
 RotateKey::Data::Data(): mEasing(), mRotate(0.0f) {}
 
-void RotateKey::Data::clamp() {
-    mRotate = xc_clamp(mRotate, Constant::rotateMin(), Constant::rotateMax());
-}
+void RotateKey::Data::clamp() { mRotate = xc_clamp(mRotate, Constant::rotateMin(), Constant::rotateMax()); }
 
 //-------------------------------------------------------------------------------------------------
 RotateKey::RotateKey(): mData() {}

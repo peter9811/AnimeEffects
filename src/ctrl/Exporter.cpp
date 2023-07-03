@@ -75,8 +75,11 @@ bool Exporter::FFMpeg::start(const QString& aArgments) {
             this->mErrorString = this->mProcess->errorString();
         }
     });
-    mProcess->connect(process, util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished),
-        [=](int, QProcess::ExitStatus) { this->mFinished = true; });
+    mProcess->connect(
+        process,
+        util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished),
+        [=](int, QProcess::ExitStatus) { this->mFinished = true; }
+    );
 
     // TODO improve the arguments build process
     QStringList arguments;
@@ -131,10 +134,28 @@ QString Exporter::FFMpeg::popLog() {
 
 //-------------------------------------------------------------------------------------------------
 Exporter::Exporter(core::Project& aProject):
-    mProject(aProject), mFramebuffers(), mClippingFrame(), mDestinationTexturizer(), mTextureDrawer(),
-    mOriginTimeInfo(), mOverwriteConfirmer(), mOverwriteConfirmation(), mProgressReporter(), mUILogger(),
-    mCommonParam(), mImageParam(), mVideoInCodec(), mVideoInCodecQuality(), mVideoExporting(), mFFMpeg(),
-    mExporting(false), mIndex(0), mDigitCount(0), mProgress(0.0f), mLog(), mIsCanceled() {}
+    mProject(aProject),
+    mFramebuffers(),
+    mClippingFrame(),
+    mDestinationTexturizer(),
+    mTextureDrawer(),
+    mOriginTimeInfo(),
+    mOverwriteConfirmer(),
+    mOverwriteConfirmation(),
+    mProgressReporter(),
+    mUILogger(),
+    mCommonParam(),
+    mImageParam(),
+    mVideoInCodec(),
+    mVideoInCodecQuality(),
+    mVideoExporting(),
+    mFFMpeg(),
+    mExporting(false),
+    mIndex(0),
+    mDigitCount(0),
+    mProgress(0.0f),
+    mLog(),
+    mIsCanceled() {}
 
 Exporter::~Exporter() {
     finish();
@@ -144,17 +165,11 @@ Exporter::~Exporter() {
     destroyFramebuffers();
 }
 
-void Exporter::setOverwriteConfirmer(const OverwriteConfirmer& aConfirmer) {
-    mOverwriteConfirmer = aConfirmer;
-}
+void Exporter::setOverwriteConfirmer(const OverwriteConfirmer& aConfirmer) { mOverwriteConfirmer = aConfirmer; }
 
-void Exporter::setProgressReporter(util::IProgressReporter& aReporter) {
-    mProgressReporter = &aReporter;
-}
+void Exporter::setProgressReporter(util::IProgressReporter& aReporter) { mProgressReporter = &aReporter; }
 
-void Exporter::setUILogger(UILogger& aLogger) {
-    mUILogger = &aLogger;
-}
+void Exporter::setUILogger(UILogger& aLogger) { mUILogger = &aLogger; }
 
 Exporter::Result Exporter::execute(const CommonParam& aCommon, const ImageParam& aImage) {
     // check param
@@ -313,10 +328,14 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam&
         videoCodec.command.replace(QRegExp("\\$ocodec(\\s|$)"), videoCodec.name + "\\1");
         videoCodec.command.replace(QRegExp("\\$opath(\\s|$)"), outPath.replace(" ", "%20"));
         videoCodec.command.replace(QRegExp("\\$pixfmt(\\s|$)"), aVideo.pixfmt + "\\1");
-        videoCodec.command.replace(QRegExp("\\$arg_colorfilter(\\s|$)"),
-            (colorIndex == 0 ? QString("-vf colormatrix=bt601:bt709") : QString("")) + "\\1");
-        videoCodec.command.replace(QRegExp("\\$arg_colorspace(\\s|$)"),
-            QString("-colorspace ") + (colorIndex == 0 ? QString("bt709") : QString("smpte170m")) + "\\1");
+        videoCodec.command.replace(
+            QRegExp("\\$arg_colorfilter(\\s|$)"),
+            (colorIndex == 0 ? QString("-vf colormatrix=bt601:bt709") : QString("")) + "\\1"
+        );
+        videoCodec.command.replace(
+            QRegExp("\\$arg_colorspace(\\s|$)"),
+            QString("-colorspace ") + (colorIndex == 0 ? QString("bt709") : QString("smpte170m")) + "\\1"
+        );
         // videoCodec.command.replace("\\", "");
 
         // qDebug() << videoCodec.command;

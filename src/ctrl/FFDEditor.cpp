@@ -12,7 +12,12 @@ namespace ctrl {
 
 //-------------------------------------------------------------------------------------------------
 FFDEditor::FFDEditor(Project& aProject, DriverResources& aDriverResources, UILogger& aUILogger):
-    mProject(aProject), mDriverResources(aDriverResources), mUILogger(aUILogger), mParam(), mCurrent(), mRootTarget(),
+    mProject(aProject),
+    mDriverResources(aDriverResources),
+    mUILogger(aUILogger),
+    mParam(),
+    mCurrent(),
+    mRootTarget(),
     mTargets() {
     // setup shader
     if (!mDriverResources.meshTransformerResource()) {
@@ -23,9 +28,12 @@ FFDEditor::FFDEditor(Project& aProject, DriverResources& aDriverResources, UILog
     if (!mDriverResources.ffdTaskResource()) {
         gl::Global::makeCurrent();
         mDriverResources.grabFFDTaskResource(new ffd::TaskResource());
-        mDriverResources.ffdTaskResource()->setup("./data/shader/FreeFormDeformVert.glsl",
-            "./data/shader/FFDEraseVert.glsl", "./data/shader/FFDFocusVertexVert.glsl",
-            "./data/shader/FFDBlurVert.glsl");
+        mDriverResources.ffdTaskResource()->setup(
+            "./data/shader/FreeFormDeformVert.glsl",
+            "./data/shader/FFDEraseVert.glsl",
+            "./data/shader/FFDFocusVertexVert.glsl",
+            "./data/shader/FFDBlurVert.glsl"
+        );
     }
 
 #if 0
@@ -158,9 +166,7 @@ FFDEditor::FFDEditor(Project& aProject, DriverResources& aDriverResources, UILog
 #endif
 }
 
-FFDEditor::~FFDEditor() {
-    finalize();
-}
+FFDEditor::~FFDEditor() { finalize(); }
 
 void FFDEditor::finalize() {
     mCurrent.reset();
@@ -207,9 +213,7 @@ bool FFDEditor::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aC
     return false;
 }
 
-void FFDEditor::updateEvent(EventType) {
-    resetCurrentTarget();
-}
+void FFDEditor::updateEvent(EventType) { resetCurrentTarget(); }
 
 core::LayerMesh* FFDEditor::getCurrentAreaMesh(core::ObjectNode& aNode) const {
     if (!aNode.timeLine())
@@ -245,7 +249,8 @@ bool FFDEditor::resetCurrentTarget(QString* aMessage) {
                 mTargets.push_back(new ffd::Target(node));
                 // create task
                 mTargets.back()->task.reset(
-                    new ffd::Task(*mDriverResources.ffdTaskResource(), *mDriverResources.meshTransformerResource()));
+                    new ffd::Task(*mDriverResources.ffdTaskResource(), *mDriverResources.meshTransformerResource())
+                );
             }
             mTargets.back()->task->resetDst(areaMesh->vertexCount());
         }

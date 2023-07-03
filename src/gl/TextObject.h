@@ -34,31 +34,17 @@ public:
     explicit TextObject(const QString& aText);
 
     void setText(const QString& aText);
-    const QString& text() const {
-        return mText;
-    }
+    const QString& text() const { return mText; }
 
-    quint16 checksum() const {
-        return mCRC16;
-    }
-    MapKey mapKey() const {
-        return MapKey(mCRC16, mText);
-    }
+    quint16 checksum() const { return mCRC16; }
+    MapKey mapKey() const { return MapKey(mCRC16, mText); }
     int pixelCount() const;
 
-    gl::Texture& texture() {
-        return mTexture;
-    }
-    const gl::Texture& texture() const {
-        return mTexture;
-    }
+    gl::Texture& texture() { return mTexture; }
+    const gl::Texture& texture() const { return mTexture; }
 
-    WorkCache& workCache() {
-        return mWorkCache;
-    }
-    const WorkCache& workCache() const {
-        return mWorkCache;
-    }
+    WorkCache& workCache() { return mWorkCache; }
+    const WorkCache& workCache() const { return mWorkCache; }
 
 private:
     QString mText;

@@ -216,8 +216,14 @@ QString indexToTimeFormat(int aIndex) {
 namespace gui {
 
 GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget* aParent):
-    EasyDialog(tr("General Settings"), aParent), mTabs(new QTabWidget(this)), mInitialLanguageIndex(), mLanguageBox(),
-    mInitialTimeFormatIndex(), mTimeFormatBox(), mInitialThemeKey("default"), mThemeBox(),
+    EasyDialog(tr("General Settings"), aParent),
+    mTabs(new QTabWidget(this)),
+    mInitialLanguageIndex(),
+    mLanguageBox(),
+    mInitialTimeFormatIndex(),
+    mTimeFormatBox(),
+    mInitialThemeKey("default"),
+    mThemeBox(),
     mGUIResources(aGUIResources) {
     // read current settings
     {
@@ -365,14 +371,18 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mResetKeybindsButton->setToolTip(tr("Reset all keybinds, a restart is required."));
         connect(mResetKeybindsButton, &QPushButton::clicked, [=]() {
             QSettings settings;
-            settings.setValue("keybindReset",
+            settings.setValue(
+                "keybindReset",
                 settings.value("keybindReset").isValid()
                     ? settings.value("keybindReset").toBool() ? false : true /*  _(:з)∠)_ */
-                    : true);
-            MainWindow::showInfoPopup(tr("Keybinds reset status"),
+                    : true
+            );
+            MainWindow::showInfoPopup(
+                tr("Keybinds reset status"),
                 settings.value("keybindReset").toBool() ? tr("The keybinds will be reset when you restart.")
                                                         : tr("The keybinds will not be reset when you restart."),
-                "Info");
+                "Info"
+            );
         });
         keybindingSettings->addRow(mResetKeybindsButton);
     }
@@ -436,7 +446,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             if (!pGenSuccess) {
                 ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
                 ffmpegNotif.setText(
-                    tr("FFmpeg was unable to generate palettes, please check if it's a valid FFmpeg executable."));
+                    tr("FFmpeg was unable to generate palettes, please check if it's a valid FFmpeg executable.")
+                );
                 ffmpegNotif.addButton(QMessageBox::Ok);
                 ffmpegNotif.exec();
                 return;
@@ -450,7 +461,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             ffmpegNotif.setText(tr("All tests have passed, FFmpeg is working correctly."));
             ffmpegNotif.setDetailedText(
                 tr("Tests:\nCheck FFmpeg version ... 🗸\nCheck FFmpeg exporting ... 🗸\n"
-                   "Check FFmpeg palette generation ... 🗸"));
+                   "Check FFmpeg palette generation ... 🗸")
+            );
             ffmpegNotif.addButton(QMessageBox::Ok);
             ffmpegNotif.exec();
             return;
@@ -459,7 +471,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         selectFromExe = new QPushButton(tr("Select from executable and automatically setup"));
         selectFromExe->setToolTip(
             tr("This will remove previous instances of FFmpeg from your tools directory"
-               " and replace them with your custom executable, please make sure this is a valid FFmpeg executable."));
+               " and replace them with your custom executable, please make sure this is a valid FFmpeg executable.")
+        );
         connect(selectFromExe, &QPushButton::clicked, [=]() {
             util::NetworkUtil net;
             QDir dir = QDir("./tools");
@@ -523,7 +536,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             }
 
             QFileInfo ffmpeg = networking.downloadGithubFile(
-                "https://api.github.com/repos/AnimeEffectsDevs/ffmpeg-bin/releases/latest", gitFile, id, this);
+                "https://api.github.com/repos/AnimeEffectsDevs/ffmpeg-bin/releases/latest", gitFile, id, this
+            );
             qDebug() << "Download name : " << ffmpeg.fileName() << "\n"
                      << "Download is executable : " << ffmpeg.isExecutable();
             if (ffmpeg.isExecutable()) {
@@ -540,8 +554,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             QMessageBox error;
             error.setWindowTitle(tr("Error"));
             error.setText(tr("An error has ocurred, please send the bellow info to the developers."));
-            error.setDetailedText("Filename : " + ffmpeg.fileName() + "\nIs Executable : " + ffmpeg.isExecutable() +
-                "\nDownload params : " + "Hardcoded API | " + gitFile + " | " + id);
+            error.setDetailedText(
+                "Filename : " + ffmpeg.fileName() + "\nIs Executable : " + ffmpeg.isExecutable() +
+                "\nDownload params : " + "Hardcoded API | " + gitFile + " | " + id
+            );
             error.exec();
         });
 
@@ -584,45 +600,27 @@ QFormLayout* GeneralSettingDialog::createTab(const QString& aTitle, QFormLayout*
     return form;
 }
 
-bool GeneralSettingDialog::languageHasChanged() {
-    return (mInitialLanguageIndex != mLanguageBox->currentIndex());
-}
+bool GeneralSettingDialog::languageHasChanged() { return (mInitialLanguageIndex != mLanguageBox->currentIndex()); }
 
-bool GeneralSettingDialog::easingHasChanged() {
-    return (mInitialEasingIndex != mEasingBox->currentIndex());
-}
+bool GeneralSettingDialog::easingHasChanged() { return (mInitialEasingIndex != mEasingBox->currentIndex()); }
 
-bool GeneralSettingDialog::rangeHasChanged() {
-    return (mInitialRangeIndex != mRangeBox->currentIndex());
-}
+bool GeneralSettingDialog::rangeHasChanged() { return (mInitialRangeIndex != mRangeBox->currentIndex()); }
 
 bool GeneralSettingDialog::timeFormatHasChanged() {
     return (mInitialTimeFormatIndex != mTimeFormatBox->currentIndex());
 }
 
-bool GeneralSettingDialog::themeHasChanged() {
-    return (mInitialThemeKey != mThemeBox->currentData());
-}
+bool GeneralSettingDialog::themeHasChanged() { return (mInitialThemeKey != mThemeBox->currentData()); }
 
-bool GeneralSettingDialog::autoSaveHasChanged() {
-    return (bAutoSave != mAutoSave->isChecked());
-}
+bool GeneralSettingDialog::autoSaveHasChanged() { return (bAutoSave != mAutoSave->isChecked()); }
 
-bool GeneralSettingDialog::autoSaveDelayHasChanged() {
-    return (mAutoSaveDelay != mAutoSaveDelayBox->value());
-}
+bool GeneralSettingDialog::autoSaveDelayHasChanged() { return (mAutoSaveDelay != mAutoSaveDelayBox->value()); }
 
-bool GeneralSettingDialog::cbCopyHasChanged() {
-    return (bAutoCbCopy != mAutoCbCopy->isChecked());
-}
+bool GeneralSettingDialog::cbCopyHasChanged() { return (bAutoCbCopy != mAutoCbCopy->isChecked()); }
 
-QString GeneralSettingDialog::theme() {
-    return mThemeBox->currentData().toString();
-}
+QString GeneralSettingDialog::theme() { return mThemeBox->currentData().toString(); }
 
-bool GeneralSettingDialog::keyDelayHasChanged() {
-    return (mKeyDelay != mKeyDelayBox->value());
-}
+bool GeneralSettingDialog::keyDelayHasChanged() { return (mKeyDelay != mKeyDelayBox->value()); }
 
 void GeneralSettingDialog::saveSettings() {
     QSettings settings;

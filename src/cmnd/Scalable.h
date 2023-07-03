@@ -17,12 +17,8 @@ public:
     virtual void initialize() {}
     virtual bool initializeAndExecute();
     void grabListener(Listener* aListener);
-    Vector& commands() {
-        return mCommands;
-    }
-    const Vector& commands() const {
-        return mCommands;
-    }
+    Vector& commands() { return mCommands; }
+    const Vector& commands() const { return mCommands; }
 
 private:
     virtual bool isUseless() const;
@@ -39,9 +35,7 @@ class LambdaScalable: public cmnd::Scalable {
     typedef std::function<void(Vector&)> InitializerType;
     InitializerType mInitializer;
 
-    virtual void initialize() {
-        mInitializer(commands());
-    }
+    virtual void initialize() { mInitializer(commands()); }
 
 public:
     LambdaScalable(const InitializerType& aInitializer): mInitializer(aInitializer) {}

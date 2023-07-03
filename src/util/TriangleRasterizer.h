@@ -25,9 +25,7 @@ public:
 
     TriangleRasterizer(const QVector2D& aVtx1, const QVector2D& aVtx2, const QVector2D& aVtx3);
 
-    inline bool hasNext() const {
-        return mState >= 0;
-    }
+    inline bool hasNext() const { return mState >= 0; }
 
     inline ScanLine nextLine() {
         ScanLine result;

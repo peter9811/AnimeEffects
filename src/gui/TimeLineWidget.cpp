@@ -6,10 +6,21 @@ namespace gui {
 
 //-------------------------------------------------------------------------------------------------
 TimeLineWidget::TimeLineWidget(
-    GUIResources& aResources, ViaPoint& aViaPoint, core::Animator& aAnimator, QWidget* aParent):
+    GUIResources& aResources, ViaPoint& aViaPoint, core::Animator& aAnimator, QWidget* aParent
+):
     QScrollArea(aParent),
-    mGUIResources(aResources), mProject(), mAnimator(aAnimator), mInner(), mCameraInfo(), mAbstractCursor(),
-    mVerticalScrollValue(0), mTimer(), mElapsed(), mBeginFrame(), mLastFrame(), mDoesLoop(false) {
+    mGUIResources(aResources),
+    mProject(),
+    mAnimator(aAnimator),
+    mInner(),
+    mCameraInfo(),
+    mAbstractCursor(),
+    mVerticalScrollValue(0),
+    mTimer(),
+    mElapsed(),
+    mBeginFrame(),
+    mLastFrame(),
+    mDoesLoop(false) {
     mInner = new TimeLineEditorWidget(aViaPoint, this);
 
     this->setWidget(mInner);
@@ -46,34 +57,28 @@ void TimeLineWidget::setPlayBackActivity(bool aIsActive) {
     onPlayBackStateChanged(aIsActive);
 }
 
-void TimeLineWidget::setPlayBackLoop(bool aDoesLoop) {
-    mDoesLoop = aDoesLoop;
-}
+void TimeLineWidget::setPlayBackLoop(bool aDoesLoop) { mDoesLoop = aDoesLoop; }
 
 void TimeLineWidget::setFrame(core::Frame aFrame) {
     mInner->setFrame(aFrame);
     onFrameUpdated();
 }
 
-core::Frame TimeLineWidget::currentFrame() const {
-    return mInner->currentFrame();
-}
+core::Frame TimeLineWidget::currentFrame() const { return mInner->currentFrame(); }
 
-int TimeLineWidget::getFps() const {
-    return mProject ? mProject->attribute().fps() : 60;
-}
+int TimeLineWidget::getFps() const { return mProject ? mProject->attribute().fps() : 60; }
 
-double TimeLineWidget::getOneFrameTime() const {
-    return 1000.0 / getFps();
-}
+double TimeLineWidget::getOneFrameTime() const { return 1000.0 / getFps(); }
 
 QPoint TimeLineWidget::viewportTransform() const {
     // @note bug? Sometimes, the value of vertical scroll bar is different from the set value.-
     QPoint point = {-this->horizontalScrollBar()->value(), -this->verticalScrollBar()->value()};
     // @note by yukusai: Fixed by the heresy you see below you, Qt is atrocious I swear...
     if (mVerticalScrollValue != this->verticalScrollBar()->value()) {
-        point.setY(mVerticalScrollValue > this->verticalScrollBar()->value() ? -mVerticalScrollValue
-                                                                             : -this->verticalScrollBar()->value());
+        point.setY(
+            mVerticalScrollValue > this->verticalScrollBar()->value() ? -mVerticalScrollValue
+                                                                      : -this->verticalScrollBar()->value()
+        );
     }
     return point;
 }
@@ -100,9 +105,7 @@ void TimeLineWidget::updateCursor(const core::AbstractCursor& aCursor) {
 }
 
 //-------------------------------------------------------------------------------------------------
-void TimeLineWidget::onTreeViewUpdated(QTreeWidgetItem* aTopNode) {
-    mInner->updateLines(aTopNode);
-}
+void TimeLineWidget::onTreeViewUpdated(QTreeWidgetItem* aTopNode) { mInner->updateLines(aTopNode); }
 
 void TimeLineWidget::onScrollUpdated(int aValue) {
     this->verticalScrollBar()->setValue(aValue);
@@ -110,9 +113,7 @@ void TimeLineWidget::onScrollUpdated(int aValue) {
     updateCamera();
 }
 
-void TimeLineWidget::onSelectionChanged(core::ObjectNode* aRepresent) {
-    mInner->updateLineSelection(aRepresent);
-}
+void TimeLineWidget::onSelectionChanged(core::ObjectNode* aRepresent) { mInner->updateLineSelection(aRepresent); }
 
 void TimeLineWidget::onPlayBackUpdated() {
     if (!mAnimator.isSuspended()) {
@@ -162,9 +163,7 @@ void TimeLineWidget::onThemeUpdated(theme::Theme& aTheme) {
     }
 }
 
-void TimeLineWidget::onProjectAttributeUpdated() {
-    mInner->updateProjectAttribute();
-}
+void TimeLineWidget::onProjectAttributeUpdated() { mInner->updateProjectAttribute(); }
 
 void TimeLineWidget::triggerOnTimeFormatChanged() {
     onTimeFormatChanged();

@@ -21,7 +21,8 @@
 
 namespace {
 
-template<class tEdit> void setMinMaxOptionWidth(tEdit* aEdit) {
+template<class tEdit>
+void setMinMaxOptionWidth(tEdit* aEdit) {
     aEdit->setMaximumWidth(200);
     aEdit->setMinimumWidth(50);
 }
@@ -31,8 +32,13 @@ template<class tEdit> void setMinMaxOptionWidth(tEdit* aEdit) {
 namespace gui {
 //-------------------------------------------------------------------------------------------------
 ExportDialog::ExportDialog(core::Project& aProject, const QString& aPath, QWidget* aParent):
-    EasyDialog(tr("Export Animation..."), aParent), mProject(aProject), mCommonParam(), mSize(), mFrameMax(),
-    mFixAspect(true), mSizeUpdating(false) {
+    EasyDialog(tr("Export Animation..."), aParent),
+    mProject(aProject),
+    mCommonParam(),
+    mSize(),
+    mFrameMax(),
+    mFixAspect(true),
+    mSizeUpdating(false) {
     mCommonParam.path = aPath;
 
     mCommonParam.size = mProject.attribute().imageSize();
@@ -56,10 +62,12 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout) {
         x->setRange(1, 32767);
         y->setRange(1, 32767);
         if (!(mCommonParam.size.width() % 2 == 0) || !(mCommonParam.size.height() % 2 == 0)) {
-            MainWindow::showInfoPopup(tr("Value is Odd"),
+            MainWindow::showInfoPopup(
+                tr("Value is Odd"),
                 tr("The width or height of the image ends with an odd number. "
                    "Please change these parameters to an even number as they may cause the export to fail."),
-                "Warn");
+                "Warn"
+            );
             mWarningShown = true;
         }
         x->setValue(mCommonParam.size.width());
@@ -72,10 +80,12 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout) {
             if (mSizeUpdating)
                 return;
             if (!(aValue % 2 == 0) && !mWarningShown) {
-                MainWindow::showInfoPopup(tr("Value is Odd"),
+                MainWindow::showInfoPopup(
+                    tr("Value is Odd"),
                     tr("A width or height ending in an odd number"
                        " may make the exporting process fail, please try another value."),
-                    "Warn");
+                    "Warn"
+                );
                 mWarningShown = true;
                 return;
             }
@@ -94,10 +104,12 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout) {
                 return;
 
             if (!(aValue % 2 == 0) && !mWarningShown) {
-                MainWindow::showInfoPopup(tr("Value is Odd"),
+                MainWindow::showInfoPopup(
+                    tr("Value is Odd"),
                     tr("A height or width ending in an odd number"
                        " may make the exporting process fail, please try another value."),
-                    "Warn");
+                    "Warn"
+                );
                 mWarningShown = true;
                 return;
             }
@@ -168,9 +180,9 @@ void ExportDialog::pushFpsBox(QFormLayout& aLayout) {
 
 //-------------------------------------------------------------------------------------------------
 ImageExportDialog::ImageExportDialog(
-    core::Project& aProject, const QString& aDirPath, const QString& aSuffix, QWidget* aParent):
-    ExportDialog(aProject, aDirPath, aParent),
-    mImageParam() {
+    core::Project& aProject, const QString& aDirPath, const QString& aSuffix, QWidget* aParent
+):
+    ExportDialog(aProject, aDirPath, aParent), mImageParam() {
     {
         QString baseName = QFileInfo(aProject.fileName()).baseName();
         if (baseName.isEmpty())
@@ -285,9 +297,9 @@ QLayout* GifExportDialog::createGifOption() {
 
 //-------------------------------------------------------------------------------------------------
 VideoExportDialog::VideoExportDialog(
-    core::Project& aProject, const QString& aFilePath, const ctrl::VideoFormat& aFormat, QWidget* aParent):
-    ExportDialog(aProject, aFilePath, aParent),
-    mVideoParam() {
+    core::Project& aProject, const QString& aFilePath, const ctrl::VideoFormat& aFormat, QWidget* aParent
+):
+    ExportDialog(aProject, aFilePath, aParent), mVideoParam() {
     {
         mVideoParam.format = aFormat;
         mVideoParam.bps = 5 * 1000 * 1000;
@@ -363,11 +375,14 @@ QLayout* VideoExportDialog::createVideoOption() {
         }
     }
     if (colorBox) {
-        colorBox->addItems(QStringList() << ""
-                                         << "");
+        colorBox->addItems(
+            QStringList() << ""
+                          << ""
+        );
 
-        this->connect(colorBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged),
-            [=]() { this->mVideoParam.colorIndex = colorBox->currentIndex(); });
+        this->connect(colorBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged), [=]() {
+            this->mVideoParam.colorIndex = colorBox->currentIndex();
+        });
 
         // initialize enabled
         if (!mVideoParam.format.codecs.isEmpty()) {
@@ -379,8 +394,9 @@ QLayout* VideoExportDialog::createVideoOption() {
     // pixel format
     QComboBox* pixfmtBox = new QComboBox();
     // connect
-    this->connect(pixfmtBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged),
-        [=]() { this->mVideoParam.pixfmt = pixfmtBox->currentText(); });
+    this->connect(pixfmtBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged), [=]() {
+        this->mVideoParam.pixfmt = pixfmtBox->currentText();
+    });
     // initialize enabled
     if (!mVideoParam.format.codecs.isEmpty()) {
         updatePixelFormat(pixfmtBox, mVideoParam.format.codecs.at(0).pixfmts);

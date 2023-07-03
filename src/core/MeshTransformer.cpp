@@ -21,9 +21,14 @@ MeshTransformer::~MeshTransformer() {
     }
 }
 
-void MeshTransformer::callGL(const TimeKeyExpans& aExpans, LayerMesh::MeshBuffer& aMeshBuffer,
-    const QVector2D& aOriginOffset, util::ArrayBlock<const gl::Vector3> aPositions, bool aNonPosed,
-    bool aUseInfluence) {
+void MeshTransformer::callGL(
+    const TimeKeyExpans& aExpans,
+    LayerMesh::MeshBuffer& aMeshBuffer,
+    const QVector2D& aOriginOffset,
+    util::ArrayBlock<const gl::Vector3> aPositions,
+    bool aNonPosed,
+    bool aUseInfluence
+) {
     XC_ASSERT(aPositions);
 
     auto& buffer = aMeshBuffer;
@@ -80,7 +85,8 @@ void MeshTransformer::callGL(const TimeKeyExpans& aExpans, LayerMesh::MeshBuffer
             if (useDualQuaternion) {
                 auto palette = aNonPosed ? PosePalette().dualQuaternions() : aExpans.posePalette().dualQuaternions();
                 program.setTupleUniformValueArray<GLfloat>(
-                    "uBoneDualQuat", palette.array()->data(), palette.count() * 2, 4);
+                    "uBoneDualQuat", palette.array()->data(), palette.count() * 2, 4
+                );
             } else {
                 auto palette = aNonPosed ? PosePalette().matrices() : aExpans.posePalette().matrices();
                 program.setUniformValueArray("uBoneMatrix", palette);

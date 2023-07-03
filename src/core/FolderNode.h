@@ -24,54 +24,24 @@ public:
     void setDefaultHSV(QList<int>);
 
     void grabHeightMap(HeightMap* aNode);
-    const HeightMap* heightMap() const {
-        return mHeightMap.data();
-    }
+    const HeightMap* heightMap() const { return mHeightMap.data(); }
 
     // from ObjectNode
-    virtual ObjectType type() const {
-        return ObjectType_Folder;
-    }
-    virtual void setName(const QString& aName) {
-        mName = aName;
-    }
-    virtual const QString& name() const {
-        return mName;
-    }
+    virtual ObjectType type() const { return ObjectType_Folder; }
+    virtual void setName(const QString& aName) { mName = aName; }
+    virtual const QString& name() const { return mName; }
     virtual float initialDepth() const;
-    virtual void setVisibility(bool aIsVisible) {
-        mIsVisible = aIsVisible;
-    }
-    virtual bool isVisible() const {
-        return mIsVisible;
-    }
-    virtual void setSlimDown(bool aIsSlimmed) {
-        mIsSlimmedDown = aIsSlimmed;
-    }
-    virtual bool isSlimmedDown() const {
-        return mIsSlimmedDown;
-    }
-    virtual bool canHoldChild() const {
-        return true;
-    }
-    virtual void setInitialRect(const QRect& aRect) {
-        mInitialRect = aRect;
-    }
-    virtual QRect initialRect() const {
-        return mInitialRect;
-    }
-    virtual Renderer* renderer() {
-        return this;
-    }
-    virtual const Renderer* renderer() const {
-        return this;
-    }
-    virtual TimeLine* timeLine() {
-        return &mTimeLine;
-    }
-    virtual const TimeLine* timeLine() const {
-        return &mTimeLine;
-    }
+    virtual void setVisibility(bool aIsVisible) { mIsVisible = aIsVisible; }
+    virtual bool isVisible() const { return mIsVisible; }
+    virtual void setSlimDown(bool aIsSlimmed) { mIsSlimmedDown = aIsSlimmed; }
+    virtual bool isSlimmedDown() const { return mIsSlimmedDown; }
+    virtual bool canHoldChild() const { return true; }
+    virtual void setInitialRect(const QRect& aRect) { mInitialRect = aRect; }
+    virtual QRect initialRect() const { return mInitialRect; }
+    virtual Renderer* renderer() { return this; }
+    virtual const Renderer* renderer() const { return this; }
+    virtual TimeLine* timeLine() { return &mTimeLine; }
+    virtual const TimeLine* timeLine() const { return &mTimeLine; }
 
     virtual bool serialize(Serializer& aOut) const;
     virtual bool deserialize(Deserializer& aIn);
@@ -82,9 +52,7 @@ public:
     virtual void renderClipper(const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
     virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData);
     virtual void setClipped(bool aIsClipped);
-    virtual bool isClipped() const {
-        return mIsClipped;
-    }
+    virtual bool isClipped() const { return mIsClipped; }
 
 private:
     void renderClippees(const RenderInfo&, const TimeCacheAccessor&);

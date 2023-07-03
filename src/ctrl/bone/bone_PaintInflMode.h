@@ -24,7 +24,8 @@ namespace bone {
     private:
         bool updatePaint();
         void assignInfluence(
-            core::Bone2& aTarget, const std::array<QVector2D, 2>& aPrev, const std::array<QVector2D, 2>& aNext);
+            core::Bone2& aTarget, const std::array<QVector2D, 2>& aPrev, const std::array<QVector2D, 2>& aNext
+        );
         void notifyAssign();
 
         core::Project& mProject;

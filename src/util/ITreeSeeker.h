@@ -3,7 +3,8 @@
 
 namespace util {
 
-template<typename tData, typename tAddress> class ITreeSeeker {
+template<typename tData, typename tAddress>
+class ITreeSeeker {
 public:
     typedef tData Data;
     typedef void* Position;

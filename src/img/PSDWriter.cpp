@@ -13,7 +13,7 @@
     } while (0)
 
 #define PSDWRITER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
-//#define PSDWRITER_DUMP(...)
+// #define PSDWRITER_DUMP(...)
 
 namespace img {
 
@@ -219,15 +219,21 @@ bool PSDWriter::writeLayerInfo() {
         write((const uint8*)"8BIM", 4);
 
         // blend mode key
-        PSDWRITER_CHECK_VALIDVALUE(layer->blendMode.size() == 4, layer->blendMode.size(),
-            "layer and mask info/layer info/layer records/blend mode key");
+        PSDWRITER_CHECK_VALIDVALUE(
+            layer->blendMode.size() == 4,
+            layer->blendMode.size(),
+            "layer and mask info/layer info/layer records/blend mode key"
+        );
         write((uint8*)layer->blendMode.c_str(), 4);
 
         // opacity
         write(layer->opacity);
         // clipping
-        PSDWRITER_CHECK_VALIDVALUE(layer->clipping == 0 || layer->clipping == 1, layer->clipping,
-            "layer and mask info/layer info/layer records/clipping");
+        PSDWRITER_CHECK_VALIDVALUE(
+            layer->clipping == 0 || layer->clipping == 1,
+            layer->clipping,
+            "layer and mask info/layer info/layer records/clipping"
+        );
         write(layer->clipping);
         // flags
         write(layer->flags);
@@ -248,8 +254,11 @@ bool PSDWriter::writeLayerInfo() {
             for (int i = 0; i < 4; ++i)
                 write(layer->mask->rect.edge[i]);
             // default color
-            PSDWRITER_CHECK_VALIDVALUE(layer->mask->defaultColor == 0 || layer->mask->defaultColor == 255,
-                layer->mask->defaultColor, "layer and mask info/layer info/layer records/layer mask/default color");
+            PSDWRITER_CHECK_VALIDVALUE(
+                layer->mask->defaultColor == 0 || layer->mask->defaultColor == 255,
+                layer->mask->defaultColor,
+                "layer and mask info/layer info/layer records/layer mask/default color"
+            );
             write(layer->mask->defaultColor);
             // flags
             write(layer->mask->flags);
@@ -306,7 +315,8 @@ bool PSDWriter::writeLayerInfo() {
         {
             int nameLength = (int)layer->name.size();
             PSDWRITER_CHECK_VALIDVALUE(
-                nameLength <= 255, nameLength, "layer and mask info/layer info/layer record/layer name");
+                nameLength <= 255, nameLength, "layer and mask info/layer info/layer record/layer name"
+            );
             write((uint8)nameLength);
             write((uint8*)layer->name.c_str(), nameLength);
             // padding

@@ -4,9 +4,7 @@ namespace util {
 
 PackBits::PackBits() {}
 
-size_t PackBits::worstEncodedSize(size_t aSrcSize) {
-    return aSrcSize + (aSrcSize / 128) + 1;
-}
+size_t PackBits::worstEncodedSize(size_t aSrcSize) { return aSrcSize + (aSrcSize / 128) + 1; }
 
 size_t PackBits::encode(const XCMemBlock& aSrc, uint8* aDst) {
     const uint8* end = aSrc.data + aSrc.size;

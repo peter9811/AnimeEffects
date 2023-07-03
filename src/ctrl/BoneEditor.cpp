@@ -16,9 +16,7 @@ namespace ctrl {
 BoneEditor::BoneEditor(Project& aProject, GraphicStyle& aStyle, UILogger& aUILogger):
     mProject(aProject), mGraphicStyle(aStyle), mUILogger(aUILogger), mParam(), mCurrent(), mTarget(), mKeyOwner() {}
 
-BoneEditor::~BoneEditor() {
-    finalize();
-}
+BoneEditor::~BoneEditor() { finalize(); }
 
 bool BoneEditor::setTarget(core::ObjectNode* aTarget) {
     finalize();
@@ -57,9 +55,7 @@ bool BoneEditor::updateCursor(const core::CameraInfo& aCamera, const core::Abstr
     return false;
 }
 
-void BoneEditor::updateEvent(EventType) {
-    resetCurrentTarget();
-}
+void BoneEditor::updateEvent(EventType) { resetCurrentTarget(); }
 
 void BoneEditor::renderQt(const core::RenderInfo& aInfo, QPainter& aPainter) {
 #if 0

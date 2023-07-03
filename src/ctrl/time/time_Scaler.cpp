@@ -12,13 +12,9 @@ namespace time {
     //-------------------------------------------------------------------------------------------------
     Scaler::Scaler(): mMaxFrame(), mWheel(kWheelValue), mIndex(1), mFrameList() {}
 
-    void Scaler::setMaxFrame(int aMaxFrame) {
-        mMaxFrame = aMaxFrame;
-    }
+    void Scaler::setMaxFrame(int aMaxFrame) { mMaxFrame = aMaxFrame; }
 
-    void Scaler::setFrameList(const std::array<int, 3>& aFrameList) {
-        mFrameList = aFrameList;
-    }
+    void Scaler::setFrameList(const std::array<int, 3>& aFrameList) { mFrameList = aFrameList; }
 
     void Scaler::update(int aWheelDelta) {
         mWheel = std::max(kMinScaleRaw, std::min(kMaxScaleRaw, mWheel - aWheelDelta));
@@ -30,18 +26,14 @@ namespace time {
         return (mIndex + 1) * frame;
     }
 
-    int Scaler::maxPixelWidth() const {
-        return pixelWidth(mMaxFrame);
-    }
+    int Scaler::maxPixelWidth() const { return pixelWidth(mMaxFrame); }
 
     int Scaler::frame(int aPixelWidth) const {
         const int frame = (aPixelWidth + ((mIndex + 1) >> 1)) / (mIndex + 1);
         return std::max(0, std::min(mMaxFrame, frame));
     }
 
-    int Scaler::maxFrame() const {
-        return mMaxFrame;
-    }
+    int Scaler::maxFrame() const { return mMaxFrame; }
 
     Scaler::Attribute Scaler::attribute(int aFrame) const {
         Attribute attr;

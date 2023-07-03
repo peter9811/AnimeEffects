@@ -39,9 +39,7 @@ public:
     struct Result {
         Result();
         Result(ResultCode aCode, const QString& aMessage);
-        explicit operator bool() const {
-            return code == ResultCode_Success;
-        }
+        explicit operator bool() const { return code == ResultCode_Success; }
         ResultCode code;
         QString message;
     };
@@ -88,12 +86,8 @@ public:
     Result execute(const CommonParam& aCommon, const GifParam& aGif);
     Result execute(const CommonParam& aCommon, const VideoParam& aVideo);
 
-    const QString& log() const {
-        return mLog;
-    }
-    bool isCanceled() const {
-        return mIsCanceled;
-    }
+    const QString& log() const { return mLog; }
+    bool isCanceled() const { return mIsCanceled; }
 
 private:
     typedef std::unique_ptr<QOpenGLFramebufferObject> FramebufferPtr;
@@ -106,15 +100,9 @@ private:
         void write(const QByteArray& aBytes);
         bool finish(const std::function<bool()>& aWaiter);
         bool execute(const QString& aArgments, const std::function<bool()>& aWaiter);
-        bool errorOccurred() const {
-            return mErrorOccurred;
-        }
-        QString errorString() const {
-            return mErrorString;
-        }
-        QProcess::ProcessError errorCode() const {
-            return mErrorCode;
-        }
+        bool errorOccurred() const { return mErrorOccurred; }
+        QString errorString() const { return mErrorString; }
+        QProcess::ProcessError errorCode() const { return mErrorCode; }
         QString popLog();
 
     private:

@@ -5,13 +5,9 @@
 namespace core {
 
 //-------------------------------------------------------------------------------------------------
-ResourceHolder::ResourceHolder(): mImageTrees(), mRootPath() {
-    mRootPath = QDir::currentPath();
-}
+ResourceHolder::ResourceHolder(): mImageTrees(), mRootPath() { mRootPath = QDir::currentPath(); }
 
-ResourceHolder::~ResourceHolder() {
-    destroy();
-}
+ResourceHolder::~ResourceHolder() { destroy(); }
 
 QString ResourceHolder::relativeFilePath(const QString& aAbsFilePath) const {
     QDir dir(mRootPath);

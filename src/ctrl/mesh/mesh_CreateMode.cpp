@@ -16,9 +16,19 @@ namespace mesh {
 
     //-------------------------------------------------------------------------------------------------
     CreateMode::CreateMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mFocuser(), mMeshAccessor(), mState(State_Idle), mDanglingPos(), mDanglingRef(),
-        mCursorPos(), mLastFocus(), mMoverRef() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mFocuser(),
+        mMeshAccessor(),
+        mState(State_Idle),
+        mDanglingPos(),
+        mDanglingRef(),
+        mCursorPos(),
+        mLastFocus(),
+        mMoverRef() {
         XC_PTR_ASSERT(mKeyOwner.key);
         mMeshAccessor.setKey(*mKeyOwner.key);
         mFocuser.setMesh(mMeshAccessor);

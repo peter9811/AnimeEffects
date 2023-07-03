@@ -15,17 +15,24 @@ namespace ctrl {
 namespace pose {
 
     DrawBoneMode::DrawBoneMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mTargetMtx(aTarget.mtx), mTargetInvMtx(aTarget.invMtx),
-        mKeyOwner(aKey), mFocuser(), mCommandRef(), mPullPos(), mPullOffset(), mPullPosRate(), mPullWeight(0.0f) {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mKeyOwner(aKey),
+        mFocuser(),
+        mCommandRef(),
+        mPullPos(),
+        mPullOffset(),
+        mPullPosRate(),
+        mPullWeight(0.0f) {
         XC_PTR_ASSERT(mKeyOwner.key);
         mFocuser.setTopBones(mKeyOwner.key->data().topBones());
         mFocuser.setFocusConnector(true);
         mFocuser.setTargetMatrix(mTargetMtx);
     }
 
-    void DrawBoneMode::updateParam(const PoseParam& aParam) {
-        mPullWeight = aParam.diWeight;
-    }
+    void DrawBoneMode::updateParam(const PoseParam& aParam) { mPullWeight = aParam.diWeight; }
 
     bool DrawBoneMode::updateCursor(const CameraInfo& aCamera, const AbstractCursor& aCursor) {
         auto focus = mFocuser.update(aCamera, aCursor.screenPos());
@@ -134,7 +141,8 @@ namespace pose {
                 {
                     auto notifier = new TimeLineUtil::Notifier(mProject);
                     notifier->event().setType(
-                        mKeyOwner.owns() ? TimeLineEvent::Type_PushKey : TimeLineEvent::Type_ChangeKeyValue);
+                        mKeyOwner.owns() ? TimeLineEvent::Type_PushKey : TimeLineEvent::Type_ChangeKeyValue
+                    );
                     notifier->event().pushTarget(mTarget, TimeKeyType_Pose, frame);
                     macro.grabListener(notifier);
                 }

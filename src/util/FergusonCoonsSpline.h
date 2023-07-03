@@ -5,12 +5,11 @@
 
 namespace util {
 
-template<typename tVec> class FergusonCoonsSpline {
+template<typename tVec>
+class FergusonCoonsSpline {
     enum { kSplitCount = 8 }; // a power of 2
 public:
-    FergusonCoonsSpline(): mP0(), mP1(), mV0(), mV1(), mLength() {
-        mLinearize[0] = 0.0f;
-    }
+    FergusonCoonsSpline(): mP0(), mP1(), mV0(), mV1(), mLength() { mLinearize[0] = 0.0f; }
 
     void set(const tVec& p0, const tVec& p1, const tVec& v0, const tVec& v1) {
         mP0 = p0;
@@ -57,9 +56,7 @@ public:
         return get(((float)a + offset) / kSplitCount);
     }
 
-    float length() const {
-        return mLength;
-    }
+    float length() const { return mLength; }
 
 private:
     tVec mP0;

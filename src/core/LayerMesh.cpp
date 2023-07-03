@@ -4,14 +4,16 @@
 
 namespace core {
 
-LayerMesh::MeshBuffer::GLBinder::GLBinder() {
-    gl::Global::makeCurrent();
-}
+LayerMesh::MeshBuffer::GLBinder::GLBinder() { gl::Global::makeCurrent(); }
 
 LayerMesh::MeshBuffer::MeshBuffer():
-    workPositions(GL_TRANSFORM_FEEDBACK_BUFFER), workXArrows(GL_TRANSFORM_FEEDBACK_BUFFER),
-    workYArrows(GL_TRANSFORM_FEEDBACK_BUFFER), outPositions(GL_ARRAY_BUFFER), outXArrows(GL_ARRAY_BUFFER),
-    outYArrows(GL_ARRAY_BUFFER), vtxCount(0) {}
+    workPositions(GL_TRANSFORM_FEEDBACK_BUFFER),
+    workXArrows(GL_TRANSFORM_FEEDBACK_BUFFER),
+    workYArrows(GL_TRANSFORM_FEEDBACK_BUFFER),
+    outPositions(GL_ARRAY_BUFFER),
+    outXArrows(GL_ARRAY_BUFFER),
+    outYArrows(GL_ARRAY_BUFFER),
+    vtxCount(0) {}
 
 void LayerMesh::MeshBuffer::reserve(int aVtxCount) {
     XC_ASSERT(aVtxCount >= 0);
@@ -28,9 +30,7 @@ void LayerMesh::MeshBuffer::reserve(int aVtxCount) {
     }
 }
 
-LayerMesh::MeshBuffer::~MeshBuffer() {
-    gl::Global::makeCurrent();
-}
+LayerMesh::MeshBuffer::~MeshBuffer() { gl::Global::makeCurrent(); }
 
 LayerMesh::ArrayedConnection::ArrayedConnection(): positions(), positionCount(), vertexRange() {}
 
@@ -49,13 +49,9 @@ void LayerMesh::ArrayedConnection::pushPosition(const gl::Vector2& aPos) {
 LayerMesh::ArrayedConnectionList::ArrayedConnectionList():
     indexRanges(), blocks(), indexRangeCount(), useBlockCount(0) {}
 
-LayerMesh::ArrayedConnectionList::~ArrayedConnectionList() {
-    destroyBlocks();
-}
+LayerMesh::ArrayedConnectionList::~ArrayedConnectionList() { destroyBlocks(); }
 
-void LayerMesh::ArrayedConnectionList::clearBlocks() {
-    useBlockCount = 0;
-}
+void LayerMesh::ArrayedConnectionList::clearBlocks() { useBlockCount = 0; }
 
 void LayerMesh::ArrayedConnectionList::destroyBlocks() {
     qDeleteAll(blocks);

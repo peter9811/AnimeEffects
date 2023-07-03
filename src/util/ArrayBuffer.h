@@ -6,16 +6,15 @@
 
 namespace util {
 
-template<typename tObject> class ArrayBuffer {
+template<typename tObject>
+class ArrayBuffer {
     tObject* mObjects;
     int mCount;
 
 public:
     ArrayBuffer(): mObjects(), mCount() {}
 
-    ArrayBuffer(tObject* aObjects, int aCount): mObjects(), mCount() {
-        reset(aObjects, aCount);
-    }
+    ArrayBuffer(tObject* aObjects, int aCount): mObjects(), mCount() { reset(aObjects, aCount); }
 
     ArrayBuffer(const ArrayBuffer<tObject>& aRhs): mObjects(), mCount(aRhs.mCount) {
         if (mCount > 0) {
@@ -38,9 +37,7 @@ public:
         return *this;
     }
 
-    virtual ~ArrayBuffer() {
-        reset();
-    }
+    virtual ~ArrayBuffer() { reset(); }
 
     void reset() {
         if (mObjects) {
@@ -69,29 +66,17 @@ public:
         std::swap(mCount, aRhs.mCount);
     }
 
-    explicit operator bool() const {
-        return mObjects;
-    }
+    explicit operator bool() const { return mObjects; }
 
-    tObject* data() {
-        return mObjects;
-    }
+    tObject* data() { return mObjects; }
 
-    const tObject* data() const {
-        return mObjects;
-    }
+    const tObject* data() const { return mObjects; }
 
-    int count() const {
-        return mCount;
-    }
+    int count() const { return mCount; }
 
-    tObject& operator[](int aIndex) {
-        return mObjects[aIndex];
-    }
+    tObject& operator[](int aIndex) { return mObjects[aIndex]; }
 
-    const tObject& operator[](int aIndex) const {
-        return mObjects[aIndex];
-    }
+    const tObject& operator[](int aIndex) const { return mObjects[aIndex]; }
 
     tObject& at(int aIndex) {
         XC_PTR_ASSERT(mObjects);

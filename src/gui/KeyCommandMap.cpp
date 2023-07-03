@@ -6,9 +6,9 @@ namespace gui {
 KeyCommandMap::KeyCommand::KeyCommand(): key(), group(), label(), binding(), invoker(), releaser() {}
 
 KeyCommandMap::KeyCommand::KeyCommand(
-    const QString& aKey, const QString& aGroup, const QString& aLabel, const ctrl::KeyBinding& aBinding):
-    key(aKey),
-    group(aGroup), label(aLabel), binding(aBinding), invoker(), releaser() {}
+    const QString& aKey, const QString& aGroup, const QString& aLabel, const ctrl::KeyBinding& aBinding
+):
+    key(aKey), group(aGroup), label(aLabel), binding(aBinding), invoker(), releaser() {}
 
 //-------------------------------------------------------------------------------------------------
 KeyCommandMap::KeyCommandMap(QWidget& aParent):
@@ -21,7 +21,8 @@ KeyCommandMap::KeyCommandMap(QWidget& aParent):
     addNewKey("Undo", general, tr("Undo last action"), ctrl::KeyBinding(Qt::Key_Z, Qt::ControlModifier));
 
     addNewKey(
-        "Redo", general, tr("Redo last action"), ctrl::KeyBinding(Qt::Key_Z, Qt::ControlModifier | Qt::ShiftModifier));
+        "Redo", general, tr("Redo last action"), ctrl::KeyBinding(Qt::Key_Z, Qt::ControlModifier | Qt::ShiftModifier)
+    );
 
     addNewKey("Copy", timeline, tr("Copy selected key(s)"), ctrl::KeyBinding(Qt::Key_C, Qt::ControlModifier));
 
@@ -34,31 +35,41 @@ KeyCommandMap::KeyCommandMap(QWidget& aParent):
     addNewKey("ToggleDocks", general, tr("Hide/Show docks"), ctrl::KeyBinding(Qt::Key_Q, Qt::ControlModifier));
 
     addNewKey(
-        "MoveRight", timeline, tr("Move one frame to the right"), ctrl::KeyBinding(Qt::Key_Right, Qt::ControlModifier));
+        "MoveRight", timeline, tr("Move one frame to the right"), ctrl::KeyBinding(Qt::Key_Right, Qt::ControlModifier)
+    );
 
     addNewKey(
-        "MoveLeft", timeline, tr("Move one frame to the Left"), ctrl::KeyBinding(Qt::Key_Left, Qt::ControlModifier));
+        "MoveLeft", timeline, tr("Move one frame to the Left"), ctrl::KeyBinding(Qt::Key_Left, Qt::ControlModifier)
+    );
 
     addNewKey(
-        "MoveToInit", timeline, tr("Move to the initial frame"), ctrl::KeyBinding(Qt::Key_Up, Qt::ControlModifier));
+        "MoveToInit", timeline, tr("Move to the initial frame"), ctrl::KeyBinding(Qt::Key_Up, Qt::ControlModifier)
+    );
 
     addNewKey(
-        "MoveToLast", timeline, tr("Move to the last frame"), ctrl::KeyBinding(Qt::Key_Down, Qt::ControlModifier));
+        "MoveToLast", timeline, tr("Move to the last frame"), ctrl::KeyBinding(Qt::Key_Down, Qt::ControlModifier)
+    );
 
     addNewKey("ToggleRepeat", timeline, tr("Enable/disable looping"), ctrl::KeyBinding(Qt::Key_R, Qt::ControlModifier));
 
     addNewKey(
-        "PlayPause", timeline, tr("Play or pause playback"), ctrl::KeyBinding(Qt::Key_Space, Qt::ControlModifier));
+        "PlayPause", timeline, tr("Play or pause playback"), ctrl::KeyBinding(Qt::Key_Space, Qt::ControlModifier)
+    );
 
     addNewKey("MoveCanvas", view, tr("Move canvas"), ctrl::KeyBinding(Qt::Key_Space, Qt::NoModifier));
 
     addNewKey("RotateCanvas", view, tr("Rotate canvas"), ctrl::KeyBinding(Qt::Key_Space, Qt::ShiftModifier));
 
-    addNewKey("RotateCanvas15Clockwise", view, tr("Rotate canvas 15° clockwise"),
-        ctrl::KeyBinding(Qt::Key_E, Qt::AltModifier));
+    addNewKey(
+        "RotateCanvas15Clockwise", view, tr("Rotate canvas 15° clockwise"), ctrl::KeyBinding(Qt::Key_E, Qt::AltModifier)
+    );
 
-    addNewKey("RotateCanvas15AntiClockwise", view, tr("Rotate canvas 15° anticlockwise"),
-        ctrl::KeyBinding(Qt::Key_Q, Qt::AltModifier));
+    addNewKey(
+        "RotateCanvas15AntiClockwise",
+        view,
+        tr("Rotate canvas 15° anticlockwise"),
+        ctrl::KeyBinding(Qt::Key_Q, Qt::AltModifier)
+    );
 
     addNewKey("ResetCanvasAngle", view, tr("Reset canvas angle"), ctrl::KeyBinding(Qt::Key_F1));
 
@@ -77,12 +88,11 @@ KeyCommandMap::KeyCommandMap(QWidget& aParent):
     resetSubKeyCommands();
 }
 
-KeyCommandMap::~KeyCommandMap() {
-    qDeleteAll(mCommands);
-}
+KeyCommandMap::~KeyCommandMap() { qDeleteAll(mCommands); }
 
 void KeyCommandMap::addNewKey(
-    const QString& aKey, const QString& aGroup, const QString& aName, const ctrl::KeyBinding& aBinding) {
+    const QString& aKey, const QString& aGroup, const QString& aName, const ctrl::KeyBinding& aBinding
+) {
     auto command = new KeyCommand(aKey, aGroup, aName, aBinding);
     mSearchMap[aKey] = command;
     mCommands.push_back(command);

@@ -5,7 +5,8 @@
 
 namespace util {
 
-template<typename tObject> class PlacePointer {
+template<typename tObject>
+class PlacePointer {
     union Align {
         tObject* ptr;
         long long dummy0;
@@ -19,9 +20,7 @@ template<typename tObject> class PlacePointer {
                                   // Yukusai - Current builds use MinGW, has anyone run into this issue?
 
 public:
-    PlacePointer(): mAlign() {
-        mAlign.ptr = NULL;
-    }
+    PlacePointer(): mAlign() { mAlign.ptr = NULL; }
 
     PlacePointer(const PlacePointer<tObject>& aRhs): mAlign() {
         mAlign.ptr = NULL;
@@ -30,9 +29,7 @@ public:
         }
     }
 
-    ~PlacePointer() {
-        destruct();
-    }
+    ~PlacePointer() { destruct(); }
 
     PlacePointer<tObject>& operator=(const PlacePointer<tObject>& aRhs) {
         if (!mAlign.ptr) {
@@ -43,7 +40,8 @@ public:
         return *this;
     }
 
-    template<typename... tArgs> void construct(tArgs&&... aArgs) {
+    template<typename... tArgs>
+    void construct(tArgs&&... aArgs) {
         destruct();
         mAlign.ptr = new (mBuffer) tObject(std::forward<tArgs>(aArgs)...);
     }
@@ -65,21 +63,13 @@ public:
         return *mAlign.ptr;
     }
 
-    tObject* get() const {
-        return mAlign.ptr;
-    }
+    tObject* get() const { return mAlign.ptr; }
 
-    explicit operator bool() const {
-        return mAlign.ptr != NULL;
-    }
+    explicit operator bool() const { return mAlign.ptr != NULL; }
 
-    bool operator==(const tObject* aRhs) {
-        return mAlign.ptr == aRhs;
-    }
+    bool operator==(const tObject* aRhs) { return mAlign.ptr == aRhs; }
 
-    bool operator==(const PlacePointer<tObject>& aRhs) {
-        return mAlign.ptr == aRhs.mAlign.ptr;
-    }
+    bool operator==(const PlacePointer<tObject>& aRhs) { return mAlign.ptr == aRhs.mAlign.ptr; }
 };
 
 } // namespace util

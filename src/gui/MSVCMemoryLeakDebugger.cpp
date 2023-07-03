@@ -11,9 +11,7 @@ int gAllocCount = 0;
 
 MemoryRegister::MemoryRegister(): mBlocks(), mBlockCount(), mMaxBlockCount(), mCount(), mLock() {}
 
-MemoryRegister::~MemoryRegister() {
-    final();
-}
+MemoryRegister::~MemoryRegister() { final(); }
 
 void MemoryRegister::final() {
     QMutexLocker locker(&mLock);
@@ -199,8 +197,9 @@ void operator delete[](void* aPtr) {
 
     //-------------------------------------------------------------------------------------------------
     #include <Windows.h>
-int myAllocHook(int aAllocType, void* aData, size_t aSize, int aBlockUse, long aRequest, const unsigned char* aFileName,
-    int aLine) {
+int myAllocHook(
+    int aAllocType, void* aData, size_t aSize, int aBlockUse, long aRequest, const unsigned char* aFileName, int aLine
+) {
     (void)aSize;
     (void)aFileName;
     if (aBlockUse == _CRT_BLOCK)

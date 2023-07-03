@@ -45,27 +45,34 @@ void TimeCursor::paintEvent(QPaintEvent* aEvent) {
     painter.end();
 }
 
-QColor TimeCursor::edgeColor() const {
-    return mEdgeColor;
-}
+QColor TimeCursor::edgeColor() const { return mEdgeColor; }
 
-void TimeCursor::setEdgeColor(const QColor& cursorEdgeColor) {
-    mEdgeColor = cursorEdgeColor;
-}
+void TimeCursor::setEdgeColor(const QColor& cursorEdgeColor) { mEdgeColor = cursorEdgeColor; }
 
-QColor TimeCursor::bodyColor() const {
-    return mBodyColor;
-}
+QColor TimeCursor::bodyColor() const { return mBodyColor; }
 
-void TimeCursor::setBodyColor(const QColor& cursorBodyColor) {
-    mBodyColor = cursorBodyColor;
-}
+void TimeCursor::setBodyColor(const QColor& cursorBodyColor) { mBodyColor = cursorBodyColor; }
 
 //-------------------------------------------------------------------------------------------------
 TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent):
-    QWidget(aParent), mViaPoint(aViaPoint), mProject(), mTimeLineSlot(), mTreeRestructSlot(), mProjectAttrSlot(),
-    mEditor(), mCamera(), mTimeCursor(this), mKeyCommandMap(*aViaPoint.keyCommandMap()), mCopyKey(), mPasteKey(),
-    mDeleteKey(), mTargets(), mCopyTargets(), mPastePos(), mOnPasting(), mTimelineTheme() {
+    QWidget(aParent),
+    mViaPoint(aViaPoint),
+    mProject(),
+    mTimeLineSlot(),
+    mTreeRestructSlot(),
+    mProjectAttrSlot(),
+    mEditor(),
+    mCamera(),
+    mTimeCursor(this),
+    mKeyCommandMap(*aViaPoint.keyCommandMap()),
+    mCopyKey(),
+    mPasteKey(),
+    mDeleteKey(),
+    mTargets(),
+    mCopyTargets(),
+    mPastePos(),
+    mOnPasting(),
+    mTimelineTheme() {
     mTimeCursor.show();
 
     mEditor.reset(new ctrl::TimeLineEditor());
@@ -86,7 +93,8 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
 
         mCopyToClipboard = new QAction(tr("Copy key to clipboard"), this);
         mCopyToClipboard->connect(
-            mCopyToClipboard, &QAction::triggered, this, &TimeLineEditorWidget::onCopyCBTriggered);
+            mCopyToClipboard, &QAction::triggered, this, &TimeLineEditorWidget::onCopyCBTriggered
+        );
     }
     this->update();
     {
@@ -151,19 +159,16 @@ void TimeLineEditorWidget::setFrame(core::Frame aFrame) {
     updateTimeCursorPos();
 }
 
-core::Frame TimeLineEditorWidget::currentFrame() const {
-    return mEditor->currentFrame();
-}
+core::Frame TimeLineEditorWidget::currentFrame() const { return mEditor->currentFrame(); }
 
-int TimeLineEditorWidget::maxFrame() const {
-    return mEditor->maxFrame();
-}
+int TimeLineEditorWidget::maxFrame() const { return mEditor->maxFrame(); }
 
 void TimeLineEditorWidget::updateTimeCursorPos() {
     if (mCamera) {
         auto pos = mEditor->currentTimeCursorPos();
         mTimeCursor.setCursorPos(
-            QPoint(pos.x(), pos.y() - static_cast<int>(mCamera->leftTopPos().y())), mCamera->screenHeight());
+            QPoint(pos.x(), pos.y() - static_cast<int>(mCamera->leftTopPos().y())), mCamera->screenHeight()
+        );
     }
 }
 
@@ -274,9 +279,7 @@ void TimeLineEditorWidget::onTimeLineModified(core::TimeLineEvent&, bool) {
     this->update();
 }
 
-void TimeLineEditorWidget::onTreeRestructured(core::ObjectTreeEvent&, bool) {
-    mCopyTargets = core::TimeLineEvent();
-}
+void TimeLineEditorWidget::onTreeRestructured(core::ObjectTreeEvent&, bool) { mCopyTargets = core::TimeLineEvent(); }
 
 void TimeLineEditorWidget::onProjectAttributeModified(core::ProjectEvent&, bool) {
     mCopyTargets = core::TimeLineEvent();
@@ -311,7 +314,8 @@ void addTfToObj(QJsonObject* json, int keyType, core::TimeKey* timeKey) {
     json->insert("Type", core::TimeLine::getTimeKeyName((core::TimeKeyType)keyType));
     json->insert("Frame", timeKey->frame());
 }
-template<typename keyData> void addStandardToObj(QJsonObject* json, keyData data, int keyType, core::TimeKey* timeKey) {
+template<typename keyData>
+void addStandardToObj(QJsonObject* json, keyData data, int keyType, core::TimeKey* timeKey) {
     addTfToObj(json, keyType, timeKey);
     json->insert("eType", util::Easing::getTypeName(data.easing().type));
     json->insert("eRange", util::Easing::getRangeName(data.easing().range));
@@ -508,61 +512,43 @@ void TimeLineEditorWidget::onPasteKeyTriggered(bool) {
     mOnPasting = false;
 }
 
-void TimeLineEditorWidget::onDeleteKeyTriggered(bool) {
-    mEditor->deleteCheckedKeys(mTargets);
-}
+void TimeLineEditorWidget::onDeleteKeyTriggered(bool) { mEditor->deleteCheckedKeys(mTargets); }
 
-QColor TimeLineEditorWidget::headerContentColor() const {
-    return mTimelineTheme.headerContentColor();
-}
+QColor TimeLineEditorWidget::headerContentColor() const { return mTimelineTheme.headerContentColor(); }
 
 void TimeLineEditorWidget::setHeaderContentColor(const QColor& headerContentColor) {
     mTimelineTheme.setHeaderContentColor(headerContentColor);
 }
 
-QColor TimeLineEditorWidget::headerBackgroundColor() const {
-    return mTimelineTheme.headerBackgroundColor();
-}
+QColor TimeLineEditorWidget::headerBackgroundColor() const { return mTimelineTheme.headerBackgroundColor(); }
 
 void TimeLineEditorWidget::setHeaderBackgroundColor(const QColor& headerBackgroundColor) {
     mTimelineTheme.setHeaderBackgroundColor(headerBackgroundColor);
 }
 
-QColor TimeLineEditorWidget::trackColor() const {
-    return mTimelineTheme.trackColor();
-}
+QColor TimeLineEditorWidget::trackColor() const { return mTimelineTheme.trackColor(); }
 
-void TimeLineEditorWidget::setTrackColor(const QColor& trackColor) {
-    mTimelineTheme.setTrackColor(trackColor);
-}
+void TimeLineEditorWidget::setTrackColor(const QColor& trackColor) { mTimelineTheme.setTrackColor(trackColor); }
 
-QColor TimeLineEditorWidget::trackTextColor() const {
-    return mTimelineTheme.trackTextColor();
-}
+QColor TimeLineEditorWidget::trackTextColor() const { return mTimelineTheme.trackTextColor(); }
 
 void TimeLineEditorWidget::setTrackTextColor(const QColor& trackTextColor) {
     mTimelineTheme.setTrackTextColor(trackTextColor);
 }
 
-QColor TimeLineEditorWidget::trackEdgeColor() const {
-    return mTimelineTheme.trackEdgeColor();
-}
+QColor TimeLineEditorWidget::trackEdgeColor() const { return mTimelineTheme.trackEdgeColor(); }
 
 void TimeLineEditorWidget::setTrackEdgeColor(const QColor& trackEdgeColor) {
     mTimelineTheme.setTrackEdgeColor(trackEdgeColor);
 }
 
-QColor TimeLineEditorWidget::trackSelectColor() const {
-    return mTimelineTheme.trackSelectColor();
-}
+QColor TimeLineEditorWidget::trackSelectColor() const { return mTimelineTheme.trackSelectColor(); }
 
 void TimeLineEditorWidget::setTrackSelectColor(const QColor& trackSelectColor) {
     mTimelineTheme.setTrackSelectColor(trackSelectColor);
 }
 
-QColor TimeLineEditorWidget::trackSeperatorColor() const {
-    return mTimelineTheme.trackSeperatorColor();
-}
+QColor TimeLineEditorWidget::trackSeperatorColor() const { return mTimelineTheme.trackSeperatorColor(); }
 
 void TimeLineEditorWidget::setTrackSeperatorColor(const QColor& trackSeperatorColor) {
     mTimelineTheme.setTrackSeperatorColor(trackSeperatorColor);

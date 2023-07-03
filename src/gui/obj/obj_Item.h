@@ -14,12 +14,8 @@ namespace obj {
 
         Item(const QTreeWidget& aTree, core::ObjectNode& aNode);
 
-        core::ObjectNode& node() {
-            return mNode;
-        }
-        const core::ObjectNode& node() const {
-            return mNode;
-        }
+        core::ObjectNode& node() { return mNode; }
+        const core::ObjectNode& node() const { return mNode; }
 
         bool isTopNode() const;
 

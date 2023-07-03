@@ -10,20 +10,20 @@ namespace ctrl {
 namespace bone {
 
     Focuser::Focuser():
-        mTopBones(), mFocusLink(), mSelectLink(), mLastFocus(), mFocusChanged(), mFocusConnector(), mFocusRate(),
+        mTopBones(),
+        mFocusLink(),
+        mSelectLink(),
+        mLastFocus(),
+        mFocusChanged(),
+        mFocusConnector(),
+        mFocusRate(),
         mTargetMtx() {}
 
-    void Focuser::setTopBones(QList<Bone2*>& aTopBones) {
-        mTopBones = &aTopBones;
-    }
+    void Focuser::setTopBones(QList<Bone2*>& aTopBones) { mTopBones = &aTopBones; }
 
-    void Focuser::setFocusConnector(bool aFocus) {
-        mFocusConnector = aFocus;
-    }
+    void Focuser::setFocusConnector(bool aFocus) { mFocusConnector = aFocus; }
 
-    void Focuser::setTargetMatrix(const QMatrix4x4& aMtx) {
-        mTargetMtx = aMtx;
-    }
+    void Focuser::setTargetMatrix(const QMatrix4x4& aMtx) { mTargetMtx = aMtx; }
 
     Bone2* Focuser::update(const CameraInfo& aCamera, const QVector2D& aPos) {
         mFocusChanged = (bool)mLastFocus;
@@ -143,17 +143,11 @@ namespace bone {
         return nullptr;
     }
 
-    void Focuser::clearFocus() {
-        mFocusLink.clear();
-    }
+    void Focuser::clearFocus() { mFocusLink.clear(); }
 
-    bool Focuser::focusChanged() const {
-        return mFocusChanged;
-    }
+    bool Focuser::focusChanged() const { return mFocusChanged; }
 
-    void Focuser::select(Bone2& aBone) {
-        aBone.setSelect(mSelectLink);
-    }
+    void Focuser::select(Bone2& aBone) { aBone.setSelect(mSelectLink); }
 
     core::Bone2* Focuser::selectingBone() {
         if (!mTopBones)
@@ -170,9 +164,7 @@ namespace bone {
         return nullptr;
     }
 
-    void Focuser::clearSelection() {
-        mSelectLink.clear();
-    }
+    void Focuser::clearSelection() { mSelectLink.clear(); }
 
 } // namespace bone
 } // namespace ctrl

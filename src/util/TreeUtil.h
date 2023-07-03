@@ -7,7 +7,8 @@ namespace util {
 
 class TreeUtil {
 public:
-    template<typename tObj> static tObj* createClone(const tObj* aObj) {
+    template<typename tObj>
+    static tObj* createClone(const tObj* aObj) {
         if (!aObj)
             return nullptr;
 
@@ -20,7 +21,8 @@ public:
         return obj;
     }
 
-    template<typename tObj, typename tShadow> static tShadow* createShadow(const tObj* aObj) {
+    template<typename tObj, typename tShadow>
+    static tShadow* createShadow(const tObj* aObj) {
         if (!aObj)
             return nullptr;
 
@@ -33,7 +35,8 @@ public:
         return shadow;
     }
 
-    template<typename tObj> static void deleteAll(tObj* aObj) {
+    template<typename tObj>
+    static void deleteAll(tObj* aObj) {
         for (auto child : aObj->children()) {
             deleteAll<tObj>(child);
         }
@@ -42,7 +45,8 @@ public:
         delete aObj;
     }
 
-    template<typename tObj> static tObj& getTreeRoot(tObj& aObj) {
+    template<typename tObj>
+    static tObj& getTreeRoot(tObj& aObj) {
         tObj* root = &aObj;
         while (root->parent()) {
             root = root->parent();
@@ -50,14 +54,16 @@ public:
         return *root;
     }
 
-    template<typename tObj> static TreePos getTreePos(const tObj* aObj) {
+    template<typename tObj>
+    static TreePos getTreePos(const tObj* aObj) {
         TreePos pos;
         pos.setValidity((bool)aObj);
         pushTreeRowRecursive(pos, aObj);
         return pos;
     }
 
-    template<typename tObj> static bool insertTo(tObj& aRoot, const TreePos& aPos, tObj* aObj) {
+    template<typename tObj>
+    static bool insertTo(tObj& aRoot, const TreePos& aPos, tObj* aObj) {
         if (!aObj)
             return false;
         if (!aPos.isValid() || aPos.depth() <= 1)
@@ -73,7 +79,8 @@ public:
         return true;
     }
 
-    template<typename tObj> static tObj* eraseFrom(tObj& aRoot, const TreePos& aPos) {
+    template<typename tObj>
+    static tObj* eraseFrom(tObj& aRoot, const TreePos& aPos) {
         if (!aPos.isValid() || aPos.depth() <= 1)
             return nullptr;
 
@@ -89,7 +96,8 @@ public:
         return obj;
     }
 
-    template<typename tObj> static tObj* find(tObj& aRoot, const TreePos& aPos) {
+    template<typename tObj>
+    static tObj* find(tObj& aRoot, const TreePos& aPos) {
         if (!aPos.isValid())
             return nullptr;
         if (aPos.depth() <= 1)
@@ -102,7 +110,8 @@ public:
         return obj;
     }
 
-    template<typename tObj> static bool leftContainsRight(tObj& aLeft, tObj& aRight) {
+    template<typename tObj>
+    static bool leftContainsRight(tObj& aLeft, tObj& aRight) {
         for (tObj* p = &aRight; p; p = p->parent()) {
             if (p == &aLeft)
                 return true;
@@ -110,7 +119,8 @@ public:
         return false;
     }
 
-    template<typename tPointerVector> static tPointerVector getUniqueRoots(const tPointerVector& aTargets) {
+    template<typename tPointerVector>
+    static tPointerVector getUniqueRoots(const tPointerVector& aTargets) {
         tPointerVector roots;
         roots.reserve(aTargets.size());
 
@@ -137,7 +147,8 @@ public:
 private:
     TreeUtil();
 
-    template<typename tObj> static void pushTreeRowRecursive(TreePos& aDst, const tObj* aObj) {
+    template<typename tObj>
+    static void pushTreeRowRecursive(TreePos& aDst, const tObj* aObj) {
         if (!aObj)
             return;
         const tObj* parent = aObj->parent();

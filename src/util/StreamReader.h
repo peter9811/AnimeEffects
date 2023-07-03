@@ -13,18 +13,21 @@
 namespace util {
 
 struct BigSwapper {
-    template<typename T> static inline T swap(T aSrc) {
+    template<typename T>
+    static inline T swap(T aSrc) {
         return qFromBigEndian(aSrc);
     }
 };
 
 struct LittleSwapper {
-    template<typename T> static inline T swap(T aSrc) {
+    template<typename T>
+    static inline T swap(T aSrc) {
         return qFromLittleEndian(aSrc);
     }
 };
 
-template<typename tSwapper> class StreamReader {
+template<typename tSwapper>
+class StreamReader {
     std::istream& mIo;
     std::ios::pos_type mStart;
     std::vector<uint8> mBuf;
@@ -32,9 +35,7 @@ template<typename tSwapper> class StreamReader {
 public:
     StreamReader(std::istream& aIo): mIo(aIo), mStart(aIo.tellg()) {}
 
-    bool isFailed() const {
-        return mIo.fail();
-    }
+    bool isFailed() const { return mIo.fail(); }
 
     void skipWhile(char aSkipLetter) {
         while (mIo) {
@@ -47,13 +48,9 @@ public:
         }
     }
 
-    void skipTo(std::ios::pos_type aEnd) {
-        skip(aEnd - tellg());
-    }
+    void skipTo(std::ios::pos_type aEnd) { skip(aEnd - tellg()); }
 
-    void skip(int aBytes) {
-        mIo.seekg(aBytes, std::ios::cur);
-    }
+    void skip(int aBytes) { mIo.seekg(aBytes, std::ios::cur); }
 
     bool skipZeroArea(int aBytes) {
         while (aBytes) {
@@ -113,9 +110,7 @@ public:
         return mBuf;
     }
 
-    void readBuf(uint8* aBuf, size_t aSize) {
-        mIo.read((char*)aBuf, aSize);
-    }
+    void readBuf(uint8* aBuf, size_t aSize) { mIo.read((char*)aBuf, aSize); }
 
     uint16 readUInt16() {
         uint16 x;
@@ -168,13 +163,9 @@ public:
         return *((float64*)&x);
     }
 
-    uint8 readByte() {
-        return mIo.get();
-    }
+    uint8 readByte() { return mIo.get(); }
 
-    std::ios::pos_type tellg() {
-        return mIo.tellg() - mStart;
-    }
+    std::ios::pos_type tellg() { return mIo.tellg() - mStart; }
 };
 
 typedef StreamReader<BigSwapper> BEStreamReader;

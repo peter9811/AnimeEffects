@@ -17,8 +17,18 @@ AbstractCursor::Button getEventButtonFrom(Qt::MouseButton aButton) {
 
 //-------------------------------------------------------------------------------------------------
 AbstractCursor::AbstractCursor():
-    mEventType(Event_TERM), mEventButton(Button_TERM), mIsPressed(), mIsDouble(), mScreenPoint(), mScreenPos(),
-    mScreenVel(), mWorldPos(), mWorldVel(), mPressure(1.0f), mIsPressedTablet(), mSuspendedCount(0),
+    mEventType(Event_TERM),
+    mEventButton(Button_TERM),
+    mIsPressed(),
+    mIsDouble(),
+    mScreenPoint(),
+    mScreenPos(),
+    mScreenVel(),
+    mWorldPos(),
+    mWorldVel(),
+    mPressure(1.0f),
+    mIsPressedTablet(),
+    mSuspendedCount(0),
     mBlankAfterSuspending() {
     for (int i = 0; i < Button_TERM; ++i) {
         mIsPressed[i] = false;
@@ -207,9 +217,7 @@ void AbstractCursor::resumeEvent() {
     }
 }
 
-bool AbstractCursor::emitsLeftPressedEvent() const {
-    return mEventType == Event_Press && mEventButton == Button_Left;
-}
+bool AbstractCursor::emitsLeftPressedEvent() const { return mEventType == Event_Press && mEventButton == Button_Left; }
 
 bool AbstractCursor::emitsLeftDraggedEvent() const {
     return mEventType == Event_Move && mIsPressed[Button_Left] && !mBlankAfterSuspending.at(Button_Left);
@@ -231,8 +239,6 @@ bool AbstractCursor::emitsRightReleasedEvent() const {
     return mEventType == Event_Release && mEventButton == Button_Right;
 }
 
-bool AbstractCursor::emitsPressedEvent() const {
-    return mEventType == Event_Press;
-}
+bool AbstractCursor::emitsPressedEvent() const { return mEventType == Event_Press; }
 
 } // namespace core

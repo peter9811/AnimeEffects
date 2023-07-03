@@ -12,13 +12,9 @@ public:
     public:
         Node(): mLink(nullptr) {}
 
-        Node(const Node& aOther): mLink(nullptr) {
-            link(aOther.mLink);
-        }
+        Node(const Node& aOther): mLink(nullptr) { link(aOther.mLink); }
 
-        virtual ~Node() {
-            unlink();
-        }
+        virtual ~Node() { unlink(); }
 
         Node& operator=(LifeLink& aLink) {
             link(&aLink);
@@ -30,9 +26,7 @@ public:
             return *this;
         }
 
-        virtual bool isLinking() const {
-            return mLink != nullptr;
-        }
+        virtual bool isLinking() const { return mLink != nullptr; }
 
     private:
         friend class LifeLink;
@@ -56,25 +50,26 @@ public:
         LifeLink* mLink;
     };
 
-    template<typename tObject> class Pointee {
+    template<typename tObject>
+    class Pointee {
         typedef void (Pointee::*SafeBoolType)() const;
         void dummyFuncForSafeBoolIdiom() const {}
 
     public:
         Pointee(): lifeLink(nullptr), address(nullptr) {}
 
-        template<typename tRhs> Pointee(const Pointee<tRhs>& aRhs): lifeLink(aRhs.lifeLink), address(aRhs.address) {}
+        template<typename tRhs>
+        Pointee(const Pointee<tRhs>& aRhs): lifeLink(aRhs.lifeLink), address(aRhs.address) {}
 
-        template<typename tRhs> Pointee& operator=(const Pointee<tRhs>& aRhs) {
+        template<typename tRhs>
+        Pointee& operator=(const Pointee<tRhs>& aRhs) {
             lifeLink = aRhs.lifeLink;
             address = aRhs.address;
         }
 
         Pointee(LifeLink* aLifeLink, tObject* aAddress): lifeLink(aLifeLink), address(aAddress) {}
 
-        operator SafeBoolType() const {
-            return lifeLink ? &Pointee::dummyFuncForSafeBoolIdiom : 0;
-        }
+        operator SafeBoolType() const { return lifeLink ? &Pointee::dummyFuncForSafeBoolIdiom : 0; }
 
         LifeLink* lifeLink;
         tObject* address;
@@ -82,13 +77,9 @@ public:
 
     LifeLink(): mList() {}
 
-    LifeLink(const LifeLink& aOther): mList() {
-        (void)aOther;
-    }
+    LifeLink(const LifeLink& aOther): mList() { (void)aOther; }
 
-    ~LifeLink() {
-        clear();
-    }
+    ~LifeLink() { clear(); }
 
     LifeLink& operator=(const LifeLink& aOther) {
         (void)aOther;
@@ -96,9 +87,7 @@ public:
         return *this;
     }
 
-    bool isLinking() const {
-        return !mList.empty();
-    }
+    bool isLinking() const { return !mList.empty(); }
 
     void clear() {
         for (NodeList::iterator itr = mList.begin(); itr != mList.end(); ++itr) {
@@ -106,11 +95,13 @@ public:
         }
     }
 
-    template<typename tObject> Pointee<tObject> pointee(tObject* aAddress) {
+    template<typename tObject>
+    Pointee<tObject> pointee(tObject* aAddress) {
         return Pointee<tObject>(this, aAddress);
     }
 
-    template<typename tObject> Pointee<const tObject> pointee(const tObject* aAddress) {
+    template<typename tObject>
+    Pointee<const tObject> pointee(const tObject* aAddress) {
         return Pointee<const tObject>(this, aAddress);
     }
 

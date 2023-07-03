@@ -5,7 +5,7 @@
 #include "core/Project.h"
 #include "core/LayerMesh.h"
 #include "core/BoneInfluenceMap.h"
-//#include <QElapsedTimer>
+// #include <QElapsedTimer>
 
 namespace core {
 
@@ -75,7 +75,8 @@ void BoneInfluenceMap::allocate(int aVertexCount, bool aInitialize) {
 }
 
 void BoneInfluenceMap::writeAsync(
-    Project& aProject, const QList<Bone2*>& aTopBones, const QMatrix4x4& aGroupMtx, const LayerMesh& aMesh) {
+    Project& aProject, const QList<Bone2*>& aTopBones, const QMatrix4x4& aGroupMtx, const LayerMesh& aMesh
+) {
     XC_ASSERT(mMaxBoneCount > 0);
 
     // cancel previous task
@@ -313,9 +314,7 @@ bool BoneInfluenceMap::deserialize(Deserializer& aIn) {
 BoneInfluenceMap::BoneParam::BoneParam(): hasParent(false), hasRange(false), shape() {}
 
 //-------------------------------------------------------------------------------------------------
-void BoneInfluenceMap::WorkAttribute::clear() {
-    count = 0;
-}
+void BoneInfluenceMap::WorkAttribute::clear() { count = 0; }
 
 void BoneInfluenceMap::WorkAttribute::tryPushBoneWeight(int aId, float aWeight) {
     if (count < kBonePerVtxMaxAll) {
@@ -343,13 +342,9 @@ void BoneInfluenceMap::WorkAttribute::tryPushBoneWeight(int aId, float aWeight) 
 BoneInfluenceMap::BuildTask::BuildTask(Project& aProject, BoneInfluenceMap& aOwner):
     mProject(aProject), mOwner(aOwner) {}
 
-void BoneInfluenceMap::BuildTask::run() {
-    mOwner.build();
-}
+void BoneInfluenceMap::BuildTask::run() { mOwner.build(); }
 
-void BoneInfluenceMap::BuildTask::cancel() {
-    mProject.paralleler().cancel(*this);
-}
+void BoneInfluenceMap::BuildTask::cancel() { mProject.paralleler().cancel(*this); }
 
 //-------------------------------------------------------------------------------------------------
 BoneInfluenceMap::Accessor::Accessor(): mOwner() {}

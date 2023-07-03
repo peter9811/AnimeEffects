@@ -12,20 +12,21 @@ public:
     Texture();
     ~Texture();
 
-    void create(const QSize& aSize, const uint8* aData = nullptr, GLenum aFormat = GL_RGBA,
-        GLint aInternalFormat = GL_RGBA8, GLenum aChannelType = GL_UNSIGNED_BYTE);
+    void create(
+        const QSize& aSize,
+        const uint8* aData = nullptr,
+        GLenum aFormat = GL_RGBA,
+        GLint aInternalFormat = GL_RGBA8,
+        GLenum aChannelType = GL_UNSIGNED_BYTE
+    );
 
     void setFilter(GLint aParam);
     void setWrap(GLint aParam, QColor aBorderColor = QColor(0, 0, 0, 0));
 
     void destroy();
 
-    GLuint id() const {
-        return mId;
-    }
-    QSize size() const {
-        return mSize;
-    }
+    GLuint id() const { return mId; }
+    QSize size() const { return mSize; }
 
 private:
     GLuint mId;

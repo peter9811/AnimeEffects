@@ -10,19 +10,11 @@ namespace gui {
 class LocaleDecider {
 public:
     LocaleDecider();
-    const QString& fontFamily() const {
-        return mLocaleParam.fontFamily;
-    }
-    const QString& fontSize() const {
-        return mLocaleParam.fontSize;
-    }
-    LocaleParam localeParam() const {
-        return mLocaleParam;
-    }
+    const QString& fontFamily() const { return mLocaleParam.fontFamily; }
+    const QString& fontSize() const { return mLocaleParam.fontSize; }
+    LocaleParam localeParam() const { return mLocaleParam; }
 
-    QTranslator* translator() {
-        return mHasTranslator ? &mTranslator : nullptr;
-    }
+    QTranslator* translator() { return mHasTranslator ? &mTranslator : nullptr; }
 
 private:
     LocaleParam mLocaleParam;

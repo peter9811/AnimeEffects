@@ -18,21 +18,11 @@ public:
     void alloc(size_t aSize);
     void free();
 
-    explicit operator bool() const {
-        return mBlock.data;
-    }
-    const XCMemBlock& block() const {
-        return mBlock;
-    }
-    uint8* data() {
-        return mBlock.data;
-    }
-    const uint8* data() const {
-        return mBlock.data;
-    }
-    size_t size() const {
-        return mBlock.size;
-    }
+    explicit operator bool() const { return mBlock.data; }
+    const XCMemBlock& block() const { return mBlock; }
+    uint8* data() { return mBlock.data; }
+    const uint8* data() const { return mBlock.data; }
+    size_t size() const { return mBlock.size; }
 
 private:
     XCMemBlock mBlock;

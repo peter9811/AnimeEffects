@@ -9,13 +9,9 @@ TextUtil::ShiftJisDecoder::ShiftJisDecoder() {
     mDecoder = mCodec->makeDecoder();
 }
 
-TextUtil::ShiftJisDecoder::~ShiftJisDecoder() {
-    delete mDecoder;
-}
+TextUtil::ShiftJisDecoder::~ShiftJisDecoder() { delete mDecoder; }
 
-QString TextUtil::ShiftJisDecoder::decode(const char* aText) const {
-    return mDecoder->toUnicode(aText);
-}
+QString TextUtil::ShiftJisDecoder::decode(const char* aText) const { return mDecoder->toUnicode(aText); }
 
 //-------------------------------------------------------------------------------------------------
 float TextUtil::getShiftJisScore(const char* aStr, size_t aSize) {

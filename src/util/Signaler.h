@@ -7,9 +7,11 @@
 
 namespace util {
 
-template<typename tDummy> class Signaler;
+template<typename tDummy>
+class Signaler;
 
-template<typename tResult, typename... tArgs> class Signaler<tResult(tArgs...)> {
+template<typename tResult, typename... tArgs>
+class Signaler<tResult(tArgs...)> {
 public:
     typedef std::function<tResult(tArgs...)> FunctionType;
     typedef std::list<FunctionType*> ListType;
@@ -31,7 +33,8 @@ public:
     }
 
     // for member function
-    template<typename tObj> SlotId connect(tObj* aObj, tResult (tObj::*aFunc)(tArgs...)) {
+    template<typename tObj>
+    SlotId connect(tObj* aObj, tResult (tObj::*aFunc)(tArgs...)) {
         IdType id = new FunctionType([aObj, aFunc](tArgs... args) -> tResult { (aObj->*aFunc)(args...); });
         mFunctions.push_back(id);
         return SlotId(id);

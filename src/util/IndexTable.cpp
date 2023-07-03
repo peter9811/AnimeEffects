@@ -21,9 +21,7 @@ void IndexTable::alloc(int aWidth, int aHeight) {
     }
 }
 
-void IndexTable::free() {
-    alloc(0, 0);
-}
+void IndexTable::free() { alloc(0, 0); }
 
 void IndexTable::clear() {
     for (int i = 0; i < mCount; ++i) {

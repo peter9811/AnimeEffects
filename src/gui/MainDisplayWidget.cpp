@@ -19,11 +19,30 @@ namespace gui {
 
 //-------------------------------------------------------------------------------------------------
 MainDisplayWidget::MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent):
-    QOpenGLWidget(aParent), mViaPoint(aViaPoint), mGLDeviceInfo(), mProject(), mGLRoot(), mGLContextAccessor(this),
-    mDefaultVAO(), mFramebuffer(), mClippingFrame(), mDestinationTexturizer(), mTextureDrawer(), mPainterHandle(),
-    mRenderingLock(), mRenderInfo(), mAbstractCursor(), mDriver(), mProjectTabBar(), mUsingTablet(false),
-    mViewSetting(), mCanvasMover(), mMovingCanvasByTool(false), mMovingCanvasByKey(false),
-    mMovingCanvasByMiddleMouseButton(false), mDevicePixelRatio(1.0) {
+    QOpenGLWidget(aParent),
+    mViaPoint(aViaPoint),
+    mGLDeviceInfo(),
+    mProject(),
+    mGLRoot(),
+    mGLContextAccessor(this),
+    mDefaultVAO(),
+    mFramebuffer(),
+    mClippingFrame(),
+    mDestinationTexturizer(),
+    mTextureDrawer(),
+    mPainterHandle(),
+    mRenderingLock(),
+    mRenderInfo(),
+    mAbstractCursor(),
+    mDriver(),
+    mProjectTabBar(),
+    mUsingTablet(false),
+    mViewSetting(),
+    mCanvasMover(),
+    mMovingCanvasByTool(false),
+    mMovingCanvasByKey(false),
+    mMovingCanvasByMiddleMouseButton(false),
+    mDevicePixelRatio(1.0) {
     this->setObjectName(QStringLiteral("MainDisplayWidget"));
     this->setMouseTracking(true);
     this->setAutoFillBackground(false); // avoid auto fill on QPainter::begin()
@@ -130,9 +149,7 @@ void MainDisplayWidget::setProject(core::Project* aProject) {
     updateRender();
 }
 
-void MainDisplayWidget::setDriver(ctrl::Driver* aDriver) {
-    mDriver = aDriver;
-}
+void MainDisplayWidget::setDriver(ctrl::Driver* aDriver) { mDriver = aDriver; }
 
 void MainDisplayWidget::resetCamera() {
     if (mRenderInfo) {
@@ -151,13 +168,9 @@ void MainDisplayWidget::resetCamera() {
     }
 }
 
-void MainDisplayWidget::setProjectTabBar(ProjectTabBar* aTabBar) {
-    mProjectTabBar = aTabBar;
-}
+void MainDisplayWidget::setProjectTabBar(ProjectTabBar* aTabBar) { mProjectTabBar = aTabBar; }
 
-void MainDisplayWidget::updateRender() {
-    this->update();
-}
+void MainDisplayWidget::updateRender() { this->update(); }
 
 void MainDisplayWidget::initializeGL() {
     if (!this->context()->isValid()) {
@@ -170,13 +183,15 @@ void MainDisplayWidget::initializeGL() {
             auto obtainedVersion = QString::number(version.first) + "." + QString::number(version.second);
             auto requiredVersion =
                 QString::number(gl::Global::kVersion.first) + "." + QString::number(gl::Global::kVersion.second);
-            XC_FATAL_ERROR("OpenGL Error",
+            XC_FATAL_ERROR(
+                "OpenGL Error",
                 QString("Failed to get the correct OpenGL version.\n"
                         "The obtained version is %1,\n"
                         "but the required version is %2.")
                     .arg(obtainedVersion)
                     .arg(requiredVersion),
-                "");
+                ""
+            );
         }
     }
     // initialize opengl functions
@@ -349,8 +364,13 @@ void MainDisplayWidget::mouseMoveEvent(QMouseEvent* aEvent) {
             // if (!mUsingTablet) qDebug() << "move" << aEvent->pos();
         }
 
-        if (mCanvasMover.updateByMove(mAbstractCursor.screenPos(), mAbstractCursor.screenVel(),
-                mAbstractCursor.isPressedLeft(), mAbstractCursor.isPressedMiddle(), mAbstractCursor.isPressedRight())) {
+        if (mCanvasMover.updateByMove(
+                mAbstractCursor.screenPos(),
+                mAbstractCursor.screenVel(),
+                mAbstractCursor.isPressedLeft(),
+                mAbstractCursor.isPressedMiddle(),
+                mAbstractCursor.isPressedRight()
+            )) {
             updateRender();
         }
     }
@@ -365,7 +385,8 @@ void MainDisplayWidget::mousePressEvent(QMouseEvent* aEvent) {
             if (mViaPoint.mouseSetting().middleMouseMoveCanvas && aEvent->button() == Qt::MouseButton::MidButton) {
                 mMovingCanvasByMiddleMouseButton = true;
                 mCanvasMover.setDragAndMove(
-                    mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton);
+                    mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton
+                );
             }
         }
     }
@@ -380,7 +401,8 @@ void MainDisplayWidget::mouseReleaseEvent(QMouseEvent* aEvent) {
             if (aEvent->button() == Qt::MouseButton::MidButton) {
                 mMovingCanvasByMiddleMouseButton = false;
                 mCanvasMover.setDragAndMove(
-                    mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton);
+                    mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton
+                );
             }
         }
     }
@@ -388,7 +410,8 @@ void MainDisplayWidget::mouseReleaseEvent(QMouseEvent* aEvent) {
 
 void MainDisplayWidget::wheelEvent(QWheelEvent* aEvent) {
     if (mCanvasMover.updateByWheel(
-            QVector2D(aEvent->position()), aEvent->angleDelta().y(), mViaPoint.mouseSetting().invertMainViewScaling)) {
+            QVector2D(aEvent->position()), aEvent->angleDelta().y(), mViaPoint.mouseSetting().invertMainViewScaling
+        )) {
         updateRender();
     }
 }
@@ -402,8 +425,13 @@ void MainDisplayWidget::tabletEvent(QTabletEvent* aEvent) {
             updateCursor();
         }
     }
-    if (mCanvasMover.updateByMove(mAbstractCursor.screenPos(), mAbstractCursor.screenVel(),
-            mAbstractCursor.isPressedLeft(), mAbstractCursor.isPressedMiddle(), mAbstractCursor.isPressedRight())) {
+    if (mCanvasMover.updateByMove(
+            mAbstractCursor.screenPos(),
+            mAbstractCursor.screenVel(),
+            mAbstractCursor.isPressedLeft(),
+            mAbstractCursor.isPressedMiddle(),
+            mAbstractCursor.isPressedRight()
+        )) {
         updateRender();
     }
 #else
@@ -412,9 +440,7 @@ void MainDisplayWidget::tabletEvent(QTabletEvent* aEvent) {
     aEvent->accept();
 }
 
-void MainDisplayWidget::onVisualUpdated() {
-    updateRender();
-}
+void MainDisplayWidget::onVisualUpdated() { updateRender(); }
 
 void MainDisplayWidget::onToolChanged(ctrl::ToolType aType) {
     if (aType == ctrl::ToolType_Cursor) {

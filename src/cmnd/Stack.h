@@ -21,9 +21,7 @@ public:
     Stack();
     ~Stack();
 
-    bool isSuspended() const {
-        return mSuspendCount > 0;
-    }
+    bool isSuspended() const { return mSuspendCount > 0; }
     void push(Base* aCommand);
     void push(const std::vector<Base*>&& aCommands);
     QString undo(bool* undone = nullptr);
@@ -66,12 +64,8 @@ private:
     void endMacro();
 
     friend class ScopedUndoSuspender;
-    void suspendUndo() {
-        ++mSuspendCount;
-    }
-    void resumeUndo() {
-        --mSuspendCount;
-    }
+    void suspendUndo() { ++mSuspendCount; }
+    void resumeUndo() { --mSuspendCount; }
 
     void pushImpl(Base* aCommand);
     void updateEditStatus();

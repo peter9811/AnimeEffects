@@ -18,13 +18,9 @@ namespace ffd {
         commandRef = nullptr;
     }
 
-    bool BrushMode::Status::hasValidBrush() const {
-        return brush.radius() > 0.0f;
-    }
+    bool BrushMode::Status::hasValidBrush() const { return brush.radius() > 0.0f; }
 
-    bool BrushMode::Status::isDrawing() const {
-        return state == State_Draw;
-    }
+    bool BrushMode::Status::isDrawing() const { return state == State_Draw; }
 
     //-------------------------------------------------------------------------------------------------
     BrushMode::BrushMode(core::Project& aProject, Targets& aTargets):
@@ -156,7 +152,8 @@ namespace ffd {
                     task->finish();
 
                     mStatus.commandRef->push(
-                        new cmnd::AssignMemory(key->data().positions(), task->dstMesh(), task->dstSize(), kCopySize));
+                        new cmnd::AssignMemory(key->data().positions(), task->dstMesh(), task->dstSize(), kCopySize)
+                    );
                 }
 
                 // push deform command

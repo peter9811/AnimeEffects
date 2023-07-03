@@ -27,21 +27,13 @@ namespace bone {
         return quad;
     }
 
-    void Renderer::setAntialiasing(bool aFlag) {
-        mPainter.setRenderHint(QPainter::Antialiasing, aFlag);
-    }
+    void Renderer::setAntialiasing(bool aFlag) { mPainter.setRenderHint(QPainter::Antialiasing, aFlag); }
 
-    void Renderer::setShadow(bool aIsShadow) {
-        mIsShadow = aIsShadow;
-    }
+    void Renderer::setShadow(bool aIsShadow) { mIsShadow = aIsShadow; }
 
-    void Renderer::setFocusConnector(bool aFocus) {
-        mFocusConnector = aFocus;
-    }
+    void Renderer::setFocusConnector(bool aFocus) { mFocusConnector = aFocus; }
 
-    void Renderer::setTargetMatrix(const QMatrix4x4& aMtx) {
-        mTargetMtx = aMtx;
-    }
+    void Renderer::setTargetMatrix(const QMatrix4x4& aMtx) { mTargetMtx = aMtx; }
 
     QPointF Renderer::getScreenPointF(const QVector2D& aBonePos) const {
         return mInfo.camera.toScreenPos(mTargetMtx * QVector3D(aBonePos)).toPointF();

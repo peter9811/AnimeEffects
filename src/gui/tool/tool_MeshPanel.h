@@ -19,9 +19,7 @@ namespace tool {
 
         int updateGeometry(const QPoint& aPos, int aWidth);
 
-        const ctrl::MeshParam& param() const {
-            return mParam;
-        }
+        const ctrl::MeshParam& param() const { return mParam; }
 
         // boost like signals
         util::Signaler<void(bool)> onParamUpdated;

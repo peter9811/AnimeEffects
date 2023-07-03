@@ -4,7 +4,12 @@ namespace gui {
 namespace prop {
 
     Backboard::Backboard(ViaPoint& aViaPoint, QWidget* aParent):
-        QWidget(aParent), mViaPoint(aViaPoint), mProject(), mLayout(), mConstantPanel(), mDefaultKeyPanel(),
+        QWidget(aParent),
+        mViaPoint(aViaPoint),
+        mProject(),
+        mLayout(),
+        mConstantPanel(),
+        mDefaultKeyPanel(),
         mCurrentKeyPanel() {
         resetLayout();
     }

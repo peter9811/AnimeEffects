@@ -60,7 +60,11 @@ namespace prop {
 
     //-------------------------------------------------------------------------------------------------
     DefaultImageGroup::DefaultImageGroup(Panel& aPanel, KeyAccessor& aAccessor, int aLabelWidth, ViaPoint& aViaPoint):
-        KeyGroup(tr("Image"), aLabelWidth), mAccessor(aAccessor), mBrowse(), mOffset(), mCellSize(),
+        KeyGroup(tr("Image"), aLabelWidth),
+        mAccessor(aAccessor),
+        mBrowse(),
+        mOffset(),
+        mCellSize(),
         mViaPoint(aViaPoint) {
         {
             aPanel.addGroup(this);
@@ -107,9 +111,16 @@ namespace prop {
 
     //-------------------------------------------------------------------------------------------------
     DefaultKeyPanel::DefaultKeyPanel(
-        ViaPoint& aViaPoint, core::Project& aProject, const QString& aTitle, QWidget* aParent):
+        ViaPoint& aViaPoint, core::Project& aProject, const QString& aTitle, QWidget* aParent
+    ):
         Panel(aTitle, aParent),
-        mViaPoint(aViaPoint), mProject(aProject), mTarget(), mKeyAccessor(), mLabelWidth(), mDepthPanel(), mOpaPanel(),
+        mViaPoint(aViaPoint),
+        mProject(aProject),
+        mTarget(),
+        mKeyAccessor(),
+        mLabelWidth(),
+        mDepthPanel(),
+        mOpaPanel(),
         mImagePanel() {
         mKeyAccessor.setProject(&aProject);
         mLabelWidth = this->fontMetrics().boundingRect(tr("Max text width :")).width();
@@ -141,9 +152,7 @@ namespace prop {
         this->setEnabled(!aIsActive);
     }
 
-    void DefaultKeyPanel::updateKey() {
-        updateKeyValue();
-    }
+    void DefaultKeyPanel::updateKey() { updateKeyValue(); }
 
     void DefaultKeyPanel::build() {
         using core::Constant;

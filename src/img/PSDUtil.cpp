@@ -5,7 +5,7 @@
 #include "img/PSDUtil.h"
 
 
-//#define PSDUTIL_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
+// #define PSDUTIL_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define PSDUTIL_DUMP(...)
 
 ///@todo following formulas have some mistakes?
@@ -53,8 +53,14 @@
 
 namespace img {
 
-bool PSDUtil::blendImage(uint8* aResult, const uint8* aBack, const QRect& aRectRB, const uint8* aFront,
-    const QRect& aRectF, const std::string& aMode) {
+bool PSDUtil::blendImage(
+    uint8* aResult,
+    const uint8* aBack,
+    const QRect& aRectRB,
+    const uint8* aFront,
+    const QRect& aRectF,
+    const std::string& aMode
+) {
     const int compo = 4;
     const int offsRX = aRectF.left() - aRectRB.left();
     const int offsRY = aRectF.top() - aRectRB.top();
@@ -154,8 +160,8 @@ bool PSDUtil::blendImage(uint8* aResult, const uint8* aBack, const QRect& aRectR
 }
 
 //------------------------------------------------------------//
-XCMemBlock PSDUtil::makeClippedImage(
-    const uint8* aTarget, const QRect& aRectT, const uint8* aBase, const QRect& aRectB) {
+XCMemBlock
+PSDUtil::makeClippedImage(const uint8* aTarget, const QRect& aRectT, const uint8* aBase, const QRect& aRectB) {
     const int compo = 4;
     const int alpha = 3;
 
@@ -260,17 +266,25 @@ XCMemBlock PSDUtil::encodePlanePackBits(const uint8* aSrc, size_t aSrcLength, in
 }
 
 bool PSDUtil::makeChanneledImage(
-    PSDFormat::Layer& aDst, const PSDFormat::Header& aHeader, const XCMemBlock& aSrc, ColorFormat aSrcFormat) {
+    PSDFormat::Layer& aDst, const PSDFormat::Header& aHeader, const XCMemBlock& aSrc, ColorFormat aSrcFormat
+) {
     return makeChanneledImage(aDst.channels, aHeader, aSrc, aSrcFormat, aDst.rect.width(), aDst.rect.height());
 }
 
 bool PSDUtil::makeChanneledImage(
-    PSDFormat::ImageData& aDst, const PSDFormat::Header& aHeader, const XCMemBlock& aSrc, ColorFormat aSrcFormat) {
+    PSDFormat::ImageData& aDst, const PSDFormat::Header& aHeader, const XCMemBlock& aSrc, ColorFormat aSrcFormat
+) {
     return makeChanneledImage(aDst.channels, aHeader, aSrc, aSrcFormat, aHeader.width, aHeader.height);
 }
 
-bool PSDUtil::makeChanneledImage(PSDFormat::ChannelList& aDst, const PSDFormat::Header& aHeader, const XCMemBlock& aSrc,
-    ColorFormat aSrcFormat, int aSrcWidth, int aSrcHeight) {
+bool PSDUtil::makeChanneledImage(
+    PSDFormat::ChannelList& aDst,
+    const PSDFormat::Header& aHeader,
+    const XCMemBlock& aSrc,
+    ColorFormat aSrcFormat,
+    int aSrcWidth,
+    int aSrcHeight
+) {
     PSDUTIL_DUMP("begin make channeled image");
 
     if (aHeader.mode != PSDFormat::ColorMode_RGB) {
@@ -356,7 +370,8 @@ bool PSDUtil::makeChanneledImage(PSDFormat::ChannelList& aDst, const PSDFormat::
 // RLE compress plane data(TIFF Standard) to interleaved
 //------------------------------------------------------------//
 bool PSDUtil::decodePlanePackBits(
-    uint8* aDst, size_t aDstLength, const uint8* aSrc, size_t aSrcLength, int aWidth, int aHeight, int aDstStride) {
+    uint8* aDst, size_t aDstLength, const uint8* aSrc, size_t aSrcLength, int aWidth, int aHeight, int aDstStride
+) {
     typedef uint16 LineLengthType;
 
     if (!aDst || !aSrc || aWidth < 1 || aHeight < 1 || aDstStride < 1) {
@@ -444,8 +459,8 @@ bool PSDUtil::decodePlanePackBits(
     return true;
 }
 
-XCMemBlock PSDUtil::makeInterleavedImage(
-    const PSDFormat::Header& aHeader, const PSDFormat::Layer& aLayer, ColorFormat aFormat) {
+XCMemBlock
+PSDUtil::makeInterleavedImage(const PSDFormat::Header& aHeader, const PSDFormat::Layer& aLayer, ColorFormat aFormat) {
     if (aLayer.entryType != PSDFormat::LayerEntryType_Layer) {
         return XCMemBlock();
     }
@@ -454,12 +469,18 @@ XCMemBlock PSDUtil::makeInterleavedImage(
 }
 
 XCMemBlock PSDUtil::makeInterleavedImage(
-    const PSDFormat::Header& aHeader, const PSDFormat::ImageData& aImageData, ColorFormat aFormat) {
+    const PSDFormat::Header& aHeader, const PSDFormat::ImageData& aImageData, ColorFormat aFormat
+) {
     return makeInterleavedImage(aHeader, aImageData.channels, aFormat, (int)aHeader.width, (int)aHeader.height);
 }
 
-XCMemBlock PSDUtil::makeInterleavedImage(const PSDFormat::Header& aHeader, const PSDFormat::ChannelList& aChannels,
-    ColorFormat aFormat, int aWidth, int aHeight) {
+XCMemBlock PSDUtil::makeInterleavedImage(
+    const PSDFormat::Header& aHeader,
+    const PSDFormat::ChannelList& aChannels,
+    ColorFormat aFormat,
+    int aWidth,
+    int aHeight
+) {
     PSDUTIL_DUMP("begin make interleaved image");
 
     if (aHeader.mode != PSDFormat::ColorMode_RGB) {
@@ -528,7 +549,8 @@ XCMemBlock PSDUtil::makeInterleavedImage(const PSDFormat::Header& aHeader, const
                 }
             } else if (chan->compressionId == 1) {
                 if (!decodePlanePackBits(
-                        image.data + i, image.size, chan->data.get(), (size_t)chan->dataLength, w, h, stride)) {
+                        image.data + i, image.size, chan->data.get(), (size_t)chan->dataLength, w, h, stride
+                    )) {
                     PSDUTIL_DUMP("decode error: id %d", chan->id);
                     return XCMemBlock(NULL, 4);
                 }
@@ -556,7 +578,8 @@ XCMemBlock PSDUtil::makeInterleavedImage(const PSDFormat::Header& aHeader, const
             work.resize(w * h);
             alpha = work.data();
             if (!decodePlanePackBits(
-                    work.data(), work.size(), mergeAlpha->data.get(), (size_t)mergeAlpha->dataLength, w, h, 1)) {
+                    work.data(), work.size(), mergeAlpha->data.get(), (size_t)mergeAlpha->dataLength, w, h, 1
+                )) {
                 return XCMemBlock(NULL, 6);
             }
         } else {

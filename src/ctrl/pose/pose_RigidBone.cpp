@@ -11,13 +11,9 @@ namespace pose {
         angle = aOrigin.worldAngle();
     }
 
-    QVector2D RigidBone::tailPos() const {
-        return rootPos + util::MathUtil::getVectorFromPolarCoord(length, angle);
-    }
+    QVector2D RigidBone::tailPos() const { return rootPos + util::MathUtil::getVectorFromPolarCoord(length, angle); }
 
-    QVector2D RigidBone::dir() const {
-        return util::MathUtil::getVectorFromPolarCoord(length, angle);
-    }
+    QVector2D RigidBone::dir() const { return util::MathUtil::getVectorFromPolarCoord(length, angle); }
 
     void RigidBone::updateMotion(int aCentroid) {
         rootPos += force;

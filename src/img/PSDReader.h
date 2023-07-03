@@ -26,16 +26,10 @@ public:
     PSDReader(std::istream& aIo);
 
     // you can move the format.
-    std::unique_ptr<PSDFormat>& format() {
-        return mFormat;
-    }
-    const std::unique_ptr<PSDFormat>& format() const {
-        return mFormat;
-    }
+    std::unique_ptr<PSDFormat>& format() { return mFormat; }
+    const std::unique_ptr<PSDFormat>& format() const { return mFormat; }
 
-    ResultCode resultCode() const {
-        return mResultCode;
-    }
+    ResultCode resultCode() const { return mResultCode; }
     const std::string resultMessage() const;
     const std::string resultCodeString() const;
 
@@ -45,7 +39,8 @@ private:
     bool loadImageResources();
     bool loadLayerAndMaskInfo();
     bool loadAdditionalLayerInfo(
-        std::list<PSDFormat::AdditionalLayerInfoPtr>& aList, PSDFormat::Layer* aLayer, std::ios::pos_type aEndPos);
+        std::list<PSDFormat::AdditionalLayerInfoPtr>& aList, PSDFormat::Layer* aLayer, std::ios::pos_type aEndPos
+    );
     bool loadImageData();
     bool checkFailure();
     void skipPads(uint32 aDataSize, uint32 aAlign);

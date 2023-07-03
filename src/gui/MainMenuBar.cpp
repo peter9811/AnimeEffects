@@ -47,8 +47,14 @@ QDomDocument getVideoExportDocument() {
 
 //-------------------------------------------------------------------------------------------------
 MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources& aGUIResources, QWidget* aParent):
-    QMenuBar(aParent), mProcess(), mViaPoint(aViaPoint), mProject(), mProjectActions(), mShowResourceWindow(),
-    mVideoFormats(), mGUIResources(aGUIResources) {
+    QMenuBar(aParent),
+    mProcess(),
+    mViaPoint(aViaPoint),
+    mProject(),
+    mProjectActions(),
+    mShowResourceWindow(),
+    mVideoFormats(),
+    mGUIResources(aGUIResources) {
     // load the list of video formats from a setting file.
     loadVideoFormats();
 
@@ -350,9 +356,7 @@ void MainMenuBar::setProject(core::Project* aProject) {
     }
 }
 
-void MainMenuBar::setShowResourceWindow(bool aShow) {
-    mShowResourceWindow->setChecked(aShow);
-}
+void MainMenuBar::setShowResourceWindow(bool aShow) { mShowResourceWindow->setChecked(aShow); }
 
 void MainMenuBar::loadVideoFormats() {
     using util::TextUtil;
@@ -425,9 +429,9 @@ void MainMenuBar::loadVideoFormats() {
 
 //-------------------------------------------------------------------------------------------------
 ProjectCanvasSizeSettingDialog::ProjectCanvasSizeSettingDialog(
-    ViaPoint& aViaPoint, core::Project& aProject, QWidget* aParent):
-    EasyDialog(tr("Set canvas size"), aParent),
-    mViaPoint(aViaPoint), mProject(aProject) {
+    ViaPoint& aViaPoint, core::Project& aProject, QWidget* aParent
+):
+    EasyDialog(tr("Set canvas size"), aParent), mViaPoint(aViaPoint), mProject(aProject) {
     // create inner widgets
     auto curSize = mProject.attribute().imageSize();
     {
@@ -468,8 +472,8 @@ void MainMenuBar::onCanvasSizeTriggered() {
     auto curSize = mProject->attribute().imageSize();
 
     // create dialog
-    QScopedPointer<ProjectCanvasSizeSettingDialog> dialog(
-        new ProjectCanvasSizeSettingDialog(mViaPoint, *mProject, this));
+    QScopedPointer<ProjectCanvasSizeSettingDialog> dialog(new ProjectCanvasSizeSettingDialog(mViaPoint, *mProject, this)
+    );
 
     // execute dialog
     dialog->exec();
@@ -501,7 +505,8 @@ void MainMenuBar::onCanvasSizeTriggered() {
                 projectPtr->onProjectAttributeModified(event, true);
                 this->onProjectAttributeUpdated();
                 this->onVisualUpdated();
-            });
+            }
+        );
         mProject->commandStack().push(command);
     }
 }
@@ -595,7 +600,8 @@ void MainMenuBar::onMaxFrameTriggered() {
                 projectPtr->onProjectAttributeModified(event, true);
                 this->onProjectAttributeUpdated();
                 this->onVisualUpdated();
-            });
+            }
+        );
         mProject->commandStack().push(command);
     }
 }
@@ -665,14 +671,17 @@ void MainMenuBar::onLoopTriggered() {
                 projectPtr->onProjectAttributeModified(event, true);
                 this->onProjectAttributeUpdated();
                 this->onVisualUpdated();
-            });
+            }
+        );
         mProject->commandStack().push(command);
     }
 }
 
 // ----------------------------------------------------------------------------- //
 ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidget* aParent):
-    EasyDialog(tr("Set FPS"), aParent), mProject(aProject), mFPSBox()
+    EasyDialog(tr("Set FPS"), aParent),
+    mProject(aProject),
+    mFPSBox()
 
 {
     // create inner widgets
@@ -751,7 +760,8 @@ void MainMenuBar::onFPSTriggered() {
                 projectPtr->onProjectAttributeModified(event, true);
                 this->onProjectAttributeUpdated();
                 this->onVisualUpdated();
-            });
+            }
+        );
         mProject->commandStack().push(command);
     }
 }

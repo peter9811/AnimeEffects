@@ -61,12 +61,8 @@ void BufferObject::copyFrom(const BufferObject& aFrom) {
     ggl.glBindBuffer(aFrom.type(), 0);
 }
 
-void BufferObject::bind() {
-    Global::functions().glBindBuffer(mType, mId);
-}
+void BufferObject::bind() { Global::functions().glBindBuffer(mType, mId); }
 
-void BufferObject::release() {
-    Global::functions().glBindBuffer(mType, 0);
-}
+void BufferObject::release() { Global::functions().glBindBuffer(mType, 0); }
 
 } // namespace gl

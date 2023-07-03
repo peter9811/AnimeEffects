@@ -22,12 +22,8 @@ public:
         void allocAndWrite(const gl::Vector3* aSrc, int aVtxCount);
         void clear();
         void swap(QVector<gl::Vector3>& aRhs);
-        util::Easing::Param& easing() {
-            return mEasing;
-        }
-        const util::Easing::Param& easing() const {
-            return mEasing;
-        }
+        util::Easing::Param& easing() { return mEasing; }
+        const util::Easing::Param& easing() const { return mEasing; }
         gl::Vector3* positions();
         const gl::Vector3* positions() const;
         int count() const;
@@ -39,20 +35,12 @@ public:
 
     FFDKey();
 
-    Data& data() {
-        return mData;
-    }
-    const Data& data() const {
-        return mData;
-    }
+    Data& data() { return mData; }
+    const Data& data() const { return mData; }
 
-    bool belongsToDefaultParent() const {
-        return !parent();
-    }
+    bool belongsToDefaultParent() const { return !parent(); }
 
-    virtual TimeKeyType type() const {
-        return TimeKeyType_FFD;
-    }
+    virtual TimeKeyType type() const { return TimeKeyType_FFD; }
     virtual TimeKey* createClone();
     virtual bool serialize(Serializer& aOut) const;
     QJsonObject serializeToJson() const;

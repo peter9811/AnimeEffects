@@ -6,8 +6,14 @@
 namespace gui {
 
 PropertyWidget::PropertyWidget(ViaPoint& aViaPoint, QWidget* aParent):
-    QScrollArea(aParent), mProject(), mTimeLineSlot(), mNodeAttrSlot(), mResModifiedSlot(), mTreeRestructSlot(),
-    mProjAttrSlot(), mBoard() {
+    QScrollArea(aParent),
+    mProject(),
+    mTimeLineSlot(),
+    mNodeAttrSlot(),
+    mResModifiedSlot(),
+    mTreeRestructSlot(),
+    mProjAttrSlot(),
+    mBoard() {
     this->setFocusPolicy(Qt::NoFocus);
 
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -21,9 +27,7 @@ PropertyWidget::PropertyWidget(ViaPoint& aViaPoint, QWidget* aParent):
     this->setWidget(mBoard);
 }
 
-PropertyWidget::~PropertyWidget() {
-    unlinkProject();
-}
+PropertyWidget::~PropertyWidget() { unlinkProject(); }
 
 void PropertyWidget::unlinkProject() {
     if (mProject) {
@@ -64,9 +68,7 @@ void PropertyWidget::updateAllProperties() {
     mBoard->updateKey(true, true);
 }
 
-void PropertyWidget::onSelectionChanged(core::ObjectNode* aRepresentNode) {
-    mBoard->setTarget(aRepresentNode);
-}
+void PropertyWidget::onSelectionChanged(core::ObjectNode* aRepresentNode) { mBoard->setTarget(aRepresentNode); }
 
 void PropertyWidget::onAttributeUpdated(core::ObjectNode&, bool) {
     mBoard->updateAttribute();
@@ -77,13 +79,9 @@ void PropertyWidget::onKeyUpdated(core::TimeLineEvent& aEvent, bool) {
     mBoard->updateKey(!aEvent.targets().empty(), !aEvent.defaultTargets().empty());
 }
 
-void PropertyWidget::onFrameUpdated() {
-    mBoard->updateFrame();
-}
+void PropertyWidget::onFrameUpdated() { mBoard->updateFrame(); }
 
-void PropertyWidget::onPlayBackStateChanged(bool aIsActive) {
-    mBoard->setPlayBackActivity(aIsActive);
-}
+void PropertyWidget::onPlayBackStateChanged(bool aIsActive) { mBoard->setPlayBackActivity(aIsActive); }
 
 void PropertyWidget::resizeEvent(QResizeEvent* aEvent) {
     QScrollArea::resizeEvent(aEvent);

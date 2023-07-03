@@ -26,11 +26,16 @@ namespace res {
         img::ResourceNode* createQImageTree(const QString& aFilePath, bool aLoadImage) const;
         img::ResourceNode* createPsdTree(const QString& aFilePath, bool aLoadImage);
 
-        bool createImageReloaderRecursive(cmnd::Stack& aStack, ModificationNotifier& aNotifier,
-            QTreeWidgetItem& aCurItem, img::ResourceNode& aCurNode, img::ResourceNode& aNewNode);
+        bool createImageReloaderRecursive(
+            cmnd::Stack& aStack,
+            ModificationNotifier& aNotifier,
+            QTreeWidgetItem& aCurItem,
+            img::ResourceNode& aCurNode,
+            img::ResourceNode& aNewNode
+        );
 
-        void createAbandonedImageRemoverRecursive(
-            cmnd::Stack& aStack, QTreeWidgetItem& aItem, img::ResourceNode& aNode);
+        void
+        createAbandonedImageRemoverRecursive(cmnd::Stack& aStack, QTreeWidgetItem& aItem, img::ResourceNode& aNode);
 
         bool tryReloadCorrespondingImages(QTreeWidgetItem& aTarget, img::ResourceNode* aNewTree);
 

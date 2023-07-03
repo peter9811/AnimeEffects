@@ -20,8 +20,16 @@ namespace mesh {
 
     //-------------------------------------------------------------------------------------------------
     SplitMode::SplitMode(Project& aProject, const Target& aTarget, KeyOwner& aKey):
-        mProject(aProject), mTarget(*aTarget.node), mKeyOwner(aKey), mTargetMtx(aTarget.mtx),
-        mTargetInvMtx(aTarget.invMtx), mFocuser(), mMeshAccessor(), mBeganSplit(false), mRelayStart(), mRelayPoints() {
+        mProject(aProject),
+        mTarget(*aTarget.node),
+        mKeyOwner(aKey),
+        mTargetMtx(aTarget.mtx),
+        mTargetInvMtx(aTarget.invMtx),
+        mFocuser(),
+        mMeshAccessor(),
+        mBeganSplit(false),
+        mRelayStart(),
+        mRelayPoints() {
         XC_PTR_ASSERT(mKeyOwner.key);
         mMeshAccessor.setKey(*mKeyOwner.key);
         mFocuser.setMesh(mMeshAccessor);
@@ -142,8 +150,8 @@ namespace mesh {
             macro.grabListener(new Notifier(mProject, mTarget, *mKeyOwner.key, eventType));
             // push command
             if (edge[1]) {
-                stack.push(
-                    mMeshAccessor.createSplitter(*face, *edge[0], posOnEdge[0], *edge[1], posOnEdge[1], &tailVtx));
+                stack.push(mMeshAccessor.createSplitter(*face, *edge[0], posOnEdge[0], *edge[1], posOnEdge[1], &tailVtx)
+                );
             } else {
                 stack.push(mMeshAccessor.createSplitter(*face, *edge[0], posOnEdge[0], &tailVtx));
             }
@@ -172,8 +180,13 @@ namespace mesh {
         return util::Segment2D(s, e - s);
     }
 
-    SplitMode::RelayPoint SplitMode::getIntersection(const CameraInfo& aCamera, const MeshFace& aFace,
-        const util::Segment2D& aSeg, const MeshEdge* aIgnoreEdge, const MeshVtx* aIgnoreVtx) {
+    SplitMode::RelayPoint SplitMode::getIntersection(
+        const CameraInfo& aCamera,
+        const MeshFace& aFace,
+        const util::Segment2D& aSeg,
+        const MeshEdge* aIgnoreEdge,
+        const MeshVtx* aIgnoreVtx
+    ) {
         static const float kVtxSqRadius = 8.0f * 8.0f;
 
         RelayPoint result;

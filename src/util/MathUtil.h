@@ -27,13 +27,9 @@ public:
         return QVector3D(aRect.width() * 0.5f, aRect.height() * 0.5f, 0.0f);
     }
 
-    static float getRadianFromDegree(float aDegree) {
-        return (float)((aDegree * M_PI) / 180.0);
-    }
+    static float getRadianFromDegree(float aDegree) { return (float)((aDegree * M_PI) / 180.0); }
 
-    static float getDegreeFromRadian(float aRadian) {
-        return (float)((aRadian * 180.0) / M_PI);
-    }
+    static float getDegreeFromRadian(float aRadian) { return (float)((aRadian * 180.0) / M_PI); }
 
     static float normalizeAngleRad(float aAngle) {
         static const double kPi2 = 2.0 * M_PI;
@@ -64,9 +60,7 @@ public:
         return qAtan2(aVec.y(), aVec.x());
     }
 
-    static float getAngleDeg(const QVector2D& aVec) {
-        return getDegreeFromRadian(getAngleRad(aVec));
-    }
+    static float getAngleDeg(const QVector2D& aVec) { return getDegreeFromRadian(getAngleRad(aVec)); }
 
     static QVector2D getVectorFromPolarCoord(float aLength, float aAngleRad) {
         return QVector2D(qCos(aAngleRad), qSin(aAngleRad)) * aLength;
@@ -91,8 +85,8 @@ public:
 
     static QVector2D blendVectorByClockwiseRotation(const QVector2D& aFrom, const QVector2D& aTo, float aRate = 0.5f);
 
-    static QVector2D blendVectorByAntiClockwiseRotation(
-        const QVector2D& aFrom, const QVector2D& aTo, float aRate = 0.5f) {
+    static QVector2D
+    blendVectorByAntiClockwiseRotation(const QVector2D& aFrom, const QVector2D& aTo, float aRate = 0.5f) {
         return blendVectorByClockwiseRotation(aTo, aFrom, 1.0f - aRate);
     }
 
@@ -100,9 +94,7 @@ public:
 
     static QPointF getRotateVectorRad(const QPointF& aPoint, float aRotate);
 
-    static QVector2D getRotateVector90Deg(const QVector2D& aVec) {
-        return QVector2D(-aVec.y(), aVec.x());
-    }
+    static QVector2D getRotateVector90Deg(const QVector2D& aVec) { return QVector2D(-aVec.y(), aVec.x()); }
 
 
     static QVector2D getAxisInversed(const QVector2D& aNormAxis, const QVector2D& aVec);

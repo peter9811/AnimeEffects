@@ -60,9 +60,7 @@ namespace tool {
         }
     }
 
-    void SingleOutItem::setChoice(int aButtonIndex) {
-        mButtons.at(aButtonIndex)->setChecked(true);
-    }
+    void SingleOutItem::setChoice(int aButtonIndex) { mButtons.at(aButtonIndex)->setChecked(true); }
 
     void SingleOutItem::connect(const std::function<void(int)>& aPressed) {
         for (int i = 0; i < mButtonNum; ++i) {
@@ -117,9 +115,7 @@ namespace tool {
         return kLabelHeight + kSliderHeight;
     }
 
-    void SliderItem::updateText(int aValue) {
-        mLabel->setText(mText + ":  " + QString::number(aValue));
-    }
+    void SliderItem::updateText(int aValue) { mLabel->setText(mText + ":  " + QString::number(aValue)); }
 
     //-------------------------------------------------------------------------------------------------
     CheckBoxItem::CheckBoxItem(const QString& aLabel, QWidget* aParent): mCheckBox() {
@@ -130,13 +126,9 @@ namespace tool {
         mCheckBox->setFocusPolicy(Qt::NoFocus);
     }
 
-    void CheckBoxItem::setToolTip(const QString& aTip) {
-        mCheckBox->setToolTip(aTip);
-    }
+    void CheckBoxItem::setToolTip(const QString& aTip) { mCheckBox->setToolTip(aTip); }
 
-    void CheckBoxItem::setChecked(bool aChecked) {
-        mCheckBox->setChecked(aChecked);
-    }
+    void CheckBoxItem::setChecked(bool aChecked) { mCheckBox->setChecked(aChecked); }
 
     void CheckBoxItem::connect(const std::function<void(bool)>& aValueChanged) {
         mCheckBox->connect(mCheckBox, &QCheckBox::clicked, aValueChanged);

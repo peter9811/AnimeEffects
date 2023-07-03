@@ -19,15 +19,9 @@ public:
     void update(const void* aData, GLint aOffset, GLsizei aSize);
     void destroy();
 
-    GLsizei size() const {
-        return mSize;
-    }
-    GLuint id() const {
-        return mId;
-    }
-    bool isValid() const {
-        return mId != 0;
-    }
+    GLsizei size() const { return mSize; }
+    GLuint id() const { return mId; }
+    bool isValid() const { return mId != 0; }
 
 private:
     CompoType mCompoType;
@@ -50,9 +44,7 @@ public:
     ComputeTexture1D& at(int aIndex);
     const ComputeTexture1D& at(int aIndex) const;
 
-    int count() const {
-        return mList.count();
-    }
+    int count() const { return mList.count(); }
 
 private:
     ComputeTexture1D::CompoType mCompoType;

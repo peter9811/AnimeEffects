@@ -17,16 +17,12 @@ namespace tool {
 
         ViewPanel(QWidget* aParent, GUIResources& aResources, const QString& aTitle);
 
-        void addButton(
-            const QString& aIconName, bool aCheckable, const QString& aToolTip, const PushDelegate& aDelegate);
+        void
+        addButton(const QString& aIconName, bool aCheckable, const QString& aToolTip, const PushDelegate& aDelegate);
 
         int updateGeometry(const QPoint& aPos, int aWidth);
-        QPushButton* button(int aId) {
-            return mButtons[aId];
-        }
-        const QPushButton* button(int aId) const {
-            return mButtons[aId];
-        }
+        QPushButton* button(int aId) { return mButtons[aId]; }
+        const QPushButton* button(int aId) const { return mButtons[aId]; }
 
     private:
         GUIResources& mGUIResources;

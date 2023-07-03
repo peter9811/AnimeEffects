@@ -25,13 +25,9 @@ namespace obj {
         this->setWhatsThis(kItemColumn, "ObjectItem");
     }
 
-    bool Item::isTopNode() const {
-        return !mNode.parent();
-    }
+    bool Item::isTopNode() const { return !mNode.parent(); }
 
-    QRect Item::visualRect() const {
-        return mTree.visualItemRect(this);
-    }
+    QRect Item::visualRect() const { return mTree.visualItemRect(this); }
 
 } // namespace obj
 } // namespace gui

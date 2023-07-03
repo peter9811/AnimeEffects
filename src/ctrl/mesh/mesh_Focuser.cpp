@@ -10,17 +10,11 @@ static const float kEdgeSqRadius = 8.0f * 8.0f;
 namespace ctrl {
 namespace mesh {
 
-    Focuser::Focuser(): mMesh(), mTargetMtx(), mFocus(), mFocusChanged(), mSelecting() {
-        setFocusEnable();
-    }
+    Focuser::Focuser(): mMesh(), mTargetMtx(), mFocus(), mFocusChanged(), mSelecting() { setFocusEnable(); }
 
-    void Focuser::setMesh(MeshAccessor& aMesh) {
-        mMesh = &aMesh;
-    }
+    void Focuser::setMesh(MeshAccessor& aMesh) { mMesh = &aMesh; }
 
-    void Focuser::setTargetMatrix(const QMatrix4x4& aMtx) {
-        mTargetMtx = aMtx;
-    }
+    void Focuser::setTargetMatrix(const QMatrix4x4& aMtx) { mTargetMtx = aMtx; }
 
     void Focuser::update(const core::CameraInfo& aCamera, const core::AbstractCursor& aCursor) {
         auto prev = mFocus;

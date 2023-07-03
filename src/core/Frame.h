@@ -15,9 +15,7 @@ public:
         return frame;
     }
 
-    inline bool operator==(const Frame& aRhs) const {
-        return mValue == aRhs.mValue && mMilli == aRhs.mMilli;
-    }
+    inline bool operator==(const Frame& aRhs) const { return mValue == aRhs.mValue && mMilli == aRhs.mMilli; }
 
     inline bool operator<(const Frame& aRhs) const {
         if (mValue == aRhs.mValue)
@@ -31,24 +29,12 @@ public:
         return mValue > aRhs.mValue;
     }
 
-    inline bool operator<=(const Frame& aRhs) const {
-        return !(*this > aRhs);
-    }
-    inline bool operator>=(const Frame& aRhs) const {
-        return !(*this < aRhs);
-    }
-    inline bool operator<(int aRhs) const {
-        return *this < Frame(aRhs);
-    }
-    inline bool operator>(int aRhs) const {
-        return *this > Frame(aRhs);
-    }
-    inline bool operator<=(int aRhs) const {
-        return *this <= Frame(aRhs);
-    }
-    inline bool operator>=(int aRhs) const {
-        return *this >= Frame(aRhs);
-    }
+    inline bool operator<=(const Frame& aRhs) const { return !(*this > aRhs); }
+    inline bool operator>=(const Frame& aRhs) const { return !(*this < aRhs); }
+    inline bool operator<(int aRhs) const { return *this < Frame(aRhs); }
+    inline bool operator>(int aRhs) const { return *this > Frame(aRhs); }
+    inline bool operator<=(int aRhs) const { return *this <= Frame(aRhs); }
+    inline bool operator>=(int aRhs) const { return *this >= Frame(aRhs); }
 
     inline void set(int aValue) {
         mValue = aValue;
@@ -60,25 +46,15 @@ public:
         mMilli = (int)(1000.0f * (aValue - mValue));
     }
 
-    inline void add(int aValue) {
-        mValue += aValue;
-    }
+    inline void add(int aValue) { mValue += aValue; }
 
-    inline void addDecimal(float aValue) {
-        setDecimal(getDecimal() + aValue);
-    }
+    inline void addDecimal(float aValue) { setDecimal(getDecimal() + aValue); }
 
-    inline int get() const {
-        return mValue;
-    }
+    inline int get() const { return mValue; }
 
-    inline float getDecimal() const {
-        return mValue + (mMilli / 1000.0f);
-    }
+    inline float getDecimal() const { return mValue + (mMilli / 1000.0f); }
 
-    inline bool hasFraction() const {
-        return mMilli != 0;
-    }
+    inline bool hasFraction() const { return mMilli != 0; }
 
     void clamp(int aMin, int aMax) {
         const float v = getDecimal();
@@ -95,9 +71,7 @@ public:
         return frame;
     }
 
-    inline Frame integrated() const {
-        return Frame(mValue);
-    }
+    inline Frame integrated() const { return Frame(mValue); }
 
     struct SerialValue {
         int value;

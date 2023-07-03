@@ -18,8 +18,18 @@
 namespace gui {
 
 ResourceTreeWidget::ResourceTreeWidget(ViaPoint& aViaPoint, bool aUseCustomContext, QWidget* aParent):
-    QTreeWidget(aParent), mViaPoint(aViaPoint), mProject(), mHolder(), mActionItem(), mChangePathAction(),
-    mRenameAction(), mReloadAction(), mFileWatch(), mWatchRemove(), mDeleteAction(), mRenaming() {
+    QTreeWidget(aParent),
+    mViaPoint(aViaPoint),
+    mProject(),
+    mHolder(),
+    mActionItem(),
+    mChangePathAction(),
+    mRenameAction(),
+    mReloadAction(),
+    mFileWatch(),
+    mWatchRemove(),
+    mDeleteAction(),
+    mRenaming() {
     // this->setSelectionMode(QAbstractItemView::ExtendedSelection);
     this->setObjectName("resourceTree");
     this->setHeaderHidden(true);
@@ -47,7 +57,8 @@ ResourceTreeWidget::ResourceTreeWidget(ViaPoint& aViaPoint, bool aUseCustomConte
 
         mChangePathAction = new QAction(tr("Change file path"), this);
         mChangePathAction->connect(
-            mChangePathAction, &QAction::triggered, this, &ResourceTreeWidget::onChangePathActionTriggered);
+            mChangePathAction, &QAction::triggered, this, &ResourceTreeWidget::onChangePathActionTriggered
+        );
 
         mRenameAction = new QAction(tr("Rename"), this);
         mRenameAction->connect(mRenameAction, &QAction::triggered, this, &ResourceTreeWidget::onRenameActionTriggered);
@@ -204,7 +215,8 @@ void ResourceTreeWidget::onChangePathActionTriggered(bool) {
     res::Item* item = res::Item::cast(mActionItem);
     if (item && item->isTopNode()) {
         const QString fileName = QFileDialog::getOpenFileName(
-            this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
+            this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
+        );
         if (fileName.isEmpty())
             return;
 
@@ -228,7 +240,8 @@ void ResourceTreeWidget::onChangePathActionTriggered(bool) {
                 [=]() {
                     mHolder->changeAbsoluteFilePath(*resNode, prevFilePath);
                     item->setText(kItemColumn, mHolder->relativeFilePath(prevFilePath));
-                });
+                }
+            );
 
             stack.push(command);
         }
@@ -278,7 +291,8 @@ void ResourceTreeWidget::endRenameEditor() {
                 [=]() {
                     item->setText(kItemColumn, curName);
                     nodePtr->data().setIdentifier(curName);
-                }));
+                }
+            ));
         }
     }
 }
@@ -302,10 +316,12 @@ void ResourceTreeWidget::onWatchTriggered(bool) {
     if (!item)
         return;
     if (!QFile(mProject->resourceHolder().findAbsoluteFilePath(item->node())).exists()) {
-        MainWindow::showInfoPopup(tr("File not found"),
+        MainWindow::showInfoPopup(
+            tr("File not found"),
             tr("The file couldn't be found, please change "
                "its file path using the button above."),
-            "Warn");
+            "Warn"
+        );
         return;
     }
     auto fileWatcher = MainWindow::getWatcher();

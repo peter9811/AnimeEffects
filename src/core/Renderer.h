@@ -32,12 +32,8 @@ public:
     virtual void setClipped(bool aIsClipped) = 0;
     virtual bool isClipped() const = 0;
 
-    virtual bool hasBlendMode() const {
-        return false;
-    }
-    virtual img::BlendMode blendMode() const {
-        return img::BlendMode_TERM;
-    }
+    virtual bool hasBlendMode() const { return false; }
+    virtual img::BlendMode blendMode() const { return img::BlendMode_TERM; }
     virtual void setBlendMode(img::BlendMode) {}
 };
 

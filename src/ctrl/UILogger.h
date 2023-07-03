@@ -5,11 +5,9 @@
 #include "ctrl/UILog.h"
 #include "ctrl/UILogType.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class UILogger
-{
+class UILogger {
 public:
     virtual ~UILogger() {}
     virtual void pushLog(const QString& aMessage, UILogType aType) = 0;

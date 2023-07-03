@@ -7,44 +7,34 @@
 #include "core/BoneShape.h"
 
 //-------------------------------------------------------------------------------------------------
-namespace
-{
+namespace {
 static const float kRangeMin = 0.1f;
 } // namespace
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-BoneShape::BendRange::BendRange()
-{
+BoneShape::BendRange::BendRange() {
     angle[0] = -1.0f;
     angle[1] = 1.0f;
 }
 
-bool BoneShape::BendRange::isValid() const
-{
-    return angle[0] >= 0.0f && angle[1] <= 0.0f;
-}
+bool BoneShape::BendRange::isValid() const { return angle[0] >= 0.0f && angle[1] <= 0.0f; }
 
-float BoneShape::BendRange::getWeight(float aBendAngle) const
-{
-    if (!isValid()) return 1.0f;
+float BoneShape::BendRange::getWeight(float aBendAngle) const {
+    if (!isValid())
+        return 1.0f;
 
     // positive angle
     float posiWeight = 0.0f;
-    if (angle[0] > 0.0f)
-    {
-        const float posiBend = (aBendAngle >= 0.0f) ?
-                                   aBendAngle : (aBendAngle + 2 * M_PI);
+    if (angle[0] > 0.0f) {
+        const float posiBend = (aBendAngle >= 0.0f) ? aBendAngle : (aBendAngle + 2 * M_PI);
         posiWeight = 1.0f - posiBend / angle[0];
     }
     // negative angle
     float negaWeight = 0.0f;
-    if (angle[1] < 0.0f)
-    {
-        const float negaBend = (aBendAngle <= 0.0f) ?
-                                   aBendAngle : (aBendAngle - 2 * M_PI);
+    if (angle[1] < 0.0f) {
+        const float negaBend = (aBendAngle <= 0.0f) ? aBendAngle : (aBendAngle - 2 * M_PI);
         negaWeight = 1.0f - negaBend / angle[1];
     }
 
@@ -52,105 +42,82 @@ float BoneShape::BendRange::getWeight(float aBendAngle) const
 }
 
 //-------------------------------------------------------------------------------------------------
-BoneShape::BoneShape()
-    : mIsValid()
-    , mSegment()
-    , mVUnit()
-    , mVDirAngle()
-    , mLength()
-    , mRadius()
-    , mBounding()
-    , mPolygon()
-    , mRootBendRange()
-    , mTailBendRange()
-{
-}
+BoneShape::BoneShape():
+    mIsValid(),
+    mSegment(),
+    mVUnit(),
+    mVDirAngle(),
+    mLength(),
+    mRadius(),
+    mBounding(),
+    mPolygon(),
+    mRootBendRange(),
+    mTailBendRange() {}
 
-void BoneShape::updateValidity()
-{
+void BoneShape::updateValidity() {
     const bool hasValidRange = !mRadius[0].isNull() || !mRadius[1].isNull();
     const bool hasLength = mSegment.dir.length() >= Constant::normalizable();
     mIsValid = hasValidRange && hasLength;
-    if (mIsValid)
-    {
+    if (mIsValid) {
         mVUnit = mSegment.dir.normalized();
         mLength = mSegment.dir.length();
         mVDirAngle = util::MathUtil::getAngleRad(mVUnit);
     }
 }
 
-void BoneShape::setSegment(const util::Segment2D& aSegment)
-{
+void BoneShape::setSegment(const util::Segment2D& aSegment) {
     mSegment = aSegment;
     updateValidity();
 }
 
-void BoneShape::setRadius(const QVector2D& aRoot, const QVector2D& aTail)
-{
+void BoneShape::setRadius(const QVector2D& aRoot, const QVector2D& aTail) {
     mRadius[0] = aRoot;
     mRadius[1] = aTail;
     updateValidity();
 }
 
-void BoneShape::setPolygon(const QPolygonF& aPolygon)
-{
+void BoneShape::setPolygon(const QPolygonF& aPolygon) {
     mPolygon = aPolygon;
     mBounding = aPolygon.boundingRect();
 }
 
-void BoneShape::setBendRange(const BendRange& aRoot, const BendRange& aTail)
-{
+void BoneShape::setBendRange(const BendRange& aRoot, const BendRange& aTail) {
     mRootBendRange = aRoot;
     mTailBendRange = aTail;
 }
 
-void BoneShape::setRootBendFromDirections(const QVector2D& aMyDir,
-                                          const QVector2D& aParentDir)
-{
+void BoneShape::setRootBendFromDirections(const QVector2D& aMyDir, const QVector2D& aParentDir) {
     mRootBendRange = BendRange();
 
-    if (!aMyDir.isNull() && !aParentDir.isNull())
-    {
+    if (!aMyDir.isNull() && !aParentDir.isNull()) {
         auto diff = util::MathUtil::getAngleDifferenceRad(aMyDir, -aParentDir);
-        if (diff >= 0.0f)
-        {
+        if (diff >= 0.0f) {
             mRootBendRange.angle[0] = diff;
             mRootBendRange.angle[1] = diff - 2 * M_PI;
-        }
-        else
-        {
+        } else {
             mRootBendRange.angle[1] = diff;
             mRootBendRange.angle[0] = diff + 2 * M_PI;
         }
     }
 }
 
-void BoneShape::adjustTailBendFromDirections(const QVector2D& aMyDir,
-                                             const QVector2D& aChildDir)
-{
-    if (!aMyDir.isNull() && !aChildDir.isNull())
-    {
+void BoneShape::adjustTailBendFromDirections(const QVector2D& aMyDir, const QVector2D& aChildDir) {
+    if (!aMyDir.isNull() && !aChildDir.isNull()) {
         auto diff = util::MathUtil::getAngleDifferenceRad(-aMyDir, aChildDir);
 
         float angle[2] = {};
-        if (diff >= 0.0f)
-        {
+        if (diff >= 0.0f) {
             angle[0] = diff;
             angle[1] = diff - 2 * M_PI;
-        }
-        else
-        {
+        } else {
             angle[1] = diff;
             angle[0] = diff + 2 * M_PI;
         }
 
-        if (!mTailBendRange.isValid())
-        {
+        if (!mTailBendRange.isValid()) {
             mTailBendRange.angle[0] = angle[0];
             mTailBendRange.angle[1] = angle[1];
-        }
-        else
-        {
+        } else {
             // reduce bend range
             mTailBendRange.angle[0] = std::min(mTailBendRange.angle[0], angle[0]);
             mTailBendRange.angle[1] = std::max(mTailBendRange.angle[1], angle[1]);
@@ -158,15 +125,11 @@ void BoneShape::adjustTailBendFromDirections(const QVector2D& aMyDir,
     }
 }
 
-float BoneShape::influence(const QVector2D& aPos) const
-{
-    if (mIsValid)
-    {
+float BoneShape::influence(const QVector2D& aPos) const {
+    if (mIsValid) {
         const QPointF pos = aPos.toPointF();
-        if (mBounding.contains(pos))
-        {
-            if (mPolygon.containsPoint(pos, Qt::OddEvenFill))
-            {
+        if (mBounding.contains(pos)) {
+            if (mPolygon.containsPoint(pos, Qt::OddEvenFill)) {
                 return getBoneWeight(aPos);
             }
         }
@@ -175,11 +138,9 @@ float BoneShape::influence(const QVector2D& aPos) const
 }
 
 float BoneShape::getBoneEllipseWeight(
-        const QVector2D& aCenter, const QVector2D& aVUnit,
-        const QVector2D& aRadius, const QVector2D& aPoint) const
-{
-    if (aRadius.x() >= kRangeMin && aRadius.y() >= kRangeMin)
-    {
+    const QVector2D& aCenter, const QVector2D& aVUnit, const QVector2D& aRadius, const QVector2D& aPoint
+) const {
+    if (aRadius.x() >= kRangeMin && aRadius.y() >= kRangeMin) {
 #if 1
         const QVector2D dir = aPoint - aCenter;
         const QVector2D vDir = aVUnit * QVector2D::dotProduct(aVUnit, dir);
@@ -190,8 +151,7 @@ float BoneShape::getBoneEllipseWeight(
         const QVector2D skewDir = hDir + vDir * vScale;
         const float skewSqlen = skewDir.lengthSquared();
 
-        if (skewSqlen < radius * radius)
-        {
+        if (skewSqlen < radius * radius) {
             return 1.0f - qSqrt(skewSqlen) / radius;
         }
 #else
@@ -204,8 +164,7 @@ float BoneShape::getBoneEllipseWeight(
         const QVector2D skewDir = hDir + vDir * vScale;
         const float skewSqlen = skewDir.lengthSquared();
 
-        if (skewSqlen < radius * radius)
-        {
+        if (skewSqlen < radius * radius) {
             const float hWeight = 1.0f - hDir.length() / aRadius.x();
             const float vWeight = 1.0f - vDir.length() / aRadius.y();
             return hWeight * vWeight;
@@ -258,75 +217,63 @@ float BoneShape::getBoneWeight(const QVector2D& aPoint) const
 }
 #else
 
-float BoneShape::getBoneWeight(const QVector2D& aPoint) const
-{
-    //static const float kWing = (float)(M_PI * 0.25);
-    //static const float kWingInv = (float)(M_PI * 0.75);
-    //static const float kWing = (float)(M_PI * 0.0);
-    //static const float kWingInv = (float)(M_PI * 1.0);
+float BoneShape::getBoneWeight(const QVector2D& aPoint) const {
+    // static const float kWing = (float)(M_PI * 0.25);
+    // static const float kWingInv = (float)(M_PI * 0.75);
+    // static const float kWing = (float)(M_PI * 0.0);
+    // static const float kWingInv = (float)(M_PI * 1.0);
 
     float twistWeight = 1.0f;
 
-#if 1
+    #if 1
     // root
     const QVector2D start2point = aPoint - mSegment.start;
-    if (!start2point.isNull())
-    {
+    if (!start2point.isNull()) {
         const float angle = util::MathUtil::getAngleRad(start2point);
         const float diff = util::MathUtil::getAngleDifferenceRad(mVDirAngle, angle);
-        //const float outress = 1.0f - std::max(std::abs(diff) - kWing, 0.0f) / kWingInv;
-        //twistWeight *= outress * outress;
+        // const float outress = 1.0f - std::max(std::abs(diff) - kWing, 0.0f) / kWingInv;
+        // twistWeight *= outress * outress;
         const float outress = mRootBendRange.getWeight(diff);
         twistWeight *= outress * outress;
     }
 
     const QVector2D end2point = aPoint - mSegment.end();
-    if (!end2point.isNull())
-    {
+    if (!end2point.isNull()) {
         const float angle = util::MathUtil::getAngleRad(end2point);
         const float diff = util::MathUtil::getAngleDifferenceRad(mVDirAngle + M_PI, angle);
-        //const float outress = 1.0f - std::max(std::abs(diff) - kWing, 0.0f) / kWingInv;
-        //twistWeight *= outress * outress;
+        // const float outress = 1.0f - std::max(std::abs(diff) - kWing, 0.0f) / kWingInv;
+        // twistWeight *= outress * outress;
         const float outress = mTailBendRange.getWeight(diff);
         twistWeight *= outress * outress;
     }
-#endif
+    #endif
 
     const float rawSegRate = util::CollDetect::getRawSegmentRate(mSegment, aPoint);
     float nearness = 1.0f;
 
-    if (rawSegRate < 0.0f)
-    { // root ellipse
+    if (rawSegRate < 0.0f) { // root ellipse
         const QVector2D range = mRadius[0];
-        if (range.x() >= kRangeMin)
-        {
+        if (range.x() >= kRangeMin) {
             nearness = getBoneEllipseWeight(mSegment.start, mVUnit, range, aPoint);
         }
-    }
-    else if (rawSegRate <= 1.0f)
-    { // a point is in a bone segment range
-        QVector2D range =
-                mRadius[0] * (1.0f - rawSegRate) + mRadius[1] * rawSegRate;
+    } else if (rawSegRate <= 1.0f) { // a point is in a bone segment range
+        QVector2D range = mRadius[0] * (1.0f - rawSegRate) + mRadius[1] * rawSegRate;
 
-        if (range.x() >= kRangeMin)
-        {
+        if (range.x() >= kRangeMin) {
             const QVector2D segPos = mSegment.start + rawSegRate * mSegment.dir;
             const float diffs = (aPoint - segPos).length();
             nearness = std::max(1.0f - diffs / range.x(), 0.0f);
         }
-    }
-    else
-    { // tail ellipse
+    } else { // tail ellipse
         const QVector2D range = mRadius[1];
 
-        if (range.x() >= kRangeMin)
-        {
+        if (range.x() >= kRangeMin) {
             nearness = getBoneEllipseWeight(mSegment.end(), mVUnit, range, aPoint);
         }
     }
 
-    //return std::min(twistWeight, nearness);
-    //return twistWeight * nearness;
+    // return std::min(twistWeight, nearness);
+    // return twistWeight * nearness;
     const float ratio = 0.3f * nearness * nearness;
     twistWeight = ratio + (1.0f - ratio) * twistWeight;
     return twistWeight * nearness;
@@ -334,27 +281,23 @@ float BoneShape::getBoneWeight(const QVector2D& aPoint) const
 #endif
 
 
-float BoneShape::getWeakness(float aRate) const
-{
+float BoneShape::getWeakness(float aRate) const {
     const float rootV = mRadius[0].y() / mLength;
     const float tailV = mRadius[1].y() / mLength;
     float weakness = 1.0f;
 
-    if (aRate < rootV)
-    {
+    if (aRate < rootV) {
         weakness *= 0.5f + 0.5f * (1.0f - (rootV - aRate) / rootV);
     }
 
-    if (aRate > 1.0f - tailV)
-    {
+    if (aRate > 1.0f - tailV) {
         weakness *= 0.5f + 0.5f * (1.0f - (aRate - (1.0f - tailV)) / tailV);
     }
 
     return weakness;
 }
 
-bool BoneShape::serialize(Serializer& aOut) const
-{
+bool BoneShape::serialize(Serializer& aOut) const {
     aOut.write(mIsValid);
     aOut.write(mSegment);
     aOut.write(mVUnit);
@@ -372,24 +315,25 @@ bool BoneShape::serialize(Serializer& aOut) const
     return aOut.checkStream();
 }
 
-void addVecToJson(QVector2D vector, QJsonObject *json, QString varName){
-    json->insert(varName + "X", vector.x()); json->insert(varName + "Y", vector.y());
+void addVecToJson(QVector2D vector, QJsonObject* json, QString varName) {
+    json->insert(varName + "X", vector.x());
+    json->insert(varName + "Y", vector.y());
 }
 
-void addRectToJson(QRectF rect, QJsonObject *json, QString varName){
+void addRectToJson(QRectF rect, QJsonObject* json, QString varName) {
     json->insert(varName + "Left", rect.left());
     json->insert(varName + "Top", rect.top());
     json->insert(varName + "Width", rect.width());
     json->insert(varName + "Height", rect.height());
 }
 
-void addPolyToJson(QPolygonF poly, QJsonObject *json, QString varName){
+void addPolyToJson(QPolygonF poly, QJsonObject* json, QString varName) {
     QJsonObject polyObj;
     QJsonArray polys;
     polyObj["PolyCount"] = poly.count();
     int vtxCount = 0;
-    while(vtxCount != poly.count()){
-        for(auto vtx: poly){
+    while (vtxCount != poly.count()) {
+        for (auto vtx : poly) {
             QJsonObject vertex;
             vertex["X"] = vtx.x();
             vertex["Y"] = vtx.y();
@@ -401,23 +345,27 @@ void addPolyToJson(QPolygonF poly, QJsonObject *json, QString varName){
     json->insert(varName, polyObj);
 }
 
-QVector2D objToVect(QJsonObject obj, QString varName){
+QVector2D objToVect(QJsonObject obj, QString varName) {
     return QVector2D(obj[varName + "X"].toDouble(), obj[varName + "Y"].toDouble());
 }
 
-QRectF objToRect(QJsonObject obj, QString varName){
-    return QRectF(obj[varName+"Left"].toDouble(), obj[varName+"Top"].toDouble(),
-           obj[varName+"Width"].toDouble(), obj[varName+"Height"].toDouble());
+QRectF objToRect(QJsonObject obj, QString varName) {
+    return QRectF(
+        obj[varName + "Left"].toDouble(),
+        obj[varName + "Top"].toDouble(),
+        obj[varName + "Width"].toDouble(),
+        obj[varName + "Height"].toDouble()
+    );
 }
 
-QPolygonF objToPoly(QJsonObject obj, QString varName){
+QPolygonF objToPoly(QJsonObject obj, QString varName) {
     QJsonObject polyKey = obj[varName].toObject();
     QJsonArray polyArray = polyKey["Vertices"].toArray();
     QPolygonF poly;
     int polyCount = polyKey["PolyCount"].toInt();
     int vtxCount = 0;
-    while(vtxCount != polyCount){
-        for(auto vtx: qAsConst(polyArray)){
+    while (vtxCount != polyCount) {
+        for (auto vtx : qAsConst(polyArray)) {
             QJsonObject vertex = vtx.toObject();
             poly.append(QPointF(vertex["X"].toDouble(), vertex["Y"].toDouble()));
             vtxCount++;
@@ -426,7 +374,7 @@ QPolygonF objToPoly(QJsonObject obj, QString varName){
     return poly;
 }
 
-void BoneShape::deserializeFromJson(QJsonObject json){
+void BoneShape::deserializeFromJson(QJsonObject json) {
     QJsonObject shape = json["Shape"].toObject();
     mIsValid = shape["Valid"].toBool();
     mSegment.start = objToVect(shape, "SegmentStart");
@@ -444,7 +392,7 @@ void BoneShape::deserializeFromJson(QJsonObject json){
     mPolygon = objToPoly(shape, "Polygon");
 }
 
-QJsonObject BoneShape::serializeToJson() const{
+QJsonObject BoneShape::serializeToJson() const {
     QJsonObject shape;
     shape["Valid"] = mIsValid;
     addVecToJson(mSegment.start, &shape, "SegmentStart");
@@ -463,8 +411,7 @@ QJsonObject BoneShape::serializeToJson() const{
     return shape;
 }
 
-bool BoneShape::deserialize(Deserializer& aIn)
-{
+bool BoneShape::deserialize(Deserializer& aIn) {
     aIn.read(mIsValid);
     aIn.read(mSegment);
     aIn.read(mVUnit);
@@ -480,8 +427,6 @@ bool BoneShape::deserialize(Deserializer& aIn)
     aIn.read(mPolygon);
 
     return aIn.checkStream();
-
 }
 
 } // namespace core
-

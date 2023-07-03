@@ -11,19 +11,18 @@
 namespace gui {
 namespace prop {
 
-class ProjectPanel : public Panel
-{
-public:
-    ProjectPanel(core::Project& aProject, QWidget* aParent);
+    class ProjectPanel: public Panel {
+    public:
+        ProjectPanel(core::Project& aProject, QWidget* aParent);
 
-private:
-    void build();
+    private:
+        void build();
 
-    core::Project& mProject;
+        core::Project& mProject;
 
-    AttrGroup* mAttributes;
-    //DecimalItem* mDepth;
-};
+        AttrGroup* mAttributes;
+        // DecimalItem* mDepth;
+    };
 
 } // namespace prop
 } // namespace gui

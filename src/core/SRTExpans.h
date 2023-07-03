@@ -7,11 +7,9 @@
 #include "util/FergusonCoonsSpline.h"
 #include "core/Frame.h"
 
-namespace core
-{
+namespace core {
 
-class SRTExpans
-{
+class SRTExpans {
 public:
     typedef util::FergusonCoonsSpline<QVector3D> SplineType;
 
@@ -61,4 +59,3 @@ private:
 } // namespace core
 
 #endif // CORE_SRTEXPANS
-

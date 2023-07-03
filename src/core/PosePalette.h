@@ -10,23 +10,19 @@
 #include "core/BoneKey.h"
 #include "core/PoseKey.h"
 
-namespace core
-{
+namespace core {
 
-class PosePalette
-{
+class PosePalette {
 public:
     enum { kMaxCount = 32 };
 
-    struct KeyPair
-    {
+    struct KeyPair {
         const BoneKey::Data* origin;
         const PoseKey::Data* pose;
     };
     typedef QVector<KeyPair> KeyPairs;
 
-    struct DualQuaternion
-    {
+    struct DualQuaternion {
         gl::Vector4 real;
         gl::Vector4 dual;
         const GLfloat* data() const { return (const GLfloat*)(this); }
@@ -43,13 +39,15 @@ public:
     util::ArrayBlock<const DualQuaternion> dualQuaternions() const;
 
 private:
-    struct BonePair { const Bone2* origin; const Bone2* pose; };
+    struct BonePair {
+        const Bone2* origin;
+        const Bone2* pose;
+    };
     typedef std::array<BonePair, kMaxCount> BonePairs;
     int makeBoneOrigins(const KeyPairs& aSrc, BonePairs& aDst);
     int makeBonePoses(const KeyPairs& aSrc, BonePairs& aDst);
     void clearDualQuaternions();
-    static DualQuaternion makeDualQuaternion(
-            const QQuaternion& aUnitQuat, const QVector3D& aTrans);
+    static DualQuaternion makeDualQuaternion(const QQuaternion& aUnitQuat, const QVector3D& aTrans);
 
     std::array<QMatrix4x4, kMaxCount> mData;
     bool mIsUnit;
@@ -59,4 +57,3 @@ private:
 } // namespace core
 
 #endif // CORE_POSEPALETTE_H
-

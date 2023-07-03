@@ -1,12 +1,10 @@
 #ifndef UTIL_ITREESEEKER
 #define UTIL_ITREESEEKER
 
-namespace util
-{
+namespace util {
 
-template <typename tData, typename tAddress>
-class ITreeSeeker
-{
+template<typename tData, typename tAddress>
+class ITreeSeeker {
 public:
     typedef tData Data;
     typedef void* Position;
@@ -26,4 +24,3 @@ public:
 } // namespace util
 
 #endif // UTIL_ITREESEEKER
-

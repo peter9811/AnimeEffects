@@ -4,21 +4,17 @@
 #include <QColor>
 #include "XC.h"
 
-namespace img
-{
+namespace img {
 
-struct ColorRGBA
-{
-    void set(const QColor& aColor)
-    {
+struct ColorRGBA {
+    void set(const QColor& aColor) {
         v[0] = (uint8)aColor.red();
         v[1] = (uint8)aColor.green();
         v[2] = (uint8)aColor.blue();
         v[3] = (uint8)aColor.alpha();
     }
 
-    void setRGB(const ColorRGBA& aRhs)
-    {
+    void setRGB(const ColorRGBA& aRhs) {
         v[0] = aRhs.v[0];
         v[1] = aRhs.v[1];
         v[2] = aRhs.v[2];
@@ -40,4 +36,3 @@ struct ColorRGBA
 } // namespace img
 
 #endif // IMG_COLORRGBA
-

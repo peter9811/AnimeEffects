@@ -2,18 +2,16 @@
 #include <QFormLayout>
 #include "gui/MouseSettingDialog.h"
 
-namespace gui
-{
+namespace gui {
 
 //-------------------------------------------------------------------------------------------------
-MouseSettingDialog::MouseSettingDialog(ViaPoint& aViaPoint, QWidget* aParent)
-    : EasyDialog(tr("Mouse Settings"), aParent)
-    , mViaPoint(aViaPoint)
-    , mInitialValues()
-    , mInvertMainViewScalingBox()
-    , mInvertTimeLineScalingBox()
-    , mMiddleMouseMoveCanvas()
-{
+MouseSettingDialog::MouseSettingDialog(ViaPoint& aViaPoint, QWidget* aParent):
+    EasyDialog(tr("Mouse Settings"), aParent),
+    mViaPoint(aViaPoint),
+    mInitialValues(),
+    mInvertMainViewScalingBox(),
+    mInvertTimeLineScalingBox(),
+    mMiddleMouseMoveCanvas() {
     // read current settings
     mInitialValues.load();
 
@@ -40,25 +38,21 @@ MouseSettingDialog::MouseSettingDialog(ViaPoint& aViaPoint, QWidget* aParent)
     group->setLayout(form);
     this->setMainWidget(group);
 
-    this->setOkCancel([=](int aResult)->bool
-    {
-        if (aResult == 0)
-        {
+    this->setOkCancel([=](int aResult) -> bool {
+        if (aResult == 0) {
             this->saveSettings();
         }
         return true;
     });
 }
 
-void MouseSettingDialog::saveSettings()
-{
+void MouseSettingDialog::saveSettings() {
     MouseSetting newValues;
     newValues.invertMainViewScaling = mInvertMainViewScalingBox->isChecked();
     newValues.invertTimeLineScaling = mInvertTimeLineScalingBox->isChecked();
     newValues.middleMouseMoveCanvas = mMiddleMouseMoveCanvas->isChecked();
 
-    if (mInitialValues != newValues)
-    {
+    if (mInitialValues != newValues) {
         newValues.save();
         mViaPoint.mouseSetting() = newValues;
     }

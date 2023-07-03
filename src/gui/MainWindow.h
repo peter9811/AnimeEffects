@@ -26,17 +26,13 @@
 #include "qfilesystemwatcher.h"
 #include "res/res_ResourceUpdater.h"
 
-namespace gui
-{
+namespace gui {
 
-class MainWindow : public QMainWindow
-{
+class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(ctrl::System& aSystem,
-               GUIResources& aResources,
-               const LocaleParam& aLocaleParam);
+    MainWindow(ctrl::System& aSystem, GUIResources& aResources, const LocaleParam& aLocaleParam);
     ~MainWindow();
 
     void showWithSettings();
@@ -47,10 +43,12 @@ public:
     QElapsedTimer timeElapsed;
     qint64 lastPress;
     qint64 lastRelease;
-    static void showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString &aDetailed = "nullptr");
-    QTimer *autosaveTimer;
-    public slots:
-        void autoSave();
+    static void showInfoPopup(
+        const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed = "nullptr"
+    );
+    QTimer* autosaveTimer;
+public slots:
+    void autoSave();
 
 public:
     void onNewProjectTriggered();
@@ -84,7 +82,7 @@ private:
     ctrl::System& mSystem;
     GUIResources& mGUIResources;
     ViaPoint mViaPoint;
-	QScopedPointer<KeyCommandMap> mKeyCommandMap;
+    QScopedPointer<KeyCommandMap> mKeyCommandMap;
     QScopedPointer<KeyCommandInvoker> mKeyCommandInvoker;
     MouseSetting mMouseSetting;
     MainMenuBar* mMainMenuBar;

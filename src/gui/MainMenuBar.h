@@ -11,14 +11,16 @@
 #include "gui/GUIResources.h"
 #include "qprocess.h"
 
-namespace gui { class MainWindow; }
-namespace gui { class ViaPoint; }
-namespace gui
-{
+namespace gui {
+class MainWindow;
+}
+namespace gui {
+class ViaPoint;
+}
+namespace gui {
 
 //-------------------------------------------------------------------------------------------------
-class MainMenuBar : public QMenuBar
-{
+class MainMenuBar: public QMenuBar {
     Q_OBJECT
 public:
     MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources& aGUIResources, QWidget* aParent);
@@ -50,13 +52,12 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class ProjectCanvasSizeSettingDialog : public EasyDialog
-{
+class ProjectCanvasSizeSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
-    ProjectCanvasSizeSettingDialog(
-            ViaPoint& aViaPoint, core::Project& aProject, QWidget* aParent);
+    ProjectCanvasSizeSettingDialog(ViaPoint& aViaPoint, core::Project& aProject, QWidget* aParent);
     QSize canvasSize() const { return QSize(mWidthBox->value(), mHeightBox->value()); }
+
 private:
     ViaPoint& mViaPoint;
     core::Project& mProject;
@@ -65,12 +66,12 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class ProjectMaxFrameSettingDialog : public EasyDialog
-{
+class ProjectMaxFrameSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     ProjectMaxFrameSettingDialog(core::Project& aProject, QWidget* aParent);
     int maxFrame() const { return mMaxFrameBox->value(); }
+
 private:
     bool confirmMaxFrameUpdating(int aNewMaxFrame) const;
     core::Project& mProject;
@@ -78,12 +79,12 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class ProjectFPSSettingDialog : public EasyDialog
-{
+class ProjectFPSSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     ProjectFPSSettingDialog(core::Project& aProject, QWidget* aParent);
     int fps() const { return mFPSBox->value(); }
+
 private:
     bool confirmFPSUpdating(int aNewMaxFrame) const;
     core::Project& mProject;
@@ -91,16 +92,15 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class ProjectLoopSettingDialog : public EasyDialog
-{
+class ProjectLoopSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     ProjectLoopSettingDialog(core::Project& aProject, QWidget* aParent);
     bool isCheckedLoopBox() const { return mLoopBox->isChecked(); }
+
 private:
     QCheckBox* mLoopBox;
 };
-
 
 
 } // namespace gui

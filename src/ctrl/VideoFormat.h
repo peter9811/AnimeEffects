@@ -4,11 +4,9 @@
 #include <QString>
 #include <QList>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class VideoCodec
-{
+class VideoCodec {
 public:
     VideoCodec();
     QString name;
@@ -22,8 +20,7 @@ public:
     bool gpuenc;
 };
 
-class VideoFormat
-{
+class VideoFormat {
 public:
     VideoFormat();
     QString name;

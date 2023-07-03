@@ -1,26 +1,29 @@
 #include "gui/ToolWidget.h"
 #include "gui/KeyCommandMap.h"
 
-namespace gui
-{
+namespace gui {
 
-ToolWidget::ToolWidget(ViaPoint& aViaPoint, GUIResources& aResources, KeyCommandMap &aKeyCommandMap,
-					   const QSize& aSizeHint, QWidget* aParent)
-    : QWidget(aParent)
-    , mViaPoint(aViaPoint)
-    , mResources(aResources)
-	, mKeyCommandMap(aKeyCommandMap)
-    , mSizeHint(aSizeHint)
-    , mViewPanel()
-    , mModePanel()
-    , mDriver()
-    , mToolType(ctrl::ToolType_TERM)
-    , mSRTPanel()
-    , mFFDPanel()
-    , mBonePanel()
-    , mPosePanel()
-    , mMeshPanel()
-{
+ToolWidget::ToolWidget(
+    ViaPoint& aViaPoint,
+    GUIResources& aResources,
+    KeyCommandMap& aKeyCommandMap,
+    const QSize& aSizeHint,
+    QWidget* aParent
+):
+    QWidget(aParent),
+    mViaPoint(aViaPoint),
+    mResources(aResources),
+    mKeyCommandMap(aKeyCommandMap),
+    mSizeHint(aSizeHint),
+    mViewPanel(),
+    mModePanel(),
+    mDriver(),
+    mToolType(ctrl::ToolType_TERM),
+    mSRTPanel(),
+    mFFDPanel(),
+    mBonePanel(),
+    mPosePanel(),
+    mMeshPanel() {
     createViewPanel();
 
     createModePanel();
@@ -49,124 +52,125 @@ ToolWidget::ToolWidget(ViaPoint& aViaPoint, GUIResources& aResources, KeyCommand
     updateGeometry();
 
     // key binding
-    if (mViaPoint.keyCommandMap())
-    {
+    if (mViaPoint.keyCommandMap()) {
         {
             auto key = mViaPoint.keyCommandMap()->get("SelectCursor");
-            if (key) key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_Cursor); };
+            if (key)
+                key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_Cursor); };
         }
         {
             auto key = mViaPoint.keyCommandMap()->get("SelectSRT");
-            if (key) key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_SRT); };
+            if (key)
+                key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_SRT); };
         }
         {
             auto key = mViaPoint.keyCommandMap()->get("SelectBone");
-            if (key) key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_Bone); };
+            if (key)
+                key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_Bone); };
         }
         {
             auto key = mViaPoint.keyCommandMap()->get("SelectPose");
-            if (key) key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_Pose); };
+            if (key)
+                key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_Pose); };
         }
         {
             auto key = mViaPoint.keyCommandMap()->get("SelectMesh");
-            if (key) key->invoker = [=]() {
-                        this->mModePanel->pushButton(ctrl::ToolType_Mesh); };
+            if (key)
+                key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_Mesh); };
         }
         {
             auto key = mViaPoint.keyCommandMap()->get("SelectFFD");
-            if (key) key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_FFD); };
+            if (key)
+                key->invoker = [=]() { this->mModePanel->pushButton(ctrl::ToolType_FFD); };
         }
     }
 }
 
-void ToolWidget::setDriver(ctrl::Driver* aDriver)
-{
+void ToolWidget::setDriver(ctrl::Driver* aDriver) {
     mDriver = aDriver;
 
-    if (mDriver)
-    {
+    if (mDriver) {
         mDriver->setTool(mToolType);
         setPanelActivity(true);
-    }
-    else
-    {
+    } else {
         setPanelActivity(false);
     }
 }
 
-void ToolWidget::createViewPanel()
-{
-    if (mViewPanel) delete mViewPanel;
+void ToolWidget::createViewPanel() {
+    if (mViewPanel)
+        delete mViewPanel;
     mViewPanel = new tool::ViewPanel(this, mResources, tr("View Settings"));
 
-    mViewPanel->addButton("showmesh", true, tr("Show mesh"), [=](bool aChecked)
-    {
+    mViewPanel->addButton("showmesh", true, tr("Show mesh"), [=](bool aChecked) {
         this->viewSetting().showLayerMesh = aChecked;
         this->onViewSettingChanged(this->viewSetting());
     });
-    mViewPanel->addButton("cutimages", true, tr("Do not draw outside the frame"), [=](bool aChecked)
-    {
+    mViewPanel->addButton("cutimages", true, tr("Do not draw outside the frame"), [=](bool aChecked) {
         this->viewSetting().cutImagesByTheFrame = aChecked;
         this->onViewSettingChanged(this->viewSetting());
     });
 
-    QString _rotateViewAntiClockwiseKeyBindingText = this->mKeyCommandMap.get("RotateCanvas15AntiClockwise")->binding.text();
-    mViewPanel->addButton("rotateac", false, tr("Rotate the canvas counterclockwise (%1)").arg(_rotateViewAntiClockwiseKeyBindingText), [=](bool)
-    {
-        this->viewSetting().rotateViewACW = true;
-        this->onViewSettingChanged(this->viewSetting());
-        this->viewSetting().rotateViewACW = false;
-    });
+    QString _rotateViewAntiClockwiseKeyBindingText =
+        this->mKeyCommandMap.get("RotateCanvas15AntiClockwise")->binding.text();
+    mViewPanel->addButton(
+        "rotateac",
+        false,
+        tr("Rotate the canvas counterclockwise (%1)").arg(_rotateViewAntiClockwiseKeyBindingText),
+        [=](bool) {
+            this->viewSetting().rotateViewACW = true;
+            this->onViewSettingChanged(this->viewSetting());
+            this->viewSetting().rotateViewACW = false;
+        }
+    );
 
     QString _rotateResetKeyBindingText = this->mKeyCommandMap.get("ResetCanvasAngle")->binding.text();
-    mViewPanel->addButton("resetrot", false, tr("Reset rotation of the canvas (%1)").arg(_rotateResetKeyBindingText), [=](bool)
-    {
-        this->viewSetting().resetRotateView = true;
-        this->onViewSettingChanged(this->viewSetting());
-        this->viewSetting().resetRotateView = false;
-    });
+    mViewPanel->addButton(
+        "resetrot",
+        false,
+        tr("Reset rotation of the canvas (%1)").arg(_rotateResetKeyBindingText),
+        [=](bool) {
+            this->viewSetting().resetRotateView = true;
+            this->onViewSettingChanged(this->viewSetting());
+            this->viewSetting().resetRotateView = false;
+        }
+    );
 
     QString _rotateViewClockwiseKeyBindingText = this->mKeyCommandMap.get("RotateCanvas15Clockwise")->binding.text();
-    mViewPanel->addButton("rotatecw", false, tr("Rotate the canvas clockwise (%1)").arg(_rotateViewClockwiseKeyBindingText), [=](bool)
-    {
-        this->viewSetting().rotateViewCW = true;
-        this->onViewSettingChanged(this->viewSetting());
-        this->viewSetting().rotateViewCW = false;
-    });
+    mViewPanel->addButton(
+        "rotatecw",
+        false,
+        tr("Rotate the canvas clockwise (%1)").arg(_rotateViewClockwiseKeyBindingText),
+        [=](bool) {
+            this->viewSetting().rotateViewCW = true;
+            this->onViewSettingChanged(this->viewSetting());
+            this->viewSetting().rotateViewCW = false;
+        }
+    );
 }
 
-void ToolWidget::createModePanel()
-{
-    if (mModePanel) delete mModePanel;
-    mModePanel = new tool::ModePanel(this, mResources, [=](ctrl::ToolType aType, bool aChecked)
-    {
+void ToolWidget::createModePanel() {
+    if (mModePanel)
+        delete mModePanel;
+    mModePanel = new tool::ModePanel(this, mResources, [=](ctrl::ToolType aType, bool aChecked) {
         this->onModePanelPushed(aType, aChecked);
     });
 }
 
-void ToolWidget::setPanelActivity(bool aIsActive)
-{
-    if (mModePanel)
-    {
-        for (int i = 0; i < ctrl::ToolType_TERM; ++i)
-        {
+void ToolWidget::setPanelActivity(bool aIsActive) {
+    if (mModePanel) {
+        for (int i = 0; i < ctrl::ToolType_TERM; ++i) {
             setButtonActivity((ctrl::ToolType)i, aIsActive);
         }
     }
 }
 
-void ToolWidget::setButtonActivity(ctrl::ToolType aType, bool aIsActive)
-{
-    if (mModePanel)
-    {
-        if (aIsActive)
-        {
+void ToolWidget::setButtonActivity(ctrl::ToolType aType, bool aIsActive) {
+    if (mModePanel) {
+        if (aIsActive) {
             mModePanel->button(aType)->setEnabled(true);
-        }
-        else
-        {
-            if (mModePanel->button(aType)->isChecked())
-            {
+        } else {
+            if (mModePanel->button(aType)->isChecked()) {
                 mModePanel->button(aType)->setChecked(false);
             }
             mModePanel->button(aType)->setEnabled(false);
@@ -174,17 +178,14 @@ void ToolWidget::setButtonActivity(ctrl::ToolType aType, bool aIsActive)
     }
 }
 
-void ToolWidget::onModePanelPushed(ctrl::ToolType aType, bool aChecked)
-{
-    if (mDriver && mToolType != ctrl::ToolType_TERM)
-    {
+void ToolWidget::onModePanelPushed(ctrl::ToolType aType, bool aChecked) {
+    if (mDriver && mToolType != ctrl::ToolType_TERM) {
         onFinalizeTool(mToolType);
     }
 
     mToolType = aChecked ? aType : ctrl::ToolType_TERM;
 
-    if (mDriver)
-    {
+    if (mDriver) {
         mDriver->setTool(mToolType);
 
         onToolChanged(mToolType);
@@ -197,36 +198,27 @@ void ToolWidget::onModePanelPushed(ctrl::ToolType aType, bool aChecked)
 
         QSettings settings;
         auto autoshowmesh = settings.value("generalsettings/tools/autoshowmesh");
-        if (autoshowmesh.isValid() && autoshowmesh.toBool()){
-            if (mToolType != ctrl::ToolType_FFD){
-                if(meshFromFunction){
+        if (autoshowmesh.isValid() && autoshowmesh.toBool()) {
+            if (mToolType != ctrl::ToolType_FFD) {
+                if (meshFromFunction) {
                     meshFromFunction = false;
                     showHideMesh(false);
                 }
             }
         }
 
-        if (mToolType == ctrl::ToolType_SRT)
-        {
+        if (mToolType == ctrl::ToolType_SRT) {
             mSRTPanel->show();
-        }
-        else if (mToolType == ctrl::ToolType_Bone)
-        {
+        } else if (mToolType == ctrl::ToolType_Bone) {
             mBonePanel->show();
-        }
-        else if (mToolType == ctrl::ToolType_Pose)
-        {
+        } else if (mToolType == ctrl::ToolType_Pose) {
             mPosePanel->show();
-        }
-        else if (mToolType == ctrl::ToolType_FFD)
-        {
-            if (autoshowmesh.isValid() && autoshowmesh.toBool()){
+        } else if (mToolType == ctrl::ToolType_FFD) {
+            if (autoshowmesh.isValid() && autoshowmesh.toBool()) {
                 showHideMesh(true);
             }
             mFFDPanel->show();
-        }
-        else if (mToolType == ctrl::ToolType_Mesh)
-        {
+        } else if (mToolType == ctrl::ToolType_Mesh) {
             mMeshPanel->show();
         }
         onParamUpdated(false);
@@ -235,51 +227,37 @@ void ToolWidget::onModePanelPushed(ctrl::ToolType aType, bool aChecked)
     }
 }
 
-void ToolWidget::onParamUpdated(bool aLayoutChanged)
-{
-    if (mDriver)
-    {
-        if (aLayoutChanged)
-        {
+void ToolWidget::onParamUpdated(bool aLayoutChanged) {
+    if (mDriver) {
+        if (aLayoutChanged) {
             updateGeometry();
         }
 
-        if (mToolType == ctrl::ToolType_SRT)
-        {
+        if (mToolType == ctrl::ToolType_SRT) {
             mDriver->updateParam(mSRTPanel->param());
             onVisualUpdated();
-        }
-        else if (mToolType == ctrl::ToolType_Bone)
-        {
+        } else if (mToolType == ctrl::ToolType_Bone) {
             mDriver->updateParam(mBonePanel->param());
             onVisualUpdated();
-        }
-        else if (mToolType == ctrl::ToolType_Pose)
-        {
+        } else if (mToolType == ctrl::ToolType_Pose) {
             mDriver->updateParam(mPosePanel->param());
             onVisualUpdated();
-        }
-        else if (mToolType == ctrl::ToolType_FFD)
-        {
+        } else if (mToolType == ctrl::ToolType_FFD) {
             mDriver->updateParam(mFFDPanel->param());
             onVisualUpdated();
-        }
-        else if (mToolType == ctrl::ToolType_Mesh)
-        {
+        } else if (mToolType == ctrl::ToolType_Mesh) {
             mDriver->updateParam(mMeshPanel->param());
             onVisualUpdated();
         }
     }
 }
 
-void ToolWidget::resizeEvent(QResizeEvent* aEvent)
-{
+void ToolWidget::resizeEvent(QResizeEvent* aEvent) {
     QWidget::resizeEvent(aEvent);
     updateGeometry();
 }
 
-void ToolWidget::updateGeometry()
-{
+void ToolWidget::updateGeometry() {
     const int width = this->size().width();
     int height = 0;
 

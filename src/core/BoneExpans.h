@@ -3,11 +3,9 @@
 
 #include "core/BoneKey.h"
 
-namespace core
-{
+namespace core {
 
-class BoneExpans
-{
+class BoneExpans {
 public:
     BoneExpans();
 

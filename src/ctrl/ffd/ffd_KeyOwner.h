@@ -11,30 +11,26 @@
 namespace ctrl {
 namespace ffd {
 
-struct KeyOwner
-{
-    KeyOwner();
-    ~KeyOwner();
+    struct KeyOwner {
+        KeyOwner();
+        ~KeyOwner();
 
-    explicit operator bool() const { return key; }
-    bool owns() const { return ownsKey; }
+        explicit operator bool() const { return key; }
+        bool owns() const { return ownsKey; }
 
-    void createKey(
-            const core::TimeLine& aLine,
-            const core::LayerMesh& aAreaMesh,
-            core::TimeKey* aAreaKey,
-            int aFrame);
+        void
+        createKey(const core::TimeLine& aLine, const core::LayerMesh& aAreaMesh, core::TimeKey* aAreaKey, int aFrame);
 
-    void pushOwnsKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);
-    void deleteOwnsKey();
+        void pushOwnsKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);
+        void deleteOwnsKey();
 
-    core::LayerMesh* getParentMesh(core::ObjectNode* node);
+        core::LayerMesh* getParentMesh(core::ObjectNode* node);
 
-    core::FFDKey* key;
-    bool ownsKey;
+        core::FFDKey* key;
+        bool ownsKey;
 
-    core::TimeKey* parentKey;
-};
+        core::TimeKey* parentKey;
+    };
 
 } // namespace ffd
 } // namespace ctrl

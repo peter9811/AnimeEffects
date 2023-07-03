@@ -4,11 +4,9 @@
 #include <QKeyEvent>
 #include "gui/KeyCommandMap.h"
 
-namespace gui
-{
+namespace gui {
 
-class KeyCommandInvoker
-{
+class KeyCommandInvoker {
 public:
     KeyCommandInvoker(KeyCommandMap& aMap);
 

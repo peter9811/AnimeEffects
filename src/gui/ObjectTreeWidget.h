@@ -18,12 +18,10 @@
 #include "gui/ViaPoint.h"
 #include "gui/obj/obj_Item.h"
 
-namespace gui
-{
+namespace gui {
 
 //-------------------------------------------------------------------------------------------------
-class ObjectTreeWidget : public QTreeWidget
-{
+class ObjectTreeWidget: public QTreeWidget {
     Q_OBJECT
 public:
     enum { kItemColumn = 0 };
@@ -46,12 +44,9 @@ public:
     void notifyRestructure();
 
 private:
-    struct ItemInfo
-    {
-        ItemInfo()
-            : ptr(nullptr), pos() {}
-        ItemInfo(QTreeWidgetItem* aPtr, const util::TreePos& aPos)
-            : ptr(aPtr), pos(aPos) {}
+    struct ItemInfo {
+        ItemInfo(): ptr(nullptr), pos() {}
+        ItemInfo(QTreeWidgetItem* aPtr, const util::TreePos& aPos): ptr(aPtr), pos(aPos) {}
         QTreeWidgetItem* ptr;
         util::TreePos pos;
     };
@@ -81,7 +76,7 @@ private:
     void onTimeLineModified(core::TimeLineEvent&, bool);
     void onItemChanged(QTreeWidgetItem* aItem, int aColumn);
     void onItemClicked(QTreeWidgetItem* aItem, int aColumn);
-    void onItemCollapsed(QTreeWidgetItem * aItem);
+    void onItemCollapsed(QTreeWidgetItem* aItem);
     void onItemExpanded(QTreeWidgetItem* aItem);
     void onItemSelectionChanged();
     void onContextMenuRequested(const QPoint& aPos);

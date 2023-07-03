@@ -1,37 +1,26 @@
 #include <QMutexLocker>
 #include "thr/TaskQueue.h"
 
-namespace thr
-{
+namespace thr {
 
-TaskQueue::TaskQueue()
-    : mTaskList()
-    , mLock()
-    , mCondition()
-    , mCondLock()
-{
-}
+TaskQueue::TaskQueue(): mTaskList(), mLock(), mCondition(), mCondLock() {}
 
-void TaskQueue::push(Task& aTask)
-{
+void TaskQueue::push(Task& aTask) {
     QMutexLocker locker(&mLock);
     aTask.setIdle();
     mTaskList.push_back(&aTask);
 }
 
-void TaskQueue::removeAll(Task& aTask)
-{
+void TaskQueue::removeAll(Task& aTask) {
     QMutexLocker locker(&mLock);
     mTaskList.removeAll(&aTask);
 }
 
-Task* TaskQueue::waitPop(unsigned long aMSec)
-{
+Task* TaskQueue::waitPop(unsigned long aMSec) {
     mLock.lock();
 
     // wait if empty
-    if (mTaskList.empty())
-    {
+    if (mTaskList.empty()) {
         mLock.unlock();
 
         // sleep
@@ -48,8 +37,7 @@ Task* TaskQueue::waitPop(unsigned long aMSec)
     return task;
 }
 
-void TaskQueue::wakeAll()
-{
+void TaskQueue::wakeAll() {
     QMutexLocker condLocker(&mCondLock);
     mCondition.wakeAll();
 }

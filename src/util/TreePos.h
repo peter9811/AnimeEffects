@@ -3,11 +3,9 @@
 
 #include <QModelIndex>
 
-namespace util
-{
+namespace util {
 
-class TreePos
-{
+class TreePos {
 public:
     TreePos();
     explicit TreePos(const QModelIndex& aIndex);
@@ -30,6 +28,7 @@ public:
     void pushRow(int aRow);
 
     void dump() const;
+
 private:
     void pushRecursive(const QModelIndex& aIndex);
     std::vector<int> mRows;

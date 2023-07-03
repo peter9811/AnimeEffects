@@ -20,19 +20,12 @@
 #include "ctrl/time/time_Focuser.h"
 #include "gui/theme/TimeLine.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
 //-------------------------------------------------------------------------------------------------
-class TimeLineEditor
-{
+class TimeLineEditor {
 public:
-    enum UpdateFlag
-    {
-        UpdateFlag_ModFrame = 1,
-        UpdateFlag_ModView = 2,
-        UpdateFlag_TERM
-    };
+    enum UpdateFlag { UpdateFlag_ModFrame = 1, UpdateFlag_ModView = 2, UpdateFlag_TERM };
     typedef unsigned int UpdateFlags;
 
     TimeLineEditor();
@@ -48,8 +41,7 @@ public:
     void clearRows();
     void pushRow(core::ObjectNode* aNode, util::Range aWorldTB, bool aClosedFolder);
     void updateRowSelection(const core::ObjectNode* aRepresent);
-    void render(QPainter& aPainter, const core::CameraInfo& aCamera, theme::TimeLine& aTheme,
-                const QRect& aCullRect);
+    void render(QPainter& aPainter, const core::CameraInfo& aCamera, theme::TimeLine& aTheme, const QRect& aCullRect);
 
     core::Frame currentFrame() const;
     int maxFrame() const { return mTimeMax; }
@@ -64,14 +56,7 @@ public:
     util::LinkPointer<core::Project> mProject;
 
 private:
-    enum State
-    {
-        State_Standby,
-        State_MoveCurrent,
-        State_MoveKeys,
-        State_EncloseKeys,
-        State_TERM
-    };
+    enum State { State_Standby, State_MoveCurrent, State_MoveKeys, State_EncloseKeys, State_TERM };
 
     void setMaxFrame(int aValue);
     void clearState();
@@ -93,6 +78,6 @@ private:
     bool mShowSelectionRange;
 };
 
-} // namespace core
+} // namespace ctrl
 
 #endif // CTRL_TIMELINEEDITOR_H

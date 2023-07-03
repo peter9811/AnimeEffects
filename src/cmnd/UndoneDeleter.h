@@ -3,29 +3,22 @@
 
 #include "util/NonCopyable.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
 template<typename tObj>
-class UndoneDeleter : private util::NonCopyable
-{
+class UndoneDeleter: private util::NonCopyable {
     tObj* mObj;
     bool mDone;
 
 public:
-    UndoneDeleter()
-        : mObj()
-        , mDone()
-    {}
+    UndoneDeleter(): mObj(), mDone() {}
 
-    explicit UndoneDeleter(tObj* aObj)
-        : mObj(aObj)
-        , mDone()
-    {}
+    explicit UndoneDeleter(tObj* aObj): mObj(aObj), mDone() {}
 
-    ~UndoneDeleter()
-    {
-        if (mObj && !mDone) { delete mObj; }
+    ~UndoneDeleter() {
+        if (mObj && !mDone) {
+            delete mObj;
+        }
     }
 
     void set(tObj* aObj) { mObj = aObj; }
@@ -42,4 +35,3 @@ public:
 } // namespace cmnd
 
 #endif // CMND_UNDONEDELETER
-

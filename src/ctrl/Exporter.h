@@ -20,16 +20,13 @@
 #include "core/DestinationTexturizer.h"
 #include "ctrl/VideoFormat.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class Exporter
-{
+class Exporter {
 public:
     typedef std::function<bool(const QString&)> OverwriteConfirmer;
 
-    enum ResultCode
-    {
+    enum ResultCode {
         ResultCode_Success,
         ResultCode_Canceled,
         ResultCode_InvalidOperation,
@@ -39,8 +36,7 @@ public:
         ResultCode_TERM
     };
 
-    struct Result
-    {
+    struct Result {
         Result();
         Result(ResultCode aCode, const QString& aMessage);
         explicit operator bool() const { return code == ResultCode_Success; }
@@ -48,8 +44,7 @@ public:
         QString message;
     };
 
-    struct CommonParam
-    {
+    struct CommonParam {
         CommonParam();
         QString path;
         QSize size;
@@ -58,8 +53,7 @@ public:
         bool isValid() const;
     };
 
-    struct VideoParam
-    {
+    struct VideoParam {
         VideoParam();
         VideoFormat format;
         int codecIndex;
@@ -68,15 +62,13 @@ public:
         QString pixfmt;
     };
 
-    struct GifParam
-    {
+    struct GifParam {
         GifParam();
         bool optimizePalette;
         int intermediateBps;
     };
 
-    struct ImageParam
-    {
+    struct ImageParam {
         ImageParam();
         QString name;
         QString suffix;
@@ -101,19 +93,18 @@ private:
     typedef std::unique_ptr<QOpenGLFramebufferObject> FramebufferPtr;
     typedef std::list<FramebufferPtr> FramebufferList;
 
-    class FFMpeg
-    {
+    class FFMpeg {
     public:
         FFMpeg();
         bool start(const QString& aArgments);
         void write(const QByteArray& aBytes);
         bool finish(const std::function<bool()>& aWaiter);
-        bool execute(const QString& aArgments,
-                     const std::function<bool()>& aWaiter);
+        bool execute(const QString& aArgments, const std::function<bool()>& aWaiter);
         bool errorOccurred() const { return mErrorOccurred; }
         QString errorString() const { return mErrorString; }
         QProcess::ProcessError errorCode() const { return mErrorCode; }
         QString popLog();
+
     private:
         QScopedPointer<QProcess> mProcess;
         bool mFinished;

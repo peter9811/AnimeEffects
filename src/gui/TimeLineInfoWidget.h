@@ -11,12 +11,9 @@
 #include "core/Animator.h"
 #include "util/Range.h"
 
-namespace gui
-{
+namespace gui {
 
-class TimeLineInfoWidget
-        : public QLabel
-{
+class TimeLineInfoWidget: public QLabel {
 public:
     TimeLineInfoWidget(GUIResources& aResources, QWidget* aParent);
     void setProject(core::Project* aProject);

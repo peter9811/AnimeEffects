@@ -4,11 +4,9 @@
 #include "core/Project.h"
 #include "gui/EasyDialog.h"
 
-namespace gui
-{
+namespace gui {
 
-class NewProjectDialog : public EasyDialog
-{
+class NewProjectDialog: public EasyDialog {
     Q_OBJECT
 public:
     NewProjectDialog(QWidget* aParent);

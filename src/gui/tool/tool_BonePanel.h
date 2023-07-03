@@ -12,31 +12,30 @@
 namespace gui {
 namespace tool {
 
-class BonePanel : public QGroupBox
-{
-    Q_OBJECT
-public:
-    BonePanel(QWidget* aParent, GUIResources& aResources);
+    class BonePanel: public QGroupBox {
+        Q_OBJECT
+    public:
+        BonePanel(QWidget* aParent, GUIResources& aResources);
 
-    int updateGeometry(const QPoint& aPos, int aWidth);
+        int updateGeometry(const QPoint& aPos, int aWidth);
 
-    const ctrl::BoneParam& param() const { return mParam; }
+        const ctrl::BoneParam& param() const { return mParam; }
 
-    // boost like signals
-    util::Signaler<void(bool)> onParamUpdated;
+        // boost like signals
+        util::Signaler<void(bool)> onParamUpdated;
 
-private:
-    void createMode();
-    void updateTypeParam(ctrl::BoneEditMode aType);
+    private:
+        void createMode();
+        void updateTypeParam(ctrl::BoneEditMode aType);
 
-    GUIResources& mResources;
-    ctrl::BoneParam mParam;
-    QScopedPointer<SingleOutItem> mTypeGroup;
-    QScopedPointer<SliderItem> mPIRadius;
-    QScopedPointer<SliderItem> mPIPressure;
-    QScopedPointer<SliderItem> mEIRadius;
-    QScopedPointer<SliderItem> mEIPressure;
-};
+        GUIResources& mResources;
+        ctrl::BoneParam mParam;
+        QScopedPointer<SingleOutItem> mTypeGroup;
+        QScopedPointer<SliderItem> mPIRadius;
+        QScopedPointer<SliderItem> mPIPressure;
+        QScopedPointer<SliderItem> mEIRadius;
+        QScopedPointer<SliderItem> mEIPressure;
+    };
 
 } // namespace tool
 } // namespace gui

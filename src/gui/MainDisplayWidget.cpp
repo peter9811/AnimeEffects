@@ -15,56 +15,50 @@
 #include "gui/KeyCommandMap.h"
 #include "gui/MouseSetting.h"
 
-namespace gui
-{
+namespace gui {
 
 //-------------------------------------------------------------------------------------------------
-MainDisplayWidget::MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent)
-    : QOpenGLWidget(aParent)
-    , mViaPoint(aViaPoint)
-    , mGLDeviceInfo()
-    , mProject()
-    , mGLRoot()
-    , mGLContextAccessor(this)
-    , mDefaultVAO()
-    , mFramebuffer()
-    , mClippingFrame()
-    , mDestinationTexturizer()
-    , mTextureDrawer()
-    , mPainterHandle()
-    , mRenderingLock()
-    , mRenderInfo()
-    , mAbstractCursor()
-    , mDriver()
-    , mProjectTabBar()
-    , mUsingTablet(false)
-    , mViewSetting()
-    , mCanvasMover()
-    , mMovingCanvasByTool(false)
-    , mMovingCanvasByKey(false)
-    , mMovingCanvasByMiddleMouseButton(false)
-    , mDevicePixelRatio(1.0)
-{
+MainDisplayWidget::MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent):
+    QOpenGLWidget(aParent),
+    mViaPoint(aViaPoint),
+    mGLDeviceInfo(),
+    mProject(),
+    mGLRoot(),
+    mGLContextAccessor(this),
+    mDefaultVAO(),
+    mFramebuffer(),
+    mClippingFrame(),
+    mDestinationTexturizer(),
+    mTextureDrawer(),
+    mPainterHandle(),
+    mRenderingLock(),
+    mRenderInfo(),
+    mAbstractCursor(),
+    mDriver(),
+    mProjectTabBar(),
+    mUsingTablet(false),
+    mViewSetting(),
+    mCanvasMover(),
+    mMovingCanvasByTool(false),
+    mMovingCanvasByKey(false),
+    mMovingCanvasByMiddleMouseButton(false),
+    mDevicePixelRatio(1.0) {
     this->setObjectName(QStringLiteral("MainDisplayWidget"));
     this->setMouseTracking(true);
     this->setAutoFillBackground(false); // avoid auto fill on QPainter::begin()
 
     // key binding
-    if (mViaPoint.keyCommandMap())
-    {
+    if (mViaPoint.keyCommandMap()) {
         // move canvas
         {
             auto key = mViaPoint.keyCommandMap()->get("MoveCanvas");
-            if (key)
-            {
-                key->invoker = [=]()
-                {
+            if (key) {
+                key->invoker = [=]() {
                     mAbstractCursor.suspendEvent([=]() { updateCursor(); });
                     mMovingCanvasByKey = true;
                     mCanvasMover.setDragAndMove(mMovingCanvasByKey || mMovingCanvasByTool);
                 };
-                key->releaser = [=]()
-                {
+                key->releaser = [=]() {
                     mMovingCanvasByKey = false;
                     mCanvasMover.setDragAndMove(mMovingCanvasByKey || mMovingCanvasByTool);
                     mAbstractCursor.resumeEvent();
@@ -75,56 +69,47 @@ MainDisplayWidget::MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent)
         // rotate canvas
         {
             auto key = mViaPoint.keyCommandMap()->get("RotateCanvas");
-            if (key)
-            {
-                key->invoker = [=]()
-                {
+            if (key) {
+                key->invoker = [=]() {
                     mAbstractCursor.suspendEvent([=]() { updateCursor(); });
                     mCanvasMover.setDragAndRotate(true);
                 };
-                key->releaser = [=]()
-                {
+                key->releaser = [=]() {
                     mCanvasMover.setDragAndRotate(false);
                     mAbstractCursor.resumeEvent();
                 };
             }
         }
 
-		// rotate canvas clockwise
-		{
-			auto key = mViaPoint.keyCommandMap()->get("RotateCanvas15Clockwise");
-			if (key)
-			{
+        // rotate canvas clockwise
+        {
+            auto key = mViaPoint.keyCommandMap()->get("RotateCanvas15Clockwise");
+            if (key) {
 
-				key->invoker = [=]()
-				{
-					mCanvasMover.rotate(qDegreesToRadians(15.0f));
-					updateRender();
-				};
-			}
-		}
+                key->invoker = [=]() {
+                    mCanvasMover.rotate(qDegreesToRadians(15.0f));
+                    updateRender();
+                };
+            }
+        }
 
-		// rotate canvas anti-clockwise
-		{
-			auto key = mViaPoint.keyCommandMap()->get("RotateCanvas15AntiClockwise");
-			if (key)
-			{
+        // rotate canvas anti-clockwise
+        {
+            auto key = mViaPoint.keyCommandMap()->get("RotateCanvas15AntiClockwise");
+            if (key) {
 
-				key->invoker = [=]()
-				{
-					mCanvasMover.rotate(qDegreesToRadians(-15.0f));
-					updateRender();
-				};
-			}
-		}
+                key->invoker = [=]() {
+                    mCanvasMover.rotate(qDegreesToRadians(-15.0f));
+                    updateRender();
+                };
+            }
+        }
 
         // reset canvas angle
         {
             auto key = mViaPoint.keyCommandMap()->get("ResetCanvasAngle");
-            if (key)
-            {
-                key->invoker = [=]()
-                {
+            if (key) {
+                key->invoker = [=]() {
                     mViaPoint.mainViewSetting().resetRotateView = true;
                     onViewSettingChanged(mViaPoint.mainViewSetting());
                     mViaPoint.mainViewSetting().resetRotateView = false;
@@ -134,8 +119,7 @@ MainDisplayWidget::MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent)
     }
 }
 
-MainDisplayWidget::~MainDisplayWidget()
-{
+MainDisplayWidget::~MainDisplayWidget() {
     mPainterHandle.reset();
     mTextureDrawer.reset();
     mDestinationTexturizer.reset();
@@ -147,15 +131,13 @@ MainDisplayWidget::~MainDisplayWidget()
     gl::Global::clearFunctions();
 }
 
-void MainDisplayWidget::setProject(core::Project* aProject)
-{
+void MainDisplayWidget::setProject(core::Project* aProject) {
     mProject.reset();
 
     mRenderInfo = nullptr;
     mAbstractCursor = core::AbstractCursor();
 
-    if (aProject)
-    {
+    if (aProject) {
         mProject = aProject->pointee();
         mRenderInfo = &(static_cast<ProjectHook*>(mProject->hook())->renderInfo());
         mRenderInfo->camera.setDevicePixelRatio(this->devicePixelRatioF());
@@ -167,22 +149,16 @@ void MainDisplayWidget::setProject(core::Project* aProject)
     updateRender();
 }
 
-void MainDisplayWidget::setDriver(ctrl::Driver* aDriver)
-{
-    mDriver = aDriver;
-}
+void MainDisplayWidget::setDriver(ctrl::Driver* aDriver) { mDriver = aDriver; }
 
-void MainDisplayWidget::resetCamera()
-{
-    if (mRenderInfo)
-    {
+void MainDisplayWidget::resetCamera() {
+    if (mRenderInfo) {
         auto& camera = mRenderInfo->camera;
         auto scrSize = this->size();
         auto imgSize = camera.imageSize();
         camera.setCenter(QVector2D(scrSize.width() * 0.5f, scrSize.height() * 0.5f));
-        if (scrSize.width() > 0 && scrSize.height() > 0 && imgSize.width() > 0 && imgSize.height() > 0)
-        {
-			auto scaleX = (float)scrSize.width() / imgSize.width();
+        if (scrSize.width() > 0 && scrSize.height() > 0 && imgSize.width() > 0 && imgSize.height() > 0) {
+            auto scaleX = (float)scrSize.width() / imgSize.width();
             auto scaleY = (float)scrSize.height() / imgSize.height();
             auto minScale = scaleX < scaleY ? scaleX : scaleY;
             camera.setScale(minScale);
@@ -192,46 +168,38 @@ void MainDisplayWidget::resetCamera()
     }
 }
 
-void MainDisplayWidget::setProjectTabBar(ProjectTabBar* aTabBar)
-{
-    mProjectTabBar = aTabBar;
-}
+void MainDisplayWidget::setProjectTabBar(ProjectTabBar* aTabBar) { mProjectTabBar = aTabBar; }
 
-void MainDisplayWidget::updateRender()
-{
-    this->update();
-}
+void MainDisplayWidget::updateRender() { this->update(); }
 
-void MainDisplayWidget::initializeGL()
-{
-    if (!this->context()->isValid())
-    {
+void MainDisplayWidget::initializeGL() {
+    if (!this->context()->isValid()) {
         XC_FATAL_ERROR("OpenGL Error", "Invalid opengl context.", "");
     }
     // check version
     {
         auto version = this->format().version();
-        if (version < gl::Global::kVersion)
-        {
+        if (version < gl::Global::kVersion) {
             auto obtainedVersion = QString::number(version.first) + "." + QString::number(version.second);
-            auto requiredVersion = QString::number(gl::Global::kVersion.first) + "." + QString::number(gl::Global::kVersion.second);
-            XC_FATAL_ERROR("OpenGL Error",
+            auto requiredVersion =
+                QString::number(gl::Global::kVersion.first) + "." + QString::number(gl::Global::kVersion.second);
+            XC_FATAL_ERROR(
+                "OpenGL Error",
                 QString("Failed to get the correct OpenGL version.\n"
                         "The obtained version is %1,\n"
                         "but the required version is %2.")
-                        .arg(obtainedVersion)
-                        .arg(requiredVersion),
-                "");
+                    .arg(obtainedVersion)
+                    .arg(requiredVersion),
+                ""
+            );
         }
     }
     // initialize opengl functions
     auto functions = this->context()->versionFunctions<gl::Global::Functions>();
-    if (!functions)
-    {
+    if (!functions) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to get opengl functions.", "");
     }
-    if (!functions->initializeOpenGLFunctions())
-    {
+    if (!functions->initializeOpenGLFunctions()) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to initialize opengl functions.", "");
     }
 
@@ -269,8 +237,7 @@ void MainDisplayWidget::initializeGL()
 
     // create texture drawer for copying framebuffer to display
     mTextureDrawer.reset(new gl::EasyTextureDrawer());
-    if (!mTextureDrawer->init())
-    {
+    if (!mTextureDrawer->init()) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to initialize texture drawer.", "");
     }
 
@@ -279,8 +246,7 @@ void MainDisplayWidget::initializeGL()
     GL_CHECK_ERROR();
 }
 
-void MainDisplayWidget::paintGL()
-{
+void MainDisplayWidget::paintGL() {
     gl::Global::Functions& ggl = gl::Global::functions();
 
     // clear clipping
@@ -291,8 +257,7 @@ void MainDisplayWidget::paintGL()
     mDestinationTexturizer->clearTexture();
     GL_CHECK_ERROR();
 
-    if (!mFramebuffer->bind())
-    {
+    if (!mFramebuffer->bind()) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to bind framebuffer.", "");
     }
 
@@ -303,8 +268,7 @@ void MainDisplayWidget::paintGL()
     GL_CHECK_ERROR();
 
     // setup renderinfo
-    if (mProject)
-    {
+    if (mProject) {
         XC_PTR_ASSERT(mRenderInfo);
         mRenderInfo->time = mProject->currentTimeInfo();
         mRenderInfo->framebuffer = mFramebuffer->handle();
@@ -318,35 +282,28 @@ void MainDisplayWidget::paintGL()
         XC_ASSERT(mRenderInfo->dest != 0);
     }
 
-    if (mDriver)
-    {
+    if (mDriver) {
         XC_PTR_ASSERT(mRenderInfo);
-        auto gridTarget = mViewSetting.showLayerMesh ?
-                              mDriver->currentTarget() : nullptr;
+        auto gridTarget = mViewSetting.showLayerMesh ? mDriver->currentTarget() : nullptr;
         mDriver->renderGL(*mRenderInfo, gridTarget);
         GL_CHECK_ERROR();
     }
 
-    if (!mFramebuffer->release())
-    {
+    if (!mFramebuffer->release()) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to unbind framebuffer.", "");
     }
 
     ggl.glBindFramebuffer(GL_FRAMEBUFFER, this->defaultFramebufferObject());
 
-    if (mViewSetting.cutImagesByTheFrame && mProject)
-    {
+    if (mViewSetting.cutImagesByTheFrame && mProject) {
         XC_PTR_ASSERT(mRenderInfo);
         gl::Util::clearColorBuffer(0.25f, 0.25f, 0.25f, 1.0f);
 
         auto imageQuad = mRenderInfo->camera.screenImageQuadangle();
         const QSize screenSize = mRenderInfo->camera.screenSize();
 
-        mTextureDrawer->draw(mFramebuffer->texture(),
-                             imageQuad, screenSize, imageQuad, screenSize);
-    }
-    else
-    {
+        mTextureDrawer->draw(mFramebuffer->texture(), imageQuad, screenSize, imageQuad, screenSize);
+    } else {
         mTextureDrawer->draw(mFramebuffer->texture());
     }
 
@@ -354,19 +311,18 @@ void MainDisplayWidget::paintGL()
     GL_CHECK_ERROR();
 }
 
-void MainDisplayWidget::paintEvent(QPaintEvent* aEvent)
-{
+void MainDisplayWidget::paintEvent(QPaintEvent* aEvent) {
     // try lock rendering!!
-    if (!mRenderingLock.tryLockForRead()) return;
-    util::Finally unlocker([=](){ this->mRenderingLock.unlock(); });
+    if (!mRenderingLock.tryLockForRead())
+        return;
+    util::Finally unlocker([=]() { this->mRenderingLock.unlock(); });
 
     QOpenGLWidget::paintEvent(aEvent);
 
     QPainter* painter = mPainterHandle->begin(*this);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    if (mDriver)
-    {
+    if (mDriver) {
         XC_PTR_ASSERT(mRenderInfo);
         mDriver->renderQt(*mRenderInfo, *painter);
         GL_CHECK_ERROR();
@@ -375,15 +331,13 @@ void MainDisplayWidget::paintEvent(QPaintEvent* aEvent)
     mPainterHandle->end();
 }
 
-void MainDisplayWidget::resizeGL(int w, int h)
-{
+void MainDisplayWidget::resizeGL(int w, int h) {
     // currrent device pixel ratio (Attention that it is variable.)
     mDevicePixelRatio = this->devicePixelRatioF();
     const QSize devSize(mDevicePixelRatio * w, mDevicePixelRatio * h); // device pixel size
     const QSize absSize(w, h); // abstract pixel size
 
-    if (mRenderInfo)
-    {
+    if (mRenderInfo) {
         mRenderInfo->camera.setDevicePixelRatio(mDevicePixelRatio);
         mRenderInfo->camera.setScreenSize(absSize);
         mCanvasMover.onScreenResized();
@@ -397,95 +351,87 @@ void MainDisplayWidget::resizeGL(int w, int h)
 
     mDestinationTexturizer->resize(devSize);
 
-    if (mProjectTabBar)
-    {
+    if (mProjectTabBar) {
         mProjectTabBar->updateTabPosition(absSize);
     }
     GL_CHECK_ERROR();
 }
 
-void MainDisplayWidget::mouseMoveEvent(QMouseEvent* aEvent)
-{
-    if (mRenderInfo)
-    {
-        if (mAbstractCursor.setMouseMove(aEvent, mRenderInfo->camera))
-        {
+void MainDisplayWidget::mouseMoveEvent(QMouseEvent* aEvent) {
+    if (mRenderInfo) {
+        if (mAbstractCursor.setMouseMove(aEvent, mRenderInfo->camera)) {
             updateCursor();
-            //if (!mUsingTablet) qDebug() << "move" << aEvent->pos();
+            // if (!mUsingTablet) qDebug() << "move" << aEvent->pos();
         }
 
-        if (mCanvasMover.updateByMove(mAbstractCursor.screenPos(),
-                                      mAbstractCursor.screenVel(),
-                                      mAbstractCursor.isPressedLeft(),
-                                      mAbstractCursor.isPressedMiddle(),
-                                      mAbstractCursor.isPressedRight()))
-        {
+        if (mCanvasMover.updateByMove(
+                mAbstractCursor.screenPos(),
+                mAbstractCursor.screenVel(),
+                mAbstractCursor.isPressedLeft(),
+                mAbstractCursor.isPressedMiddle(),
+                mAbstractCursor.isPressedRight()
+            )) {
             updateRender();
         }
     }
 }
 
-void MainDisplayWidget::mousePressEvent(QMouseEvent* aEvent)
-{
-    if (mRenderInfo)
-    {
-        if (mAbstractCursor.setMousePress(aEvent, mRenderInfo->camera))
-        {
+void MainDisplayWidget::mousePressEvent(QMouseEvent* aEvent) {
+    if (mRenderInfo) {
+        if (mAbstractCursor.setMousePress(aEvent, mRenderInfo->camera)) {
             updateCursor();
-            //if (!mUsingTablet) qDebug() << "press";
+            // if (!mUsingTablet) qDebug() << "press";
 
-            if(mViaPoint.mouseSetting().middleMouseMoveCanvas && aEvent->button() == Qt::MouseButton::MidButton) {
+            if (mViaPoint.mouseSetting().middleMouseMoveCanvas && aEvent->button() == Qt::MouseButton::MidButton) {
                 mMovingCanvasByMiddleMouseButton = true;
-                mCanvasMover.setDragAndMove(mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton);
+                mCanvasMover.setDragAndMove(
+                    mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton
+                );
             }
         }
     }
 }
 
-void MainDisplayWidget::mouseReleaseEvent(QMouseEvent* aEvent)
-{
-    if (mRenderInfo)
-    {
-        if (mAbstractCursor.setMouseRelease(aEvent, mRenderInfo->camera))
-        {
+void MainDisplayWidget::mouseReleaseEvent(QMouseEvent* aEvent) {
+    if (mRenderInfo) {
+        if (mAbstractCursor.setMouseRelease(aEvent, mRenderInfo->camera)) {
             updateCursor();
-            //if (!mUsingTablet) qDebug() << "release";
+            // if (!mUsingTablet) qDebug() << "release";
 
-            if(aEvent->button() == Qt::MouseButton::MidButton) {
+            if (aEvent->button() == Qt::MouseButton::MidButton) {
                 mMovingCanvasByMiddleMouseButton = false;
-                mCanvasMover.setDragAndMove(mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton);
+                mCanvasMover.setDragAndMove(
+                    mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton
+                );
             }
         }
     }
 }
 
-void MainDisplayWidget::wheelEvent(QWheelEvent* aEvent)
-{
-    if (mCanvasMover.updateByWheel(QVector2D(aEvent->position()), aEvent->angleDelta().y(),
-                                   mViaPoint.mouseSetting().invertMainViewScaling))
-    {
+void MainDisplayWidget::wheelEvent(QWheelEvent* aEvent) {
+    if (mCanvasMover.updateByWheel(
+            QVector2D(aEvent->position()), aEvent->angleDelta().y(), mViaPoint.mouseSetting().invertMainViewScaling
+        )) {
         updateRender();
     }
 }
 
-void MainDisplayWidget::tabletEvent(QTabletEvent* aEvent)
-{
+void MainDisplayWidget::tabletEvent(QTabletEvent* aEvent) {
     /// Tablet behavior is difference between mac and windows. It's Qt's bug?
     /// In windows, Duplicate mouse events occur while operating a tablet.
 #ifdef Q_OS_MAC
-    if (mRenderInfo)
-    {
-        if (mAbstractCursor.setTabledEvent(aEvent, mRenderInfo->camera))
-        {
+    if (mRenderInfo) {
+        if (mAbstractCursor.setTabledEvent(aEvent, mRenderInfo->camera)) {
             updateCursor();
         }
     }
-    if (mCanvasMover.updateByMove(mAbstractCursor.screenPos(),
-                                  mAbstractCursor.screenVel(),
-                                  mAbstractCursor.isPressedLeft(),
-                                  mAbstractCursor.isPressedMiddle(),
-                                  mAbstractCursor.isPressedRight()))
-    {
+    if (mCanvasMover.updateByMove(
+            mAbstractCursor.screenPos(),
+            mAbstractCursor.screenVel(),
+            mAbstractCursor.isPressedLeft(),
+            mAbstractCursor.isPressedMiddle(),
+            mAbstractCursor.isPressedRight()
+        )) {
         updateRender();
     }
 #else
@@ -494,72 +440,52 @@ void MainDisplayWidget::tabletEvent(QTabletEvent* aEvent)
     aEvent->accept();
 }
 
-void MainDisplayWidget::onVisualUpdated()
-{
-    updateRender();
-}
+void MainDisplayWidget::onVisualUpdated() { updateRender(); }
 
-void MainDisplayWidget::onToolChanged(ctrl::ToolType aType)
-{
-    if (aType == ctrl::ToolType_Cursor)
-    {
+void MainDisplayWidget::onToolChanged(ctrl::ToolType aType) {
+    if (aType == ctrl::ToolType_Cursor) {
         this->setCursor(Qt::OpenHandCursor);
         mMovingCanvasByTool = true;
         mCanvasMover.setDragAndMove(mMovingCanvasByKey || mMovingCanvasByTool);
-    }
-    else
-    {
+    } else {
         this->setCursor(Qt::ArrowCursor);
         mMovingCanvasByTool = false;
         mCanvasMover.setDragAndMove(mMovingCanvasByKey || mMovingCanvasByTool);
     }
 }
 
-void MainDisplayWidget::onFinalizeTool(ctrl::ToolType)
-{
+void MainDisplayWidget::onFinalizeTool(ctrl::ToolType) {
     mAbstractCursor.suspendEvent([=]() { updateCursor(); });
     mAbstractCursor.resumeEvent();
 }
 
-void MainDisplayWidget::onViewSettingChanged(const MainViewSetting& aSetting)
-{
+void MainDisplayWidget::onViewSettingChanged(const MainViewSetting& aSetting) {
     mViewSetting = aSetting;
 
-    if (mViewSetting.resetRotateView)
-    {
+    if (mViewSetting.resetRotateView) {
         mCanvasMover.resetRotation();
-    }
-    else if (mViewSetting.rotateViewACW)
-    {
-		mCanvasMover.rotate(qDegreesToRadians(-15.0f));
-    }
-    else if (mViewSetting.rotateViewCW)
-    {
-		mCanvasMover.rotate(qDegreesToRadians(15.0f));
+    } else if (mViewSetting.rotateViewACW) {
+        mCanvasMover.rotate(qDegreesToRadians(-15.0f));
+    } else if (mViewSetting.rotateViewCW) {
+        mCanvasMover.rotate(qDegreesToRadians(15.0f));
     }
 
     updateRender();
 }
 
-void MainDisplayWidget::onProjectAttributeUpdated()
-{
-    if (mProject && mRenderInfo)
-    {
+void MainDisplayWidget::onProjectAttributeUpdated() {
+    if (mProject && mRenderInfo) {
         const QSize newSize = mProject->attribute().imageSize();
-        if (newSize != mRenderInfo->camera.imageSize())
-        {
+        if (newSize != mRenderInfo->camera.imageSize()) {
             mRenderInfo->camera.setImageSize(newSize);
         }
     }
 }
 
-void MainDisplayWidget::updateCursor()
-{
-    if (mDriver)
-    {
+void MainDisplayWidget::updateCursor() {
+    if (mDriver) {
         XC_PTR_ASSERT(mRenderInfo);
-        if (mDriver->updateCursor(mAbstractCursor, mRenderInfo->camera))
-        {
+        if (mDriver->updateCursor(mAbstractCursor, mRenderInfo->camera)) {
             updateRender();
         }
     }

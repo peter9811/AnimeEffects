@@ -20,11 +20,9 @@
 #include "gl/Vector3.h"
 #include "core/Frame.h"
 
-namespace core
-{
+namespace core {
 
-class Serializer
-{
+class Serializer {
 public:
     typedef std::ostream::pos_type PosType;
 
@@ -65,11 +63,9 @@ public:
 
     bool failure() const;
 
-    bool checkStream()
-    {
-        if (failure())
-        {
-            //setLog("stream error");
+    bool checkStream() {
+        if (failure()) {
+            // setLog("stream error");
             return false;
         }
         return true;
@@ -83,4 +79,3 @@ private:
 } // namespace core
 
 #endif // SERIALIZER
-

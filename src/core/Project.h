@@ -19,14 +19,11 @@
 #include "core/ObjectTreeEvent.h"
 #include "core/ProjectEvent.h"
 
-namespace core
-{
+namespace core {
 
-class Project : private util::NonCopyable
-{
+class Project: private util::NonCopyable {
 public:
-    class Attribute
-    {
+    class Attribute {
     public:
         Attribute();
         void setImageSize(const QSize& aSize) { mImageSize = aSize; }
@@ -45,8 +42,7 @@ public:
         bool mLoop;
     };
 
-    class Hook
-    {
+    class Hook {
     public:
         virtual ~Hook() {}
     };

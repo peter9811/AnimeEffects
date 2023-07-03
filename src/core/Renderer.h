@@ -8,32 +8,24 @@
 #include "core/RenderInfo.h"
 #include "core/TimeCacheAccessor.h"
 
-namespace core
-{
+namespace core {
 
-class Renderer
-{
+class Renderer {
 public:
-    struct SortUnit
-    {
-        SortUnit() : renderer(), depth() {}
+    struct SortUnit {
+        SortUnit(): renderer(), depth() {}
         Renderer* renderer;
         float depth;
         TimeLine* timeline;
-
     };
 
     virtual ~Renderer() {}
 
-    virtual void prerender(const RenderInfo& aInfo,
-                           const TimeCacheAccessor&) = 0;
+    virtual void prerender(const RenderInfo& aInfo, const TimeCacheAccessor&) = 0;
 
-    virtual void render(const RenderInfo& aInfo,
-                        const TimeCacheAccessor&) = 0;
+    virtual void render(const RenderInfo& aInfo, const TimeCacheAccessor&) = 0;
 
-    virtual void renderClipper(const RenderInfo& aInfo,
-                               const TimeCacheAccessor&,
-                               uint8 aClipperId) = 0;
+    virtual void renderClipper(const RenderInfo& aInfo, const TimeCacheAccessor&, uint8 aClipperId) = 0;
 
     virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData) = 0;
 

@@ -12,25 +12,24 @@
 namespace ctrl {
 namespace bone {
 
-class CreateMode : public IMode
-{
-public:
-    CreateMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    class CreateMode: public IMode {
+    public:
+        CreateMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    void pushNewBone(core::Bone2& aParent, core::Bone2& aNewChild);
-    void pushNewTopBone(core::Bone2& aNewRoot, core::Bone2& aNewChild);
+    private:
+        void pushNewBone(core::Bone2& aParent, core::Bone2& aNewChild);
+        void pushNewTopBone(core::Bone2& aNewRoot, core::Bone2& aNewChild);
 
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    KeyOwner& mKeyOwner;
-    QMatrix4x4 mTargetMtx;
-    QMatrix4x4 mTargetInvMtx;
-    QScopedPointer<core::Bone2> mDangledTop;
-    Focuser mFocuser;
-};
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        KeyOwner& mKeyOwner;
+        QMatrix4x4 mTargetMtx;
+        QMatrix4x4 mTargetInvMtx;
+        QScopedPointer<core::Bone2> mDangledTop;
+        Focuser mFocuser;
+    };
 
 } // namespace bone
 } // namespace ctrl

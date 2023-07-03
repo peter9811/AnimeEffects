@@ -3,41 +3,25 @@
 
 #include <QVector>
 #include "img/ResourceNode.h"
-namespace core { class Project; }
+namespace core {
+class Project;
+}
 
-namespace core
-{
+namespace core {
 
-class ResourceEvent
-{
+class ResourceEvent {
 public:
-    enum Type
-    {
-        Type_AddTree,
-        Type_Delete,
-        Type_Reload,
-        Type_Rename,
-        Type_TERM
-    };
+    enum Type { Type_AddTree, Type_Delete, Type_Reload, Type_Rename, Type_TERM };
 
     typedef QVector<const img::ResourceNode*> Targets;
 
     ResourceEvent(Project& aProject);
 
-    void setType(Type aType)
-    {
-        mType = aType;
-    }
+    void setType(Type aType) { mType = aType; }
 
-    void setRoot(img::ResourceNode& aNode)
-    {
-        mRoot = &aNode;
-    }
+    void setRoot(img::ResourceNode& aNode) { mRoot = &aNode; }
 
-    void pushTarget(img::ResourceNode& aNode)
-    {
-        mTargets.push_back(&aNode);
-    }
+    void pushTarget(img::ResourceNode& aNode) { mTargets.push_back(&aNode); }
 
     void setSingleTarget(img::ResourceNode& aNode);
 

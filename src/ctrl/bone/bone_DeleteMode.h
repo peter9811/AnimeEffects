@@ -12,23 +12,22 @@
 namespace ctrl {
 namespace bone {
 
-class DeleteMode : public IMode
-{
-public:
-    DeleteMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    class DeleteMode: public IMode {
+    public:
+        DeleteMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    void deleteBone(core::Bone2& aBone);
+    private:
+        void deleteBone(core::Bone2& aBone);
 
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    KeyOwner& mKeyOwner;
-    QMatrix4x4 mTargetMtx;
-    QMatrix4x4 mTargetInvMtx;
-    Focuser mFocuser;
-};
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        KeyOwner& mKeyOwner;
+        QMatrix4x4 mTargetMtx;
+        QMatrix4x4 mTargetInvMtx;
+        Focuser mFocuser;
+    };
 
 } // namespace bone
 } // namespace ctrl

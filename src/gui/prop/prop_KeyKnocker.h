@@ -9,16 +9,15 @@
 namespace gui {
 namespace prop {
 
-class KeyKnocker : public QGroupBox
-{
-public:
-    KeyKnocker(const QString& aLabel);
-    void set(const std::function<void()>& aKnocker);
+    class KeyKnocker: public QGroupBox {
+    public:
+        KeyKnocker(const QString& aLabel);
+        void set(const std::function<void()>& aKnocker);
 
-private:
-    QPushButton* mButton;
-    QHBoxLayout* mLayout;
-};
+    private:
+        QPushButton* mButton;
+        QHBoxLayout* mLayout;
+    };
 
 } // namespace prop
 } // namespace gui

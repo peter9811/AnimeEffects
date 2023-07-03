@@ -6,17 +6,15 @@
 #include "gl/Vector3.h"
 #include "core/TimeKey.h"
 
-namespace core
-{
+namespace core {
 
-class FFDKey : public TimeKey
-{
+class FFDKey: public TimeKey {
 public:
-    class Data
-    {
+    class Data {
         util::Easing::Param mEasing;
         QVector<gl::Vector3> mBuffer;
         int mVtxCount;
+
     public:
         Data();
         void alloc(int aVtxCount);
@@ -27,13 +25,12 @@ public:
         util::Easing::Param& easing() { return mEasing; }
         const util::Easing::Param& easing() const { return mEasing; }
         gl::Vector3* positions();
-        const gl::Vector3* positions()const;
+        const gl::Vector3* positions() const;
         int count() const;
         void insertVtx(int aIndex, const gl::Vector3& aPos);
         void pushBackVtx(const gl::Vector3& aPos);
         gl::Vector3 removeVtx(int aIndex);
         gl::Vector3 popBackVtx();
-
     };
 
     FFDKey();

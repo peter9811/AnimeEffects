@@ -4,13 +4,13 @@
 #include <QVector>
 #include "cmnd/Listener.h"
 #include "core/ObjectTreeEvent.h"
-namespace core { class Project; }
+namespace core {
+class Project;
+}
 
-namespace core
-{
+namespace core {
 
-class ObjectTreeNotifier : public cmnd::Listener
-{
+class ObjectTreeNotifier: public cmnd::Listener {
 public:
     ObjectTreeNotifier(Project& aProject);
 

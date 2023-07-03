@@ -4,11 +4,9 @@
 #include <memory>
 #include "img/ResourceData.h"
 
-namespace img
-{
+namespace img {
 
-class ResourceHandle
-{
+class ResourceHandle {
 public:
     ResourceHandle();
     ~ResourceHandle();

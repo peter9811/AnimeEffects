@@ -9,31 +9,24 @@
 #include "core/Project.h"
 #include "core/ObjectTree.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class ImageFileLoader
-{
+class ImageFileLoader {
 public:
     ImageFileLoader(const gl::DeviceInfo& aDeviceInfo);
 
     void setCanvasSize(const QSize& aSize, bool aForce);
 
-    bool load(const QString& aPath, core::Project& aProject,
-              util::IProgressReporter& aReporter);
+    bool load(const QString& aPath, core::Project& aProject, util::IProgressReporter& aReporter);
 
     const QString& log() const { return mLog; }
 
 private:
-    bool createEmptyCanvas(core::Project& aProject,
-                           const QString& aTopName,
-                           const QSize& aCanvasSize);
+    bool createEmptyCanvas(core::Project& aProject, const QString& aTopName, const QSize& aCanvasSize);
 
-    bool loadPsd(core::Project& aProject,
-                 util::IProgressReporter& aReporter);
+    bool loadPsd(core::Project& aProject, util::IProgressReporter& aReporter);
 
-    bool loadImage(core::Project& aProject,
-                   util::IProgressReporter& aReporter);
+    bool loadImage(core::Project& aProject, util::IProgressReporter& aReporter);
 
     static QRect calculateBoundingRectFromChildren(const core::ObjectNode& aNode);
     void setDefaultPosturesFromInitialRects(core::ObjectNode& aNode);

@@ -10,11 +10,9 @@
 #include "gui/ViaPoint.h"
 #include "gui/prop/prop_Backboard.h"
 
-namespace gui
-{
+namespace gui {
 
-class PropertyWidget : public QScrollArea
-{
+class PropertyWidget: public QScrollArea {
 public:
     PropertyWidget(ViaPoint& aViaPoint, QWidget* aParent);
     ~PropertyWidget();

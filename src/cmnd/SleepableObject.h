@@ -1,11 +1,9 @@
 #ifndef CMND_SLEEPABLEOBJECT_H
 #define CMND_SLEEPABLEOBJECT_H
 
-namespace cmnd
-{
+namespace cmnd {
 
-class SleepableObject
-{
+class SleepableObject {
 public:
     virtual ~SleepableObject() {}
     virtual void awake() = 0;

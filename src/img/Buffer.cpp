@@ -1,12 +1,9 @@
 #include "img/Buffer.h"
 
-namespace
-{
+namespace {
 
-int getChannelNum(img::Format aFormat)
-{
-    switch (aFormat)
-    {
+int getChannelNum(img::Format aFormat) {
+    switch (aFormat) {
     case img::Format_RGBA8:
         return 4;
     case img::Format_RGB8:
@@ -19,41 +16,23 @@ int getChannelNum(img::Format aFormat)
     }
 }
 
-}
+} // namespace
 
-namespace img
-{
+namespace img {
 
-Buffer::Buffer()
-    : mFormat(Format_TERM)
-    , mBlock()
-    , mWidth()
-    , mHeight()
-    , mChannelNum()
-{
-}
+Buffer::Buffer(): mFormat(Format_TERM), mBlock(), mWidth(), mHeight(), mChannelNum() {}
 
-Buffer::~Buffer()
-{
-    free();
-}
+Buffer::~Buffer() { free(); }
 
-Buffer::Buffer(const Buffer& aRhs)
-    : mFormat(aRhs.mFormat)
-    , mBlock()
-    , mWidth(aRhs.mWidth)
-    , mHeight(aRhs.mHeight)
-    , mChannelNum(aRhs.mChannelNum)
-{
-    if (aRhs.mBlock.data)
-    {
+Buffer::Buffer(const Buffer& aRhs):
+    mFormat(aRhs.mFormat), mBlock(), mWidth(aRhs.mWidth), mHeight(aRhs.mHeight), mChannelNum(aRhs.mChannelNum) {
+    if (aRhs.mBlock.data) {
         alloc(aRhs.mFormat, QSize(aRhs.mWidth, aRhs.mHeight));
         memcpy(mBlock.data, aRhs.mBlock.data, aRhs.mBlock.size);
     }
 }
 
-Buffer& Buffer::operator=(const Buffer& aRhs)
-{
+Buffer& Buffer::operator=(const Buffer& aRhs) {
     free();
 
     mFormat = aRhs.mFormat;
@@ -61,16 +40,14 @@ Buffer& Buffer::operator=(const Buffer& aRhs)
     mHeight = aRhs.mHeight;
     mChannelNum = aRhs.mChannelNum;
 
-    if (aRhs.mBlock.data)
-    {
+    if (aRhs.mBlock.data) {
         alloc(aRhs.mFormat, QSize(aRhs.mWidth, aRhs.mHeight));
         memcpy(mBlock.data, aRhs.mBlock.data, aRhs.mBlock.size);
     }
     return *this;
 }
 
-void Buffer::grab(Format aFormat, const XCMemBlock& aBlock, const QSize& aSize)
-{
+void Buffer::grab(Format aFormat, const XCMemBlock& aBlock, const QSize& aSize) {
     free();
     mFormat = aFormat;
     mBlock = aBlock;
@@ -79,8 +56,7 @@ void Buffer::grab(Format aFormat, const XCMemBlock& aBlock, const QSize& aSize)
     mChannelNum = getChannelNum(mFormat);
 }
 
-void Buffer::grab(Buffer& aUngrab)
-{
+void Buffer::grab(Buffer& aUngrab) {
     mFormat = aUngrab.mFormat;
     mBlock = aUngrab.mBlock;
     mWidth = aUngrab.mWidth;
@@ -93,8 +69,7 @@ void Buffer::grab(Buffer& aUngrab)
     aUngrab.mChannelNum = 0;
 }
 
-XCMemBlock Buffer::release()
-{
+XCMemBlock Buffer::release() {
     XCMemBlock block = mBlock;
     mBlock = XCMemBlock();
     mWidth = 0;
@@ -105,8 +80,7 @@ XCMemBlock Buffer::release()
     return block;
 }
 
-void Buffer::alloc(Format aFormat, const QSize& aSize)
-{
+void Buffer::alloc(Format aFormat, const QSize& aSize) {
     free();
     mFormat = aFormat;
     mChannelNum = getChannelNum(mFormat);
@@ -114,16 +88,13 @@ void Buffer::alloc(Format aFormat, const QSize& aSize)
     mHeight = aSize.height();
 
     mBlock.size = mChannelNum * mWidth * mHeight;
-    if (mBlock.size > 0)
-    {
+    if (mBlock.size > 0) {
         mBlock.data = new uint8[mBlock.size];
     }
 }
 
-void Buffer::free()
-{
-    if (mBlock.data)
-    {
+void Buffer::free() {
+    if (mBlock.data) {
         delete[] mBlock.data;
         mBlock = XCMemBlock();
         mWidth = 0;

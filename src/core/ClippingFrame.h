@@ -7,11 +7,9 @@
 #include "gl/BufferObject.h"
 #include "gl/EasyShaderProgram.h"
 
-namespace core
-{
+namespace core {
 
-class ClippingFrame
-{
+class ClippingFrame {
 public:
     ClippingFrame();
 

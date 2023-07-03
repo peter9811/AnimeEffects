@@ -17,11 +17,9 @@
 #include "core/PosePalette.h"
 #include "core/BoneExpans.h"
 
-namespace core
-{
+namespace core {
 
-class TimeKeyExpans
-{
+class TimeKeyExpans {
 public:
     TimeKeyExpans();
 
@@ -41,8 +39,8 @@ public:
     OpaKey::Data& opa() { return mOpa; }
     const OpaKey::Data& opa() const { return mOpa; }
 
-    HSVKey::Data& hsv() {return mHSV;}
-    const HSVKey::Data& hsv() const {return mHSV;}
+    HSVKey::Data& hsv() { return mHSV; }
+    const HSVKey::Data& hsv() const { return mHSV; }
 
     void setWorldOpacity(float aValue) { mWorldOpacity = aValue; }
     float worldOpacity() const { return mWorldOpacity; }

@@ -11,16 +11,14 @@
 #include "gl/BufferObject.h"
 #include "core/Frame.h"
 
-namespace core
-{
+namespace core {
 
-class LayerMesh
-{
+class LayerMesh {
 public:
-
-    struct MeshBuffer
-    {
-        struct GLBinder { GLBinder(); };
+    struct MeshBuffer {
+        struct GLBinder {
+            GLBinder();
+        };
         MeshBuffer();
         ~MeshBuffer();
         void reserve(int aVtxCount);
@@ -35,8 +33,7 @@ public:
         int vtxCount;
     };
 
-    struct ArrayedConnection
-    {
+    struct ArrayedConnection {
         enum { kMaxCount = 1024 };
         ArrayedConnection();
         void resetPositions();
@@ -47,8 +44,7 @@ public:
         util::Range vertexRange;
     };
 
-    struct ArrayedConnectionList
-    {
+    struct ArrayedConnectionList {
         ArrayedConnectionList();
         ~ArrayedConnectionList();
         void clearBlocks();
@@ -63,12 +59,12 @@ public:
         int useBlockCount;
     };
 
-    class ArrayedConnectionWriter
-    {
+    class ArrayedConnectionWriter {
         ArrayedConnectionList& mList;
         int mVertexCount;
         ArrayedConnection* mCurBlock;
         int mIndex;
+
     public:
         ArrayedConnectionWriter(ArrayedConnectionList& aList, int aVertexCount);
         ~ArrayedConnectionWriter();
@@ -85,9 +81,7 @@ public:
     virtual GLsizei indexCount() const = 0;
     virtual gl::BufferObject& getIndexBuffer() = 0;
     virtual MeshBuffer& getMeshBuffer() = 0;
-    virtual void resetArrayedConnection(
-            ArrayedConnectionList& aDest,
-            const gl::Vector3* aPositions) const = 0;
+    virtual void resetArrayedConnection(ArrayedConnectionList& aDest, const gl::Vector3* aPositions) const = 0;
     virtual Frame frameSign() const = 0;
     virtual QVector2D originOffset() const = 0;
 };
@@ -95,4 +89,3 @@ public:
 } // namespace core
 
 #endif // CORE_LAYERMESH
-

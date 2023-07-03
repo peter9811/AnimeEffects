@@ -19,30 +19,26 @@
 #include "MainWindow.h"
 
 
-namespace
-{
+namespace {
 
 template<class tEdit>
-void setMinMaxOptionWidth(tEdit* aEdit)
-{
+void setMinMaxOptionWidth(tEdit* aEdit) {
     aEdit->setMaximumWidth(200);
     aEdit->setMinimumWidth(50);
 }
 
-}
+} // namespace
 
-namespace gui
-{
+namespace gui {
 //-------------------------------------------------------------------------------------------------
-ExportDialog::ExportDialog(core::Project& aProject, const QString& aPath, QWidget* aParent)
-    : EasyDialog(tr("Export Animation..."), aParent)
-    , mProject(aProject)
-    , mCommonParam()
-    , mSize()
-    , mFrameMax()
-    , mFixAspect(true)
-    , mSizeUpdating(false)
-{
+ExportDialog::ExportDialog(core::Project& aProject, const QString& aPath, QWidget* aParent):
+    EasyDialog(tr("Export Animation..."), aParent),
+    mProject(aProject),
+    mCommonParam(),
+    mSize(),
+    mFrameMax(),
+    mFixAspect(true),
+    mSizeUpdating(false) {
     mCommonParam.path = aPath;
 
     mCommonParam.size = mProject.attribute().imageSize();
@@ -57,8 +53,7 @@ ExportDialog::ExportDialog(core::Project& aProject, const QString& aPath, QWidge
     mFrameMax = mProject.currentTimeInfo().frameMax;
 }
 
-void ExportDialog::pushSizeBox(QFormLayout& aLayout)
-{
+void ExportDialog::pushSizeBox(QFormLayout& aLayout) {
     // size
     {
         auto x = new QSpinBox();
@@ -66,9 +61,13 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout)
         auto fix = new QCheckBox();
         x->setRange(1, 32767);
         y->setRange(1, 32767);
-        if (!(mCommonParam.size.width() % 2 == 0) || !(mCommonParam.size.height() % 2 == 0)){
-            MainWindow::showInfoPopup(tr("Value is Odd"), tr("The width or height of the image ends with an odd number. "
-            "Please change these parameters to an even number as they may cause the export to fail."), "Warn");
+        if (!(mCommonParam.size.width() % 2 == 0) || !(mCommonParam.size.height() % 2 == 0)) {
+            MainWindow::showInfoPopup(
+                tr("Value is Odd"),
+                tr("The width or height of the image ends with an odd number. "
+                   "Please change these parameters to an even number as they may cause the export to fail."),
+                "Warn"
+            );
             mWarningShown = true;
         }
         x->setValue(mCommonParam.size.width());
@@ -77,33 +76,40 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout)
         setMinMaxOptionWidth(y);
         fix->setChecked(mFixAspect);
 
-        this->connect(x, util::SelectArgs<int>::from(&QSpinBox::valueChanged), [=](int aValue)
-        {
-            if (mSizeUpdating) return;
-            if (!(aValue % 2 == 0) && !mWarningShown){
-                MainWindow::showInfoPopup(tr("Value is Odd"), tr("A width or height ending in an odd number"
-                " may make the exporting process fail, please try another value."), "Warn");
+        this->connect(x, util::SelectArgs<int>::from(&QSpinBox::valueChanged), [=](int aValue) {
+            if (mSizeUpdating)
+                return;
+            if (!(aValue % 2 == 0) && !mWarningShown) {
+                MainWindow::showInfoPopup(
+                    tr("Value is Odd"),
+                    tr("A width or height ending in an odd number"
+                       " may make the exporting process fail, please try another value."),
+                    "Warn"
+                );
                 mWarningShown = true;
                 return;
             }
             mSizeUpdating = true;
             QSize& size = this->mCommonParam.size;
             size.setWidth(aValue);
-            if (mFixAspect)
-            {
+            if (mFixAspect) {
                 size.setHeight((int)(mSize.height() * aValue / (double)mSize.width()));
                 y->setValue(size.height());
             }
             mSizeUpdating = false;
         });
 
-        this->connect(y, util::SelectArgs<int>::from(&QSpinBox::valueChanged), [=](int aValue)
-        {
-            if (mSizeUpdating) return;
+        this->connect(y, util::SelectArgs<int>::from(&QSpinBox::valueChanged), [=](int aValue) {
+            if (mSizeUpdating)
+                return;
 
-            if (!(aValue % 2 == 0) && !mWarningShown){
-                MainWindow::showInfoPopup(tr("Value is Odd"), tr("A height or width ending in an odd number"
-                " may make the exporting process fail, please try another value."), "Warn");
+            if (!(aValue % 2 == 0) && !mWarningShown) {
+                MainWindow::showInfoPopup(
+                    tr("Value is Odd"),
+                    tr("A height or width ending in an odd number"
+                       " may make the exporting process fail, please try another value."),
+                    "Warn"
+                );
                 mWarningShown = true;
                 return;
             }
@@ -111,18 +117,14 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout)
             mSizeUpdating = true;
             QSize& size = this->mCommonParam.size;
             size.setHeight(aValue);
-            if (mFixAspect)
-            {
+            if (mFixAspect) {
                 size.setWidth((int)(mSize.width() * aValue / (double)mSize.height()));
                 x->setValue(size.width());
             }
             mSizeUpdating = false;
         });
 
-        this->connect(fix, &QCheckBox::clicked, [=](bool aCheck)
-        {
-            this->mFixAspect = aCheck;
-        });
+        this->connect(fix, &QCheckBox::clicked, [=](bool aCheck) { this->mFixAspect = aCheck; });
 
         aLayout.addRow(tr("Image width :"), x);
         aLayout.addRow(tr("Image height :"), y);
@@ -130,8 +132,7 @@ void ExportDialog::pushSizeBox(QFormLayout& aLayout)
     }
 }
 
-void ExportDialog::pushFrameBox(QFormLayout& aLayout)
-{
+void ExportDialog::pushFrameBox(QFormLayout& aLayout) {
     // start frame
     auto start = new QSpinBox();
     start->setRange(0, mFrameMax);
@@ -144,23 +145,19 @@ void ExportDialog::pushFrameBox(QFormLayout& aLayout)
     end->setValue(mCommonParam.frame.max());
     setMinMaxOptionWidth(end);
 
-    this->connect(start, &QSpinBox::editingFinished, [=]()
-    {
+    this->connect(start, &QSpinBox::editingFinished, [=]() {
         const int v = start->value();
         this->mCommonParam.frame.setMin(v);
-        if (this->mCommonParam.frame.max() < v)
-        {
+        if (this->mCommonParam.frame.max() < v) {
             end->setValue(v);
             this->mCommonParam.frame.setMax(v);
         }
     });
 
-    this->connect(end, &QSpinBox::editingFinished, [=]()
-    {
+    this->connect(end, &QSpinBox::editingFinished, [=]() {
         const int v = end->value();
         this->mCommonParam.frame.setMax(v);
-        if (v < this->mCommonParam.frame.min())
-        {
+        if (v < this->mCommonParam.frame.min()) {
             start->setValue(v);
             this->mCommonParam.frame.setMin(v);
         }
@@ -170,31 +167,26 @@ void ExportDialog::pushFrameBox(QFormLayout& aLayout)
     aLayout.addRow(tr("Last frame :"), end);
 }
 
-void ExportDialog::pushFpsBox(QFormLayout& aLayout)
-{
+void ExportDialog::pushFpsBox(QFormLayout& aLayout) {
     auto fps = new QSpinBox();
     fps->setRange(1, 60);
     fps->setValue(mCommonParam.fps);
     setMinMaxOptionWidth(fps);
 
-    this->connect(fps, &QSpinBox::editingFinished, [=]()
-    {
-        this->mCommonParam.fps = fps->value();
-    });
+    this->connect(fps, &QSpinBox::editingFinished, [=]() { this->mCommonParam.fps = fps->value(); });
 
     aLayout.addRow(tr("FPS :"), fps);
 }
 
 //-------------------------------------------------------------------------------------------------
 ImageExportDialog::ImageExportDialog(
-        core::Project& aProject, const QString& aDirPath,
-        const QString& aSuffix, QWidget* aParent)
-    : ExportDialog(aProject, aDirPath, aParent)
-    , mImageParam()
-{
+    core::Project& aProject, const QString& aDirPath, const QString& aSuffix, QWidget* aParent
+):
+    ExportDialog(aProject, aDirPath, aParent), mImageParam() {
     {
         QString baseName = QFileInfo(aProject.fileName()).baseName();
-        if (baseName.isEmpty()) baseName = "nameless";
+        if (baseName.isEmpty())
+            baseName = "nameless";
         mImageParam.name = baseName + "_export";
         mImageParam.suffix = aSuffix;
     }
@@ -209,10 +201,9 @@ ImageExportDialog::ImageExportDialog(
     this->fixSize();
 }
 
-QLayout* ImageExportDialog::createImageOption()
-{
+QLayout* ImageExportDialog::createImageOption() {
     auto form = new QFormLayout();
-    //form->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
+    // form->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
     form->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
     form->setLabelAlignment(Qt::AlignRight);
 
@@ -222,27 +213,20 @@ QLayout* ImageExportDialog::createImageOption()
         setMinMaxOptionWidth(name);
         name->setText(mImageParam.name);
 
-        this->connect(name, &QLineEdit::editingFinished, [=]()
-        {
-            this->mImageParam.name = name->text();
-        });
+        this->connect(name, &QLineEdit::editingFinished, [=]() { this->mImageParam.name = name->text(); });
 
         form->addRow(tr("Prefix name :"), name);
     }
 
     // quality
-    if (mImageParam.suffix == "jpg")
-    {
+    if (mImageParam.suffix == "jpg") {
         auto quality = new QSpinBox();
         setMinMaxOptionWidth(quality);
         quality->setMinimum(-1);
         quality->setMaximum(100);
         quality->setValue(mImageParam.quality);
 
-        this->connect(quality, &QSpinBox::editingFinished, [=]()
-        {
-            this->mImageParam.quality = quality->value();
-        });
+        this->connect(quality, &QSpinBox::editingFinished, [=]() { this->mImageParam.quality = quality->value(); });
 
         form->addRow(tr("Quality :"), quality);
     }
@@ -255,11 +239,8 @@ QLayout* ImageExportDialog::createImageOption()
 }
 
 //-------------------------------------------------------------------------------------------------
-GifExportDialog::GifExportDialog(
-        core::Project& aProject, const QString& aFilePath, QWidget* aParent)
-    : ExportDialog(aProject, aFilePath, aParent)
-    , mGifParam()
-{
+GifExportDialog::GifExportDialog(core::Project& aProject, const QString& aFilePath, QWidget* aParent):
+    ExportDialog(aProject, aFilePath, aParent), mGifParam() {
     {
         int fpsCheck = this->commonParam().fps != 0 && this->commonParam().fps <= 500 ? this->commonParam().fps : 30;
         this->commonParam().fps = fpsCheck;
@@ -277,8 +258,7 @@ GifExportDialog::GifExportDialog(
     this->fixSize();
 }
 
-QLayout* GifExportDialog::createGifOption()
-{
+QLayout* GifExportDialog::createGifOption() {
     auto form = new QFormLayout();
     form->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
     form->setLabelAlignment(Qt::AlignRight);
@@ -294,10 +274,7 @@ QLayout* GifExportDialog::createGifOption()
         kbps->setRange(0, 100 * 1000);
         kbps->setValue(mGifParam.intermediateBps / 1000);
 
-        this->connect(kbps, &QSpinBox::editingFinished, [=]()
-        {
-            this->mGifParam.intermediateBps = kbps->value();
-        });
+        this->connect(kbps, &QSpinBox::editingFinished, [=]() { this->mGifParam.intermediateBps = kbps->value(); });
     }
 
     // optimize palette
@@ -306,8 +283,7 @@ QLayout* GifExportDialog::createGifOption()
         opti->setChecked(mGifParam.optimizePalette);
         kbps->setEnabled(mGifParam.optimizePalette);
 
-        this->connect(opti, &QCheckBox::clicked, [=](bool aCheck)
-        {
+        this->connect(opti, &QCheckBox::clicked, [=](bool aCheck) {
             this->mGifParam.optimizePalette = aCheck;
             kbps->setEnabled(aCheck);
         });
@@ -321,11 +297,9 @@ QLayout* GifExportDialog::createGifOption()
 
 //-------------------------------------------------------------------------------------------------
 VideoExportDialog::VideoExportDialog(
-        core::Project& aProject, const QString& aFilePath,
-        const ctrl::VideoFormat& aFormat, QWidget* aParent)
-    : ExportDialog(aProject, aFilePath, aParent)
-    , mVideoParam()
-{
+    core::Project& aProject, const QString& aFilePath, const ctrl::VideoFormat& aFormat, QWidget* aParent
+):
+    ExportDialog(aProject, aFilePath, aParent), mVideoParam() {
     {
         mVideoParam.format = aFormat;
         mVideoParam.bps = 5 * 1000 * 1000;
@@ -341,34 +315,30 @@ VideoExportDialog::VideoExportDialog(
     this->fixSize();
 }
 
-void VideoExportDialog::setColorspaceValidity(QComboBox* aBox, bool aIsValid)
-{
-    if (!aBox) return;
+void VideoExportDialog::setColorspaceValidity(QComboBox* aBox, bool aIsValid) {
+    if (!aBox)
+        return;
 
     aBox->setEnabled(aIsValid);
-    if (aIsValid)
-    {
+    if (aIsValid) {
         aBox->setItemText(0, "BT.709");
         aBox->setItemText(1, "BT.601");
-    }
-    else
-    {
+    } else {
         aBox->setItemText(0, "");
         aBox->setItemText(1, "");
     }
 }
 
-void VideoExportDialog::updatePixelFormat(QComboBox* aBox, const QStringList& aPixfmts)
-{
+void VideoExportDialog::updatePixelFormat(QComboBox* aBox, const QStringList& aPixfmts) {
     mVideoParam.pixfmt.clear();
 
-    if (!aBox) return;
+    if (!aBox)
+        return;
 
     auto valid = !aPixfmts.isEmpty();
     aBox->clear();
 
-    if (valid)
-    {
+    if (valid) {
         aBox->addItems(aPixfmts);
         mVideoParam.pixfmt = aPixfmts.at(0);
     }
@@ -376,22 +346,18 @@ void VideoExportDialog::updatePixelFormat(QComboBox* aBox, const QStringList& aP
     aBox->setEnabled(valid);
 }
 
-void VideoExportDialog::updateCommentLabel(QLabel* aLabel, bool aGPUEnc)
-{
-    if (!aLabel) return;
+void VideoExportDialog::updateCommentLabel(QLabel* aLabel, bool aGPUEnc) {
+    if (!aLabel)
+        return;
 
-    if (aGPUEnc)
-    {
+    if (aGPUEnc) {
         aLabel->setText(tr("This codec requires a dedicated GPU."));
-    }
-    else
-    {
+    } else {
         aLabel->clear();
     }
 }
 
-QLayout* VideoExportDialog::createVideoOption()
-{
+QLayout* VideoExportDialog::createVideoOption() {
     auto form = new QFormLayout();
     form->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
     form->setLabelAlignment(Qt::AlignRight);
@@ -402,26 +368,24 @@ QLayout* VideoExportDialog::createVideoOption()
 
     // colorspace
     QComboBox* colorBox = nullptr;
-    for (auto codec : mVideoParam.format.codecs)
-    {
-        if (codec.colorspace)
-        {
+    for (auto codec : mVideoParam.format.codecs) {
+        if (codec.colorspace) {
             colorBox = new QComboBox();
             break;
         }
     }
-    if (colorBox)
-    {
-        colorBox->addItems(QStringList() << "" << "");
+    if (colorBox) {
+        colorBox->addItems(
+            QStringList() << ""
+                          << ""
+        );
 
-        this->connect(colorBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged), [=]()
-        {
+        this->connect(colorBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged), [=]() {
             this->mVideoParam.colorIndex = colorBox->currentIndex();
         });
 
         // initialize enabled
-        if (!mVideoParam.format.codecs.isEmpty())
-        {
+        if (!mVideoParam.format.codecs.isEmpty()) {
             auto valid = mVideoParam.format.codecs.at(0).colorspace;
             setColorspaceValidity(colorBox, valid);
         }
@@ -430,35 +394,29 @@ QLayout* VideoExportDialog::createVideoOption()
     // pixel format
     QComboBox* pixfmtBox = new QComboBox();
     // connect
-    this->connect(pixfmtBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged), [=]()
-    {
+    this->connect(pixfmtBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged), [=]() {
         this->mVideoParam.pixfmt = pixfmtBox->currentText();
     });
     // initialize enabled
-    if (!mVideoParam.format.codecs.isEmpty())
-    {
+    if (!mVideoParam.format.codecs.isEmpty()) {
         updatePixelFormat(pixfmtBox, mVideoParam.format.codecs.at(0).pixfmts);
     }
 
     // codec
-    if (!mVideoParam.format.codecs.isEmpty())
-    {
+    if (!mVideoParam.format.codecs.isEmpty()) {
         mVideoParam.codecIndex = 0;
 
         auto codecBox = new QComboBox();
 
-        for (auto codec : mVideoParam.format.codecs)
-        {
+        for (auto codec : mVideoParam.format.codecs) {
             QString hints;
-            if (codec.lossless || codec.transparent)
-            {
-                if (codec.lossless)
-                {
+            if (codec.lossless || codec.transparent) {
+                if (codec.lossless) {
                     hints += tr("Lossless");
                 }
-                if (codec.transparent)
-                {
-                    if (!hints.isEmpty()) hints += QString(", ");
+                if (codec.transparent) {
+                    if (!hints.isEmpty())
+                        hints += QString(", ");
                     hints += tr("Transparent");
                 }
                 hints = QString(" (") + hints + ")";
@@ -466,8 +424,7 @@ QLayout* VideoExportDialog::createVideoOption()
             codecBox->addItem(codec.label + hints);
         }
 
-        this->connect(codecBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged), [=]()
-        {
+        this->connect(codecBox, util::SelectArgs<int>::from(&QComboBox::currentIndexChanged), [=]() {
             auto index = codecBox->currentIndex();
             this->mVideoParam.codecIndex = index;
             this->setColorspaceValidity(colorBox, mVideoParam.format.codecs.at(index).colorspace);
@@ -494,10 +451,7 @@ QLayout* VideoExportDialog::createVideoOption()
         kbps->setRange(0, 100 * 1000);
         kbps->setValue(mVideoParam.bps / 1000);
 
-        this->connect(kbps, &QSpinBox::editingFinished, [=]()
-        {
-            this->mVideoParam.bps = kbps->value();
-        });
+        this->connect(kbps, &QSpinBox::editingFinished, [=]() { this->mVideoParam.bps = kbps->value(); });
 
         form->addRow(tr("Bit rate (Kbps) :"), kbps);
     }
@@ -518,4 +472,3 @@ QLayout* VideoExportDialog::createVideoOption()
 }
 
 } // namespace gui
-

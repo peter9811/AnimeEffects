@@ -7,11 +7,9 @@
 #include "core/RenderInfo.h"
 #include "core/LayerMesh.h"
 
-namespace core
-{
+namespace core {
 
-class DestinationTexturizer
-{
+class DestinationTexturizer {
 public:
     DestinationTexturizer();
 
@@ -20,8 +18,12 @@ public:
     void clearTexture();
 
     void update(
-            GLuint aFramebuffer, GLuint aFrameTexture, const QMatrix4x4& aViewMatrix,
-            LayerMesh& aMesh, gl::BufferObject& aPositions);
+        GLuint aFramebuffer,
+        GLuint aFrameTexture,
+        const QMatrix4x4& aViewMatrix,
+        LayerMesh& aMesh,
+        gl::BufferObject& aPositions
+    );
 
     gl::Texture& texture() { return *mTexture; }
     const gl::Texture& texture() const { return *mTexture; }

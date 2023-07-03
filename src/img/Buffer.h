@@ -6,11 +6,9 @@
 #include "XC.h"
 #include "img/Format.h"
 
-namespace img
-{
+namespace img {
 
-class Buffer
-{
+class Buffer {
 public:
     Buffer();
     Buffer(const Buffer& aRhs);
@@ -34,8 +32,7 @@ public:
     QSize pixelSize() const { return QSize(mWidth, mHeight); }
 
     template<typename tChannel>
-    inline tChannel* rawPixel(int aX, int aY) const
-    {
+    inline tChannel* rawPixel(int aX, int aY) const {
         return (tChannel*)(mBlock.data + (aX + aY * mWidth) * mChannelNum);
     }
 

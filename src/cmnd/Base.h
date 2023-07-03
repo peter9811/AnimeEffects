@@ -3,11 +3,9 @@
 
 #include <QString>
 
-namespace cmnd
-{
+namespace cmnd {
 
-class Base
-{
+class Base {
 public:
     Base() {}
     virtual ~Base() {}

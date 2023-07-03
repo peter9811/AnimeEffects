@@ -9,14 +9,13 @@
 namespace ctrl {
 namespace pose {
 
-class IMode
-{
-public:
-    virtual ~IMode() {}
-    virtual void updateParam(const PoseParam&) {}
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&) = 0;
-    virtual void renderQt(const core::RenderInfo&, QPainter&) = 0;
-};
+    class IMode {
+    public:
+        virtual ~IMode() {}
+        virtual void updateParam(const PoseParam&) {}
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&) = 0;
+        virtual void renderQt(const core::RenderInfo&, QPainter&) = 0;
+    };
 
 } // namespace pose
 } // namespace ctrl

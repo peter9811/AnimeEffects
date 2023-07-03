@@ -17,15 +17,12 @@
 
 using namespace core;
 
-namespace ctrl
-{
+namespace ctrl {
 
 //-------------------------------------------------------------------------------------------------
 img::ResourceNode* createLayerResource(
-        const img::PSDFormat::Header& aHeader,
-        const img::PSDFormat::Layer& aLayer,
-        const QString& aName, QRect& aInOutRect)
-{
+    const img::PSDFormat::Header& aHeader, const img::PSDFormat::Layer& aLayer, const QString& aName, QRect& aInOutRect
+) {
     // create texture image
     auto imagePair = img::Util::createTextureImage(aHeader, aLayer);
     aInOutRect = imagePair.second;
@@ -39,16 +36,14 @@ img::ResourceNode* createLayerResource(
     return resNode;
 }
 
-img::ResourceNode* createFolderResource(const QString& aName, const QPoint& aPos)
-{
+img::ResourceNode* createFolderResource(const QString& aName, const QPoint& aPos) {
     auto resNode = new img::ResourceNode(aName);
     resNode->data().setPos(aPos);
     resNode->data().setIsLayer(false);
     return resNode;
 }
 
-FolderNode* createTopNode(const QString& aName, const QRect& aInitialRect)
-{
+FolderNode* createTopNode(const QString& aName, const QRect& aInitialRect) {
     // create tree top node
     FolderNode* node = new FolderNode(aName);
     node->setInitialRect(aInitialRect);
@@ -58,53 +53,36 @@ FolderNode* createTopNode(const QString& aName, const QRect& aInitialRect)
 }
 
 //-------------------------------------------------------------------------------------------------
-ImageFileLoader::ImageFileLoader(const gl::DeviceInfo& aDeviceInfo)
-    : mLog()
-    , mFileInfo()
-    , mGLDeviceInfo(aDeviceInfo)
-    , mCanvasSize(512, 512)
-    , mForceCanvasSize(false)
-{
-}
+ImageFileLoader::ImageFileLoader(const gl::DeviceInfo& aDeviceInfo):
+    mLog(), mFileInfo(), mGLDeviceInfo(aDeviceInfo), mCanvasSize(512, 512), mForceCanvasSize(false) {}
 
-void ImageFileLoader::setCanvasSize(const QSize &aSize, bool aForce)
-{
-    if (aSize.width() <= 0 || aSize.height() <= 0) return;
+void ImageFileLoader::setCanvasSize(const QSize& aSize, bool aForce) {
+    if (aSize.width() <= 0 || aSize.height() <= 0)
+        return;
 
     mCanvasSize = aSize;
     mForceCanvasSize = aForce;
 }
 
-bool ImageFileLoader::load(
-        const QString& aPath,
-        core::Project& aProject,
-        util::IProgressReporter& aReporter)
-{
+bool ImageFileLoader::load(const QString& aPath, core::Project& aProject, util::IProgressReporter& aReporter) {
     XC_DEBUG_REPORT("------------------------------------------");
 
     mFileInfo = QFileInfo(aPath);
     const QString suffix = mFileInfo.suffix();
 
-    if (aPath.isEmpty() || !mFileInfo.isFile())
-    {
+    if (aPath.isEmpty() || !mFileInfo.isFile()) {
         return createEmptyCanvas(aProject, "topnode", mCanvasSize);
-    }
-    else if (suffix == "psd")
-    {
+    } else if (suffix == "psd") {
         return loadPsd(aProject, aReporter);
-    }
-    else
-    {
+    } else {
         return loadImage(aProject, aReporter);
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-bool ImageFileLoader::createEmptyCanvas(core::Project& aProject, const QString& aTopName, const QSize& aCanvasSize)
-{
+bool ImageFileLoader::createEmptyCanvas(core::Project& aProject, const QString& aTopName, const QSize& aCanvasSize) {
     // check the image has valid size as a texture.
-    if (!checkTextureSizeError((uint32)aCanvasSize.width(), (uint32)aCanvasSize.height()))
-    {
+    if (!checkTextureSizeError((uint32)aCanvasSize.width(), (uint32)aCanvasSize.height())) {
         mLog = "invalid canvas size";
         return false;
     }
@@ -122,17 +100,13 @@ bool ImageFileLoader::createEmptyCanvas(core::Project& aProject, const QString& 
 }
 
 //-------------------------------------------------------------------------------------------------
-bool ImageFileLoader::loadImage(
-        core::Project& aProject,
-        util::IProgressReporter& aReporter)
-{
+bool ImageFileLoader::loadImage(core::Project& aProject, util::IProgressReporter& aReporter) {
     aReporter.setSection("Loading the Image File...");
     aReporter.setMaximum(1);
     aReporter.setProgress(0);
 
     QImage image(mFileInfo.filePath());
-    if (image.isNull())
-    {
+    if (image.isNull()) {
         mLog = "Failed to load image file";
         return false;
     }
@@ -140,8 +114,7 @@ bool ImageFileLoader::loadImage(
     auto size = mForceCanvasSize ? mCanvasSize : image.size();
     auto name = mFileInfo.baseName();
 
-    if (!createEmptyCanvas(aProject, name, size))
-    {
+    if (!createEmptyCanvas(aProject, name, size)) {
         return false;
     }
 
@@ -172,10 +145,7 @@ bool ImageFileLoader::loadImage(
 }
 
 //-------------------------------------------------------------------------------------------------
-bool ImageFileLoader::loadPsd(
-        core::Project& aProject,
-        util::IProgressReporter& aReporter)
-{
+bool ImageFileLoader::loadPsd(core::Project& aProject, util::IProgressReporter& aReporter) {
     using img::PSDFormat;
     using img::PSDReader;
     using img::PSDUtil;
@@ -192,8 +162,7 @@ bool ImageFileLoader::loadPsd(
         file.reset(new std::ifstream(path.toLocal8Bit(), std::ios::binary));
         XC_DEBUG_REPORT() << "image path =" << path;
 
-        if (file->fail())
-        {
+        if (file->fail()) {
             mLog = "Can not find a file.";
             return false;
         }
@@ -202,10 +171,8 @@ bool ImageFileLoader::loadPsd(
     // read psd
     PSDReader reader(*file);
 
-    if (reader.resultCode() != PSDReader::ResultCode_Success)
-    {
-        mLog = "error(" + QString::number(reader.resultCode()) + ") " +
-                QString::fromStdString(reader.resultMessage());
+    if (reader.resultCode() != PSDReader::ResultCode_Success) {
+        mLog = "error(" + QString::number(reader.resultCode()) + ") " + QString::fromStdString(reader.resultMessage());
         return false;
     }
     aReporter.setProgress(1);
@@ -223,14 +190,10 @@ bool ImageFileLoader::loadPsd(
 
     img::Util::TextFilter textFilter(*format);
 
-    auto canvasSize =
-            mForceCanvasSize ?
-                mCanvasSize :
-                QSize((int)format->header().width, (int)format->header().height);
+    auto canvasSize = mForceCanvasSize ? mCanvasSize : QSize((int)format->header().width, (int)format->header().height);
 
     // check the image has valid size as a texture.
-    if (!checkTextureSizeError((uint32)canvasSize.width(), (uint32)canvasSize.height()))
-    {
+    if (!checkTextureSizeError((uint32)canvasSize.width(), (uint32)canvasSize.height())) {
         mLog = "invalid canvas size";
         return false;
     }
@@ -253,8 +216,7 @@ bool ImageFileLoader::loadPsd(
     aProject.resourceHolder().pushImageTree(*resStack.back(), mFileInfo.absoluteFilePath());
 
     // for each layer
-    for (ReverseIterator itr = layers.rbegin(); itr != layers.rend(); ++itr)
-    {
+    for (ReverseIterator itr = layers.rbegin(); itr != layers.rend(); ++itr) {
         FolderNode* current = treeStack.back();
         XC_PTR_ASSERT(current);
         img::ResourceNode* resCurrent = resStack.back();
@@ -262,20 +224,17 @@ bool ImageFileLoader::loadPsd(
 
         PSDFormat::Layer& layer = *((*itr).get());
         const QString name = textFilter.get(layer.name);
-        QRect rect(layer.rect.left(), layer.rect.top(),
-                   layer.rect.width(), layer.rect.height());
+        QRect rect(layer.rect.left(), layer.rect.top(), layer.rect.width(), layer.rect.height());
         const float parentDepth = ObjectNodeUtil::getInitialWorldDepth(*current);
 
         XC_REPORT() << "name =" << name << "size =" << rect.width() << "," << rect.height();
 
         // check the image has valid size as a texture.
-        if (!checkTextureSizeError(rect.width(), rect.height()))
-        {
+        if (!checkTextureSizeError(rect.width(), rect.height())) {
             return false;
         }
 
-        if (layer.entryType == PSDFormat::LayerEntryType_Layer)
-        {
+        if (layer.entryType == PSDFormat::LayerEntryType_Layer) {
             // create layer resource (Note that the rect be modified.)
             auto resNode = createLayerResource(format->header(), layer, name, rect);
             resCurrent->children().pushBack(resNode);
@@ -293,18 +252,14 @@ bool ImageFileLoader::loadPsd(
 
             // update depth
             globalDepth -= 1.0f;
-        }
-        else if (layer.entryType == PSDFormat::LayerEntryType_Bounding)
-        {
+        } else if (layer.entryType == PSDFormat::LayerEntryType_Bounding) {
             // create bounding box
             current->setInitialRect(calculateBoundingRectFromChildren(*current));
 
             // pop tree
             treeStack.pop_back();
             resStack.pop_back();
-        }
-        else
-        {
+        } else {
             // create folder resource
             auto resNode = createFolderResource(name, rect.topLeft());
             resCurrent->children().pushBack(resNode);
@@ -338,24 +293,19 @@ bool ImageFileLoader::loadPsd(
     return true;
 }
 
-QRect ImageFileLoader::calculateBoundingRectFromChildren(const ObjectNode& aNode)
-{
+QRect ImageFileLoader::calculateBoundingRectFromChildren(const ObjectNode& aNode) {
     QRect rect;
-    for (auto child : aNode.children())
-    {
-        if (child->initialRect().isValid())
-        {
+    for (auto child : aNode.children()) {
+        if (child->initialRect().isValid()) {
             rect = rect.isValid() ? rect.united(child->initialRect()) : child->initialRect();
         }
     }
     return rect;
 }
 
-void ImageFileLoader::setDefaultPosturesFromInitialRects(ObjectNode& aNode)
-{
+void ImageFileLoader::setDefaultPosturesFromInitialRects(ObjectNode& aNode) {
     ObjectNode::Iterator itr(&aNode);
-    while (itr.hasNext())
-    {
+    while (itr.hasNext()) {
         auto node = itr.next();
         auto parent = node->parent();
         const bool isTop = !parent;
@@ -363,39 +313,32 @@ void ImageFileLoader::setDefaultPosturesFromInitialRects(ObjectNode& aNode)
 
         QVector2D pos;
         QVector2D parentPos;
-        if (!isTop)
-        {
+        if (!isTop) {
             // parent position
-            parentPos = (parent->initialRect().isValid() && !parentIsTop) ?
-                        util::MathUtil::getCenter(parent->initialRect()) : QVector2D();
+            parentPos = (parent->initialRect().isValid() && !parentIsTop)
+                ? util::MathUtil::getCenter(parent->initialRect())
+                : QVector2D();
 
             // node position
-            pos = (node->initialRect().isValid()) ?
-                        util::MathUtil::getCenter(node->initialRect()) : parentPos;
-
+            pos = (node->initialRect().isValid()) ? util::MathUtil::getCenter(node->initialRect()) : parentPos;
         }
 
         // set
-        if (node->type() == ObjectType_Layer)
-        {
+        if (node->type() == ObjectType_Layer) {
             ((LayerNode*)node)->setDefaultPosture(pos - parentPos);
-        }
-        else if (node->type() == ObjectType_Folder)
-        {
+        } else if (node->type() == ObjectType_Folder) {
             ((FolderNode*)node)->setDefaultPosture(pos - parentPos);
         }
     }
 }
 
-bool ImageFileLoader::checkTextureSizeError(uint32 aWidth, uint32 aHeight)
-{
+bool ImageFileLoader::checkTextureSizeError(uint32 aWidth, uint32 aHeight) {
     const uint32 maxSize = (uint32)mGLDeviceInfo.maxTextureSize;
 
-    if (maxSize < aWidth || maxSize < aHeight)
-    {
-        mLog = QString("The image size over the max texture size of your current device. ") +
-        "image size(" + QString::number(aWidth) + ", " + QString::number(aHeight) + "), " +
-        "max size(" + QString::number(maxSize) + ", " + QString::number(maxSize) + ")";
+    if (maxSize < aWidth || maxSize < aHeight) {
+        mLog = QString("The image size over the max texture size of your current device. ") + "image size(" +
+            QString::number(aWidth) + ", " + QString::number(aHeight) + "), " + "max size(" + QString::number(maxSize) +
+            ", " + QString::number(maxSize) + ")";
         return false;
     }
     return true;

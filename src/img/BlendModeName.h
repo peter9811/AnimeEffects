@@ -3,11 +3,9 @@
 
 #include <QObject>
 
-namespace img
-{
+namespace img {
 
-class BlendModeName : public QObject
-{
+class BlendModeName: public QObject {
     Q_OBJECT
 public:
     BlendModeName();

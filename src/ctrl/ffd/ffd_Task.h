@@ -18,78 +18,69 @@
 namespace ctrl {
 namespace ffd {
 
-// You can set a same buffer to src and dst.
-class Task : public gl::Task
-{
-public:
-    enum Type
-    {
-        Type_Deformer,
-        Type_Eraser,
-        Type_Focuser,
-        Type_Dragger,
-        Type_TERM
-    };
+    // You can set a same buffer to src and dst.
+    class Task: public gl::Task {
+    public:
+        enum Type { Type_Deformer, Type_Eraser, Type_Focuser, Type_Dragger, Type_TERM };
 
-    Task(TaskResource& aResource, core::MeshTransformerResource& aMeshRes);
+        Task(TaskResource& aResource, core::MeshTransformerResource& aMeshRes);
 
-    void setType(Type aType);
-    void setDragIndex(int aIndex); // for Dragger
+        void setType(Type aType);
+        void setDragIndex(int aIndex); // for Dragger
 
-    void resetDst(int aVtxCount);
-    void writeSrc(
+        void resetDst(int aVtxCount);
+        void writeSrc(
             const core::TimeKeyExpans& aSrcExpans,
             const gl::Vector3* aSrcMesh,
             const core::LayerMesh& aOriginMesh,
-            const FFDParam& aBrushParam);
+            const FFDParam& aBrushParam
+        );
 
-    void setBrush(
-            const QVector2D& aBrushCenter,
-            const QVector2D& aBrushVel);
+        void setBrush(const QVector2D& aBrushCenter, const QVector2D& aBrushVel);
 
-    gl::Vector3* dstMesh() const { return mDstMesh.data(); }
-    size_t dstSize() const { return sizeof(gl::Vector3) * mVtxCount; }
+        gl::Vector3* dstMesh() const { return mDstMesh.data(); }
+        size_t dstSize() const { return sizeof(gl::Vector3) * mVtxCount; }
 
-    QVector2D dragMove() const { return mDragMove; } // for Dragger
-    int focusIndex() const { return mFocusIndex; } // for Focuser
+        QVector2D dragMove() const { return mDragMove; } // for Dragger
+        int focusIndex() const { return mFocusIndex; } // for Focuser
 
-private:
-    virtual void onRequested();
-    virtual void onFinished();
-    void requestBlur();
-    gl::EasyShaderProgram& selectShaderProgram() const;
+    private:
+        virtual void onRequested();
+        virtual void onFinished();
+        void requestBlur();
+        gl::EasyShaderProgram& selectShaderProgram() const;
 
-    TaskResource& mResource;
+        TaskResource& mResource;
 
-    Type mType;
-    core::MeshTransformer mMeshTransformer;
-    core::LayerMesh::MeshBuffer mMeshBuffer;
-    util::ArrayBlock<const gl::Vector3> mSrcMesh;
-    const core::TimeKeyExpans* mSrcExpans;
-    QVector2D mSrcOriginOffset;
-    core::LayerMesh::ArrayedConnectionList mArrayedConnectionList;
-    gl::ComputeTexture1DList mSrcBlurPositions;
+        Type mType;
+        core::MeshTransformer mMeshTransformer;
+        core::LayerMesh::MeshBuffer mMeshBuffer;
+        util::ArrayBlock<const gl::Vector3> mSrcMesh;
+        const core::TimeKeyExpans* mSrcExpans;
+        QVector2D mSrcOriginOffset;
+        core::LayerMesh::ArrayedConnectionList mArrayedConnectionList;
+        gl::ComputeTexture1DList mSrcBlurPositions;
 
-    gl::BufferObject mWorkInMesh;
-    gl::BufferObject mWorkInWeight;
-    gl::BufferObject mOutMesh;
-    gl::BufferObject mOutWeight;
+        gl::BufferObject mWorkInMesh;
+        gl::BufferObject mWorkInWeight;
+        gl::BufferObject mOutMesh;
+        gl::BufferObject mOutWeight;
 
-    const gl::Vector3* mOriginMesh;
-    QScopedArrayPointer<gl::Vector3> mDstMesh;
-    QScopedArrayPointer<GLfloat> mDstWeight;
-    int mVtxCount;
-    int mDstBufferCount;
+        const gl::Vector3* mOriginMesh;
+        QScopedArrayPointer<gl::Vector3> mDstMesh;
+        QScopedArrayPointer<GLfloat> mDstWeight;
+        int mVtxCount;
+        int mDstBufferCount;
 
-    FFDParam mParam;
-    QVector2D mBrushCenter;
-    QVector2D mBrushVel;
-    bool mUseBlur;
+        FFDParam mParam;
+        QVector2D mBrushCenter;
+        QVector2D mBrushVel;
+        bool mUseBlur;
 
-    int mFocusIndex;
-    int mDragIndex;
-    QVector2D mDragMove;
-};
+        int mFocusIndex;
+        int mDragIndex;
+        QVector2D mDragMove;
+    };
 
 } // namespace ffd
 } // namespace ctrl

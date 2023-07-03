@@ -4,44 +4,31 @@
 #include "core/MeshTransformerResource.h"
 #include "core/ObjectNodeUtil.h"
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-MeshTransformer::MeshTransformer(const QString& aShaderPath)
-    : mResource(*(new MeshTransformerResource()))
-    , mResourceOwns(true)
-    , mOutPositions()
-    , mOutXArrows()
-    , mOutYArrows()
-{
+MeshTransformer::MeshTransformer(const QString& aShaderPath):
+    mResource(*(new MeshTransformerResource())), mResourceOwns(true), mOutPositions(), mOutXArrows(), mOutYArrows() {
     mResource.setup(aShaderPath);
 }
 
-MeshTransformer::MeshTransformer(MeshTransformerResource& aResource)
-    : mResource(aResource)
-    , mResourceOwns(false)
-    , mOutPositions()
-    , mOutXArrows()
-    , mOutYArrows()
-{
-}
+MeshTransformer::MeshTransformer(MeshTransformerResource& aResource):
+    mResource(aResource), mResourceOwns(false), mOutPositions(), mOutXArrows(), mOutYArrows() {}
 
-MeshTransformer::~MeshTransformer()
-{
-    if (mResourceOwns)
-    {
+MeshTransformer::~MeshTransformer() {
+    if (mResourceOwns) {
         delete &mResource;
     }
 }
 
 void MeshTransformer::callGL(
-        const TimeKeyExpans& aExpans,
-        LayerMesh::MeshBuffer& aMeshBuffer,
-        const QVector2D& aOriginOffset,
-        util::ArrayBlock<const gl::Vector3> aPositions,
-        bool aNonPosed, bool aUseInfluence)
-{
+    const TimeKeyExpans& aExpans,
+    LayerMesh::MeshBuffer& aMeshBuffer,
+    const QVector2D& aOriginOffset,
+    util::ArrayBlock<const gl::Vector3> aPositions,
+    bool aNonPosed,
+    bool aUseInfluence
+) {
     XC_ASSERT(aPositions);
 
     auto& buffer = aMeshBuffer;
@@ -50,7 +37,8 @@ void MeshTransformer::callGL(
     mOutXArrows = &buffer.outXArrows;
     mOutYArrows = &buffer.outYArrows;
 
-    if (aPositions.count() <= 0) return;
+    if (aPositions.count() <= 0)
+        return;
 
     QMatrix4x4 worldMatrix;
     QMatrix4x4 innerMatrix;
@@ -62,21 +50,16 @@ void MeshTransformer::callGL(
 
     const int vtxCount = aPositions.count();
 
-    if (useInfluence)
-    {
+    if (useInfluence) {
         inflData = influence->accessor();
-        XC_MSG_ASSERT(influence->vertexCount() == vtxCount,
-                      "%d, %d", vtxCount, influence->vertexCount());
+        XC_MSG_ASSERT(influence->vertexCount() == vtxCount, "%d, %d", vtxCount, influence->vertexCount());
     }
 
-    if ((!aNonPosed && aExpans.bone().isAffectedByBinding()) || useInfluence)
-    {
+    if ((!aNonPosed && aExpans.bone().isAffectedByBinding()) || useInfluence) {
         worldMatrix = aExpans.bone().outerMatrix();
         innerMatrix = aExpans.bone().innerMatrix();
         innerMatrix.translate(aOriginOffset);
-    }
-    else
-    {
+    } else {
         worldMatrix = aExpans.srt().worldCSRTMatrix();
         worldMatrix.translate(aOriginOffset);
     }
@@ -93,26 +76,19 @@ void MeshTransformer::callGL(
         program.setUniformValue("uInnerMatrix", innerMatrix);
         program.setUniformValue("uWorldMatrix", worldMatrix);
 
-        if (useInfluence)
-        {
+        if (useInfluence) {
             program.setAttributeArray("inBoneIndex0", inflData.indices0(), vtxCount);
             program.setAttributeArray("inBoneWeight0", inflData.weights0(), vtxCount);
             program.setAttributeArray("inBoneIndex1", inflData.indices1(), vtxCount);
             program.setAttributeArray("inBoneWeight1", inflData.weights1(), vtxCount);
 
-            if (useDualQuaternion)
-            {
-                auto palette = aNonPosed ? PosePalette().dualQuaternions() :
-                                           aExpans.posePalette().dualQuaternions();
+            if (useDualQuaternion) {
+                auto palette = aNonPosed ? PosePalette().dualQuaternions() : aExpans.posePalette().dualQuaternions();
                 program.setTupleUniformValueArray<GLfloat>(
-                            "uBoneDualQuat",
-                            palette.array()->data(),
-                            palette.count() * 2, 4);
-            }
-            else
-            {
-                auto palette = aNonPosed ? PosePalette().matrices() :
-                                           aExpans.posePalette().matrices();
+                    "uBoneDualQuat", palette.array()->data(), palette.count() * 2, 4
+                );
+            } else {
+                auto palette = aNonPosed ? PosePalette().matrices() : aExpans.posePalette().matrices();
                 program.setUniformValueArray("uBoneMatrix", palette);
             }
         }

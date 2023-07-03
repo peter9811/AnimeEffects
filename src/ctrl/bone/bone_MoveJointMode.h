@@ -13,24 +13,23 @@
 namespace ctrl {
 namespace bone {
 
-class MoveJointMode : public IMode
-{
-public:
-    MoveJointMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    class MoveJointMode: public IMode {
+    public:
+        MoveJointMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    void moveBone(core::Bone2& aTarget, const QVector2D& aMove);
+    private:
+        void moveBone(core::Bone2& aTarget, const QVector2D& aMove);
 
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    KeyOwner& mKeyOwner;
-    QMatrix4x4 mTargetMtx;
-    QMatrix4x4 mTargetInvMtx;
-    Focuser mFocuser;
-    MoveBone* mCommandRef;
-};
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        KeyOwner& mKeyOwner;
+        QMatrix4x4 mTargetMtx;
+        QMatrix4x4 mTargetInvMtx;
+        Focuser mFocuser;
+        MoveBone* mCommandRef;
+    };
 
 } // namespace bone
 } // namespace ctrl

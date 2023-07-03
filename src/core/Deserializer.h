@@ -25,23 +25,22 @@
 #include "gl/DeviceInfo.h"
 #include "core/Frame.h"
 
-namespace core
-{
+namespace core {
 
-class Deserializer
-{
+class Deserializer {
 public:
     typedef std::istream::pos_type PosType;
     typedef util::IDSolver<void*> IDSolverType;
 
     Deserializer(
-            util::LEStreamReader& aIn,
-            IDSolverType& aSolver,
-            size_t aMaxFileSize,
-            QVersionNumber aVersion,
-            const gl::DeviceInfo& aGLDeviceInfo,
-            util::IProgressReporter& aRepoter,
-            int aRShiftCount);
+        util::LEStreamReader& aIn,
+        IDSolverType& aSolver,
+        size_t aMaxFileSize,
+        QVersionNumber aVersion,
+        const gl::DeviceInfo& aGLDeviceInfo,
+        util::IProgressReporter& aRepoter,
+        int aRShiftCount
+    );
 
     QVersionNumber version() const { return mVersion; }
 
@@ -79,7 +78,11 @@ public:
     void readFixedString(QString& aValue, int aSize);
 
     template<typename tValue>
-    tValue getRead() { tValue value = tValue(); read(value); return value; }
+    tValue getRead() {
+        tValue value = tValue();
+        read(value);
+        return value;
+    }
 
     bool beginBlock(const std::string& aSignature);
     bool endBlock();
@@ -92,24 +95,18 @@ public:
     const QVector<QString>& logScopes() const;
     const QStringList& log() const { return mLog; }
 
-    bool errored(const QString& aLog)
-    {
-        if (!mValue.isEmpty())
-        {
+    bool errored(const QString& aLog) {
+        if (!mValue.isEmpty()) {
             setLog(aLog + "(" + mValue + ")");
             mValue.clear();
-        }
-        else
-        {
+        } else {
             setLog(aLog);
         }
         return false;
     }
 
-    bool checkStream()
-    {
-        if (failure())
-        {
+    bool checkStream() {
+        if (failure()) {
             setLog("stream error");
             return false;
         }
@@ -139,4 +136,3 @@ private:
 } // namespace core
 
 #endif // CORE_DESERIALIZER
-

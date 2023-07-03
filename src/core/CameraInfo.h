@@ -9,16 +9,13 @@
 #include <QPointF>
 #include <QMatrix4x4>
 
-namespace core
-{
+namespace core {
 
-class CameraInfo
-{
+class CameraInfo {
 public:
     CameraInfo();
 
-    void reset(const QSize& aScreenSize, double aDpr,
-               const QSize& aImageSize, const QPoint& aLeftTopPos);
+    void reset(const QSize& aScreenSize, double aDpr, const QSize& aImageSize, const QPoint& aLeftTopPos);
 
     void setDevicePixelRatio(double aRatio);
     inline void setScreenWidth(int aWidth) { mScreenSize.setWidth(aWidth); }
@@ -68,10 +65,7 @@ public:
     QMatrix4x4 viewMatrix() const;
 
 private:
-    QVector2D centerOffset() const
-    {
-        return 0.5f * QVector2D(mImageSize.width(), mImageSize.height());
-    }
+    QVector2D centerOffset() const { return 0.5f * QVector2D(mImageSize.width(), mImageSize.height()); }
 
     double mDevicePixelRatio;
     QSize mScreenSize;

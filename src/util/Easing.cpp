@@ -2,28 +2,26 @@
 #include "util/Easing.h"
 #include "util/EasingName.h"
 
-namespace util
-{
+namespace util {
 
 //-------------------------------------------------------------------------------------------------
-bool Easing::Param::isValidParam() const
-{
-    if (type < 0 || Type_TERM <= type) return false;
-    if (range < 0 || Range_TERM <= range) return false;
-    if (weight < 0.0f || 1.0f < weight) return false;
+bool Easing::Param::isValidParam() const {
+    if (type < 0 || Type_TERM <= type)
+        return false;
+    if (range < 0 || Range_TERM <= range)
+        return false;
+    if (weight < 0.0f || 1.0f < weight)
+        return false;
     return true;
 }
 
-bool Easing::Param::operator==(const Param& aRhs) const
-{
+bool Easing::Param::operator==(const Param& aRhs) const {
     return type == aRhs.type && range == aRhs.range && weight == aRhs.weight;
 }
 
 //-------------------------------------------------------------------------------------------------
-QString Easing::getTypeName(Type aType)
-{
-    switch (aType)
-    {
+QString Easing::getTypeName(Type aType) {
+    switch (aType) {
     case Type_None:
         return EasingName::tr("None");
     case Type_Linear:
@@ -53,7 +51,7 @@ QString Easing::getTypeName(Type aType)
     }
 }
 
-QString Easing::getRangeName(Range aRange){
+QString Easing::getRangeName(Range aRange) {
     switch (aRange) {
     case Range_In:
         return QString("In");
@@ -66,68 +64,85 @@ QString Easing::getRangeName(Range aRange){
     }
 }
 
-Easing::Type Easing::easingToEnum(QString easing){
+Easing::Type Easing::easingToEnum(QString easing) {
     QString aEasing;
-    if(easing.isNull()){
+    if (easing.isNull()) {
         QSettings settings;
         aEasing = settings.value("generalsettings/easing").toString();
-    }
-    else{
+    } else {
         aEasing = easing;
     }
-    if (aEasing == "None") return Easing::Type_None;
-    else if (aEasing == "Linear") return Easing::Type_Linear;
-    else if (aEasing == "Sine") return Easing::Type_Sine;
-    else if (aEasing == "Quad") return Easing::Type_Quad;
-    else if (aEasing == "Cubic") return Easing::Type_Cubic;
-    else if (aEasing == "Quart") return Easing::Type_Quart;
-    else if (aEasing == "Quint") return Easing::Type_Quint;
-    else if (aEasing == "Expo") return Easing::Type_Expo;
-    else if (aEasing == "Circ") return Easing::Type_Circ;
-    else if (aEasing == "Back") return Easing::Type_Back;
-    else if (aEasing == "Elastic") return Easing::Type_Elastic;
-    else if (aEasing == "Bounce") return Easing::Type_Bounce;
-    else return Easing::Type_Linear; // Default easing is Linear
+    if (aEasing == "None")
+        return Easing::Type_None;
+    else if (aEasing == "Linear")
+        return Easing::Type_Linear;
+    else if (aEasing == "Sine")
+        return Easing::Type_Sine;
+    else if (aEasing == "Quad")
+        return Easing::Type_Quad;
+    else if (aEasing == "Cubic")
+        return Easing::Type_Cubic;
+    else if (aEasing == "Quart")
+        return Easing::Type_Quart;
+    else if (aEasing == "Quint")
+        return Easing::Type_Quint;
+    else if (aEasing == "Expo")
+        return Easing::Type_Expo;
+    else if (aEasing == "Circ")
+        return Easing::Type_Circ;
+    else if (aEasing == "Back")
+        return Easing::Type_Back;
+    else if (aEasing == "Elastic")
+        return Easing::Type_Elastic;
+    else if (aEasing == "Bounce")
+        return Easing::Type_Bounce;
+    else
+        return Easing::Type_Linear; // Default easing is Linear
 }
 
-Easing::Range Easing::rangeToEnum(QString range){
+Easing::Range Easing::rangeToEnum(QString range) {
     QString aRange;
-    if(range.isNull()){
+    if (range.isNull()) {
         QSettings settings;
         aRange = settings.value("generalsettings/range").toString();
-    }
-    else{
+    } else {
         aRange = range;
     }
-    if (aRange == "In") return Easing::Range_In;
-    else if (aRange == "Out") return Easing::Range_Out;
-    else if (aRange == "All") return Easing::Range_InOut;
-    else return Easing::Range_InOut; // Default range is InOut, defined as "All" by Hidefuku
+    if (aRange == "In")
+        return Easing::Range_In;
+    else if (aRange == "Out")
+        return Easing::Range_Out;
+    else if (aRange == "All")
+        return Easing::Range_InOut;
+    else
+        return Easing::Range_InOut; // Default range is InOut, defined as "All" by Hidefuku
 }
 
 
 //-------------------------------------------------------------------------------------------------
-QStringList Easing::getTypeNameList()
-{
+QStringList Easing::getTypeNameList() {
     QStringList list;
-    for (int i = 0; i < Type_TERM; ++i)
-    {
+    for (int i = 0; i < Type_TERM; ++i) {
         list.append(getTypeName((Type)i));
     }
     return list;
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::calculate(Type aType, Range aRange, float t, float b, float c, float d)
-{
-#define RETURN_BY_EASING_FUNCTION(func) switch (aRange) {   \
-        case Range_In: return func##In(t, b, c, d);         \
-        case Range_Out: return func##Out(t, b, c, d);       \
-        case Range_InOut: return func##InOut(t, b, c, d);   \
-        default: return func##InOut(t, b, c, d); }
+float Easing::calculate(Type aType, Range aRange, float t, float b, float c, float d) {
+#define RETURN_BY_EASING_FUNCTION(func) \
+    switch (aRange) { \
+    case Range_In: \
+        return func##In(t, b, c, d); \
+    case Range_Out: \
+        return func##Out(t, b, c, d); \
+    case Range_InOut: \
+        return func##InOut(t, b, c, d); \
+    default: \
+        return func##InOut(t, b, c, d); \
+    }
 
-    switch (aType)
-    {
+    switch (aType) {
     case Type_None:
         return b;
     case Type_Linear:
@@ -158,220 +173,167 @@ float Easing::calculate(Type aType, Range aRange, float t, float b, float c, flo
 #undef RETURN_BY_EASING_FUNCTION
 }
 
-float Easing::calculate(Param aParam, float t, float b, float c, float d)
-{
+float Easing::calculate(Param aParam, float t, float b, float c, float d) {
     const float result = calculate(aParam.type, aParam.range, t, b, c, d);
 
-    if (aParam.type > Type_Linear)
-    {
+    if (aParam.type > Type_Linear) {
         return result * aParam.weight + (c * (t / d) + b) * (1.0f - aParam.weight);
     }
     return result;
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::sineIn(float t, float b, float c, float d)
-{
-    return -c * qCos(t / d * (M_PI / 2)) + c + b;
-}
+float Easing::sineIn(float t, float b, float c, float d) { return -c * qCos(t / d * (M_PI / 2)) + c + b; }
 
-float Easing::sineOut(float t, float b, float c, float d)
-{
-    return c * qSin(t / d * (M_PI / 2)) + b;
-}
+float Easing::sineOut(float t, float b, float c, float d) { return c * qSin(t / d * (M_PI / 2)) + b; }
 
-float Easing::sineInOut(float t, float b, float c, float d)
-{
-    return -c / 2 * (qCos(M_PI * t / d) - 1) + b;
-}
+float Easing::sineInOut(float t, float b, float c, float d) { return -c / 2 * (qCos(M_PI * t / d) - 1) + b; }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::quadIn(float t, float b, float c, float d)
-{
+float Easing::quadIn(float t, float b, float c, float d) {
     t /= d;
     return c * t * t + b;
 }
 
-float Easing::quadOut(float t, float b, float c, float d)
-{
+float Easing::quadOut(float t, float b, float c, float d) {
     t /= d;
     return -c * t * (t - 2) + b;
 }
 
-float Easing::quadInOut(float t, float b, float c, float d)
-{
+float Easing::quadInOut(float t, float b, float c, float d) {
     t /= d / 2;
-    if (t < 1)
-    {
+    if (t < 1) {
         return ((c / 2) * (t * t)) + b;
-    }
-    else
-    {
+    } else {
         --t;
         return -c / 2 * ((t - 2) * t - 1) + b;
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::cubicIn(float t, float b, float c, float d)
-{
+float Easing::cubicIn(float t, float b, float c, float d) {
     t /= d;
     return c * t * t * t + b;
 }
 
-float Easing::cubicOut(float t, float b, float c, float d)
-{
+float Easing::cubicOut(float t, float b, float c, float d) {
     t = t / d - 1;
     return c * (t * t * t + 1) + b;
 }
 
-float Easing::cubicInOut(float t, float b, float c, float d)
-{
+float Easing::cubicInOut(float t, float b, float c, float d) {
     t /= d / 2;
-    if (t < 1)
-    {
+    if (t < 1) {
         return c / 2 * t * t * t + b;
-    }
-    else
-    {
+    } else {
         t -= 2;
         return c / 2 * (t * t * t + 2) + b;
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::quartIn(float t, float b, float c, float d)
-{
+float Easing::quartIn(float t, float b, float c, float d) {
     t /= d;
     return c * t * t * t * t + b;
 }
 
-float Easing::quartOut(float t, float b, float c, float d)
-{
+float Easing::quartOut(float t, float b, float c, float d) {
     t = t / d - 1;
     return -c * (t * t * t * t - 1) + b;
 }
 
-float Easing::quartInOut(float t, float b, float c, float d)
-{
+float Easing::quartInOut(float t, float b, float c, float d) {
     t /= d / 2;
-    if (t < 1)
-    {
+    if (t < 1) {
         return c / 2 * t * t * t * t + b;
-    }
-    else
-    {
+    } else {
         t -= 2;
         return -c / 2 * (t * t * t * t - 2) + b;
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::quintIn(float t, float b, float c, float d)
-{
+float Easing::quintIn(float t, float b, float c, float d) {
     t /= d;
     return c * t * t * t * t * t + b;
 }
 
-float Easing::quintOut(float t, float b, float c, float d)
-{
+float Easing::quintOut(float t, float b, float c, float d) {
     t = t / d - 1;
     return c * (t * t * t * t * t + 1) + b;
 }
 
-float Easing::quintInOut(float t, float b, float c, float d)
-{
-    t /= d/2;
-    if (t < 1)
-    {
+float Easing::quintInOut(float t, float b, float c, float d) {
+    t /= d / 2;
+    if (t < 1) {
         return c / 2 * t * t * t * t * t + b;
-    }
-    else
-    {
+    } else {
         t -= 2;
         return c / 2 * (t * t * t * t * t + 2) + b;
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::expoIn(float t, float b, float c, float d)
-{
-    return (t == 0) ? b : c * qPow(2, 10 * (t / d - 1)) + b;
-}
+float Easing::expoIn(float t, float b, float c, float d) { return (t == 0) ? b : c * qPow(2, 10 * (t / d - 1)) + b; }
 
-float Easing::expoOut(float t, float b, float c, float d)
-{
+float Easing::expoOut(float t, float b, float c, float d) {
     return (t == d) ? b + c : c * (-qPow(2, -10 * t / d) + 1) + b;
 }
 
-float Easing::expoInOut(float t, float b, float c, float d)
-{
-    if (t == 0) return b;
-    if (t == d) return b + c;
+float Easing::expoInOut(float t, float b, float c, float d) {
+    if (t == 0)
+        return b;
+    if (t == d)
+        return b + c;
 
-    if ((t /= d / 2) < 1)
-    {
+    if ((t /= d / 2) < 1) {
         return c / 2 * qPow(2, 10 * (t - 1)) + b;
-    }
-    else
-    {
+    } else {
         return c / 2 * (-qPow(2, -10 * --t) + 2) + b;
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::circIn(float t, float b , float c, float d)
-{
+float Easing::circIn(float t, float b, float c, float d) {
     t /= d;
     return -c * (qSqrt(1 - t * t) - 1) + b;
 }
 
-float Easing::circOut(float t, float b, float c, float d)
-{
+float Easing::circOut(float t, float b, float c, float d) {
     t = t / d - 1;
     return c * qSqrt(1 - t * t) + b;
 }
 
-float Easing::circInOut(float t, float b, float c, float d)
-{
+float Easing::circInOut(float t, float b, float c, float d) {
     t /= d / 2;
-    if (t < 1)
-    {
+    if (t < 1) {
         return -c / 2 * (qSqrt(1 - t * t) - 1) + b;
-    }
-    else
-    {
+    } else {
         t -= 2;
         return c / 2 * (qSqrt(1 - t * t) + 1) + b;
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::backIn(float t, float b, float c, float d)
-{
+float Easing::backIn(float t, float b, float c, float d) {
     float s = 1.70158f;
     t /= d;
     return c * t * t * ((s + 1) * t - s) + b;
 }
 
-float Easing::backOut(float t, float b, float c, float d)
-{
+float Easing::backOut(float t, float b, float c, float d) {
     float s = 1.70158f;
     t = t / d - 1;
     return c * (t * t * ((s + 1) * t + s) + 1) + b;
 }
 
-float Easing::backInOut(float t, float b, float c, float d)
-{
+float Easing::backInOut(float t, float b, float c, float d) {
     float s = 1.70158f;
     t /= d / 2;
-    if (t < 1)
-    {
+    if (t < 1) {
         s *= 1.525f;
         return c / 2 * (t * t * ((s + 1) * t - s)) + b;
-    }
-    else
-    {
+    } else {
         t -= 2;
         s *= 1.525f;
         return c / 2 * (t * t * ((s + 1) * t + s) + 2) + b;
@@ -379,10 +341,11 @@ float Easing::backInOut(float t, float b, float c, float d)
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::elasticIn(float t, float b, float c, float d)
-{
-    if (t == 0) return b;
-    if ((t /= d) == 1) return b + c;
+float Easing::elasticIn(float t, float b, float c, float d) {
+    if (t == 0)
+        return b;
+    if ((t /= d) == 1)
+        return b + c;
 
     float p = d * 0.3f;
     float a = c;
@@ -391,10 +354,11 @@ float Easing::elasticIn(float t, float b, float c, float d)
     return -(postFix * qSin((t * d - s) * (2 * M_PI) / p)) + b;
 }
 
-float Easing::elasticOut(float t, float b, float c, float d)
-{
-    if (t == 0) return b;
-    if ((t /= d) == 1) return b + c;
+float Easing::elasticOut(float t, float b, float c, float d) {
+    if (t == 0)
+        return b;
+    if ((t /= d) == 1)
+        return b + c;
 
     float p = d * 0.3f;
     float a = c;
@@ -402,64 +366,47 @@ float Easing::elasticOut(float t, float b, float c, float d)
     return (a * qPow(2, -10 * t) * qSin((t * d - s) * (2 * M_PI) / p) + c + b);
 }
 
-float Easing::elasticInOut(float t, float b, float c, float d)
-{
-    if (t == 0) return b;
-    if ((t /= d / 2) == 2) return b + c;
+float Easing::elasticInOut(float t, float b, float c, float d) {
+    if (t == 0)
+        return b;
+    if ((t /= d / 2) == 2)
+        return b + c;
 
     float p = d * (0.3f * 1.5f);
     float a = c;
     float s = p / 4;
 
-    if (t < 1)
-    {
+    if (t < 1) {
         float postFix = a * qPow(2, 10 * (t -= 1));
         return -0.5f * (postFix * qSin((t * d - s) * (2 * M_PI) / p)) + b;
-    }
-    else
-    {
+    } else {
         float postFix = a * qPow(2, -10 * (t -= 1));
         return postFix * qSin((t * d - s) * (2 * M_PI) / p) * 0.5f + c + b;
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-float Easing::bounceIn(float t, float b, float c, float d)
-{
-    return c - bounceOut(d - t, 0, c, d) + b;
-}
+float Easing::bounceIn(float t, float b, float c, float d) { return c - bounceOut(d - t, 0, c, d) + b; }
 
-float Easing::bounceOut(float t, float b, float c, float d)
-{
-    if ((t /= d) < (1.0f / 2.75f))
-    {
+float Easing::bounceOut(float t, float b, float c, float d) {
+    if ((t /= d) < (1.0f / 2.75f)) {
         return c * (7.5625f * t * t) + b;
-    }
-    else if (t < (2.0f / 2.75f))
-    {
+    } else if (t < (2.0f / 2.75f)) {
         float postFix = t -= (1.5f / 2.75f);
-        return c * (7.5625f * (postFix) * t + 0.75f) + b;
-    }
-    else if (t < (2.5f / 2.75f))
-    {
+        return c * (7.5625f * (postFix)*t + 0.75f) + b;
+    } else if (t < (2.5f / 2.75f)) {
         float postFix = t -= (2.25f / 2.75f);
-        return c * (7.5625f * (postFix) * t + 0.9375f) + b;
-    }
-    else
-    {
+        return c * (7.5625f * (postFix)*t + 0.9375f) + b;
+    } else {
         float postFix = t -= (2.625f / 2.75f);
-        return c * (7.5625f * (postFix) * t + 0.984375f) + b;
+        return c * (7.5625f * (postFix)*t + 0.984375f) + b;
     }
 }
 
-float Easing::bounceInOut(float t, float b, float c, float d)
-{
-    if (t < d / 2)
-    {
+float Easing::bounceInOut(float t, float b, float c, float d) {
+    if (t < d / 2) {
         return bounceIn(t * 2, 0, c, d) * 0.5f + b;
-    }
-    else
-    {
+    } else {
         return bounceOut(t * 2 - d, 0, c, d) * 0.5f + c * 0.5f + b;
     }
 }

@@ -8,19 +8,18 @@
 namespace ctrl {
 namespace pose {
 
-struct KeyOwner
-{
-    KeyOwner() : key(), ownsKey(), parent() {}
+    struct KeyOwner {
+        KeyOwner(): key(), ownsKey(), parent() {}
 
-    explicit operator bool() const { return key; }
-    bool owns() const { return ownsKey; }
-    void pushOwnsKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);
-    void deleteOwnsKey();
+        explicit operator bool() const { return key; }
+        bool owns() const { return ownsKey; }
+        void pushOwnsKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);
+        void deleteOwnsKey();
 
-    core::PoseKey* key;
-    bool ownsKey;
-    core::TimeKey* parent;
-};
+        core::PoseKey* key;
+        bool ownsKey;
+        core::TimeKey* parent;
+    };
 
 } // namespace pose
 } // namespace ctrl

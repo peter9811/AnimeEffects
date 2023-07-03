@@ -13,28 +13,27 @@
 namespace gui {
 namespace prop {
 
-class Backboard : public QWidget
-{
-public:
-    Backboard(ViaPoint& aViaPoint, QWidget* aParent);
-    void setProject(core::Project* aProject);
-    void setTarget(core::ObjectNode* aNode);
-    void setPlayBackActivity(bool aIsActive);
+    class Backboard: public QWidget {
+    public:
+        Backboard(ViaPoint& aViaPoint, QWidget* aParent);
+        void setProject(core::Project* aProject);
+        void setTarget(core::ObjectNode* aNode);
+        void setPlayBackActivity(bool aIsActive);
 
-    void updateAttribute();
-    void updateKey(bool aUpdateKey, bool aUppdateDefaultKey);
-    void updateFrame();
+        void updateAttribute();
+        void updateKey(bool aUpdateKey, bool aUppdateDefaultKey);
+        void updateFrame();
 
-private:
-    void resetLayout();
+    private:
+        void resetLayout();
 
-    ViaPoint& mViaPoint;
-    core::Project* mProject;
-    QVBoxLayout* mLayout;
-    QScopedPointer<ConstantPanel> mConstantPanel;
-    QScopedPointer<DefaultKeyPanel> mDefaultKeyPanel;
-    QScopedPointer<CurrentKeyPanel> mCurrentKeyPanel;
-};
+        ViaPoint& mViaPoint;
+        core::Project* mProject;
+        QVBoxLayout* mLayout;
+        QScopedPointer<ConstantPanel> mConstantPanel;
+        QScopedPointer<DefaultKeyPanel> mDefaultKeyPanel;
+        QScopedPointer<CurrentKeyPanel> mCurrentKeyPanel;
+    };
 
 } // namespace prop
 } // namespace gui

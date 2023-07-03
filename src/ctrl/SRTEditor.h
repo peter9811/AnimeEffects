@@ -13,11 +13,9 @@
 #include "ctrl/srt/srt_KeyOwner.h"
 #include "ctrl/srt/srt_IMode.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class SRTEditor : public IEditor
-{
+class SRTEditor: public IEditor {
 public:
     SRTEditor(core::Project& aProject, UILogger& aUILogger);
     ~SRTEditor();
@@ -26,9 +24,7 @@ public:
 
     void updateParam(const SRTParam& aParam);
 
-    virtual bool updateCursor(
-            const core::CameraInfo& aCamera,
-            const core::AbstractCursor& aCursor);
+    virtual bool updateCursor(const core::CameraInfo& aCamera, const core::AbstractCursor& aCursor);
     virtual void updateEvent(EventType);
 
     virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);

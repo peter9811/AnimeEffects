@@ -5,11 +5,9 @@
 #include "core/Project.h"
 #include "core/RenderInfo.h"
 
-namespace gui
-{
+namespace gui {
 
-class ProjectHook : public core::Project::Hook
-{
+class ProjectHook: public core::Project::Hook {
 public:
     ProjectHook();
     virtual ~ProjectHook();

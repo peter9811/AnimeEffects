@@ -1,14 +1,12 @@
 #ifndef UTIL_RANGE
 #define UTIL_RANGE
 
-namespace util
-{
+namespace util {
 
-class Range
-{
+class Range {
 public:
-    Range() : mMin(), mMax() {}
-    Range(int aMin, int aMax) : mMin(aMin), mMax(aMax) {}
+    Range(): mMin(), mMax() {}
+    Range(int aMin, int aMax): mMin(aMin), mMax(aMax) {}
 
     int min() const { return mMin; }
     int max() const { return mMax; }
@@ -28,4 +26,3 @@ private:
 } // namespace util
 
 #endif // UTIL_RANGE
-

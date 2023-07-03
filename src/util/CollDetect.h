@@ -6,14 +6,11 @@
 #include "util/Triangle2D.h"
 #include "util/ArrayBlock.h"
 
-namespace util
-{
+namespace util {
 // north east coordinate
-class CollDetect
-{
+class CollDetect {
 public:
-    static inline float getCross(const QVector2D& aV0, const QVector2D& aV1)
-    {
+    static inline float getCross(const QVector2D& aV0, const QVector2D& aV1) {
         return aV0.x() * aV1.y() - aV0.y() * aV1.x();
     }
 
@@ -44,12 +41,10 @@ public:
     static bool intersects(const Segment2D& aSeg0, const Segment2D& aSeg1);
     static bool intersects(const QRectF& aRect, const Segment2D& aSegment); ///@note aRect is filling
 
-    static std::pair<bool, QVector2D> getIntersection(
-            const Segment2D& aSeg0, const Segment2D& aSeg1);
+    static std::pair<bool, QVector2D> getIntersection(const Segment2D& aSeg0, const Segment2D& aSeg1);
 
 private:
-    static bool rayIntersectsToPolygonEdge(
-            const QVector2D& aTop, const QVector2D& aBottom, const QVector2D& aPoint);
+    static bool rayIntersectsToPolygonEdge(const QVector2D& aTop, const QVector2D& aBottom, const QVector2D& aPoint);
 
     CollDetect() {}
 };

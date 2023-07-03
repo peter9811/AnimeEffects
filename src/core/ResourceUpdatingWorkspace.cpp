@@ -1,22 +1,14 @@
 #include "core/ResourceUpdatingWorkspace.h"
 
-namespace core
-{
+namespace core {
 
-ResourceUpdatingWorkspace::ResourceUpdatingWorkspace()
-    : transUnits()
-{
-}
+ResourceUpdatingWorkspace::ResourceUpdatingWorkspace(): transUnits() {}
 
 
-GridMesh::Transitions& ResourceUpdatingWorkspace::makeSureTransitions(
-        const TimeKey* aParent, const GridMesh& aMesh)
-{
-    for (auto& unit : transUnits)
-    {
+GridMesh::Transitions& ResourceUpdatingWorkspace::makeSureTransitions(const TimeKey* aParent, const GridMesh& aMesh) {
+    for (auto& unit : transUnits) {
         // found
-        if (unit.parent == aParent)
-        {
+        if (unit.parent == aParent) {
             unit.mesh = &aMesh;
             return unit.trans;
         }
@@ -28,13 +20,10 @@ GridMesh::Transitions& ResourceUpdatingWorkspace::makeSureTransitions(
     return transUnits.back().trans;
 }
 
-const ResourceUpdatingWorkspace::Unit* ResourceUpdatingWorkspace::findUnit(const TimeKey* aParent) const
-{
-    for (auto& unit : transUnits)
-    {
+const ResourceUpdatingWorkspace::Unit* ResourceUpdatingWorkspace::findUnit(const TimeKey* aParent) const {
+    for (auto& unit : transUnits) {
         // found
-        if (unit.parent == aParent)
-        {
+        if (unit.parent == aParent) {
             return &unit;
         }
     }

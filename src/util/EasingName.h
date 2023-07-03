@@ -3,11 +3,9 @@
 
 #include <QObject>
 
-namespace util
-{
+namespace util {
 
-class EasingName : public QObject
-{
+class EasingName: public QObject {
     Q_OBJECT
 public:
     EasingName();

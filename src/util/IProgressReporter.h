@@ -3,11 +3,9 @@
 
 #include <QString>
 
-namespace util
-{
+namespace util {
 
-class IProgressReporter
-{
+class IProgressReporter {
 public:
     virtual ~IProgressReporter() {}
 
@@ -20,4 +18,3 @@ public:
 } // namespace util
 
 #endif // UTIL_IPROGRESSREPORTER
-

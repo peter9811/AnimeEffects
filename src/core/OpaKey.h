@@ -4,24 +4,25 @@
 #include "util/Easing.h"
 #include "core/TimeKey.h"
 
-namespace core
-{
+namespace core {
 
-class OpaKey : public TimeKey
-{
+class OpaKey: public TimeKey {
 public:
-    class Data
-    {
+    class Data {
         util::Easing::Param mEasing;
         float mOpacity;
         void clamp();
+
     public:
         Data();
 
         util::Easing::Param& easing() { return mEasing; }
         const util::Easing::Param& easing() const { return mEasing; }
 
-        void setOpacity(float aOpacity) { mOpacity = aOpacity; clamp(); }
+        void setOpacity(float aOpacity) {
+            mOpacity = aOpacity;
+            clamp();
+        }
         const float& opacity() const { return mOpacity; }
 
         bool isZero() const;

@@ -8,15 +8,10 @@
 #include <QCheckBox>
 #include "gui/NewProjectDialog.h"
 
-namespace gui
-{
+namespace gui {
 
-NewProjectDialog::NewProjectDialog(QWidget* aParent)
-    : EasyDialog(tr("New Project Dialog"), aParent)
-    , mFileName()
-    , mAttribute()
-    , mSpecifiesCanvasSize()
-{
+NewProjectDialog::NewProjectDialog(QWidget* aParent):
+    EasyDialog(tr("New Project Dialog"), aParent), mFileName(), mAttribute(), mSpecifiesCanvasSize() {
     // initialize attribute
     {
         mAttribute.setMaxFrame(60 * 10);
@@ -24,12 +19,11 @@ NewProjectDialog::NewProjectDialog(QWidget* aParent)
     }
 
     this->setMainWidget(createOption(), false);
-    this->setOkCancel([=](int)->bool { return true; });
-    //this->fixSize();
+    this->setOkCancel([=](int) -> bool { return true; });
+    // this->fixSize();
 }
 
-QWidget* NewProjectDialog::createOption()
-{
+QWidget* NewProjectDialog::createOption() {
     auto form = new QFormLayout();
     form->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
     form->setLabelAlignment(Qt::AlignRight);
@@ -39,17 +33,17 @@ QWidget* NewProjectDialog::createOption()
         auto layout = new QHBoxLayout();
 
         auto line = new QLineEdit(this);
-        //line->setEnabled(false);
+        // line->setEnabled(false);
         line->setReadOnly(true);
         line->setContextMenuPolicy(Qt::NoContextMenu);
         line->setFocusPolicy(Qt::NoFocus);
         layout->addWidget(line);
 
         auto button = new QPushButton(this);
-        this->connect(button, &QPushButton::clicked, [=]()
-        {
+        this->connect(button, &QPushButton::clicked, [=]() {
             this->mFileName = QFileDialog::getOpenFileName(
-                        this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)");
+                this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
+            );
 
             line->setText(mFileName);
         });
@@ -66,10 +60,7 @@ QWidget* NewProjectDialog::createOption()
         frame->setRange(1, std::numeric_limits<int>::max());
         frame->setValue(mAttribute.maxFrame());
 
-        this->connect(frame, &QSpinBox::editingFinished, [=]()
-        {
-            this->mAttribute.setMaxFrame(frame->value());
-        });
+        this->connect(frame, &QSpinBox::editingFinished, [=]() { this->mAttribute.setMaxFrame(frame->value()); });
 
         form->addRow(tr("Maximum frame count :"), frame);
     }
@@ -79,10 +70,7 @@ QWidget* NewProjectDialog::createOption()
         fps->setRange(1, std::numeric_limits<int>::max());
         fps->setValue(mAttribute.fps());
 
-        this->connect(fps, &QSpinBox::editingFinished, [=]()
-        {
-            this->mAttribute.setFps(fps->value());
-        });
+        this->connect(fps, &QSpinBox::editingFinished, [=]() { this->mAttribute.setFps(fps->value()); });
 
         form->addRow(tr("Frames per second :"), fps);
     }
@@ -93,7 +81,7 @@ QWidget* NewProjectDialog::createOption()
         width->setEnabled(false);
         width->setRange(1, std::numeric_limits<int>::max());
         width->setValue(mAttribute.imageSize().width());
-        this->connect(width, &QSpinBox::editingFinished, [=](){
+        this->connect(width, &QSpinBox::editingFinished, [=]() {
             auto size = this->mAttribute.imageSize();
             size.setWidth(width->value());
             this->mAttribute.setImageSize(size);
@@ -103,15 +91,14 @@ QWidget* NewProjectDialog::createOption()
         height->setEnabled(false);
         height->setRange(1, std::numeric_limits<int>::max());
         height->setValue(mAttribute.imageSize().height());
-        this->connect(height, &QSpinBox::editingFinished, [=](){
+        this->connect(height, &QSpinBox::editingFinished, [=]() {
             auto size = this->mAttribute.imageSize();
             size.setHeight(height->value());
             this->mAttribute.setImageSize(size);
         });
 
         auto check = new QCheckBox();
-        this->connect(check, &QCheckBox::clicked, [=](bool aChecked)
-        {
+        this->connect(check, &QCheckBox::clicked, [=](bool aChecked) {
             this->mSpecifiesCanvasSize = aChecked;
             width->setEnabled(aChecked);
             height->setEnabled(aChecked);

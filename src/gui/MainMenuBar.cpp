@@ -21,15 +21,12 @@
 #include "gui/MouseSettingDialog.h"
 #include "util/NetworkUtil.h"
 
-namespace gui
-{
+namespace gui {
 //-------------------------------------------------------------------------------------------------
-QDomDocument getVideoExportDocument()
-{
+QDomDocument getVideoExportDocument() {
     QFile file("./data/encode/VideoEncode.txt");
 
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << file.errorString();
         return QDomDocument();
     }
@@ -38,11 +35,8 @@ QDomDocument getVideoExportDocument()
     QString errorMessage;
     int errorLine = 0;
     int errorColumn = 0;
-    if (!prop.setContent(&file, false, &errorMessage, &errorLine, &errorColumn))
-    {
-        qDebug() << "invalid xml file. "
-                 << file.fileName()
-                 << errorMessage << ", line = " << errorLine
+    if (!prop.setContent(&file, false, &errorMessage, &errorLine, &errorColumn)) {
+        qDebug() << "invalid xml file. " << file.fileName() << errorMessage << ", line = " << errorLine
                  << ", column = " << errorColumn;
         return QDomDocument();
     }
@@ -52,16 +46,15 @@ QDomDocument getVideoExportDocument()
 }
 
 //-------------------------------------------------------------------------------------------------
-MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources &aGUIResources, QWidget* aParent)
-    : QMenuBar(aParent)
-    , mProcess()
-    , mViaPoint(aViaPoint)
-    , mProject()
-    , mProjectActions()
-    , mShowResourceWindow()
-    , mVideoFormats()
-    , mGUIResources(aGUIResources)
-{
+MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources& aGUIResources, QWidget* aParent):
+    QMenuBar(aParent),
+    mProcess(),
+    mViaPoint(aViaPoint),
+    mProject(),
+    mProjectActions(),
+    mShowResourceWindow(),
+    mVideoFormats(),
+    mGUIResources(aGUIResources) {
     // load the list of video formats from a setting file.
     loadVideoFormats();
 
@@ -69,9 +62,9 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
     QMenu* fileMenu = new QMenu(tr("File"), this);
     {
-        QAction* newProject     = new QAction(tr("New Project..."), this);
-        QAction* openProject    = new QAction(tr("Open Project..."), this);
-        QMenu* openRecent     = new QMenu(tr("Open Recent..."), this);
+        QAction* newProject = new QAction(tr("New Project..."), this);
+        QAction* openProject = new QAction(tr("Open Project..."), this);
+        QMenu* openRecent = new QMenu(tr("Open Recent..."), this);
         {
             // Get settings
             QSettings settings;
@@ -79,8 +72,8 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             recentfiles = settings.value("projectloader/recents").toStringList();
 
             // Path placeholders
-            if (recentfiles.length() != 8){
-                while (recentfiles.length() != 8){
+            if (recentfiles.length() != 8) {
+                while (recentfiles.length() != 8) {
                     recentfiles.append("Path placeholder");
                 }
             }
@@ -93,10 +86,11 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             QString seventhPath = recentfiles[6];
             QString eigthPath = recentfiles[7];
             QStringList list;
-            list << firstPath << secondPath << thirdPath << fourthPath << fifthPath << sixthPath << seventhPath << eigthPath;
+            list << firstPath << secondPath << thirdPath << fourthPath << fifthPath << sixthPath << seventhPath
+                 << eigthPath;
 
             // Path actions
-            QAction * placeholderAction = new QAction(tr("No other projects..."), this);
+            QAction* placeholderAction = new QAction(tr("No other projects..."), this);
             QAction* firstPathAction = new QAction(firstPath);
             QAction* secondPathAction = new QAction(secondPath);
             QAction* thirdPathAction = new QAction(thirdPath);
@@ -107,46 +101,53 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             QAction* eigthPathAction = new QAction(eigthPath);
             // Path addition
             // Better than before, but still not very DRY code.
-            for (int x = 0; x <= 7; x+=1){
-                if (list[x] == QString("Path placeholder")){
+            for (int x = 0; x <= 7; x += 1) {
+                if (list[x] == QString("Path placeholder")) {
                     openRecent->addAction(placeholderAction);
-                }
-                else{
-                    switch(x){
-                    case 0: openRecent->addAction(firstPathAction);
-                            break;
-                    case 1: openRecent->addAction(secondPathAction);
-                            break;
-                    case 2: openRecent->addAction(thirdPathAction);
-                            break;
-                    case 3: openRecent->addAction(fourthPathAction);
-                            break;
-                    case 4: openRecent->addAction(fifthPathAction);
-                            break;
-                    case 5: openRecent->addAction(sixthPathAction);
-                            break;
-                    case 6: openRecent->addAction(seventhPathAction);
-                            break;
-                    case 7: openRecent->addAction(eigthPathAction);
-                            break;
+                } else {
+                    switch (x) {
+                    case 0:
+                        openRecent->addAction(firstPathAction);
+                        break;
+                    case 1:
+                        openRecent->addAction(secondPathAction);
+                        break;
+                    case 2:
+                        openRecent->addAction(thirdPathAction);
+                        break;
+                    case 3:
+                        openRecent->addAction(fourthPathAction);
+                        break;
+                    case 4:
+                        openRecent->addAction(fifthPathAction);
+                        break;
+                    case 5:
+                        openRecent->addAction(sixthPathAction);
+                        break;
+                    case 6:
+                        openRecent->addAction(seventhPathAction);
+                        break;
+                    case 7:
+                        openRecent->addAction(eigthPathAction);
+                        break;
                     }
                 }
             }
 
             // Connections
-            connect(placeholderAction, &QAction::triggered, [=](){ qDebug() << "You've earned yourself a cookie!"; });
-            connect(firstPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(firstPath); });
-            connect(secondPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(secondPath); });
-            connect(thirdPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(thirdPath); });
-            connect(fourthPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(fourthPath); });
-            connect(fifthPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(fifthPath); });
-            connect(sixthPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(sixthPath); });
-            connect(seventhPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(seventhPath); });
-            connect(eigthPathAction, &QAction::triggered, [=](){ mainWindow->onOpenRecentTriggered(eigthPath); });
+            connect(placeholderAction, &QAction::triggered, [=]() { qDebug() << "You've earned yourself a cookie!"; });
+            connect(firstPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(firstPath); });
+            connect(secondPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(secondPath); });
+            connect(thirdPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(thirdPath); });
+            connect(fourthPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(fourthPath); });
+            connect(fifthPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(fifthPath); });
+            connect(sixthPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(sixthPath); });
+            connect(seventhPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(seventhPath); });
+            connect(eigthPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(eigthPath); });
         }
-        QAction* saveProject    = new QAction(tr("Save Project"), this);
-        QAction* saveProjectAs  = new QAction(tr("Save Project As..."), this);
-        QAction* closeProject   = new QAction(tr("Close Project"), this);
+        QAction* saveProject = new QAction(tr("Save Project"), this);
+        QAction* saveProjectAs = new QAction(tr("Save Project As..."), this);
+        QAction* closeProject = new QAction(tr("Close Project"), this);
         QAction* exportWindow = new QAction(tr("New Export..."), this);
         QMenu* exportAs = new QMenu(tr("Export As"), this);
         {
@@ -157,18 +158,17 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
             QAction* jpgs = new QAction(tr("JPEG Sequence..."), this);
             QAction* pngs = new QAction(tr("PNG Sequence..."), this);
-            QAction* gif  = new QAction(tr("GIF Animation..."), this);
-            connect(jpgs, &QAction::triggered, [=](){ mainWindow->onExportImageSeqTriggered("jpg"); });
-            connect(pngs, &QAction::triggered, [=](){ mainWindow->onExportImageSeqTriggered("png"); });
-            connect(gif,  &QAction::triggered, [=](){ mainWindow->onExportVideoTriggered(gifFormat); });
+            QAction* gif = new QAction(tr("GIF Animation..."), this);
+            connect(jpgs, &QAction::triggered, [=]() { mainWindow->onExportImageSeqTriggered("jpg"); });
+            connect(pngs, &QAction::triggered, [=]() { mainWindow->onExportImageSeqTriggered("png"); });
+            connect(gif, &QAction::triggered, [=]() { mainWindow->onExportVideoTriggered(gifFormat); });
             exportAs->addAction(jpgs);
             exportAs->addAction(pngs);
             exportAs->addAction(gif);
 
-            for (auto format : mVideoFormats)
-            {
+            for (auto format : mVideoFormats) {
                 QAction* video = new QAction(format.label + " " + tr("Video") + "...", this);
-                connect(video,  &QAction::triggered, [=](){ mainWindow->onExportVideoTriggered(format); });
+                connect(video, &QAction::triggered, [=]() { mainWindow->onExportVideoTriggered(format); });
                 exportAs->addAction(video);
             }
         }
@@ -242,10 +242,8 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         resource->setCheckable(true);
         mShowResourceWindow = resource;
 
-        connect(resource, &QAction::triggered, [&](bool aChecked)
-        {
-            if (aViaPoint.resourceDialog())
-            {
+        connect(resource, &QAction::triggered, [&](bool aChecked) {
+            if (aViaPoint.resourceDialog()) {
                 aViaPoint.resourceDialog()->setVisible(aChecked);
             }
         });
@@ -256,33 +254,28 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
     QMenu* optionMenu = new QMenu(tr("Option"), this);
     {
         QAction* general = new QAction(tr("General Settings..."), this);
-        QAction* mouse   = new QAction(tr("Mouse Settings..."), this);
+        QAction* mouse = new QAction(tr("Mouse Settings..."), this);
         QAction* keyBind = new QAction(tr("Key Bindings..."), this);
 
-        connect(general, &QAction::triggered, [&](bool)
-        {
-            GeneralSettingDialog *generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+        connect(general, &QAction::triggered, [&](bool) {
+            GeneralSettingDialog* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
             QScopedPointer<GeneralSettingDialog> dialog(generalSettingsDialog);
-            if(dialog->exec() == QDialog::DialogCode::Accepted) {
-                if(generalSettingsDialog->timeFormatHasChanged())
+            if (dialog->exec() == QDialog::DialogCode::Accepted) {
+                if (generalSettingsDialog->timeFormatHasChanged())
                     this->onTimeFormatChanged();
-                if(generalSettingsDialog->themeHasChanged())
+                if (generalSettingsDialog->themeHasChanged())
                     this->mGUIResources.setTheme(generalSettingsDialog->theme());
             }
         });
 
-        connect(mouse, &QAction::triggered, [&](bool)
-        {
-            QScopedPointer<MouseSettingDialog> dialog(
-                        new MouseSettingDialog(aViaPoint, this));
+        connect(mouse, &QAction::triggered, [&](bool) {
+            QScopedPointer<MouseSettingDialog> dialog(new MouseSettingDialog(aViaPoint, this));
             dialog->exec();
         });
 
-        connect(keyBind, &QAction::triggered, [&](bool)
-        {
+        connect(keyBind, &QAction::triggered, [&](bool) {
             XC_PTR_ASSERT(aViaPoint.keyCommandMap());
-            QScopedPointer<KeyBindingDialog> dialog(
-                        new KeyBindingDialog(*aViaPoint.keyCommandMap(), this));
+            QScopedPointer<KeyBindingDialog> dialog(new KeyBindingDialog(*aViaPoint.keyCommandMap(), this));
             dialog->exec();
         });
 
@@ -294,16 +287,20 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
     QMenu* helpMenu = new QMenu(tr("Help"), this);
     {
         QAction* aboutMe = new QAction(tr("About AnimeEffects..."), this);
-        connect(aboutMe, &QAction::triggered, [=]()
-        {
+        connect(aboutMe, &QAction::triggered, [=]() {
             QMessageBox msgBox;
             msgBox.setWindowIcon(QIcon("../src/AnimeEffects.ico"));
-            auto versionString = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." + QString::number(AE_MICRO_VERSION);
-            auto formatVersionString = QString::number(AE_PROJECT_FORMAT_MAJOR_VERSION) + "." + QString::number(AE_PROJECT_FORMAT_MINOR_VERSION);
+            auto versionString = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." +
+                QString::number(AE_MICRO_VERSION);
+            auto formatVersionString = QString::number(AE_PROJECT_FORMAT_MAJOR_VERSION) + "." +
+                QString::number(AE_PROJECT_FORMAT_MINOR_VERSION);
             auto platform = QSysInfo::productType();
-            auto qtVersion = QString::number(QT_VERSION_MAJOR) + "." + QString::number(QT_VERSION_MINOR) + "." + QString::number(QT_VERSION_PATCH);
+            auto qtVersion = QString::number(QT_VERSION_MAJOR) + "." + QString::number(QT_VERSION_MINOR) + "." +
+                QString::number(QT_VERSION_PATCH);
             platform[0] = platform[0].toUpper(); // First letter capitalization :D
-            QString msgStr = tr("### AnimeEffects for ") + platform + tr(" version ") + versionString + "<br />" + tr("Original code and artwork by [Hidefuku](https://github.com/hidefuku).<br />Current development handled by the [AnimeEffectsDevs](https://github.com/AnimeEffectsDevs).");
+            QString msgStr = tr("### AnimeEffects for ") + platform + tr(" version ") + versionString + "<br />" +
+                tr("Original code and artwork by [Hidefuku](https://github.com/hidefuku).<br />Current development "
+                   "handled by the [AnimeEffectsDevs](https://github.com/AnimeEffectsDevs).");
             msgBox.setText(msgStr);
             msgBox.setTextFormat(Qt::TextFormat::MarkdownText);
             QString detail;
@@ -324,8 +321,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         });
 
         QAction* checkForUpdates = new QAction(tr("Check for Updates..."), this);
-        connect(checkForUpdates, &QAction::triggered, [=]()
-        {
+        connect(checkForUpdates, &QAction::triggered, [=]() {
             util::NetworkUtil networking;
             QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
             networking.checkForUpdate(url, networking, this);
@@ -346,33 +342,23 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
     setProject(nullptr);
 }
 
-void MainMenuBar::setProject(core::Project* aProject)
-{
+void MainMenuBar::setProject(core::Project* aProject) {
     mProject = aProject;
 
-    if (mProject)
-    {
-        for (auto action : mProjectActions)
-        {
+    if (mProject) {
+        for (auto action : mProjectActions) {
             action->setEnabled(true);
         }
-    }
-    else
-    {
-        for (auto action : mProjectActions)
-        {
+    } else {
+        for (auto action : mProjectActions) {
             action->setEnabled(false);
         }
     }
 }
 
-void MainMenuBar::setShowResourceWindow(bool aShow)
-{
-    mShowResourceWindow->setChecked(aShow);
-}
+void MainMenuBar::setShowResourceWindow(bool aShow) { mShowResourceWindow->setChecked(aShow); }
 
-void MainMenuBar::loadVideoFormats()
-{
+void MainMenuBar::loadVideoFormats() {
     using util::TextUtil;
 
     QDomDocument doc = getVideoExportDocument();
@@ -380,44 +366,52 @@ void MainMenuBar::loadVideoFormats()
 
     // for each format
     QDomElement domFormat = domRoot.firstChildElement("format");
-    while (!domFormat.isNull())
-    {
+    while (!domFormat.isNull()) {
         ctrl::VideoFormat format;
         // neccessary attribute
         format.name = domFormat.attribute("name");
-        if (format.name.isEmpty()) continue;
+        if (format.name.isEmpty())
+            continue;
         // optional attributes
         format.label = domFormat.attribute("label");
         format.icodec = domFormat.attribute("icodec");
         format.command = domFormat.attribute("command");
-        if (format.label.isEmpty()) format.label = format.name;
-        if (format.icodec.isEmpty()) format.icodec = "png";
+        if (format.label.isEmpty())
+            format.label = format.name;
+        if (format.icodec.isEmpty())
+            format.icodec = "png";
         // add one format
         mVideoFormats.push_back(format);
 
         // for each codec
         QDomElement domCodec = domFormat.firstChildElement("codec");
-        while (!domCodec.isNull())
-        {
+        while (!domCodec.isNull()) {
             ctrl::VideoCodec codec;
             // neccessary attribute
             codec.name = domCodec.attribute("name");
-            if (codec.name.isEmpty()) continue;
+            if (codec.name.isEmpty())
+                continue;
             // optional attributes
             codec.label = domCodec.attribute("label");
             codec.icodec = domCodec.attribute("icodec");
             codec.command = domCodec.attribute("command");
-            if (codec.label.isEmpty()) codec.label = codec.name;
-            if (codec.icodec.isEmpty()) codec.icodec = format.icodec;
-            if (codec.command.isEmpty()) codec.command = format.command;
+            if (codec.label.isEmpty())
+                codec.label = codec.name;
+            if (codec.icodec.isEmpty())
+                codec.icodec = format.icodec;
+            if (codec.command.isEmpty())
+                codec.command = format.command;
             {
                 auto hints = TextUtil::splitAndTrim(domCodec.attribute("hint"), ',');
-                for (auto hint : hints)
-                {
-                    if      (hint == "lossless"   ) codec.lossless    = true;
-                    else if (hint == "transparent") codec.transparent = true;
-                    else if (hint == "colorspace" ) codec.colorspace  = true;
-                    else if (hint == "gpuenc"     ) codec.gpuenc      = true;
+                for (auto hint : hints) {
+                    if (hint == "lossless")
+                        codec.lossless = true;
+                    else if (hint == "transparent")
+                        codec.transparent = true;
+                    else if (hint == "colorspace")
+                        codec.colorspace = true;
+                    else if (hint == "gpuenc")
+                        codec.gpuenc = true;
                 }
             }
             codec.pixfmts = TextUtil::splitAndTrim(domCodec.attribute("pixfmt"), ',');
@@ -435,18 +429,14 @@ void MainMenuBar::loadVideoFormats()
 
 //-------------------------------------------------------------------------------------------------
 ProjectCanvasSizeSettingDialog::ProjectCanvasSizeSettingDialog(
-        ViaPoint& aViaPoint, core::Project& aProject, QWidget *aParent)
-    : EasyDialog(tr("Set canvas size"), aParent)
-    , mViaPoint(aViaPoint)
-    , mProject(aProject)
-{
+    ViaPoint& aViaPoint, core::Project& aProject, QWidget* aParent
+):
+    EasyDialog(tr("Set canvas size"), aParent), mViaPoint(aViaPoint), mProject(aProject) {
     // create inner widgets
     auto curSize = mProject.attribute().imageSize();
     {
         auto devInfo = mViaPoint.glDeviceInfo();
-        const int maxBufferSize = std::min(
-                    devInfo.maxTextureSize,
-                    devInfo.maxRenderBufferSize);
+        const int maxBufferSize = std::min(devInfo.maxTextureSize, devInfo.maxRenderBufferSize);
         XC_ASSERT(maxBufferSize > 0);
 
         auto form = new QFormLayout();
@@ -475,57 +465,55 @@ ProjectCanvasSizeSettingDialog::ProjectCanvasSizeSettingDialog(
     this->fixSize();
 }
 
-void MainMenuBar::onCanvasSizeTriggered()
-{
-    if (!mProject) return;
+void MainMenuBar::onCanvasSizeTriggered() {
+    if (!mProject)
+        return;
 
     auto curSize = mProject->attribute().imageSize();
 
     // create dialog
-    QScopedPointer<ProjectCanvasSizeSettingDialog> dialog(
-                new ProjectCanvasSizeSettingDialog(mViaPoint, *mProject, this));
+    QScopedPointer<ProjectCanvasSizeSettingDialog> dialog(new ProjectCanvasSizeSettingDialog(mViaPoint, *mProject, this)
+    );
 
     // execute dialog
     dialog->exec();
-    if (dialog->result() != QDialog::Accepted) return;
+    if (dialog->result() != QDialog::Accepted)
+        return;
 
     // get new canvas size
     const QSize newSize = dialog->canvasSize();
     XC_ASSERT(!newSize.isEmpty());
-    if (curSize == newSize) return;
+    if (curSize == newSize)
+        return;
 
     // create commands
     {
-        cmnd::ScopedMacro macro(mProject->commandStack(),
-                                CmndName::tr("Change the canvas size"));
+        cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Change the canvas size"));
 
         core::Project* projectPtr = mProject;
-        auto command = new cmnd::Delegatable([=]()
-        {
-            projectPtr->attribute().setImageSize(newSize);
-            auto event = core::ProjectEvent::imageSizeChangeEvent(*projectPtr);
-            projectPtr->onProjectAttributeModified(event, false);
-            this->onProjectAttributeUpdated();
-            this->onVisualUpdated();
-        },
-        [=]()
-        {
-            projectPtr->attribute().setImageSize(curSize);
-            auto event = core::ProjectEvent::imageSizeChangeEvent(*projectPtr);
-            projectPtr->onProjectAttributeModified(event, true);
-            this->onProjectAttributeUpdated();
-            this->onVisualUpdated();
-        });
+        auto command = new cmnd::Delegatable(
+            [=]() {
+                projectPtr->attribute().setImageSize(newSize);
+                auto event = core::ProjectEvent::imageSizeChangeEvent(*projectPtr);
+                projectPtr->onProjectAttributeModified(event, false);
+                this->onProjectAttributeUpdated();
+                this->onVisualUpdated();
+            },
+            [=]() {
+                projectPtr->attribute().setImageSize(curSize);
+                auto event = core::ProjectEvent::imageSizeChangeEvent(*projectPtr);
+                projectPtr->onProjectAttributeModified(event, true);
+                this->onProjectAttributeUpdated();
+                this->onVisualUpdated();
+            }
+        );
         mProject->commandStack().push(command);
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-ProjectMaxFrameSettingDialog::ProjectMaxFrameSettingDialog(core::Project& aProject, QWidget *aParent)
-    : EasyDialog(tr("Set max frames"), aParent)
-    , mProject(aProject)
-    , mMaxFrameBox()
-{
+ProjectMaxFrameSettingDialog::ProjectMaxFrameSettingDialog(core::Project& aProject, QWidget* aParent):
+    EasyDialog(tr("Set max frames"), aParent), mProject(aProject), mMaxFrameBox() {
     // create inner widgets
     auto curMaxFrame = mProject.attribute().maxFrame();
     {
@@ -547,10 +535,8 @@ ProjectMaxFrameSettingDialog::ProjectMaxFrameSettingDialog(core::Project& aProje
         this->setMainWidget(group);
     }
 
-    this->setOkCancel([=](int aIndex)->bool
-    {
-        if (aIndex == 0)
-        {
+    this->setOkCancel([=](int aIndex) -> bool {
+        if (aIndex == 0) {
             return this->confirmMaxFrameUpdating(this->mMaxFrameBox->value());
         }
         return true;
@@ -558,16 +544,14 @@ ProjectMaxFrameSettingDialog::ProjectMaxFrameSettingDialog(core::Project& aProje
     this->fixSize();
 }
 
-bool ProjectMaxFrameSettingDialog::confirmMaxFrameUpdating(int aNewMaxFrame) const
-{
+bool ProjectMaxFrameSettingDialog::confirmMaxFrameUpdating(int aNewMaxFrame) const {
     XC_ASSERT(aNewMaxFrame > 0);
 
     auto curMaxFrame = mProject.attribute().maxFrame();
-    if (curMaxFrame <= aNewMaxFrame) return true;
+    if (curMaxFrame <= aNewMaxFrame)
+        return true;
 
-    if (!core::ObjectNodeUtil::thereAreSomeKeysExceedingFrame(
-                mProject.objectTree().topNode(), aNewMaxFrame))
-    {
+    if (!core::ObjectNodeUtil::thereAreSomeKeysExceedingFrame(mProject.objectTree().topNode(), aNewMaxFrame)) {
         return true;
     }
 
@@ -577,55 +561,54 @@ bool ProjectMaxFrameSettingDialog::confirmMaxFrameUpdating(int aNewMaxFrame) con
     return false;
 }
 
-void MainMenuBar::onMaxFrameTriggered()
-{
-    if (!mProject) return;
+void MainMenuBar::onMaxFrameTriggered() {
+    if (!mProject)
+        return;
 
     auto curMaxFrame = mProject->attribute().maxFrame();
 
     // create dialog
-    QScopedPointer<ProjectMaxFrameSettingDialog> dialog(
-                new ProjectMaxFrameSettingDialog(*mProject, this));
+    QScopedPointer<ProjectMaxFrameSettingDialog> dialog(new ProjectMaxFrameSettingDialog(*mProject, this));
 
     // execute dialog
     dialog->exec();
-    if (dialog->result() != QDialog::Accepted) return;
+    if (dialog->result() != QDialog::Accepted)
+        return;
 
     // get new canvas size
     const int newMaxFrame = dialog->maxFrame();
     XC_ASSERT(newMaxFrame > 0);
-    if (curMaxFrame == newMaxFrame) return;
+    if (curMaxFrame == newMaxFrame)
+        return;
 
     // create commands
     {
-        cmnd::ScopedMacro macro(mProject->commandStack(),
-                                CmndName::tr("Change the max frame"));
+        cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Change the max frame"));
 
         core::Project* projectPtr = mProject;
-        auto command = new cmnd::Delegatable([=]()
-        {
-            projectPtr->attribute().setMaxFrame(newMaxFrame);
-            auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
-            projectPtr->onProjectAttributeModified(event, false);
-            this->onProjectAttributeUpdated();
-            this->onVisualUpdated();
-        },
-        [=]()
-        {
-            projectPtr->attribute().setMaxFrame(curMaxFrame);
-            auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
-            projectPtr->onProjectAttributeModified(event, true);
-            this->onProjectAttributeUpdated();
-            this->onVisualUpdated();
-        });
+        auto command = new cmnd::Delegatable(
+            [=]() {
+                projectPtr->attribute().setMaxFrame(newMaxFrame);
+                auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
+                projectPtr->onProjectAttributeModified(event, false);
+                this->onProjectAttributeUpdated();
+                this->onVisualUpdated();
+            },
+            [=]() {
+                projectPtr->attribute().setMaxFrame(curMaxFrame);
+                auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
+                projectPtr->onProjectAttributeModified(event, true);
+                this->onProjectAttributeUpdated();
+                this->onVisualUpdated();
+            }
+        );
         mProject->commandStack().push(command);
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-ProjectLoopSettingDialog::ProjectLoopSettingDialog(core::Project& aProject, QWidget* aParent)
-    : EasyDialog(tr("Set loop"), aParent)
-{
+ProjectLoopSettingDialog::ProjectLoopSettingDialog(core::Project& aProject, QWidget* aParent):
+    EasyDialog(tr("Set loop"), aParent) {
     // create inner widgets
     auto curLoop = aProject.attribute().loop();
     {
@@ -650,9 +633,9 @@ ProjectLoopSettingDialog::ProjectLoopSettingDialog(core::Project& aProject, QWid
     this->fixSize();
 }
 
-void MainMenuBar::onLoopTriggered()
-{
-    if (!mProject) return;
+void MainMenuBar::onLoopTriggered() {
+    if (!mProject)
+        return;
 
     auto curLoop = mProject->attribute().loop();
 
@@ -661,43 +644,44 @@ void MainMenuBar::onLoopTriggered()
 
     // execute dialog
     dialog->exec();
-    if (dialog->result() != QDialog::Accepted) return;
+    if (dialog->result() != QDialog::Accepted)
+        return;
 
     // get new loop setting
     const bool newLoop = dialog->isCheckedLoopBox();
-    if (curLoop == newLoop) return;
+    if (curLoop == newLoop)
+        return;
 
     // create commands
     {
-        cmnd::ScopedMacro macro(mProject->commandStack(),
-                                CmndName::tr("Change loop settings"));
+        cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Change loop settings"));
 
         core::Project* projectPtr = mProject;
-        auto command = new cmnd::Delegatable([=]()
-        {
-            projectPtr->attribute().setLoop(newLoop);
-            auto event = core::ProjectEvent::loopChangeEvent(*projectPtr);
-            projectPtr->onProjectAttributeModified(event, false);
-            this->onProjectAttributeUpdated();
-            this->onVisualUpdated();
-        },
-        [=]()
-        {
-            projectPtr->attribute().setLoop(curLoop);
-            auto event = core::ProjectEvent::loopChangeEvent(*projectPtr);
-            projectPtr->onProjectAttributeModified(event, true);
-            this->onProjectAttributeUpdated();
-            this->onVisualUpdated();
-        });
+        auto command = new cmnd::Delegatable(
+            [=]() {
+                projectPtr->attribute().setLoop(newLoop);
+                auto event = core::ProjectEvent::loopChangeEvent(*projectPtr);
+                projectPtr->onProjectAttributeModified(event, false);
+                this->onProjectAttributeUpdated();
+                this->onVisualUpdated();
+            },
+            [=]() {
+                projectPtr->attribute().setLoop(curLoop);
+                auto event = core::ProjectEvent::loopChangeEvent(*projectPtr);
+                projectPtr->onProjectAttributeModified(event, true);
+                this->onProjectAttributeUpdated();
+                this->onVisualUpdated();
+            }
+        );
         mProject->commandStack().push(command);
     }
 }
 
 // ----------------------------------------------------------------------------- //
-ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidget *aParent)
-    : EasyDialog(tr("Set FPS"), aParent)
-    , mProject(aProject)
-    , mFPSBox()
+ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidget* aParent):
+    EasyDialog(tr("Set FPS"), aParent),
+    mProject(aProject),
+    mFPSBox()
 
 {
     // create inner widgets
@@ -721,10 +705,8 @@ ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidge
         this->setMainWidget(group);
     }
 
-    this->setOkCancel([=](int aIndex)->bool
-    {
-        if (aIndex == 0)
-        {
+    this->setOkCancel([=](int aIndex) -> bool {
+        if (aIndex == 0) {
             return this->confirmFPSUpdating(this->mFPSBox->value());
         }
         return true;
@@ -732,54 +714,54 @@ ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidge
     this->fixSize();
 }
 
-bool ProjectFPSSettingDialog::confirmFPSUpdating(int aNewFPS) const
-{
+bool ProjectFPSSettingDialog::confirmFPSUpdating(int aNewFPS) const {
     XC_ASSERT(aNewFPS > 0);
-    if (aNewFPS!=0) return true;
+    if (aNewFPS != 0)
+        return true;
     return false;
 }
 
-void MainMenuBar::onFPSTriggered()
-{
-    if (!mProject) return;
+void MainMenuBar::onFPSTriggered() {
+    if (!mProject)
+        return;
 
     auto curFPS = mProject->attribute().fps();
 
     // create dialog
-    QScopedPointer<ProjectFPSSettingDialog> dialog(
-                new ProjectFPSSettingDialog(*mProject, this));
+    QScopedPointer<ProjectFPSSettingDialog> dialog(new ProjectFPSSettingDialog(*mProject, this));
 
     // execute dialog
     dialog->exec();
-    if (dialog->result() != QDialog::Accepted) return;
+    if (dialog->result() != QDialog::Accepted)
+        return;
 
     // get new canvas size
     const int newFPS = dialog->fps();
     XC_ASSERT(newFPS > 0);
-    if (curFPS == newFPS) return;
+    if (curFPS == newFPS)
+        return;
 
     // create commands
     {
-        cmnd::ScopedMacro macro(mProject->commandStack(),
-                                CmndName::tr("Change the FPS"));
+        cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Change the FPS"));
 
         core::Project* projectPtr = mProject;
-        auto command = new cmnd::Delegatable([=]()
-        {
-            projectPtr->attribute().setFps(newFPS);
-            auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
-            projectPtr->onProjectAttributeModified(event, false);
-            this->onProjectAttributeUpdated();
-            this->onVisualUpdated();
-        },
-        [=]()
-        {
-            projectPtr->attribute().setFps(curFPS);
-            auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
-            projectPtr->onProjectAttributeModified(event, true);
-            this->onProjectAttributeUpdated();
-            this->onVisualUpdated();
-        });
+        auto command = new cmnd::Delegatable(
+            [=]() {
+                projectPtr->attribute().setFps(newFPS);
+                auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
+                projectPtr->onProjectAttributeModified(event, false);
+                this->onProjectAttributeUpdated();
+                this->onVisualUpdated();
+            },
+            [=]() {
+                projectPtr->attribute().setFps(curFPS);
+                auto event = core::ProjectEvent::maxFrameChangeEvent(*projectPtr);
+                projectPtr->onProjectAttributeModified(event, true);
+                this->onProjectAttributeUpdated();
+                this->onVisualUpdated();
+            }
+        );
         mProject->commandStack().push(command);
     }
 }

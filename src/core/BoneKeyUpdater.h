@@ -6,17 +6,16 @@
 #include "core/ResourceEvent.h"
 #include "core/TimeLineEvent.h"
 #include "core/ProjectEvent.h"
-namespace core { class ObjectTree; }
+namespace core {
+class ObjectTree;
+}
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-class BoneUnbindWorkspace
-{
+class BoneUnbindWorkspace {
 public:
-    struct Unit
-    {
+    struct Unit {
         Unit();
         QVector<ObjectNode*> parents;
         ObjectNode* node;
@@ -29,10 +28,8 @@ public:
 typedef std::shared_ptr<BoneUnbindWorkspace> BoneUnbindWorkspacePtr;
 
 //-------------------------------------------------------------------------------------------------
-class BoneKeyUpdater
-{
+class BoneKeyUpdater {
 public:
-
     static void onTimeLineModified(TimeLineEvent& aEvent);
 
     static void onTreeRestructured(ObjectTreeEvent& aEvent);
@@ -41,18 +38,16 @@ public:
 
     static void onProjectAttributeModified(ProjectEvent& aEvent);
 
-     // for tree restructuring
+    // for tree restructuring
     static cmnd::Base* createNodeUnbinderForDelete(ObjectNode& aNode);
-    //static cmnd::Base* createNodeUnbinderForMove(
-    //        ObjectTree& aTree, const util::TreePos& aFrom, const util::TreePos& aTo);
-    static cmnd::Base* createNodesUnbinderForMove(
-            ObjectTree& aTree, const BoneUnbindWorkspacePtr& aWorkspace);
+    // static cmnd::Base* createNodeUnbinderForMove(
+    //         ObjectTree& aTree, const util::TreePos& aFrom, const util::TreePos& aTo);
+    static cmnd::Base* createNodesUnbinderForMove(ObjectTree& aTree, const BoneUnbindWorkspacePtr& aWorkspace);
 
 private:
     static void onTimeLineModified(
-            Project& aProject, ObjectNode& aNode,
-            const QVector<ObjectNode*>& aUniqueRoots,
-            bool aResetCacheList);
+        Project& aProject, ObjectNode& aNode, const QVector<ObjectNode*>& aUniqueRoots, bool aResetCacheList
+    );
 
     static void resetInfluenceCachesOfChildren(Project& aProject, ObjectNode& aRoot);
     static void resetInfluenceCachesOfOneNode(Project& aProject, ObjectNode& aNode);

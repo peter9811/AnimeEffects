@@ -11,26 +11,25 @@
 namespace gui {
 namespace prop {
 
-class Panel : public QGroupBox
-{
-    Q_OBJECT
-public:
-    Panel(const QString& aTitle, QWidget* aParent);
-    virtual ~Panel() {}
-    void addGroup(QGroupBox* aGroup);
-    void addStretch();
+    class Panel: public QGroupBox {
+        Q_OBJECT
+    public:
+        Panel(const QString& aTitle, QWidget* aParent);
+        virtual ~Panel() {}
+        void addGroup(QGroupBox* aGroup);
+        void addStretch();
 
-    std::function<void()> onCollapsed;
+        std::function<void()> onCollapsed;
 
-private slots:
-    void onClicked(bool aChecked);
-    void onChildrenClicked(bool aChecked);
+    private slots:
+        void onClicked(bool aChecked);
+        void onChildrenClicked(bool aChecked);
 
-private:
-    QVBoxLayout* mLayout;
-    QVector<QGroupBox*> mGroups;
-    bool mChecked;
-};
+    private:
+        QVBoxLayout* mLayout;
+        QVector<QGroupBox*> mGroups;
+        bool mChecked;
+    };
 
 } // namespace prop
 } // namespace gui

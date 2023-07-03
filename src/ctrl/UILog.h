@@ -3,11 +3,9 @@
 
 #include <QObject>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class UILog : public QObject
-{
+class UILog: public QObject {
     Q_OBJECT
 public:
     UILog() {}

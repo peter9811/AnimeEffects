@@ -1,10 +1,8 @@
 #ifndef CTRL_TOOLTYPE
 #define CTRL_TOOLTYPE
 
-namespace ctrl
-{
-enum ToolType
-{
+namespace ctrl {
+enum ToolType {
     ToolType_Cursor,
     ToolType_SRT,
     ToolType_Bone,
@@ -13,7 +11,6 @@ enum ToolType
     ToolType_FFD,
     ToolType_TERM
 };
-} // namespace core
+} // namespace ctrl
 
 #endif // CTRL_TOOLTYPE
-

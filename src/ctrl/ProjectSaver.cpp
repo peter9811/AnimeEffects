@@ -2,49 +2,39 @@
 #include "core/Serializer.h"
 #include "ctrl/ProjectSaver.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-ProjectSaver::ProjectSaver()
-    : mLog()
-{
-}
+ProjectSaver::ProjectSaver(): mLog() {}
 
-bool ProjectSaver::save(const QString& aFilePath, const core::Project& aProject)
-{
+bool ProjectSaver::save(const QString& aFilePath, const core::Project& aProject) {
     std::ofstream file(aFilePath.toLocal8Bit(), std::ios::out | std::ios::binary);
 
-    if (file.fail())
-    {
+    if (file.fail()) {
         mLog = "Unable to save the project.";
         return false;
     }
 
     util::StreamWriter out(file);
 
-    if (!writeHeader(out))
-    {
+    if (!writeHeader(out)) {
         mLog = "Failed to write header.";
         return false;
     }
 
-    if (!writeGlobalBlock(out, aProject))
-    {
+    if (!writeGlobalBlock(out, aProject)) {
         mLog = "Failed to write global block.";
         return false;
     }
 
     core::Serializer serializer(out);
 
-    if (!aProject.resourceHolder().serialize(serializer))
-    {
+    if (!aProject.resourceHolder().serialize(serializer)) {
         mLog = "Failed to write resources block.";
         return false;
     }
 
     // write object tree
-    if (!aProject.objectTree().serialize(serializer))
-    {
+    if (!aProject.objectTree().serialize(serializer)) {
         mLog = "Failed to write object tree block.";
         return false;
     }
@@ -53,10 +43,9 @@ bool ProjectSaver::save(const QString& aFilePath, const core::Project& aProject)
     return true;
 }
 
-bool ProjectSaver::writeHeader(util::StreamWriter& aOut)
-{
-    static const std::array<uint8, 6> kSignature{ 'A', 'N', 'I', 'M', 'F', 'X' };
-    static const std::array<uint8, 2> kEndian{ 0xff, 0x00 };
+bool ProjectSaver::writeHeader(util::StreamWriter& aOut) {
+    static const std::array<uint8, 6> kSignature{'A', 'N', 'I', 'M', 'F', 'X'};
+    static const std::array<uint8, 2> kEndian{0xff, 0x00};
     static const uint32 kMajorVersion = AE_PROJECT_FORMAT_MAJOR_VERSION;
     static const uint32 kMinorVersion = AE_PROJECT_FORMAT_MINOR_VERSION;
     static const int kReserveSize = 16;
@@ -75,9 +64,8 @@ bool ProjectSaver::writeHeader(util::StreamWriter& aOut)
     return !aOut.isFailed();
 }
 
-bool ProjectSaver::writeGlobalBlock(util::StreamWriter& aOut, const core::Project& aProject)
-{
-    static const std::array<sint8, 4> kSignature{ 'G', 'L', 'B', 'L' };
+bool ProjectSaver::writeGlobalBlock(util::StreamWriter& aOut, const core::Project& aProject) {
+    static const std::array<sint8, 4> kSignature{'G', 'L', 'B', 'L'};
     static const uint32 kBlockLength = 64;
     static const int kReserveSize = 47;
 

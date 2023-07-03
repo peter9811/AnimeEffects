@@ -3,23 +3,15 @@
 
 #include "cmnd/Stack.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
-class ScopedUndoSuspender
-{
+class ScopedUndoSuspender {
     Stack& mStack;
-public:
-    ScopedUndoSuspender(Stack& aStack)
-        : mStack(aStack)
-    {
-        mStack.suspendUndo();
-    }
 
-    ~ScopedUndoSuspender()
-    {
-        mStack.resumeUndo();
-    }
+public:
+    ScopedUndoSuspender(Stack& aStack): mStack(aStack) { mStack.suspendUndo(); }
+
+    ~ScopedUndoSuspender() { mStack.resumeUndo(); }
 };
 
 } // namespace cmnd

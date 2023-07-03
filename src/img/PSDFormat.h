@@ -5,14 +5,11 @@
 #include <iostream>
 #include "XC.h"
 
-namespace img
-{
+namespace img {
 
-class PSDFormat
-{
+class PSDFormat {
 public:
-    enum ColorMode
-    {
+    enum ColorMode {
         ColorMode_Bitmap = 0,
         ColorMode_Grayscale = 1,
         ColorMode_Indexed = 2,
@@ -23,8 +20,7 @@ public:
         ColorMode_Lab = 9,
     };
 
-    enum LayerEntryType
-    {
+    enum LayerEntryType {
         LayerEntryType_Layer,
         LayerEntryType_OpenFolder,
         LayerEntryType_CloseFolder,
@@ -32,10 +28,8 @@ public:
         LayerEntryType_TERM,
     };
 
-    static int getChannelCount(ColorMode aMode)
-    {
-        switch (aMode)
-        {
+    static int getChannelCount(ColorMode aMode) {
+        switch (aMode) {
         case ColorMode_Bitmap:
         case ColorMode_Grayscale:
         case ColorMode_Indexed:
@@ -47,14 +41,16 @@ public:
         case ColorMode_CMYK:
             return 4;
         default:
-            //ColorMode_Multichannel
+            // ColorMode_Multichannel
             return -1;
         }
     }
 
-    struct Rect
-    {
-        Rect() { for (int i = 0; i < 4; ++i) edge[i] = 0; }
+    struct Rect {
+        Rect() {
+            for (int i = 0; i < 4; ++i)
+                edge[i] = 0;
+        }
         int edge[4]; // t, l, b, r
         int width() const { return edge[3] - edge[1]; }
         int height() const { return edge[2] - edge[0]; }
@@ -64,17 +60,17 @@ public:
         int bottom() const { return edge[2]; }
     };
 
-    struct BlendingRange
-    {
-        BlendingRange() : isValid()
-        { src[0] = src[1] = dst[0] = dst[1] = 0; src[2] = src[3] = dst[2] = dst[3] = 255; }
+    struct BlendingRange {
+        BlendingRange(): isValid() {
+            src[0] = src[1] = dst[0] = dst[1] = 0;
+            src[2] = src[3] = dst[2] = dst[3] = 255;
+        }
         bool isValid;
         uint8 src[4];
         uint8 dst[4];
     };
 
-    class Header
-    {
+    class Header {
     public:
         uint16 version;
         uint16 channels;
@@ -84,13 +80,11 @@ public:
         uint16 mode;
     };
 
-    class ColorModeData
-    {
+    class ColorModeData {
     public:
     };
 
-    class ImageResourceBlock
-    {
+    class ImageResourceBlock {
     public:
         uint16 id;
         std::string name;
@@ -100,14 +94,12 @@ public:
     typedef std::unique_ptr<ImageResourceBlock> ImageResourceBlockPtr;
     typedef std::list<ImageResourceBlockPtr> ImageResourceBlockList;
 
-    class ImageResources
-    {
+    class ImageResources {
     public:
         ImageResourceBlockList blocks;
     };
 
-    class Channel
-    {
+    class Channel {
     public:
         sint16 id;
         uint16 compressionId;
@@ -118,12 +110,9 @@ public:
     typedef std::unique_ptr<Channel> ChannelPtr;
     typedef std::list<ChannelPtr> ChannelList;
 
-    class LayerMask
-    {
+    class LayerMask {
     public:
-        LayerMask() :
-            rect(), defaultColor(), flags(),
-            hasReal(false), realFlags(), realUserMaskBG(), realUserRect() {}
+        LayerMask(): rect(), defaultColor(), flags(), hasReal(false), realFlags(), realUserMaskBG(), realUserRect() {}
 
         Rect rect;
         uint8 defaultColor;
@@ -134,8 +123,7 @@ public:
         Rect realUserRect;
     };
 
-    class AdditionalLayerInfo
-    {
+    class AdditionalLayerInfo {
     public:
         std::string key;
         uint32 dataLength;
@@ -144,12 +132,16 @@ public:
     typedef std::unique_ptr<AdditionalLayerInfo> AdditionalLayerInfoPtr;
     typedef std::list<AdditionalLayerInfoPtr> AdditionalLayerInfoList;
 
-    class Layer
-    {
+    class Layer {
     public:
-        Layer()
-            : entryType(LayerEntryType_Layer), entryKey(),
-              channelCount(), opacity(), clipping(), flagsOffset(), flags() {}
+        Layer():
+            entryType(LayerEntryType_Layer),
+            entryKey(),
+            channelCount(),
+            opacity(),
+            clipping(),
+            flagsOffset(),
+            flags() {}
 
         bool isVisible() const { return (flags & 0x02) == 0; }
         LayerEntryType entryType; // doesn't ref in writer
@@ -170,8 +162,7 @@ public:
     typedef std::unique_ptr<Layer> LayerPtr;
     typedef std::list<LayerPtr> LayerList;
 
-    class GlobalLayerMaskInfo
-    {
+    class GlobalLayerMaskInfo {
     public:
         uint16 overlayColorSpace;
         uint32 colorComponent[2];
@@ -180,10 +171,9 @@ public:
         int fillerCount;
     };
 
-    class LayerAndMaskInfo
-    {
+    class LayerAndMaskInfo {
     public:
-        LayerAndMaskInfo() : layerCount() {}
+        LayerAndMaskInfo(): layerCount() {}
 
         sint16 layerCount; // doesn't ref in writer
         LayerList layers;
@@ -191,22 +181,14 @@ public:
         AdditionalLayerInfoList additionalLayerInfos; // global infos
     };
 
-    class ImageData
-    {
+    class ImageData {
     public:
         uint16 compressionId;
         uint8 hasTransparency;
         std::list<ChannelPtr> channels;
     };
 
-    PSDFormat()
-        : mHeader()
-        , mColorModeData()
-        , mImageResources()
-        , mLayerAndMaskInfo()
-        , mImageData()
-    {
-    }
+    PSDFormat(): mHeader(), mColorModeData(), mImageResources(), mLayerAndMaskInfo(), mImageData() {}
 
     Header& header() { return mHeader; }
     const Header& header() const { return mHeader; }

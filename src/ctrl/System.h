@@ -7,14 +7,11 @@
 #include "gl/DeviceInfo.h"
 #include "core/Project.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class System : private util::NonCopyable
-{
+class System: private util::NonCopyable {
 public:
-    struct SaveResult
-    {
+    struct SaveResult {
         bool success;
         QString message;
         SaveResult();
@@ -22,8 +19,7 @@ public:
         explicit operator bool() const { return success; }
     };
 
-    struct LoadResult
-    {
+    struct LoadResult {
         core::Project* project;
         QStringList message;
         LoadResult();
@@ -39,16 +35,15 @@ public:
     void setAnimator(core::Animator& aAnimator);
 
     LoadResult newProject(
-            const QString& aFileName,
-            const core::Project::Attribute& aAttr,
-            core::Project::Hook* aHookGrabbed,
-            util::IProgressReporter& aReporter,
-            bool aSpecifiesCanvasSize);
+        const QString& aFileName,
+        const core::Project::Attribute& aAttr,
+        core::Project::Hook* aHookGrabbed,
+        util::IProgressReporter& aReporter,
+        bool aSpecifiesCanvasSize
+    );
 
-    LoadResult openProject(
-            const QString& aFileName,
-            core::Project::Hook* aHookGrabbed,
-            util::IProgressReporter& aReporter);
+    LoadResult
+    openProject(const QString& aFileName, core::Project::Hook* aHookGrabbed, util::IProgressReporter& aReporter);
 
     SaveResult saveProject(core::Project& aProject);
 

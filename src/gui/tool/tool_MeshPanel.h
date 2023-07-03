@@ -12,26 +12,25 @@
 namespace gui {
 namespace tool {
 
-class MeshPanel : public QGroupBox
-{
-    Q_OBJECT
-public:
-    MeshPanel(QWidget* aParent, GUIResources& aResources);
+    class MeshPanel: public QGroupBox {
+        Q_OBJECT
+    public:
+        MeshPanel(QWidget* aParent, GUIResources& aResources);
 
-    int updateGeometry(const QPoint& aPos, int aWidth);
+        int updateGeometry(const QPoint& aPos, int aWidth);
 
-    const ctrl::MeshParam& param() const { return mParam; }
+        const ctrl::MeshParam& param() const { return mParam; }
 
-    // boost like signals
-    util::Signaler<void(bool)> onParamUpdated;
+        // boost like signals
+        util::Signaler<void(bool)> onParamUpdated;
 
-private:
-    void createMode();
+    private:
+        void createMode();
 
-    GUIResources& mResources;
-    ctrl::MeshParam mParam;
-    QScopedPointer<SingleOutItem> mTypeGroup;
-};
+        GUIResources& mResources;
+        ctrl::MeshParam mParam;
+        QScopedPointer<SingleOutItem> mTypeGroup;
+    };
 
 } // namespace tool
 } // namespace gui

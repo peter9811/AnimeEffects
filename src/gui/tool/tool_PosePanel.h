@@ -12,30 +12,29 @@
 namespace gui {
 namespace tool {
 
-class PosePanel : public QGroupBox
-{
-    Q_OBJECT
-public:
-    PosePanel(QWidget* aParent, GUIResources& aResources);
+    class PosePanel: public QGroupBox {
+        Q_OBJECT
+    public:
+        PosePanel(QWidget* aParent, GUIResources& aResources);
 
-    int updateGeometry(const QPoint& aPos, int aWidth);
+        int updateGeometry(const QPoint& aPos, int aWidth);
 
-    const ctrl::PoseParam& param() const { return mParam; }
+        const ctrl::PoseParam& param() const { return mParam; }
 
-    // boost like signals
-    util::Signaler<void(bool)> onParamUpdated;
+        // boost like signals
+        util::Signaler<void(bool)> onParamUpdated;
 
-private:
-    void createMode();
-    void updateTypeParam(ctrl::PoseEditMode aType);
+    private:
+        void createMode();
+        void updateTypeParam(ctrl::PoseEditMode aType);
 
-    GUIResources& mResources;
-    ctrl::PoseParam mParam;
-    QScopedPointer<SingleOutItem> mTypeGroup;
-    QScopedPointer<SliderItem> mDIWeight;
-    QScopedPointer<SliderItem> mEIRadius;
-    QScopedPointer<SliderItem> mEIPressure;
-};
+        GUIResources& mResources;
+        ctrl::PoseParam mParam;
+        QScopedPointer<SingleOutItem> mTypeGroup;
+        QScopedPointer<SliderItem> mDIWeight;
+        QScopedPointer<SliderItem> mEIRadius;
+        QScopedPointer<SliderItem> mEIPressure;
+    };
 
 } // namespace tool
 } // namespace gui

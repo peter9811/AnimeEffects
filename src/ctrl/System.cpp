@@ -10,81 +10,48 @@
 
 using namespace core;
 
-namespace
-{
+namespace {
 static const int kStandardFps = 60;
 }
 
-namespace ctrl
-{
+namespace ctrl {
 //-------------------------------------------------------------------------------------------------
-System::SaveResult::SaveResult()
-    : success()
-    , message()
-{
-}
+System::SaveResult::SaveResult(): success(), message() {}
 
-System::SaveResult::SaveResult(bool aSuccess, const QString& aMessage)
-    : success(aSuccess)
-    , message(aMessage)
-{
-}
+System::SaveResult::SaveResult(bool aSuccess, const QString& aMessage): success(aSuccess), message(aMessage) {}
 
 //-------------------------------------------------------------------------------------------------
-System::LoadResult::LoadResult()
-    : project()
-    , message()
-{
-}
+System::LoadResult::LoadResult(): project(), message() {}
 
-System::LoadResult::LoadResult(core::Project* aProject, const QString& aMessage)
-    : project(aProject)
-    , message(aMessage)
-{
-}
+System::LoadResult::LoadResult(core::Project* aProject, const QString& aMessage):
+    project(aProject), message(aMessage) {}
 
-System::LoadResult::LoadResult(core::Project* aProject, const QStringList& aMessage)
-    : project(aProject)
-    , message(aMessage)
-{
-}
+System::LoadResult::LoadResult(core::Project* aProject, const QStringList& aMessage):
+    project(aProject), message(aMessage) {}
 
-QString System::LoadResult::messages() const
-{
+QString System::LoadResult::messages() const {
     QString msgs;
-    for (auto it = message.rbegin(); it != message.rend(); ++it)
-    {
+    for (auto it = message.rbegin(); it != message.rend(); ++it) {
         msgs += *it + "\n";
     }
     return msgs;
 }
 
 //-------------------------------------------------------------------------------------------------
-System::System(const QString& aResourceDir, const QString& aCacheDir)
-    : mResourceDir(aResourceDir)
-    , mCacheDir(aCacheDir)
-    , mProjects()
-    , mAnimator()
-{
-}
+System::System(const QString& aResourceDir, const QString& aCacheDir):
+    mResourceDir(aResourceDir), mCacheDir(aCacheDir), mProjects(), mAnimator() {}
 
-System::~System()
-{
-    closeAllProjects();
-}
+System::~System() { closeAllProjects(); }
 
-void System::setAnimator(Animator& aAnimator)
-{
-    mAnimator = &aAnimator;
-}
+void System::setAnimator(Animator& aAnimator) { mAnimator = &aAnimator; }
 
 System::LoadResult System::newProject(
-        const QString& aFileName,
-        const core::Project::Attribute& aAttr,
-        core::Project::Hook* aHookGrabbed,
-        util::IProgressReporter& aReporter,
-        bool aSpecifiesCanvasSize)
-{
+    const QString& aFileName,
+    const core::Project::Attribute& aAttr,
+    core::Project::Hook* aHookGrabbed,
+    util::IProgressReporter& aReporter,
+    bool aSpecifiesCanvasSize
+) {
     QScopedPointer<core::Project::Hook> hookScope(aHookGrabbed);
 
     XC_ASSERT(mAnimator);
@@ -100,8 +67,7 @@ System::LoadResult System::newProject(
     ctrl::ImageFileLoader loader(gl::DeviceInfo::instance());
     loader.setCanvasSize(aAttr.imageSize(), aSpecifiesCanvasSize);
 
-    if (loader.load(aFileName, *projectScope, aReporter))
-    {
+    if (loader.load(aFileName, *projectScope, aReporter)) {
         mProjects.push_back(projectScope.take());
         return LoadResult(mProjects.back(), "Success.");
     }
@@ -112,11 +78,8 @@ System::LoadResult System::newProject(
     return result;
 }
 
-System::LoadResult System::openProject(
-        const QString& aFileName,
-        Project::Hook* aHookGrabbed,
-        util::IProgressReporter& aReporter)
-{
+System::LoadResult
+System::openProject(const QString& aFileName, Project::Hook* aHookGrabbed, util::IProgressReporter& aReporter) {
     QScopedPointer<core::Project::Hook> hookScope(aHookGrabbed);
 
     XC_ASSERT(mAnimator);
@@ -124,29 +87,27 @@ System::LoadResult System::openProject(
 
     gl::Global::makeCurrent();
 
-    if (!aFileName.isEmpty())
-    {
+    if (!aFileName.isEmpty()) {
         QScopedPointer<core::Project> projectScope;
         projectScope.reset(new Project(aFileName, *mAnimator, hookScope.take()));
 
         ctrl::ProjectLoader loader;
-        if (loader.load(aFileName, *projectScope, gl::DeviceInfo::instance(), aReporter))
-        {
+        if (loader.load(aFileName, *projectScope, gl::DeviceInfo::instance(), aReporter)) {
             mProjects.push_back(projectScope.take());
             // Get settings
             QSettings settings;
             QStringList recentfiles = settings.value("projectloader/recents").toStringList();
 
             // Check file length
-            if (recentfiles.length() != 8){
+            if (recentfiles.length() != 8) {
                 recentfiles.append(aFileName);
             }
             // If length eight remove first
-            else if (recentfiles.length() == 8){
-                    recentfiles.pop_front();
+            else if (recentfiles.length() == 8) {
+                recentfiles.pop_front();
             }
             // Save
-            if (!settings.value("projectloader/recents").toStringList().contains(aFileName)){
+            if (!settings.value("projectloader/recents").toStringList().contains(aFileName)) {
                 settings.setValue("projectloader/recents", recentfiles);
                 settings.sync();
             }
@@ -154,8 +115,7 @@ System::LoadResult System::openProject(
             return LoadResult(mProjects.back(), "Success.");
         }
 
-        for (auto log : loader.log())
-        {
+        for (auto log : loader.log()) {
             qDebug() << log;
         }
 
@@ -168,43 +128,37 @@ System::LoadResult System::openProject(
     return LoadResult(nullptr, "Empty file.");
 }
 
-System::SaveResult System::saveProject(core::Project& aProject)
-{
+System::SaveResult System::saveProject(core::Project& aProject) {
     const int index = mProjects.indexOf(&aProject);
 
-    if (index < 0 || mProjects.count() <= index)
-    {
+    if (index < 0 || mProjects.count() <= index) {
         return SaveResult(false, "Invalid project reference.");
     }
 
     auto project = mProjects.at(index);
 
-    if (project && !project->isNameless())
-    {
+    if (project && !project->isNameless()) {
         const QString outputPath = project->fileName();
         const QString cachePath = mCacheDir + "/lastproject.cache";
         // ensure the string "%20" is not used
-        //qDebug() << outputPath;
-        if (outputPath.contains("%20")){
+        // qDebug() << outputPath;
+        if (outputPath.contains("%20")) {
             // qDebug() << outputPath;
             return SaveResult(false, "Please do not use '%20' for naming anie files.");
         }
 
         // create cache directory
-        if (!makeSureCacheDirectory(mCacheDir))
-        {
+        if (!makeSureCacheDirectory(mCacheDir)) {
             return SaveResult(false, "Failed to create cache directory.");
         }
 
         ctrl::ProjectSaver saver;
 
-        if (!saver.save(cachePath, *project))
-        {
+        if (!saver.save(cachePath, *project)) {
             return SaveResult(false, "Failed to save project. (" + saver.log() + ")");
         }
 
-        if (!safeRename(cachePath, outputPath))
-        {
+        if (!safeRename(cachePath, outputPath)) {
             return SaveResult(false, "Failed to rename the project file.");
         }
 
@@ -216,12 +170,10 @@ System::SaveResult System::saveProject(core::Project& aProject)
     return SaveResult(false, "Invalid operation.");
 }
 
-bool System::closeProject(core::Project& aProject)
-{
+bool System::closeProject(core::Project& aProject) {
     const int index = mProjects.indexOf(&aProject);
 
-    if (0 <= index && index < mProjects.count())
-    {
+    if (0 <= index && index < mProjects.count()) {
         auto ptr = mProjects.at(index);
         mProjects.removeAt(index);
         delete ptr;
@@ -230,39 +182,32 @@ bool System::closeProject(core::Project& aProject)
     return false;
 }
 
-void System::closeAllProjects()
-{
+void System::closeAllProjects() {
     qDeleteAll(mProjects);
     mProjects.clear();
 }
 
-core::Project* System::project(int aIndex)
-{
+core::Project* System::project(int aIndex) {
     XC_ASSERT(0 <= aIndex && aIndex < mProjects.count());
     return mProjects[aIndex];
 }
 
-const core::Project* System::project(int aIndex) const
-{
+const core::Project* System::project(int aIndex) const {
     XC_ASSERT(0 <= aIndex && aIndex < mProjects.count());
     return mProjects[aIndex];
 }
 
-bool System::hasModifiedProject() const
-{
-    for (auto project : mProjects)
-    {
-        if (project->isModified()) return true;
+bool System::hasModifiedProject() const {
+    for (auto project : mProjects) {
+        if (project->isModified())
+            return true;
     }
     return false;
 }
 
-bool System::makeSureCacheDirectory(const QString& aCacheDir)
-{
-    if (!QDir::current().exists(aCacheDir))
-    {
-        if (!QDir::current().mkpath(aCacheDir))
-        {
+bool System::makeSureCacheDirectory(const QString& aCacheDir) {
+    if (!QDir::current().exists(aCacheDir)) {
+        if (!QDir::current().mkpath(aCacheDir)) {
             qDebug() << "failed to create cache directory.";
             return false;
         }
@@ -270,25 +215,20 @@ bool System::makeSureCacheDirectory(const QString& aCacheDir)
     return true;
 }
 
-bool System::safeRename(const QString& aSrc, const QString& aDst)
-{
-    if (!QFile::exists(aSrc))
-    {
+bool System::safeRename(const QString& aSrc, const QString& aDst) {
+    if (!QFile::exists(aSrc)) {
         qDebug() << "failed to find a project cache file.";
         return false;
     }
 
-    if (QFile::exists(aDst))
-    {
-        if (!QFile::remove(aDst))
-        {
+    if (QFile::exists(aDst)) {
+        if (!QFile::remove(aDst)) {
             qDebug() << "failed to remove a project file.";
             return false;
         }
     }
 
-    if (!QFile::rename(aSrc, aDst))
-    {
+    if (!QFile::rename(aSrc, aDst)) {
         qDebug() << "failed to rename a project file.";
         return false;
     }
@@ -296,4 +236,3 @@ bool System::safeRename(const QString& aSrc, const QString& aDst)
 }
 
 } // namespace ctrl
-

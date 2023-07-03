@@ -4,35 +4,21 @@
 #include "util/Signaler.h"
 #include "cmnd/Listener.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
-class SignalNotifier : public Listener
-{
+class SignalNotifier: public Listener {
     util::Signaler<void()>& mSignaler;
+
 public:
-    SignalNotifier(util::Signaler<void()>& aSignaler)
-        : mSignaler(aSignaler)
-    {
-    }
+    SignalNotifier(util::Signaler<void()>& aSignaler): mSignaler(aSignaler) {}
 
-    virtual void onExecuted()
-    {
-        mSignaler();
-    }
+    virtual void onExecuted() { mSignaler(); }
 
-    virtual void onUndone()
-    {
-        mSignaler();
-    }
+    virtual void onUndone() { mSignaler(); }
 
-    virtual void onRedone()
-    {
-        mSignaler();
-    }
+    virtual void onRedone() { mSignaler(); }
 };
 
-}
+} // namespace cmnd
 
 #endif // CMND_SIGNALNOTIFIER
-

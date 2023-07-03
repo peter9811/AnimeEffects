@@ -8,14 +8,11 @@
 #include "XC.h"
 #include "img/Buffer.h"
 
-namespace img
-{
+namespace img {
 
-class GridMeshCreator
-{
+class GridMeshCreator {
 public:
-    struct HexaConnection
-    {
+    struct HexaConnection {
         int id[6];
         bool has(int aIndex) const { return id[aIndex] != -1; }
         void clear();
@@ -34,8 +31,7 @@ public:
     void writeConnections(HexaConnection* aDest);
 
 private:
-    struct Vertex
-    {
+    struct Vertex {
         bool isExist;
         float x;
         float y;
@@ -46,14 +42,10 @@ private:
         float reduceRate;
 
         QVector2D pos() const { return QVector2D(x, y); }
-        QVector2D posReduced() const
-        {
-            return QVector2D(x, y) + (reduceVec * maxReduce * reduceRate);
-        }
+        QVector2D posReduced() const { return QVector2D(x, y) + (reduceVec * maxReduce * reduceRate); }
     };
 
-    struct Cell
-    {
+    struct Cell {
         bool isExist;
         bool inverted;
         bool nonReducing;
@@ -63,8 +55,7 @@ private:
         Vertex* vtx[3];
     };
 
-    class Image
-    {
+    class Image {
         img::Buffer mBuffer;
         const uint8* mData;
         QSize mSize;
@@ -73,20 +64,17 @@ private:
         Image(const uint8* aPtr, const QSize& aSize);
 
         QSize size() const { return mSize; }
-        bool hasRawAlpha(int aX, int aY) const
-            { return mData[(aX + aY * mSize.width()) * 4 + 3] > 10; }
-        bool hasAlpha(int aX, int aY) const
-        {
-            if (aX < 0 || mSize.width() <= aX ||
-                aY < 0 || mSize.height() <= aY) return false;
+        bool hasRawAlpha(int aX, int aY) const { return mData[(aX + aY * mSize.width()) * 4 + 3] > 10; }
+        bool hasAlpha(int aX, int aY) const {
+            if (aX < 0 || mSize.width() <= aX || aY < 0 || mSize.height() <= aY)
+                return false;
             return hasRawAlpha(aX, aY);
         }
         bool hasSomeAlphaIn3x3(int aX, int aY) const;
         bool getOpaExistence(const Cell& aCell, const QSizeF& aCellSize) const;
     };
 
-    class VertexTable
-    {
+    class VertexTable {
         QScopedArrayPointer<Vertex> mVertices;
         QSize mSize;
         const float mHalfSqrt3;
@@ -97,31 +85,31 @@ private:
         int width() const { return mSize.width(); }
         int height() const { return mSize.height(); }
 
-        Vertex& vertex(int aX, int aY)
-        {
+        Vertex& vertex(int aX, int aY) {
             XC_MSG_ASSERT(0 <= aX && aX < mSize.width(), "x=%d", aX);
             XC_MSG_ASSERT(0 <= aY && aY < mSize.height(), "y=%d", aY);
             return mVertices[aX + aY * mSize.width()];
         }
 
-        const Vertex& vertex(int aX, int aY) const
-        {
+        const Vertex& vertex(int aX, int aY) const {
             XC_MSG_ASSERT(0 <= aX && aX < mSize.width(), "x=%d", aX);
             XC_MSG_ASSERT(0 <= aY && aY < mSize.height(), "y=%d", aY);
             return mVertices[aX + aY * mSize.width()];
         }
 
-        const Vertex* findVertex(int aX, int aY) const
-        {
-            if (aX < 0 || mSize.width() <= aX) return nullptr;
-            if (aY < 0 || mSize.height() <= aY) return nullptr;
+        const Vertex* findVertex(int aX, int aY) const {
+            if (aX < 0 || mSize.width() <= aX)
+                return nullptr;
+            if (aY < 0 || mSize.height() <= aY)
+                return nullptr;
             return &(mVertices[aX + aY * mSize.width()]);
         }
 
-        void setExistance(bool aValue, int aX, int aY)
-        {
-            if (aX < 0 || mSize.width() <= aX) return;
-            if (aY < 0 || mSize.height() <= aY) return;
+        void setExistance(bool aValue, int aX, int aY) {
+            if (aX < 0 || mSize.width() <= aX)
+                return;
+            if (aY < 0 || mSize.height() <= aY)
+                return;
             mVertices[aX + aY * mSize.width()].isExist = aValue;
         }
 
@@ -129,8 +117,7 @@ private:
         void shortenReducingVectorsOnePixel();
     };
 
-    class CellTable
-    {
+    class CellTable {
         QScopedArrayPointer<Cell> mCells;
         QSizeF mCellSize;
         int mWidth;
@@ -138,8 +125,7 @@ private:
 
     public:
         static QSizeF calculateCellSize(int aCellWidth);
-        static QSize calculateCellTableSize(
-                const QSize& aImageSize, const QSizeF& aCellSize);
+        static QSize calculateCellTableSize(const QSize& aImageSize, const QSizeF& aCellSize);
 
         CellTable(int aCellWidth);
         int initCells(const Image& aImage);

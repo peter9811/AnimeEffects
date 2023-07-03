@@ -17,20 +17,16 @@
 #include "ctrl/DriverResources.h"
 #include "ctrl/UILogger.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class Driver
-{
+class Driver {
 public:
-    Driver(core::Project& aProject, DriverResources& aResources,
-           GraphicStyle& aGraphicStyle, UILogger& aUILogger);
+    Driver(core::Project& aProject, DriverResources& aResources, GraphicStyle& aGraphicStyle, UILogger& aUILogger);
 
     void setTarget(core::ObjectNode* aNode);
     core::ObjectNode* currentTarget() const { return mCurrentNode; }
     void setTool(ToolType aType);
-    bool updateCursor(const core::AbstractCursor& aCursor,
-                      const core::CameraInfo& aCamera);
+    bool updateCursor(const core::AbstractCursor& aCursor, const core::CameraInfo& aCamera);
     void updateFrame();
     void updateKey(core::TimeLineEvent& aEvent, bool aUndo);
     void updateTree(core::ObjectTreeEvent& aEvent, bool aUndo);

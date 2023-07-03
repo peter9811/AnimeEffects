@@ -4,63 +4,46 @@
 #include <vector>
 #include "util/ITreeSeeker.h"
 
-namespace util
-{
+namespace util {
 
-template <typename tData, typename tAddress>
-class TreeSeekIterator
-{
+template<typename tData, typename tAddress>
+class TreeSeekIterator {
 public:
     typedef ITreeSeeker<tData, tAddress> SeekerType;
     typedef typename SeekerType::Data DataType;
     typedef typename SeekerType::Position PositionType;
 
-    TreeSeekIterator(SeekerType& aSeeker, PositionType aRoot)
-        : mSeeker(aSeeker)
-        , mPositions()
-    {
-        if (aRoot)
-        {
+    TreeSeekIterator(SeekerType& aSeeker, PositionType aRoot): mSeeker(aSeeker), mPositions() {
+        if (aRoot) {
             mPositions.push_back(aRoot);
         }
     }
 
-    bool hasNext() const
-    {
-        return !mPositions.empty();
-    }
+    bool hasNext() const { return !mPositions.empty(); }
 
-    PositionType next()
-    {
+    PositionType next() {
         XC_PTR_ASSERT(!mPositions.empty());
         PositionType next = mPositions.back();
         toNext();
         return next;
     }
 
-    DataType data(PositionType aPos)
-    {
-        return mSeeker.data(aPos);
-    }
+    DataType data(PositionType aPos) { return mSeeker.data(aPos); }
 
 private:
-    void toNext()
-    {
+    void toNext() {
         XC_ASSERT(!mPositions.empty());
 
         auto current = mPositions.back();
         auto child = mSeeker.child(current);
-        if (child)
-        {
+        if (child) {
             mPositions.push_back(child);
             return;
         }
 
-        while (!mPositions.empty())
-        {
+        while (!mPositions.empty()) {
             auto next = mSeeker.nextSib(mPositions.back());
-            if (next)
-            {
+            if (next) {
                 mPositions.back() = next;
                 return;
             }
@@ -76,4 +59,3 @@ private:
 } // namespace util
 
 #endif // UTIL_TREESEEKITERATOR
-

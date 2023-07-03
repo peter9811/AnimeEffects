@@ -16,11 +16,9 @@
 #include "util/Signaler.h"
 #include "theme/Theme.h"
 
-namespace gui
-{
+namespace gui {
 
-class GUIResources : private util::NonCopyable
-{
+class GUIResources: private util::NonCopyable {
 public:
     GUIResources(const QString& aResourceDir);
     ~GUIResources();
@@ -32,8 +30,8 @@ public:
     void setTheme(const QString& aThemeId);
 
 public:
-    QString getThemeLocation(){return mTheme.path();};
-    QString getTheme(){return mTheme.id();};
+    QString getThemeLocation() { return mTheme.path(); };
+    QString getTheme() { return mTheme.id(); };
     // signals
     util::Signaler<void(theme::Theme&)> onThemeChanged;
     void triggerOnThemeChanged();

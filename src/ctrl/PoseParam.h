@@ -3,11 +3,9 @@
 
 #include "ctrl/PoseEditMode.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class PoseParam
-{
+class PoseParam {
 public:
     PoseParam();
 
@@ -18,10 +16,8 @@ public:
     // for eraser mode
     float eiRadius;
     float eiPressure;
-
 };
 
 } // namespace ctrl
 
 #endif // CTRL_POSEPARAM_H
-

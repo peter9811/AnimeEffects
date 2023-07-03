@@ -7,18 +7,18 @@
 #include "util/Easing.h"
 #include "core/TimeKey.h"
 #include "core/Bone2.h"
-namespace core { class BoneKey; }
+namespace core {
+class BoneKey;
+}
 
-namespace core
-{
+namespace core {
 
-class PoseKey : public TimeKey
-{
+class PoseKey: public TimeKey {
 public:
-    class Data
-    {
+    class Data {
         util::Easing::Param mEasing;
         QList<Bone2*> mTopBones;
+
     public:
         Data();
         Data(const Data& aRhs);

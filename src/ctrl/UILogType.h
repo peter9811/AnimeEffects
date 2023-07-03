@@ -1,15 +1,9 @@
 #ifndef CTRL_UILOGTYPE_H
 #define CTRL_UILOGTYPE_H
 
-namespace ctrl
-{
+namespace ctrl {
 
-enum UILogType
-{
-    UILogType_Info,
-    UILogType_Warn,
-    UILogType_TERM
-};
+enum UILogType { UILogType_Info, UILogType_Warn, UILogType_TERM };
 
 } // namespace ctrl
 

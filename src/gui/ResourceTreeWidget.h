@@ -14,8 +14,7 @@
 
 namespace gui {
 
-class ResourceTreeWidget : public QTreeWidget
-{
+class ResourceTreeWidget: public QTreeWidget {
     Q_OBJECT
 public:
     enum { kItemColumn = 0 };
@@ -32,6 +31,7 @@ public:
     void onWatchRemoveTriggered(bool aIsTriggered);
 
     util::Signaler<void(const NodeList&)> onNodeSelectionChanged;
+
 private:
     void resetTreeView(core::ResourceHolder& aHolder);
     QTreeWidgetItem* findItem(const util::TreePos& aPos);

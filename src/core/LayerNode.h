@@ -16,13 +16,9 @@
 #include "core/MeshTransformer.h"
 #include "core/ShaderHolder.h"
 
-namespace core
-{
+namespace core {
 
-class LayerNode
-        : public ObjectNode
-        , public Renderer
-{
+class LayerNode: public ObjectNode, public Renderer {
 public:
     LayerNode(const QString& aName, ShaderHolder& aShaderHolder);
 
@@ -67,8 +63,7 @@ public:
     // from Renderer
     virtual void prerender(const RenderInfo&, const TimeCacheAccessor&);
     virtual void render(const RenderInfo&, const TimeCacheAccessor&);
-    virtual void renderClipper(
-            const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
+    virtual void renderClipper(const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
     virtual void setClipped(bool aIsClipped);
     virtual bool isClipped() const { return mIsClipped; }
     virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData);

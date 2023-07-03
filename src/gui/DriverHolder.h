@@ -11,11 +11,9 @@
 #include "ctrl/GraphicStyle.h"
 #include "gui/ViaPoint.h"
 
-namespace gui
-{
+namespace gui {
 
-class DriverHolder
-{
+class DriverHolder {
 public:
     DriverHolder(ViaPoint& aViaPoint);
     ~DriverHolder();
@@ -38,7 +36,6 @@ public:
     void onProjectAttributeUpdated();
 
 private:
-
     ViaPoint& mViaPoint;
     ctrl::DriverResources mDriverResources;
     QScopedPointer<ctrl::Driver> mDriver;

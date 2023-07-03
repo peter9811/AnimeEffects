@@ -6,11 +6,9 @@
 #include "gui/ViaPoint.h"
 #include "gui/MouseSetting.h"
 
-namespace gui
-{
+namespace gui {
 
-class MouseSettingDialog : public EasyDialog
-{
+class MouseSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     MouseSettingDialog(ViaPoint& aViaPoint, QWidget* aParent);

@@ -4,59 +4,43 @@
 
 #include <QPainterPath>
 
-namespace
-{
+namespace {
 static const int kAttachmentId = 0;
 }
 
-namespace gl
-{
+namespace gl {
 
-FontDrawer::FontDrawer()
-    : mFramebuffer()
-    , mShader()
-    , mResizer()
-    , mColor()
-    , mLocPosition(-1)
-    , mLocViewMtx(-1)
-    , mTextureCache()
-{
+FontDrawer::FontDrawer():
+    mFramebuffer(), mShader(), mResizer(), mColor(), mLocPosition(-1), mLocViewMtx(-1), mTextureCache() {
     initShader();
     mResizer.init();
 }
 
-bool FontDrawer::initShader()
-{
+bool FontDrawer::initShader() {
     static const char* kVertexShaderText =
-            "#version 330 \n"
-            "in vec2 inPosition;"
-            "uniform mat4 uViewMtx;"
-            "void main(void){"
-            "  gl_Position = uViewMtx * vec4(inPosition, 0.0, 1.0);"
-            "}";
+        "#version 330 \n"
+        "in vec2 inPosition;"
+        "uniform mat4 uViewMtx;"
+        "void main(void){"
+        "  gl_Position = uViewMtx * vec4(inPosition, 0.0, 1.0);"
+        "}";
     static const char* kFragmentShaderText =
-            "#version 330 \n"
-            "layout(location = 0, index = 0) out vec4 oFragColor;"
-            "void main(void){"
-            "  oFragColor = vec4(1);"
-            "}";
+        "#version 330 \n"
+        "layout(location = 0, index = 0) out vec4 oFragColor;"
+        "void main(void){"
+        "  oFragColor = vec4(1);"
+        "}";
 
-    if (!mShader.setVertexSource(QString(kVertexShaderText)))
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to compile vertex shader.",
-                       mShader.log());
+    if (!mShader.setVertexSource(QString(kVertexShaderText))) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to compile vertex shader.", mShader.log());
         return false;
     }
-    if (!mShader.setFragmentSource(QString(kFragmentShaderText)))
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to compile fragment shader.",
-                       mShader.log());
+    if (!mShader.setFragmentSource(QString(kFragmentShaderText))) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to compile fragment shader.", mShader.log());
         return false;
     }
-    if (!mShader.link())
-    {
-        XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.",
-                       mShader.log());
+    if (!mShader.link()) {
+        XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.", mShader.log());
         return false;
     }
 
@@ -65,26 +49,20 @@ bool FontDrawer::initShader()
 
     GL_CHECK_ERROR();
     return true;
-
 }
 
-void FontDrawer::setColor(const QColor& aColor)
-{
-    mColor = aColor;
-}
+void FontDrawer::setColor(const QColor& aColor) { mColor = aColor; }
 
-void FontDrawer::draw(const QFont& aFont, TextObject& aTextObj)
-{
+void FontDrawer::draw(const QFont& aFont, TextObject& aTextObj) {
     QFontMetrics metrics(aFont);
     const QRect boundingRect = metrics.boundingRect(aTextObj.text());
-    //const QSize textureSize(boundingRect.right(), boundingRect.bottom());
+    // const QSize textureSize(boundingRect.right(), boundingRect.bottom());
     const QSize textureSize(boundingRect.size());
-    //qDebug() << boundingRect;
+    // qDebug() << boundingRect;
     const QSize workSize = textureSize * 2;
 
     // reserve texture
-    if (aTextObj.texture().size() != textureSize)
-    {
+    if (aTextObj.texture().size() != textureSize) {
         aTextObj.texture().create(textureSize);
         aTextObj.texture().setFilter(GL_LINEAR);
         aTextObj.texture().setWrap(GL_CLAMP_TO_BORDER, QColor(0, 0, 0, 0));
@@ -112,7 +90,7 @@ void FontDrawer::draw(const QFont& aFont, TextObject& aTextObj)
 
     // setup draw buffers
     {
-        const GLenum attachments[] = { GL_COLOR_ATTACHMENT0 };
+        const GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
         ggl.glDrawBuffers(1, attachments);
     }
 
@@ -152,18 +130,20 @@ void FontDrawer::draw(const QFont& aFont, TextObject& aTextObj)
 
         mFramebuffer.bind();
 
-        const GLenum attachments[] = { GL_COLOR_ATTACHMENT0 };
+        const GLenum attachments[] = {GL_COLOR_ATTACHMENT0};
         ggl.glDrawBuffers(1, attachments);
 
         gl::Util::setViewportAsActualPixels(textureSize);
-        const GLuint clearColorU[] = {
-            (GLuint)mColor.red(), (GLuint)mColor.green(), (GLuint)mColor.blue(), 255
-        };
+        const GLuint clearColorU[] = {(GLuint)mColor.red(), (GLuint)mColor.green(), (GLuint)mColor.blue(), 255};
         ggl.glClearBufferuiv(GL_COLOR, kAttachmentId, clearColorU);
 
-        mResizer.draw(mTextureCache->id(),
-                      QRect(QPoint(0.0f, 0.0f), textureSize), textureSize,
-                      QRect(QPoint(0.0f, 0.0f), workSize), mTextureCache->size());
+        mResizer.draw(
+            mTextureCache->id(),
+            QRect(QPoint(0.0f, 0.0f), textureSize),
+            textureSize,
+            QRect(QPoint(0.0f, 0.0f), workSize),
+            mTextureCache->size()
+        );
 
         mFramebuffer.release();
     }
@@ -175,33 +155,29 @@ void FontDrawer::draw(const QFont& aFont, TextObject& aTextObj)
     }
 }
 
-void FontDrawer::updateWorkTextureCache(TextObject& aTextObj, const QSize& aNeedSize)
-{
+void FontDrawer::updateWorkTextureCache(TextObject& aTextObj, const QSize& aNeedSize) {
     TextObject::WorkCache caches[2];
-    int score[2] = { 0, 0 };
+    int score[2] = {0, 0};
     caches[0].swap(mTextureCache);
     caches[1].swap(aTextObj.workCache());
 
-    for (int i = 0; i < 2; ++i)
-    {
-        if (!caches[i]) continue;
+    for (int i = 0; i < 2; ++i) {
+        if (!caches[i])
+            continue;
 
         auto cacheSize = caches[i]->size();
-        if (aNeedSize.width() <= cacheSize.width() && aNeedSize.height() < cacheSize.height())
-        {
+        if (aNeedSize.width() <= cacheSize.width() && aNeedSize.height() < cacheSize.height()) {
             const int cacheLength = cacheSize.width() * cacheSize.height();
             const int needLength = aNeedSize.width() * aNeedSize.height();
 
-            if (cacheLength < needLength * 2)
-            {
+            if (cacheLength < needLength * 2) {
                 score[i] = needLength * 2 - cacheLength;
             }
             // note: delete texture caches which too large
         }
     }
 
-    if (score[0] == 0 && score[1] == 0)
-    {
+    if (score[0] == 0 && score[1] == 0) {
         caches[0].reset();
         caches[1].reset();
 
@@ -213,55 +189,45 @@ void FontDrawer::updateWorkTextureCache(TextObject& aTextObj, const QSize& aNeed
 
         aTextObj.workCache().reset(newCache);
         mTextureCache = aTextObj.workCache();
-    }
-    else if (score[0] > score[1])
-    {
+    } else if (score[0] > score[1]) {
         mTextureCache.swap(caches[0]);
         aTextObj.workCache() = mTextureCache;
-    }
-    else
-    {
+    } else {
         aTextObj.workCache().swap(caches[1]);
         mTextureCache = aTextObj.workCache();
     }
 }
 
 void FontDrawer::createCascadePolygons(
-        const QFont& aFont, const QFontMetrics& aMetrics,
-        const QString& aText, QVector<gl::Vector2>& aDest)
-{
+    const QFont& aFont, const QFontMetrics& aMetrics, const QString& aText, QVector<gl::Vector2>& aDest
+) {
     QPainterPath path;
     path.addText(0.0f, aMetrics.ascent(), aFont, aText);
     auto polygons = path.toSubpathPolygons();
 
     // get count of segments
     int segCount = 0;
-    for (auto& polygon : polygons)
-    {
+    for (auto& polygon : polygons) {
         segCount += polygon.size();
     }
 
     aDest.resize(segCount * 6);
 
     int i = 0;
-    for (auto& polygon : polygons)
-    {
-        if (polygon.empty()) continue;
+    for (auto& polygon : polygons) {
+        if (polygon.empty())
+            continue;
         auto pre = polygon.back();
-        for (auto vtx : polygon)
-        {
-            if (pre.x() < vtx.x())
-            {
-                aDest[i    ].set(pre.x(), pre.y());
+        for (auto vtx : polygon) {
+            if (pre.x() < vtx.x()) {
+                aDest[i].set(pre.x(), pre.y());
                 aDest[i + 1].set(vtx.x(), vtx.y());
                 aDest[i + 2].set(pre.x(), 0.0f);
                 aDest[i + 3].set(pre.x(), 0.0f);
                 aDest[i + 4].set(vtx.x(), vtx.y());
                 aDest[i + 5].set(vtx.x(), 0.0f);
-            }
-            else
-            {
-                aDest[i    ].set(vtx.x(), vtx.y());
+            } else {
+                aDest[i].set(vtx.x(), vtx.y());
                 aDest[i + 1].set(pre.x(), pre.y());
                 aDest[i + 2].set(pre.x(), 0.0f);
                 aDest[i + 3].set(pre.x(), 0.0f);

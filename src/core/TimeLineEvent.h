@@ -3,31 +3,23 @@
 
 #include <QVector>
 #include "core/TimeKeyPos.h"
-namespace core { class Project; }
-namespace core { class ObjectNode; }
+namespace core {
+class Project;
+}
+namespace core {
+class ObjectNode;
+}
 
-namespace core
-{
+namespace core {
 
-class TimeLineEvent
-{
+class TimeLineEvent {
 public:
-    enum Type
-    {
-        Type_PushKey,
-        Type_RemoveKey,
-        Type_MoveKey,
-        Type_CopyKey,
-        Type_ChangeKeyValue,
-        Type_TERM
-    };
+    enum Type { Type_PushKey, Type_RemoveKey, Type_MoveKey, Type_CopyKey, Type_ChangeKeyValue, Type_TERM };
 
-    struct Target
-    {
-        Target()
-            : node(), pos(), subIndex() {}
-        Target(ObjectNode& aNode, const TimeKeyPos& aPos, int aSubIndex)
-            : node(&aNode), pos(aPos), subIndex(aSubIndex) {}
+    struct Target {
+        Target(): node(), pos(), subIndex() {}
+        Target(ObjectNode& aNode, const TimeKeyPos& aPos, int aSubIndex):
+            node(&aNode), pos(aPos), subIndex(aSubIndex) {}
 
         ObjectNode* node;
         TimeKeyPos pos;
@@ -56,7 +48,10 @@ public:
 
     // set a project by a project
     void setProject(Project& aProject) { mProject = &aProject; }
-    Project& project() const { XC_PTR_ASSERT(mProject); return *mProject; }
+    Project& project() const {
+        XC_PTR_ASSERT(mProject);
+        return *mProject;
+    }
 
 private:
     Project* mProject;
@@ -68,4 +63,3 @@ private:
 } // namespace core
 
 #endif // CORE_TIMELINEEVENT
-

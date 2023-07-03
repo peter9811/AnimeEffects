@@ -15,34 +15,33 @@
 namespace gui {
 namespace tool {
 
-class FFDPanel : public QGroupBox
-{
-    Q_OBJECT
-public:
-    FFDPanel(QWidget* aParent, GUIResources& aResources);
+    class FFDPanel: public QGroupBox {
+        Q_OBJECT
+    public:
+        FFDPanel(QWidget* aParent, GUIResources& aResources);
 
-    int updateGeometry(const QPoint& aPos, int aWidth);
+        int updateGeometry(const QPoint& aPos, int aWidth);
 
-    const ctrl::FFDParam& param() const { return mParam; }
+        const ctrl::FFDParam& param() const { return mParam; }
 
-    // boost like signals
-    util::Signaler<void(bool)> onParamUpdated;
+        // boost like signals
+        util::Signaler<void(bool)> onParamUpdated;
 
-private:
-    void createBrush();
-    void updateTypeParam(ctrl::FFDParam::Type aType);
+    private:
+        void createBrush();
+        void updateTypeParam(ctrl::FFDParam::Type aType);
 
-    GUIResources& mResources;
-    ctrl::FFDParam mParam;
-    QScopedPointer<SingleOutItem> mTypeGroup;
-    QScopedPointer<SingleOutItem> mHardnessGroup;
-    QScopedPointer<SliderItem> mRadius;
-    QScopedPointer<SliderItem> mPressure;
-    QScopedPointer<SliderItem> mBlur;
-    QScopedPointer<SingleOutItem> mEraseHardnessGroup;
-    QScopedPointer<SliderItem> mEraseRadius;
-    QScopedPointer<SliderItem> mErasePressure;
-};
+        GUIResources& mResources;
+        ctrl::FFDParam mParam;
+        QScopedPointer<SingleOutItem> mTypeGroup;
+        QScopedPointer<SingleOutItem> mHardnessGroup;
+        QScopedPointer<SliderItem> mRadius;
+        QScopedPointer<SliderItem> mPressure;
+        QScopedPointer<SliderItem> mBlur;
+        QScopedPointer<SingleOutItem> mEraseHardnessGroup;
+        QScopedPointer<SliderItem> mEraseRadius;
+        QScopedPointer<SliderItem> mErasePressure;
+    };
 
 } // namespace tool
 } // namespace gui

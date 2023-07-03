@@ -5,11 +5,9 @@
 #include <QString>
 #include <QIcon>
 
-namespace ctrl
-{
+namespace ctrl {
 
-class GraphicStyle
-{
+class GraphicStyle {
 public:
     virtual ~GraphicStyle() {}
     virtual QFont font() const = 0;
@@ -17,6 +15,6 @@ public:
     virtual QIcon icon(const QString& aName) const = 0;
 };
 
-}
+} // namespace ctrl
 
 #endif // CTRL_GRAPHICSTYLE_H

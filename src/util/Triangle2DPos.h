@@ -4,11 +4,9 @@
 #include <array>
 #include "util/Triangle2D.h"
 
-namespace util
-{
+namespace util {
 
-class Triangle2DPos
-{
+class Triangle2DPos {
 public:
     static Triangle2DPos make(const Triangle2D& aTriangle, const QVector2D& aPoint);
 

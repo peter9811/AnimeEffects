@@ -4,43 +4,28 @@
 namespace ctrl {
 namespace ffd {
 
-//-------------------------------------------------------------------------------------------------
-Target::Target()
-    : node()
-    , keyOwner()
-    , task()
-{
-}
+    //-------------------------------------------------------------------------------------------------
+    Target::Target(): node(), keyOwner(), task() {}
 
-Target::Target(core::ObjectNode* aNode)
-    : node(aNode)
-    , keyOwner()
-    , task()
-{
-}
+    Target::Target(core::ObjectNode* aNode): node(aNode), keyOwner(), task() {}
 
-Target::~Target()
-{
-    keyOwner.deleteOwnsKey();
+    Target::~Target() {
+        keyOwner.deleteOwnsKey();
 
-    gl::Global::makeCurrent();
-    task.reset();
-}
-
-bool Target::isValid() const
-{
-    return (bool)node && (bool)keyOwner;
-}
-
-//-------------------------------------------------------------------------------------------------
-bool Targets::hasValidTarget() const
-{
-    for (int i = 0; i < this->size(); ++i)
-    {
-        if ((*this)[i]->isValid()) return true;
+        gl::Global::makeCurrent();
+        task.reset();
     }
-    return false;
-}
+
+    bool Target::isValid() const { return (bool)node && (bool)keyOwner; }
+
+    //-------------------------------------------------------------------------------------------------
+    bool Targets::hasValidTarget() const {
+        for (int i = 0; i < this->size(); ++i) {
+            if ((*this)[i]->isValid())
+                return true;
+        }
+        return false;
+    }
 
 
 } // namespace ffd

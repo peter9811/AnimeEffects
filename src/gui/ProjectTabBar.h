@@ -7,13 +7,11 @@
 
 #include "gui/GUIResources.h"
 
-namespace gui
-{
+namespace gui {
 
-class ProjectTabBar : public QTabBar
-{
+class ProjectTabBar: public QTabBar {
 public:
-    ProjectTabBar(QWidget* aParent, GUIResources &aResources);
+    ProjectTabBar(QWidget* aParent, GUIResources& aResources);
     void updateTabPosition(const QSize& aDisplaySize);
     bool pushProject(core::Project& aProject);
     void removeProject(core::Project& aProject);

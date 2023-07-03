@@ -10,13 +10,13 @@
 #include "core/BoneShape.h"
 #include "core/Serializer.h"
 #include "core/Deserializer.h"
-namespace core { class ObjectNode; }
+namespace core {
+class ObjectNode;
+}
 
-namespace core
-{
+namespace core {
 
-class Bone2 : public util::TreeNodeBase<Bone2>
-{
+class Bone2: public util::TreeNodeBase<Bone2> {
 public:
     typedef util::TreeNodeBase<Bone2>::Children ChildrenType;
     typedef util::TreeIterator<Bone2, ChildrenType::Iterator> Iterator;

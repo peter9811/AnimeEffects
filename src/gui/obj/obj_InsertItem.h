@@ -5,22 +5,20 @@
 #include "cmnd/Stable.h"
 #include "gui/obj/obj_Item.h"
 
-namespace gui
-{
-namespace obj
-{
+namespace gui {
+namespace obj {
 
-class InsertItem : public cmnd::Stable
-{
-    QTreeWidgetItem& mParent;
-    Item& mItem;
-    int mIndex;
-public:
-    InsertItem(QTreeWidgetItem& aParent, int aIndex, Item& aItem);
+    class InsertItem: public cmnd::Stable {
+        QTreeWidgetItem& mParent;
+        Item& mItem;
+        int mIndex;
 
-    virtual void undo();
-    virtual void redo();
-};
+    public:
+        InsertItem(QTreeWidgetItem& aParent, int aIndex, Item& aItem);
+
+        virtual void undo();
+        virtual void redo();
+    };
 
 } // namespace obj
 } // namespace gui

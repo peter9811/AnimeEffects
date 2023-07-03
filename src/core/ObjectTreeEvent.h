@@ -3,24 +3,17 @@
 
 #include <QVector>
 #include "core/ObjectNode.h"
-namespace core { class Project; }
+namespace core {
+class Project;
+}
 
-namespace core
-{
+namespace core {
 
-class ObjectTreeEvent
-{
+class ObjectTreeEvent {
 public:
-    enum Type
-    {
-        Type_Add,
-        Type_Delete,
-        Type_Move,
-        Type_TERM
-    };
+    enum Type { Type_Add, Type_Delete, Type_Move, Type_TERM };
 
-    struct Target
-    {
+    struct Target {
         Target();
         Target(ObjectNode* aParent, ObjectNode& aNode);
         ObjectNode* parent;

@@ -2,87 +2,62 @@
 #include "qjsonarray.h"
 #include "qjsonobject.h"
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-FFDKey::Data::Data()
-    : mEasing()
-    , mBuffer()
-    , mVtxCount(0)
-{
-}
+FFDKey::Data::Data(): mEasing(), mBuffer(), mVtxCount(0) {}
 
-void FFDKey::Data::alloc(int aVtxCount)
-{
+void FFDKey::Data::alloc(int aVtxCount) {
     XC_ASSERT(aVtxCount > 0);
     mVtxCount = aVtxCount;
 
-    if (mBuffer.count() != aVtxCount)
-    {
+    if (mBuffer.count() != aVtxCount) {
         mBuffer.resize(aVtxCount);
     }
 }
 
-void FFDKey::Data::write(const gl::Vector3* aSrc, int aVtxCount)
-{
+void FFDKey::Data::write(const gl::Vector3* aSrc, int aVtxCount) {
     XC_ASSERT(aVtxCount <= mVtxCount);
     auto writeCount = aVtxCount <= mVtxCount ? aVtxCount : mVtxCount; // fail safe code
-    if (writeCount > 0)
-    {
+    if (writeCount > 0) {
         memcpy(mBuffer.data(), aSrc, sizeof(gl::Vector3) * writeCount);
     }
 }
 
-void FFDKey::Data::allocAndWrite(const gl::Vector3* aSrc, int aVtxCount)
-{
+void FFDKey::Data::allocAndWrite(const gl::Vector3* aSrc, int aVtxCount) {
     alloc(aVtxCount);
     write(aSrc, aVtxCount);
 }
 
-void FFDKey::Data::clear()
-{
+void FFDKey::Data::clear() {
     mVtxCount = 0;
     mBuffer.clear();
 }
 
-void FFDKey::Data::swap(QVector<gl::Vector3>& aRhs)
-{
+void FFDKey::Data::swap(QVector<gl::Vector3>& aRhs) {
     XC_ASSERT(mVtxCount == mBuffer.count());
     mVtxCount = aRhs.count();
     mBuffer.swap(aRhs);
 }
 
-gl::Vector3* FFDKey::Data::positions()
-{
-    return mBuffer.data();
-}
+gl::Vector3* FFDKey::Data::positions() { return mBuffer.data(); }
 
-const gl::Vector3* FFDKey::Data::positions() const
-{
-    return mBuffer.data();
-}
+const gl::Vector3* FFDKey::Data::positions() const { return mBuffer.data(); }
 
-int FFDKey::Data::count() const
-{
-    return mVtxCount;
-}
+int FFDKey::Data::count() const { return mVtxCount; }
 
-void FFDKey::Data::insertVtx(int aIndex, const gl::Vector3& aPos)
-{
+void FFDKey::Data::insertVtx(int aIndex, const gl::Vector3& aPos) {
     XC_ASSERT(0 <= aIndex && aIndex <= count());
     mBuffer.insert(aIndex, aPos);
     ++mVtxCount;
 }
 
-void FFDKey::Data::pushBackVtx(const gl::Vector3& aPos)
-{
+void FFDKey::Data::pushBackVtx(const gl::Vector3& aPos) {
     mBuffer.push_back(aPos);
     ++mVtxCount;
 }
 
-gl::Vector3 FFDKey::Data::removeVtx(int aIndex)
-{
+gl::Vector3 FFDKey::Data::removeVtx(int aIndex) {
     XC_ASSERT(count() > 0);
     XC_ASSERT(0 <= aIndex && aIndex < count());
 
@@ -92,8 +67,7 @@ gl::Vector3 FFDKey::Data::removeVtx(int aIndex)
     return pos;
 }
 
-gl::Vector3 FFDKey::Data::popBackVtx()
-{
+gl::Vector3 FFDKey::Data::popBackVtx() {
     XC_ASSERT(count() > 0);
     auto pos = mBuffer.at(count() - 1);
     mBuffer.pop_back();
@@ -102,24 +76,20 @@ gl::Vector3 FFDKey::Data::popBackVtx()
 }
 
 //-------------------------------------------------------------------------------------------------
-FFDKey::FFDKey()
-    : mData()
-{
-}
+FFDKey::FFDKey(): mData() {}
 
-TimeKey* FFDKey::createClone()
-{
+TimeKey* FFDKey::createClone() {
     auto newKey = new FFDKey();
     newKey->mData = this->mData;
     return newKey;
 }
 
-QJsonObject FFDKey::serializeToJson() const{
+QJsonObject FFDKey::serializeToJson() const {
     QJsonObject ffd;
     ffd["VertexCount"] = mData.count();
     QJsonArray pos;
-    if (mData.count() > 0){
-        for (int i = 0; i < mData.count(); ++i){
+    if (mData.count() > 0) {
+        for (int i = 0; i < mData.count(); ++i) {
             QJsonObject gl3;
             gl3["X"] = ((float32)mData.positions()[i].x);
             gl3["Y"] = ((float32)mData.positions()[i].y);
@@ -131,37 +101,34 @@ QJsonObject FFDKey::serializeToJson() const{
     return ffd;
 }
 
-void FFDKey::deserializeFromJson(QJsonObject json){
+void FFDKey::deserializeFromJson(QJsonObject json) {
     // Vertices
     json = json["FFD"].toObject();
     int vtxCount = json["VertexCount"].toInt();
-    if (vtxCount > 0){
+    if (vtxCount > 0) {
         // allocate
         mData.alloc(vtxCount);
         // positions
         QJsonArray vtx = json["Positions"].toArray();
-        for (int i = 0; i < vtxCount; i++){
+        for (int i = 0; i < vtxCount; i++) {
             QJsonObject vtxObj = vtx[i].toObject();
             mData.positions()[i].x = vtxObj["X"].toDouble();
             mData.positions()[i].y = vtxObj["Y"].toDouble();
             mData.positions()[i].z = vtxObj["Z"].toDouble();
         }
-    }
-    else{
+    } else {
         mData.clear();
     }
 }
 
-bool FFDKey::serialize(Serializer& aOut) const
-{
+bool FFDKey::serialize(Serializer& aOut) const {
     // easing
     aOut.write(mData.easing());
 
     // vertex count
     aOut.write(mData.count());
     // positions
-    if (mData.count() > 0)
-    {
+    if (mData.count() > 0) {
         aOut.writeGL(mData.positions(), mData.count());
     }
 
@@ -169,13 +136,10 @@ bool FFDKey::serialize(Serializer& aOut) const
 }
 
 
-
-bool FFDKey::deserialize(Deserializer& aIn)
-{
+bool FFDKey::deserialize(Deserializer& aIn) {
     aIn.pushLogScope("FFDKey");
 
-    if (!aIn.read(mData.easing()))
-    {
+    if (!aIn.read(mData.easing())) {
         return aIn.errored("invalid easing param");
     }
 
@@ -183,15 +147,12 @@ bool FFDKey::deserialize(Deserializer& aIn)
     int count = 0;
     aIn.read(count);
 
-    if (count > 0)
-    {
+    if (count > 0) {
         // allocate
         mData.alloc(count);
         // positions
         aIn.readGL(mData.positions(), mData.count());
-    }
-    else
-    {
+    } else {
         mData.clear();
     }
 

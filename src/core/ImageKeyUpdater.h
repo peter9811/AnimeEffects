@@ -5,25 +5,31 @@
 #include "core/ObjectNode.h"
 #include "core/ResourceEvent.h"
 #include "core/ResourceUpdatingWorkspace.h"
-namespace core { class ImageKey; }
+namespace core {
+class ImageKey;
+}
 
-namespace core
-{
+namespace core {
 
-class ImageKeyUpdater
-{
+class ImageKeyUpdater {
 public:
     static cmnd::Stable* createResourceUpdater(
-            ObjectNode& aNode, const ResourceEvent& aEvent,
-            const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions);
+        ObjectNode& aNode,
+        const ResourceEvent& aEvent,
+        const ResourceUpdatingWorkspacePtr& aWorkspace,
+        bool aCreateTransitions
+    );
 
     static cmnd::Stable* createResourceUpdater(
-            ImageKey& aKey, img::ResourceNode& aNewResource,
-            const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions);
+        ImageKey& aKey,
+        img::ResourceNode& aNewResource,
+        const ResourceUpdatingWorkspacePtr& aWorkspace,
+        bool aCreateTransitions
+    );
 
     static cmnd::Stable* createGridMeshUpdater(
-            ImageKey& aKey, int aNewCellSize,
-            const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions);
+        ImageKey& aKey, int aNewCellSize, const ResourceUpdatingWorkspacePtr& aWorkspace, bool aCreateTransitions
+    );
 
     static cmnd::Base* createResourceSleeperForDelete(ObjectNode& aNode);
 };

@@ -1,11 +1,9 @@
 #ifndef GUI_MOUSESETTING_H
 #define GUI_MOUSESETTING_H
 
-namespace gui
-{
+namespace gui {
 
-class MouseSetting
-{
+class MouseSetting {
 public:
     MouseSetting();
 

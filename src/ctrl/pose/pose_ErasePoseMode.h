@@ -16,27 +16,26 @@
 namespace ctrl {
 namespace pose {
 
-class ErasePoseMode : public IMode
-{
-public:
-    ErasePoseMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
-    virtual void updateParam(const PoseParam&);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    class ErasePoseMode: public IMode {
+    public:
+        ErasePoseMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
+        virtual void updateParam(const PoseParam&);
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    void updatePaint();
+    private:
+        void updatePaint();
 
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    QMatrix4x4 mTargetMtx;
-    QMatrix4x4 mTargetInvMtx;
-    KeyOwner& mKeyOwner;
-    RotateAllBones* mCommandRef;
-    util::Circle mBrush;
-    float mBrushPressure;
-    bool mIsBrushDrawing;
-};
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        QMatrix4x4 mTargetMtx;
+        QMatrix4x4 mTargetInvMtx;
+        KeyOwner& mKeyOwner;
+        RotateAllBones* mCommandRef;
+        util::Circle mBrush;
+        float mBrushPressure;
+        bool mIsBrushDrawing;
+    };
 
 } // namespace pose
 } // namespace ctrl

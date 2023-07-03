@@ -17,30 +17,25 @@
 #include "core/Serializer.h"
 #include "core/Deserializer.h"
 
-namespace core
-{
+namespace core {
 class HeightMap;
 
-class GridMesh : public LayerMesh
-{
+class GridMesh: public LayerMesh {
 public:
     typedef std::array<GLuint, 3> TriId;
 
-    struct Transition
-    {
-        Transition() : id(), pos() {}
+    struct Transition {
+        Transition(): id(), pos() {}
         TriId id;
         util::Triangle2DPos pos;
     };
 
-    struct Transitions
-    {
+    struct Transitions {
         QVector<Transition> data;
         QVector2D offset;
     };
 
-    class TransitionCreater
-    {
+    class TransitionCreater {
         QRect mRect;
         int mIndexCount;
         QScopedArrayPointer<GLuint> mIndices;
@@ -48,12 +43,8 @@ public:
         QPoint mTopLeft;
 
     public:
-        TransitionCreater(
-                const GridMesh& aPrev,
-                const QPoint& aTopLeft);
-        Transitions create(
-                const gl::Vector3* aNext, int aCount,
-                const QPoint& aTopLeft);
+        TransitionCreater(const GridMesh& aPrev, const QPoint& aTopLeft);
+        Transitions create(const gl::Vector3* aNext, int aCount, const QPoint& aTopLeft);
     };
 
     GridMesh();
@@ -65,9 +56,8 @@ public:
     void setOriginOffset(const QVector2D& aOffset) { mOriginOffset = aOffset; }
     void createFromImage(const void* aImagePtr, const QSize& aSize, int aCellPx);
     void writeHeightMap(const HeightMap& aMap, const QVector2D& aMinPos);
-    util::ArrayBlock<gl::Vector3> createFFD(
-            util::ArrayBlock<const gl::Vector3> aPrevFFD,
-            const Transitions& aTrans) const;
+    util::ArrayBlock<gl::Vector3>
+    createFFD(util::ArrayBlock<const gl::Vector3> aPrevFFD, const Transitions& aTrans) const;
 
     // from LayerMesh
     virtual GLenum primitiveMode() const { return GL_TRIANGLES; }
@@ -78,9 +68,7 @@ public:
     virtual GLsizei indexCount() const { return (GLsizei)mIndexCount; }
     virtual gl::BufferObject& getIndexBuffer();
     virtual MeshBuffer& getMeshBuffer();
-    virtual void resetArrayedConnection(
-            ArrayedConnectionList& aDest,
-            const gl::Vector3* aPositions) const;
+    virtual void resetArrayedConnection(ArrayedConnectionList& aDest, const gl::Vector3* aPositions) const;
     virtual Frame frameSign() const;
     virtual QVector2D originOffset() const { return mOriginOffset; }
 
@@ -108,9 +96,8 @@ private:
     void initializeVertexBuffers(int aVertexCount);
     void freeBuffers();
     void resetIndexBuffer();
-    std::pair<bool, gl::Vector3> gatherValidPositions(
-            int aIndex, const gl::Vector3* aPositions,
-            const bool* aValidity) const;
+    std::pair<bool, gl::Vector3>
+    gatherValidPositions(int aIndex, const gl::Vector3* aPositions, const bool* aValidity) const;
     bool hasConnection(int aArrayIndex, int aIdIndex) const;
     int connectionId(int aArrayIndex, int aIdIndex) const;
 

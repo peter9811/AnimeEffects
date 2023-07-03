@@ -14,27 +14,27 @@
 namespace ctrl {
 namespace bone {
 
-class BindNodesMode : public IMode
-{
-public:
-    BindNodesMode(core::Project& aProject, const Target& aTarget,
-                  KeyOwner& aKey, const GraphicStyle& aGraphicStyle);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    class BindNodesMode: public IMode {
+    public:
+        BindNodesMode(
+            core::Project& aProject, const Target& aTarget, KeyOwner& aKey, const GraphicStyle& aGraphicStyle
+        );
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    void bindNode(core::Bone2& aBone, core::ObjectNode& aNode);
-    void unbindNode(core::ObjectNode& aNode);
-    void renderChildNodes(const core::RenderInfo& aInfo, QPainter& aPainter);
-    core::Project& mProject;
-    const GraphicStyle& mGraphicStyle;
-    core::ObjectNode& mTarget;
-    KeyOwner& mKeyOwner;
-    QMatrix4x4 mTargetMtx;
-    QMatrix4x4 mTargetInvMtx;
-    Focuser mFocuser;
-    NodeSelector mNodeSelector;
-};
+    private:
+        void bindNode(core::Bone2& aBone, core::ObjectNode& aNode);
+        void unbindNode(core::ObjectNode& aNode);
+        void renderChildNodes(const core::RenderInfo& aInfo, QPainter& aPainter);
+        core::Project& mProject;
+        const GraphicStyle& mGraphicStyle;
+        core::ObjectNode& mTarget;
+        KeyOwner& mKeyOwner;
+        QMatrix4x4 mTargetMtx;
+        QMatrix4x4 mTargetInvMtx;
+        Focuser mFocuser;
+        NodeSelector mNodeSelector;
+    };
 
 } // namespace bone
 } // namespace ctrl

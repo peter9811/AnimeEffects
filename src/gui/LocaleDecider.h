@@ -5,11 +5,9 @@
 #include <QTranslator>
 #include "gui/LocaleParam.h"
 
-namespace gui
-{
+namespace gui {
 
-class LocaleDecider
-{
+class LocaleDecider {
 public:
     LocaleDecider();
     const QString& fontFamily() const { return mLocaleParam.fontFamily; }

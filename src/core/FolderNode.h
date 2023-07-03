@@ -7,13 +7,9 @@
 #include "core/HeightMap.h"
 #include "core/TimeLine.h"
 
-namespace core
-{
+namespace core {
 
-class FolderNode
-        : public ObjectNode
-        , public Renderer
-{
+class FolderNode: public ObjectNode, public Renderer {
 public:
     FolderNode(const QString& aName);
     ~FolderNode();
@@ -25,7 +21,7 @@ public:
     // default opacity
     void setDefaultOpacity(float aValue);
     // default hsv
-    void setDefaultHSV (QList<int>);
+    void setDefaultHSV(QList<int>);
 
     void grabHeightMap(HeightMap* aNode);
     const HeightMap* heightMap() const { return mHeightMap.data(); }
@@ -53,10 +49,8 @@ public:
     // from Renderer
     virtual void prerender(const RenderInfo&, const TimeCacheAccessor&);
     virtual void render(const RenderInfo&, const TimeCacheAccessor&);
-    virtual void renderClipper(
-            const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
-    virtual void renderHSV(
-            const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData);
+    virtual void renderClipper(const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
+    virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData);
     virtual void setClipped(bool aIsClipped);
     virtual bool isClipped() const { return mIsClipped; }
 

@@ -2,10 +2,17 @@ project(AnimeEffects)
 
 set(MACOSX_BUNDLE_ICON_FILE AnimeEffects.icns)
 
-set(app_icon_macos "../AnimeEffects.icns")
-set_source_files_properties(${app_icon_macos} PROPERTIES
-    MACOSX_PACKAGE_LOCATION "Resources"
-)
+if(WIN32)
+    set(app_icon "icon.rc")
+elseif(APPLE)
+    set(app_icon "../AnimeEffects.icns")
+    set_source_files_properties(${app_icon} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources"
+    )
+elseif(UNIX)
+    install(FILES ${CMAKE_SOURCE_DIR}/../dist/AnimeEffects.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps/)
+    install(FILES ${CMAKE_SOURCE_DIR}/../dist/AnimeEffects.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications/)
+endif()
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     ../XC.h
@@ -84,8 +91,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     tool/tool_PosePanel.cpp tool/tool_PosePanel.h
     tool/tool_SRTPanel.cpp tool/tool_SRTPanel.h
     tool/tool_ViewPanel.cpp tool/tool_ViewPanel.h
-    icon.rc
-    ${app_icon_macos}
+    ${app_icon}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE
     ..
@@ -122,4 +128,4 @@ install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/../data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

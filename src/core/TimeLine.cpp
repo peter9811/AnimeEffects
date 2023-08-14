@@ -202,7 +202,7 @@ bool TimeLine::serialize(Serializer& aOut) const {
     // signature
     auto pos = aOut.beginBlock(kSignature);
 
-    // non empty type count (including default keys)
+    // non-empty type count (including default keys)
     aOut.write(serializeTypeCount());
 
     // each map

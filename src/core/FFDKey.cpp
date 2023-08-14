@@ -18,7 +18,7 @@ void FFDKey::Data::alloc(int aVtxCount) {
 
 void FFDKey::Data::write(const gl::Vector3* aSrc, int aVtxCount) {
     XC_ASSERT(aVtxCount <= mVtxCount);
-    auto writeCount = aVtxCount <= mVtxCount ? aVtxCount : mVtxCount; // fail safe code
+    auto writeCount = aVtxCount <= mVtxCount ? aVtxCount : mVtxCount; // fail-safe code
     if (writeCount > 0) {
         memcpy(mBuffer.data(), aSrc, sizeof(gl::Vector3) * writeCount);
     }

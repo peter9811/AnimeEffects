@@ -45,7 +45,7 @@ MainDisplayWidget::MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent):
     mDevicePixelRatio(1.0) {
     this->setObjectName(QStringLiteral("MainDisplayWidget"));
     this->setMouseTracking(true);
-    this->setAutoFillBackground(false); // avoid auto fill on QPainter::begin()
+    this->setAutoFillBackground(false); // avoid autofill on QPainter::begin()
 
     // key binding
     if (mViaPoint.keyCommandMap()) {

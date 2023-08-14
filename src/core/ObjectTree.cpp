@@ -98,12 +98,12 @@ cmnd::Vector ObjectTree::createNodeDeleter(ObjectNode& aNode) {
     core::ObjectNode* parent = aNode.parent();
     XC_PTR_ASSERT(parent);
     if (!parent)
-        return commands; // fail safe code
+        return commands; // fail-safe code
 
     auto index = parent->children().indexOf(&aNode);
     XC_ASSERT(index >= 0);
     if (index < 0)
-        return commands; // fail safe code
+        return commands; // fail-safe code
 
     commands.push(BoneKeyUpdater::createNodeUnbinderForDelete(aNode));
     commands.push(ImageKeyUpdater::createResourceSleeperForDelete(aNode));

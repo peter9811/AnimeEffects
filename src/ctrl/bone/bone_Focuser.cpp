@@ -48,7 +48,7 @@ namespace bone {
         if (!mTopBones)
             return nullptr;
 
-        // find a overwrapped joint
+        // find an overwrapped joint
         for (auto topBone : *mTopBones) {
             Bone2::Iterator itr(topBone);
             while (itr.hasNext()) {
@@ -65,7 +65,7 @@ namespace bone {
 
         const QVector2D curPos = aCamera.toWorldPos(aPos);
 
-        // find a overwrapped connector
+        // find an overwrapped connector
         for (auto topBone : *mTopBones) {
             Bone2::Iterator itr(topBone);
             while (itr.hasNext()) {
@@ -98,7 +98,7 @@ namespace bone {
             }
         }
 
-        // find a overwrapped connector area
+        // find an overwrapped connector area
         for (auto topBone : *mTopBones) {
             // each bone
             Bone2::Iterator itr(topBone);

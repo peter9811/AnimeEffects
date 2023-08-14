@@ -64,14 +64,14 @@ namespace TimeLineUtil {
         if (aAdd == 0)
             return true;
 
-        // if next frames has a invalid value, nothing to do
+        // if next frames has an invalid value, nothing to do
         for (const TimeLineEvent::Target& target : mSortedTargets) {
             XC_ASSERT(!target.pos.isNull());
 
             const int current = (mCurrent == 0) ? target.pos.index() : target.subIndex;
             const int next = target.subIndex + aAdd;
 
-            // check out of range (fail safe code)
+            // check out of range (fail-safe code)
             if (next < aFrame.min() || aFrame.max() < next)
                 return false;
 

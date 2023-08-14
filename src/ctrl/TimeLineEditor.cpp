@@ -302,7 +302,7 @@ util::Easing::Param objToEasing(QJsonObject obj) {
 TimeKey* getKeyFromObj(QJsonObject obj, util::LifeLink::Pointee<Project> project, bool isFolder) {
     TimeKeyType type = TimeLine::getTimeKeyType(obj["Type"].toString());
     // We're losing precision for float casts from json strings because
-    // the cast rounds at the third decimal for some godforasken reason.
+    // the cast rounds at the third decimal for some godforsaken reason.
     switch (type) {
     case TimeKeyType_Move: {
         MoveKey* moveKey = new MoveKey;
@@ -346,12 +346,12 @@ TimeKey* getKeyFromObj(QJsonObject obj, util::LifeLink::Pointee<Project> project
         return opaKey;
     }
     case TimeKeyType_Bone: {
-        BoneKey* boneKey = new BoneKey;
+        auto* boneKey = new BoneKey;
         QJsonArray boneArray = obj["Bones"].toArray();
         QList<core::Bone2*> bones;
         for (QJsonValue bone : boneArray) {
             QJsonObject boneObj = bone.toObject();
-            core::Bone2* newBone = new core::Bone2;
+            auto* newBone = new core::Bone2;
             newBone->deserializeFromJson(boneObj, false);
             bones.append(newBone);
         }
@@ -417,7 +417,7 @@ TimeKey* getKeyFromObj(QJsonObject obj, util::LifeLink::Pointee<Project> project
         hsvKey->setFrame(obj["Frame"].toInt());
         return hsvKey;
     }
-    // If you end up here you done goofed.
+    // If you end up here you've done goofed.
     case TimeKeyType_TERM: {
         return nullptr;
     }
@@ -428,15 +428,15 @@ QList<TimeKey*> TimeLineEditor::getTypesFromCb(util::LifeLink::Pointee<Project> 
     QClipboard* qcb = QGuiApplication::clipboard(); // qDebug() << qcb->text();
     QJsonObject keyJson = QJsonDocument::fromJson(QByteArray::fromStdString(qcb->text().toStdString())).object();
     if (!isKeyJsonValid(keyJson)) {
-        return QList<TimeKey*>();
-    };
+        return {};
+    }
     QJsonArray keys = keyJson["Keys"].toArray(); // qDebug() << keys;
     QList<TimeKey*> keyList;
     for (QJsonValue key : keys) {
         auto keyObj = key.toObject();
         // To get all keys isFolder is set to false.
         TimeKey* pastedKey = getKeyFromObj(keyObj, project, false);
-        if (!(pastedKey == nullptr)) {
+        if (pastedKey != nullptr) {
             keyList.append(pastedKey);
         }
     }
@@ -449,15 +449,15 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
     QJsonObject keyJson = QJsonDocument::fromJson(QByteArray::fromStdString(qcb->text().toStdString())).object();
     if (!isKeyJsonValid(keyJson))
         return "Invalid Json";
-    QJsonArray keys = keyJson["Keys"].toArray(); // qDebug() << keys;
+    QJsonArray tlKeys = keyJson["Keys"].toArray(); // qDebug() << keys;
     QList<TimeKey*> keyList;
     int nullLog = 0;
     QStringList keyTypeIgnore{"Mesh", "Image", "FFD"};
     QStringList keyErrored;
-    for (QJsonValue key : keys) {
+    for (QJsonValue key : tlKeys) {
         auto keyObj = key.toObject();
         TimeKey* pastedKey = getKeyFromObj(keyObj, project, isFolder);
-        if (!(pastedKey == nullptr)) {
+        if (pastedKey != nullptr) {
             keyList.append(pastedKey);
         } else {
             auto keyType = TimeLine::getTimeKeyType(keyObj["Type"].toString());
@@ -467,8 +467,8 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
     }
     QString returnString;
     if (keyErrored.contains("FFD")) {
-        returnString = "FFD pasting is unsuported.";
-    } else if (keyList.size() == 0) {
+        returnString = "FFD pasting is unsupported.";
+    } else if (keyList.empty()) {
         returnString = "No keys to copy.";
     }
     // qDebug() << project.address->fileName();
@@ -476,7 +476,7 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
     int timelineHasKey = 0;
     int pastedKeys = 0;
 
-    if (keyList.size() != 0) {
+    if (!keyList.empty()) {
         for (int x = 0; x < keyList.size(); x++) {
             TimeKey* keyframe = keyList[x];
             int newFrame = keyframe->frame();
@@ -547,7 +547,7 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
         }
         returnString = "Successfully pasted [" + QString::number(pastedKeys) + "] key(s).";
     }
-    if (!(frameLessThanZero == 0) || !(timelineHasKey == 0) || !(nullLog == 0)) {
+    if (frameLessThanZero != 0 || timelineHasKey != 0 || nullLog != 0) {
         returnString.append(
             "\nNumber of errors is [" + QString::number(frameLessThanZero + timelineHasKey + nullLog) + "]"
         );
@@ -583,7 +583,7 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
             QStringList keys{"Move", "Rotate", "Scale", "Depth", "Opa", "Bone", "Pose", "HSV"};
             bool containsOtherKeys = false;
             int containsCount = 0;
-            for (QString key : keys) {
+            for (const QString& key : keys) {
                 if (keyErrored.contains(key)) {
                     containsOtherKeys = true;
                     containsCount++;
@@ -598,7 +598,7 @@ QString TimeLineEditor::pasteCbKeys(gui::obj::Item* objItem, util::LifeLink::Poi
                 returnString.append("\nNumber of types with a param error: " + QString::number(containsCount));
             }
             QString keysErrored = "\nKey types errored: ";
-            for (QString key : keyErrored) {
+            for (const QString& key : keyErrored) {
                 keysErrored.append(key + ";");
             }
             returnString.append(keysErrored);

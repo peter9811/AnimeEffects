@@ -93,7 +93,7 @@ void ResourceTreeWidget::setProject(core::Project* aProject) {
         }
     }
     XC_ASSERT(this->topLevelItemCount() == 0);
-    this->clear(); // fail safe code
+    this->clear(); // fail-safe code
 
     // update reference
     if (aProject) {

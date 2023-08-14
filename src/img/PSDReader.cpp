@@ -433,7 +433,7 @@ bool PSDReader::loadLayerAndMaskInfo() {
             if (checkFailure())
                 return false;
 
-            // fail safe code
+            // fail-safe code
             if (tellg() != maskEnd) {
                 skipTo(maskEnd);
             }
@@ -468,7 +468,7 @@ bool PSDReader::loadLayerAndMaskInfo() {
                 blendRangeLength -= 8;
             }
         }
-        skip(blendRangeLength); // fail safe code
+        skip(blendRangeLength); // fail-safe code
 
         // layer name
         unsigned char nameLength = readByte();
@@ -517,7 +517,7 @@ bool PSDReader::loadLayerAndMaskInfo() {
     }
     PSDREADER_DUMP("post cid : remain %d", (int)(layerInfoEnd - tellg()));
 
-    skipTo(layerInfoEnd); // fail safe code
+    skipTo(layerInfoEnd); // fail-safe code
 
     // global layer mask info
     if (endPos - tellg() > 0) {
@@ -556,7 +556,7 @@ bool PSDReader::loadLayerAndMaskInfo() {
         return false;
     }
 
-    skipTo(endPos); // fail safe code
+    skipTo(endPos); // fail-safe code
 
     return true;
 }
@@ -663,7 +663,7 @@ bool PSDReader::loadAdditionalLayerInfo(
         // to next
         length = aEndPos - tellg();
     }
-    skip(length); // fail safe code
+    skip(length); // fail-safe code
     if (checkFailure())
         return false;
 

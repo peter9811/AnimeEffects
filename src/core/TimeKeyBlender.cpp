@@ -790,7 +790,7 @@ void TimeKeyBlender::blendFFDKey(PositionType aPos, const TimeInfo& aTime) {
         XC_ASSERT(key0->parent() == areaKey);
         XC_ASSERT(key1->parent() == areaKey);
 
-        // alloc if need
+        // alloc if needed
         expans.ffd().alloc(count);
 
         // calculate easing

@@ -9,7 +9,7 @@
 
 namespace gl {
 
-// south east coordinate
+// south-east coordinate
 // triangulate a simple clockwise polygon by ear clipping algorithm.
 class Triangulator {
 public:

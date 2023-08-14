@@ -477,9 +477,6 @@ bool BoneKey::deserialize(Deserializer& aIn) {
 }
 
 bool BoneKey::deserializeBone(Deserializer& aIn, Bone2* aBone) {
-    if (!aBone)
-        return true;
-
     // child count
     const int childCount = aIn.getRead<int>();
     if (childCount < 0) {

@@ -214,6 +214,9 @@ public:
     Children& children() { return mChildren; }
     const Children& children() const { return mChildren; }
 
+    void setPrevSib(TreeNodeType* aSibling) { mPrevSib = aSibling; }
+
+    void setNextSib(TreeNodeType* aSibling) { mNextSib = aSibling; }
 
 private:
     friend Children;
@@ -228,9 +231,6 @@ private:
         mNextSib = aNext;
     }
 
-    void setPrevSib(TreeNodeType* aSibling) { mPrevSib = aSibling; }
-
-    void setNextSib(TreeNodeType* aSibling) { mNextSib = aSibling; }
 
     TreeNodeType* mParent;
     TreeNodeType* mPrevSib;

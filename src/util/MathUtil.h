@@ -9,7 +9,7 @@
 #include "util/Segment2D.h"
 
 namespace util {
-// north east coordinate
+// north-east coordinate
 class MathUtil {
 public:
     static QVector2D getCenter(const QRect& aRect) {

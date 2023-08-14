@@ -149,6 +149,9 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         QAction* saveProjectAs = new QAction(tr("Save Project As..."), this);
         QAction* closeProject = new QAction(tr("Close Project"), this);
         QAction* exportWindow = new QAction(tr("New Export..."), this);
+        {
+            // New export action goes here...
+        }
         QMenu* exportAs = new QMenu(tr("Export As"), this);
         {
             ctrl::VideoFormat gifFormat;
@@ -192,7 +195,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         fileMenu->addSeparator();
         fileMenu->addAction(saveProject);
         fileMenu->addAction(saveProjectAs);
-        // fileMenu->addAction(exportWindow);
+        fileMenu->addAction(exportWindow);
         fileMenu->addAction(exportAs->menuAction());
         fileMenu->addSeparator();
         fileMenu->addAction(closeProject);

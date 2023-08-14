@@ -218,7 +218,7 @@ void Stack::Macro::killListeners() {
 
 void Stack::Macro::grabListener(Listener* aListener) {
     XC_PTR_ASSERT(aListener);
-    if (aListener) // fail safe code
+    if (aListener) // fail-safe code
     {
         mListeners.push_back(aListener);
     }

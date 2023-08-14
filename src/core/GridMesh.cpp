@@ -310,7 +310,7 @@ GridMesh::createFFD(util::ArrayBlock<const gl::Vector3> aPrevFFD, const Transiti
     XC_ASSERT(aTrans.data.count() == mVertexCount);
 
     if (mVertexCount == 0 || aTrans.data.count() == 0) {
-        return util::ArrayBlock<gl::Vector3>(nullptr, 0); // fail safe code
+        return util::ArrayBlock<gl::Vector3>(nullptr, 0); // fail-safe code
     }
 
     auto count = aTrans.data.count();

@@ -22,7 +22,7 @@ namespace tool {
         const ctrl::SRTParam& param() const { return mParam; }
 
         // boost like signals
-        util::Signaler<void(bool)> onParamUpdated; // a argment will be true when the layout is changed.
+        util::Signaler<void(bool)> onParamUpdated; // argument will be true when the layout is changed.
 
     private:
         void createMode();

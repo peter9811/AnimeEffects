@@ -7,7 +7,7 @@
 #include "util/ArrayBlock.h"
 
 namespace util {
-// north east coordinate
+// north-east coordinate
 class CollDetect {
 public:
     static inline float getCross(const QVector2D& aV0, const QVector2D& aV1) {

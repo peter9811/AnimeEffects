@@ -224,7 +224,7 @@ int GridMeshCreator::CellTable::initCells(const Image& aImage) {
     mHeight = tableSize.height();
     mCells.reset(new Cell[mWidth * mHeight]);
 
-    // initialize each cells
+    // initialize each cell
     for (int y = 0; y < mHeight; ++y) {
         const bool zalign = (y % 2 == 0);
         const int line = y * mWidth;
@@ -558,7 +558,7 @@ void GridMeshCreator::reduceBurrs(VertexTable& aTable, const Image& aImage) {
         }
     }
 
-    // shorten reducing vectors if they are riding on a opaque pixels.
+    // shorten reducing vectors if they are riding on an opaque pixel.
     for (int y = 0; y < aTable.height(); ++y) {
         for (int x = 0; x < aTable.width(); ++x) {
             auto& vtx = aTable.vertex(x, y);

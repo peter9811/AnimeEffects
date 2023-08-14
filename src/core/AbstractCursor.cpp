@@ -46,7 +46,7 @@ bool AbstractCursor::setMousePressImpl(Qt::MouseButton aButton, QPoint aPos, con
     mEventType = Event_Press;
     mEventButton = getEventButtonFrom(aButton);
 
-    if (mEventButton != Button_TERM) // fail safe code
+    if (mEventButton != Button_TERM) // fail-safe code
     {
         if (mIsPressed[mEventButton]) // duplicate event?
         {
@@ -99,7 +99,7 @@ bool AbstractCursor::setMouseReleaseImpl(Qt::MouseButton aButton, QPoint aPos, c
     mEventButton = getEventButtonFrom(aButton);
 
     bool isDuplicateEvent = false;
-    if (mEventButton != Button_TERM) // fail safe code
+    if (mEventButton != Button_TERM) // fail-safe code
     {
         if (!mIsPressed[mEventButton]) // duplicate event?
         {
@@ -136,7 +136,7 @@ bool AbstractCursor::setMouseReleaseImpl(Qt::MouseButton aButton, QPoint aPos, c
 bool AbstractCursor::setMouseDoubleClick(QMouseEvent* aEvent, const CameraInfo& aCameraInfo) {
     setMousePress(aEvent, aCameraInfo);
 
-    if (mEventButton != Button_TERM) // fail safe code
+    if (mEventButton != Button_TERM) // fail-safe code
     {
         mIsDouble[mEventButton] = true;
     }

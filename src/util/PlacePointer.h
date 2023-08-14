@@ -17,7 +17,7 @@ class PlacePointer {
     Align mAlign;
     /*alignas(tObject)*/ char
         mBuffer[sizeof(tObject)]; // @todo msvc c++11 bug?
-                                  // Yukusai - Current builds use MinGW, has anyone run into this issue?
+                                  // The use of MSVC 2019+ is advised, specially now with support for CMake
 
 public:
     PlacePointer(): mAlign() { mAlign.ptr = NULL; }

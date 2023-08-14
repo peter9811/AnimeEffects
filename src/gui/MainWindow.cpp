@@ -328,9 +328,8 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     // autosave
 
     QSettings settings;
-    bool autosave = settings.value("generalsettings/projects/autosaveEnabled").isValid()
-        ? settings.value("generalsettings/projects/autosaveEnabled").toBool()
-        : false;
+    bool autosave = settings.value("generalsettings/projects/autosaveEnabled").isValid() &&
+        settings.value("generalsettings/projects/autosaveEnabled").toBool();
 
     if (autosave) {
         autosaveTimer = new QTimer(this);

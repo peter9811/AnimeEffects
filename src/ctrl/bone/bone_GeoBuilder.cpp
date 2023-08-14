@@ -65,11 +65,11 @@ namespace bone {
                 }
 
                 auto infl = boneGeo.intersected(mOutlines);
-                // erase a appended close vertex at last index of QPolygonF
+                // erase an appended close vertex at last index of QPolygonF
                 eraseUselessCloser(infl);
 
                 // erase divided influence polygons
-                // which doesn't contains a bone segment pos.
+                // which doesn't contain a bone segment pos.
                 eraseDividedPolygons(infl, seg.start);
 
                 if (!infl.empty()) {

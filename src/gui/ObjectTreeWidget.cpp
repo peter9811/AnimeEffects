@@ -122,7 +122,7 @@ void ObjectTreeWidget::setProject(core::Project* aProject) {
         }
     }
     XC_ASSERT(this->topLevelItemCount() == 0);
-    this->clear(); // fail safe code
+    this->clear(); // fail-safe code
 
     // update reference
     if (aProject) {
@@ -455,7 +455,7 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
         return;
     }
     obj::Item* objItem = obj::Item::cast(mActionItem);
-    bool objIsFolder = !bool(objItem->childCount() == 0);
+    bool objIsFolder = objItem->childCount() != 0;
     auto pasteReturnVal = mEditor->pasteCbKeys(objItem, mProject->pointee(), objIsFolder);
     // Result handler
     QStringList returnVal = pasteReturnVal.split("\n");

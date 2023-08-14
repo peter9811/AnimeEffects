@@ -147,7 +147,7 @@ bool PSDUtil::blendImage(
 
 #undef ImageBlendFunction
 
-    // all of the mode
+    // all the modes
     // 'pass' = pass through, 'norm' = normal, 'diss' = dissolve, 'dark' = darken,
     // 'mul ' = multiply, 'idiv' = color burn, 'lbrn' = linear burn, 'dkCl' = darker color,
     // 'lite' = lighten, 'scrn' = screen, 'div ' = color dodge, 'lddg' = linear dodge,

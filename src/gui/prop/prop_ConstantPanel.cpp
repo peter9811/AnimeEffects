@@ -105,7 +105,7 @@ namespace prop {
         XC_ASSERT(aTarget);
         XC_PTR_ASSERT(aTarget->renderer());
         if (!aTarget || !aTarget->renderer())
-            return; // fail safe code
+            return; // fail-safe code
 
         auto prev = aTarget->renderer()->blendMode();
         cmnd::ScopedMacro macro(aProject.commandStack(), CmndName::tr("update a blending mode"));
@@ -120,7 +120,7 @@ namespace prop {
         XC_ASSERT(aTarget);
         XC_PTR_ASSERT(aTarget->renderer());
         if (!aTarget || !aTarget->renderer())
-            return; // fail safe code
+            return; // fail-safe code
 
         const bool prev = aTarget->renderer()->isClipped();
         cmnd::ScopedMacro macro(aProject.commandStack(), CmndName::tr("update a clippping flag"));

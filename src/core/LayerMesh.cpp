@@ -20,7 +20,7 @@ void LayerMesh::MeshBuffer::reserve(int aVtxCount) {
     if (vtxCount != aVtxCount) {
         vtxCount = aVtxCount;
 
-        const int reserve = vtxCount > 0 ? vtxCount : 1; // fail safe code
+        const int reserve = vtxCount > 0 ? vtxCount : 1; // fail-safe code
         workPositions.resetData<gl::Vector3>(reserve, GL_STREAM_COPY);
         workXArrows.resetData<gl::Vector3>(reserve, GL_STREAM_COPY);
         workYArrows.resetData<gl::Vector3>(reserve, GL_STREAM_COPY);

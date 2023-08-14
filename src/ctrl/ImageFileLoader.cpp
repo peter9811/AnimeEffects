@@ -176,7 +176,7 @@ bool ImageFileLoader::loadPsd(core::Project& aProject, util::IProgressReporter& 
         return false;
     }
     aReporter.setProgress(1);
-    file->close(); // do not use any more
+    file->close(); // do not use anymore
 
     // update reporter
     aReporter.setSection(QCoreApplication::translate("Image Loader", "Building a Object Tree..."));

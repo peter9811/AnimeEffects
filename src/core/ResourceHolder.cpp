@@ -150,7 +150,7 @@ bool ResourceHolder::serializeNode(Serializer& aOut, const img::ResourceNode& aN
     // reference id
     aOut.writeID(&aNode);
 
-    // is layer
+    // is a layer
     aOut.write(aNode.data().isLayer());
 
     // rect
@@ -252,7 +252,7 @@ bool ResourceHolder::deserializeNode(Deserializer& aIn, img::ResourceNode** aDst
         return aIn.errored("failed to bind reference id");
     }
 
-    // is layer
+    // is a layer
     bool isLayer = false;
     aIn.read(isLayer);
     nodePtr->data().setIsLayer(isLayer);

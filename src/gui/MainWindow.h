@@ -25,6 +25,7 @@
 #include "gui/MouseSetting.h"
 #include "qfilesystemwatcher.h"
 #include "res/res_ResourceUpdater.h"
+#include "exportdiag.h"
 
 namespace gui {
 
@@ -78,6 +79,16 @@ private:
     int confirmProjectClosing(bool aCurrentOnly);
     void onProjectTabChanged(core::Project&);
     void onThemeUpdated(theme::Theme&);
+
+    bool onStartup = true;
+    bool themeChangeWarned = false;
+    bool exporting = false;
+    QWidget* exportWidget = new QWidget;
+    ExportWidgetUI* exportUI = new ExportWidgetUI;
+    void regenerateWidget(){
+        exportWidget = new QWidget;
+        exporting = false;
+    }
 
     ctrl::System& mSystem;
     GUIResources& mGUIResources;

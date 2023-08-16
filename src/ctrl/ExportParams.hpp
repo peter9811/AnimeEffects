@@ -1,5 +1,5 @@
-#ifndef ANIMEEFFECTS_EXPORTPARAMS_H
-#define ANIMEEFFECTS_EXPORTPARAMS_H
+#ifndef ANIMEEFFECTS_EXPORTPARAMS_HPP
+#define ANIMEEFFECTS_EXPORTPARAMS_HPP
 
 #include <QString>
 #include <QList>
@@ -32,12 +32,17 @@ namespace ctrl {
 
     struct ImageParams {};
 
-    class ExportParams {
-    public:
-        ExportParams();
-        QString name;
-        QString path;
-        exportTarget exportType;
-    };
-}
-#endif // ANIMEEFFECTS_EXPORTPARAMS_H
+    class exportParam {
+        public:
+            exportParam();
+            QString name;
+            QString path;
+            exportTarget exportType;
+        };
+    exportParam::exportParam() {
+        name = "New Project";
+        exportType = exportTarget::video;
+    }
+    }
+
+#endif // ANIMEEFFECTS_EXPORTPARAMS_HPP

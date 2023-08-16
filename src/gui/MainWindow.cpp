@@ -14,14 +14,13 @@
 #include "ctrl/Exporter.h"
 #include "gui/MainWindow.h"
 #include "gui/ExportDialog.h"
-// New Exporter
-#include "gui/exportdiag.h"
-//---//
 #include "gui/NewProjectDialog.h"
 #include "gui/ResourceDialog.h"
 #include "gui/ProjectHook.h"
 #include "gui/menu/menu_ProgressReporter.h"
 #include "util/NetworkUtil.h"
+// This thing is held by duct tape and string I swear...
+#include "ctrl/ExportParams.hpp"
 
 namespace {
 class EventSuspender {
@@ -462,6 +461,21 @@ void MainWindow::onThemeUpdated(theme::Theme& aTheme) {
     if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {
         mDockToolWidget->setStyleSheet(QTextStream(&stylesheet).readAll());
         stylesheet.close();
+    }
+
+    if (!onStartup && !themeChangeWarned) {
+        QMessageBox visualArtifactWarning;
+        visualArtifactWarning.setWindowTitle(tr("Theme changed"));
+        visualArtifactWarning.setText(
+            tr("There may be visual artifacts after changing themes, we recommend you restart "
+               "the application.")
+        );
+        visualArtifactWarning.setDefaultButton(QMessageBox::Ok);
+        visualArtifactWarning.exec();
+        themeChangeWarned = true;
+    }
+    else{
+        onStartup = false;
     }
 }
 
@@ -921,26 +935,29 @@ void MainWindow::onCloseProjectTriggered() {
 void MainWindow::onExportTriggered() {
     if (!mCurrent)
         return;
+    if (exporting) {
+        // In case the user minimized the widget and then forgot about it
+        exportWidget->showNormal();
+        return;
+    }
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
     // TODO , remember to insert the ffmpeg check here
-
     qDebug() << "Exporting";
-
-    QString aSuffix = "Testing";
-
-    // export param
-    ctrl::Exporter::CommonParam cparam;
-    ctrl::Exporter::ImageParam iparam;
+    // export params
+    auto* exParam = new ctrl::exportParam();
+    qDebug() << exParam->name;
+    exParam->name = "hi";
+    qDebug() << exParam->name;
     {
-        QScopedPointer<ExportClasses> dialog(new ExportClasses(*mCurrent, aSuffix, this));
-
-        dialog->exec();
-        if (dialog->result() != QDialog::Accepted)
-            return;
-
-        cparam = dialog->commonParam();
-        iparam = dialog->imageParam();
+        exporting = true;
+        exportWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+        // this is easier than using onClose signals lmao
+        connect(exportWidget, &QObject::destroyed, [=](){regenerateWidget();});
+        // TODO: Create signal slots for the export and cancel buttons
+        exportWidget->setParent(this, Qt::Window);
+        exportUI->setupUi(exportWidget);
+        exportWidget->show();
     }
 }
 

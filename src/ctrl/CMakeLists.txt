@@ -98,7 +98,7 @@ add_library(${PROJECT_NAME}
     time/time_Focuser.cpp time/time_Focuser.h
     time/time_Renderer.cpp time/time_Renderer.h
     time/time_Scaler.cpp time/time_Scaler.h
-        ExportParams.cpp ExportParams.h)
+        ExportParams.hpp)
 target_include_directories(${PROJECT_NAME} PUBLIC
     ..
 )

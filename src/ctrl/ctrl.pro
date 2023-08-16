@@ -209,4 +209,4 @@ HEADERS += \
     pose/pose_RotateBones.h \
     pose/pose_RigidBone.h \
     pose/pose_BoneDynamics.h \
-    ExportParams.cpp
+    ExportParams.hpp

@@ -112,8 +112,7 @@ SOURCES += \
     pose/pose_ErasePoseMode.cpp \
     pose/pose_RotateBones.cpp \
     pose/pose_RigidBone.cpp \
-    pose/pose_BoneDynamics.cpp \
-    ExportParams.cpp
+    pose/pose_BoneDynamics.cpp
 
 HEADERS += \
     Driver.h \

@@ -51,7 +51,7 @@ namespace ctrl {
     QStringList movEnc {
         "automatic", "libx264", "h264", "prores_ks", "utvideo"
     };
-    QstringList mp4Enc {
+    QStringList mp4Enc {
         "automatic", "mpeg4", "h264"
     };
     QStringList webmEnc {
@@ -159,7 +159,7 @@ namespace ctrl {
             }
 
             exportParam::exportParam(){
-                exportTarget = video;
+                exportTarget = exportTarget::video;
             }
 }
 

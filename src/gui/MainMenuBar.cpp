@@ -317,6 +317,30 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             detail += tr("OpenGL Version: ") + QString(this->mViaPoint.glDeviceInfo().version.c_str()) + "\n";
             detail += tr("Qt Version: ") + qtVersion + "\n";
             detail += tr("Format Version: ") + formatVersionString + "\n";
+            // Unicode Check
+            QRegExp nonAscii = QRegExp("[^\\x00-\\x7F]+");
+            QString hasUnicode = QApplication::applicationFilePath().contains(nonAscii)? "True" : "False";
+            detail += tr("Location Has Unicode: ") + hasUnicode  + "\n";
+            // Write Check
+            QFile file(QApplication::applicationDirPath() + R"(\data\shader\TestBlurVert.glsl)");
+            bool isWritable = true;
+            if (!file.open(QIODevice::WriteOnly)) { isWritable = false; }
+            else{ file.close(); }
+            QString isFolderWritable = isWritable? "True" : "False";
+            detail += tr("Location Is Writable: ") + isFolderWritable + "\n";
+            // FFmpeg Check
+            util::NetworkUtil networking;
+            QFileInfo ffmpeg_file;
+            QString ffmpeg;
+            if (networking.os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
+            else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
+            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
+            else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
+            bool fExists = networking.libExists(ffmpeg, "-version");
+            QString ffmpegType = ffmpeg == "ffmpeg"? "Process" : "File";
+            QString ffmpegReach = fExists? "True" : "False";
+            detail += tr("FFmpeg Reach Type: ") + ffmpegType + "\n";
+            detail += tr(QString("FFmpeg Reachable: " + ffmpegReach).toStdString().c_str());
             msgBox.setDetailedText(detail);
             msgBox.setStandardButtons(QMessageBox::Ok);
             msgBox.setDefaultButton(QMessageBox::Ok);

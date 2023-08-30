@@ -26,6 +26,7 @@ public:
     bool timeFormatHasChanged();
     bool autoSaveHasChanged();
     bool autoSaveDelayHasChanged();
+    bool autoFFmpegHasChanged();
     bool themeHasChanged();
     bool cbCopyHasChanged();
     bool keyDelayHasChanged();
@@ -56,6 +57,9 @@ private:
 
     int mAutoSaveDelay;
     QSpinBox* mAutoSaveDelayBox;
+
+    bool mAutoFFmpegCheck;
+    QCheckBox* mAutoFFmpegBox;
 
     bool bAutoCbCopy;
     QCheckBox* mAutoCbCopy;

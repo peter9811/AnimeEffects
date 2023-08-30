@@ -933,32 +933,184 @@ void MainWindow::onCloseProjectTriggered() {
 }
 
 void MainWindow::onExportTriggered() {
-    if (!mCurrent)
-        return;
-    if (exporting) {
-        // In case the user minimized the widget and then forgot about it
-        exportWidget->showNormal();
-        return;
-    }
-    // stop animation and main display rendering
+    if (!mCurrent) { return; }
+    if (exporting) { exportWidget->showNormal(); return; }
+    // Stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
-    // TODO , remember to insert the ffmpeg check here
-    qDebug() << "Exporting";
-    // export params
-    auto* exParam = new ctrl::exportParam();
-    qDebug() << exParam->name;
-    exParam->name = "hi";
-    qDebug() << exParam->name;
+    QGuiApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    // FFmpeg Check
+    QSettings settings;
+    settings.sync();
     {
-        exporting = true;
-        exportWidget->setAttribute(Qt::WA_DeleteOnClose,true);
-        // this is easier than using onClose signals lmao
-        connect(exportWidget, &QObject::destroyed, [=](){regenerateWidget();});
-        // TODO: Create signal slots for the export and cancel buttons
-        exportWidget->setParent(this, Qt::Window);
-        exportUI->setupUi(exportWidget);
-        exportWidget->show();
+        auto ffCheck = settings.value("ffmpeg_check");
+        if (!ffCheck.isValid() || ffCheck.toBool()) {
+            util::NetworkUtil networking;
+            QFileInfo ffmpeg_file;
+            QString ffmpeg;
+
+            if (networking.os() == "win") {
+                ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
+            } else {
+                ffmpeg_file = QFileInfo("./tools/ffmpeg");
+            }
+            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) {
+                ffmpeg = "ffmpeg";
+            } else {
+                ffmpeg = ffmpeg_file.absoluteFilePath();
+            }
+
+            // Exists?
+            bool fExists = networking.libExists(ffmpeg, "-version");
+
+            if (!fExists) {
+                QMessageBox message;
+                message.setIcon(QMessageBox::Warning);
+                message.setText(tr("FFmpeg was not found."));
+                auto infoText =
+                    tr("Exporting video requires FFmpeg to be installed on your computer, "
+                       "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
+                       "In the following screen you can instruct AnimeEffects to download and install it automatically for "
+                       "you, "
+                       "or you can download it by yourself and tell AnimeEffects where it is.");
+                message.setInformativeText(infoText);
+                message.setStandardButtons(QMessageBox::Ok);
+                message.setDefaultButton(QMessageBox::Ok);
+                message.exec();
+
+                auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+                generalSettingsDialog->selectTab(2);
+                generalSettingsDialog->exec();
+                return;
+            }
+            ffCheck.setValue(false);
+        }
     }
+    // Initialize GUI
+    exporting = true;
+    bool operationCancelled = true;
+    // Regenerate widget on destroy, it's destroyed on close to avoid a weird bug and to prevent memory leaks.
+    exportWidget->setAttribute(Qt::WA_DeleteOnClose,true);
+    connect(exportWidget, &QObject::destroyed, [=](){regenerateWidget();});
+    exportWidget->setParent(this, Qt::Window);
+    exportUI->setupUi(exportWidget, mGUIResources.getThemeLocation());
+
+    // Initialize export and general parameters
+    auto* exParam = new ctrl::exportParam();
+    ctrl::GeneralParams genParam;
+    genParam.nativeWidth = mCurrent->attribute().imageSize().width();
+    genParam.nativeHeight = mCurrent->attribute().imageSize().height();
+    genParam.nativeFPS = mCurrent->attribute().fps();
+    
+    // This one is only to stop IDE's from thinking operationCancelled will always be true //
+    if(exportUI->exportButton->isChecked()){ operationCancelled = false; }
+
+    // Connections
+    connect(exportUI->cancelButton, &QPushButton::clicked,
+            [=]() mutable {operationCancelled = true; exportWidget->close();});
+    connect(exportUI->exportButton, &QPushButton::clicked,
+            [=]() mutable {operationCancelled = false; exportWidget->close();});
+    connect(exportUI->setWidthNative, &QPushButton::clicked,
+            [=](){exportUI->widthSpinBox->setValue(genParam.nativeWidth);});
+    connect(exportUI->setHeightNative, &QPushButton::clicked,
+            [=](){exportUI->heightSpinBox->setValue(genParam.nativeHeight);});
+    connect(exportUI->setFPSNative, &QPushButton::clicked,
+            [=](){exportUI->fpsCombo->setValue(genParam.nativeFPS);});
+
+    // Get generics
+    QVariant aspectRatioV = settings.value("export_aspect_ratio");
+    QVariant intermediateTypeV = settings.value("export_intermediate_type");
+    QVariant allowTransparencyV = settings.value("export_allow_transparency");
+    QVariant allowCustomParamV = settings.value("export_allow_params");
+    QVariant allowInterParamV = settings.value("export_allow_param_inter");
+    QVariant allowPostParamV = settings.value("export_allow_param_post");
+    QVariant useCustomPaletteV = settings.value("export_custom_palette");
+
+    int aspectRatio = 0; int intermediateType = 0;
+    bool allowTransparency = false; bool allowCustomParam = false; bool allowInterParam = false ;
+    bool allowPostParam = false; bool useCustomPalette = false;
+
+    QVector<QVariant *> intValues {
+        &aspectRatioV, &intermediateTypeV
+    };
+    QVector<int> intVariables {
+        aspectRatio, intermediateType
+    };
+    QVector<QVariant *> boolValues {
+        &allowTransparencyV, &allowCustomParamV, &allowInterParamV, &allowPostParamV, &useCustomPaletteV
+    };
+    QVector<bool> boolVariables {
+        allowTransparency, allowCustomParam, allowInterParam, allowPostParam, useCustomPalette
+    };
+
+    int x = 0;
+    for(auto variant : intValues){
+        if(!variant->isValid()){
+            variant->setValue(0);
+            settings.sync();
+        }
+        intVariables[x] = variant->toInt();
+        x++;
+    }
+    x= 0;
+    for(auto variant : boolValues){
+        if(!variant->isValid()){
+            variant->setValue(false);
+            settings.sync();
+        }
+        boolVariables[x] = variant->toBool();
+        x++;
+    }
+
+    // Get formats
+
+    QVariant pixelFormatV = settings.value("export_pixel_format");
+    QVariant aviEncV = settings.value("export_avi_encoder");
+    QVariant mkvEncV = settings.value("export_mkv_encoder");
+    QVariant movEncV = settings.value("export_mov_encoder");
+    QVariant mp4EncV = settings.value("export_mp4_encoder");
+    QVariant webmEncV = settings.value("export_webm_encoder");
+    ctrl::pixelFormats pixelFormat;
+    ctrl::aviEncoders aviEncoder;
+    ctrl::mkvEncoders mkvEncoder;
+    ctrl::movEncoders movEncoder;
+    ctrl::mp4Encoders mp4Encoder;
+    ctrl::webmEncoders webmEncoder;
+
+    QVector<QVariant *> formats {
+        &pixelFormatV, &aviEncV, &mkvEncV, &movEncV, &mp4EncV, &webmEncV
+    };
+    for(auto variant: formats){
+        if(!variant->isValid()){
+            variant->setValue(QString("automatic"));
+            settings.sync();
+        }
+    }
+    pixelFormat = ctrl::getFormatAsEnum<ctrl::pixelFormats>(ctrl::exportTarget::pxFmt, pixelFormatV.toString());
+    aviEncoder = ctrl::getFormatAsEnum<ctrl::aviEncoders>(ctrl::exportTarget::aviEnc, aviEncV.toString());
+    mkvEncoder = ctrl::getFormatAsEnum<ctrl::mkvEncoders>(ctrl::exportTarget::mkvEnc, mkvEncV.toString());
+    movEncoder = ctrl::getFormatAsEnum<ctrl::movEncoders>(ctrl::exportTarget::movEnc, movEncV.toString());
+    mp4Encoder = ctrl::getFormatAsEnum<ctrl::mp4Encoders>(ctrl::exportTarget::mp4Enc, mp4EncV.toString());
+    webmEncoder = ctrl::getFormatAsEnum<ctrl::webmEncoders>(ctrl::exportTarget::webmEnc, webmEncV.toString());
+
+    // Get custom parameters
+    QVariant interPassV = settings.value("export_inter_params");
+    QVariant postPassV = settings.value("export_post_params");
+
+
+
+    // Value initialization
+    exportUI->widthSpinBox->setValue(genParam.nativeWidth);
+    exportUI->heightSpinBox->setValue(genParam.nativeHeight);
+    exportUI->fpsCombo->setValue(genParam.nativeFPS);
+    exportUI->lastFrameSpinBox->setValue(mCurrent->currentTimeInfo().frameMax);
+
+    // Execute and gather params
+    QGuiApplication::restoreOverrideCursor();
+    exportWidget->exec();
+    if (operationCancelled) { return; }
+
+
+    exParam->generalParams = genParam;
 }
 
 void MainWindow::onExportImageSeqTriggered(const QString& aSuffix) {
@@ -1023,7 +1175,7 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
     QSettings settings;
     settings.sync();
     auto ffCheck = settings.value("ffmpeg_check");
-    if (!ffCheck.isValid() || ffCheck == true) {
+    if (!ffCheck.isValid() || ffCheck.toBool()) {
         util::NetworkUtil networking;
         QFileInfo ffmpeg_file;
         QString ffmpeg;

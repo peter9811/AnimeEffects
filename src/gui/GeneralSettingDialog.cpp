@@ -251,19 +251,22 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         }
 
         auto isAutoSave = settings.value("generalsettings/projects/autosaveEnabled");
-        bAutoSave = isAutoSave.isValid() ? isAutoSave.toBool() : false;
+        bAutoSave = isAutoSave.isValid() && isAutoSave.toBool();
 
         auto isAutoSaveDelay = settings.value("generalsettings/projects/autosaveDelay");
         mAutoSaveDelay = isAutoSaveDelay.isValid() ? isAutoSaveDelay.toInt() : 5;
 
         auto isAutoCbCopy = settings.value("generalsettings/keys/autocb");
-        bAutoCbCopy = isAutoCbCopy.isValid() ? isAutoCbCopy.toBool() : true;
+        bAutoCbCopy = !isAutoCbCopy.isValid() || isAutoCbCopy.toBool();
+
+        auto isAutoFFmpegCheck = settings.value("ffmpeg_check");
+        mAutoFFmpegCheck = !isAutoFFmpegCheck.isValid() || isAutoFFmpegCheck.toBool();
 
         auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
         mKeyDelay = isKeyDelay.isValid() ? isKeyDelay.toInt() : 125;
 
         auto isAutoShowMesh = settings.value("generalsettings/tools/autoshowmesh");
-        bAutoShowMesh = isAutoShowMesh.isValid() ? isAutoShowMesh.toBool() : false;
+        bAutoShowMesh = isAutoShowMesh.isValid() && isAutoShowMesh.toBool();
     }
 
     auto form = new QFormLayout();
@@ -314,7 +317,6 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mAutoSave->setChecked(bAutoSave);
         projectSaving->addRow(tr("Automatically save your project : "), mAutoSave);
 
-
         mAutoSaveDelayBox = new QSpinBox();
         mAutoSaveDelayBox->setValue(mAutoSaveDelay);
         projectSaving->addRow(tr("Time in minutes between autosaves : "), mAutoSaveDelayBox);
@@ -326,6 +328,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             settings.setValue("generalsettings/tools/autoshowmesh", mAutoShowMesh->isChecked());
         });
         projectSaving->addRow(tr("Automatically show mesh when selecting FFD : "), mAutoShowMesh);
+
+        mAutoFFmpegBox = new QCheckBox();
+        mAutoFFmpegBox->setChecked(mAutoFFmpegCheck);
+        projectSaving->addRow(tr("Check for FFmpeg on export : "), mAutoFFmpegBox);
 
         mResetButton = new QPushButton(tr("Reset recent files list"));
         mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
@@ -371,11 +377,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mResetKeybindsButton->setToolTip(tr("Reset all keybinds, a restart is required."));
         connect(mResetKeybindsButton, &QPushButton::clicked, [=]() {
             QSettings settings;
-            settings.setValue(
-                "keybindReset",
-                settings.value("keybindReset").isValid()
-                    ? settings.value("keybindReset").toBool() ? false : true /*  _(:з)∠)_ */
-                    : true
+            settings.setValue("keybindReset",
+                !settings.value("keybindReset").isValid() || !settings.value("keybindReset").toBool()
             );
             MainWindow::showInfoPopup(
                 tr("Keybinds reset status"),
@@ -425,7 +428,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             QProcess gif;
             gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
             gif.waitForFinished();
-            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo("gif.gif").exists() ? true : false;
+            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo("gif.gif").exists();
             qDebug() << "Gif exists: " << QFileInfo("gif.gif").exists()
                      << "| Gif remove: " << QFile("gif.gif").remove();
             gif.deleteLater();
@@ -442,7 +445,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             QProcess palettegen;
             palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"}, QProcess::ReadWrite);
             palettegen.waitForFinished();
-            bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo("palette.png").exists() ? true : false;
+            bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo("palette.png").exists();
             if (!pGenSuccess) {
                 ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
                 ffmpegNotif.setText(
@@ -616,6 +619,8 @@ bool GeneralSettingDialog::autoSaveHasChanged() { return (bAutoSave != mAutoSave
 
 bool GeneralSettingDialog::autoSaveDelayHasChanged() { return (mAutoSaveDelay != mAutoSaveDelayBox->value()); }
 
+bool GeneralSettingDialog::autoFFmpegHasChanged() { return (mAutoFFmpegCheck != mAutoFFmpegBox->isChecked()); }
+
 bool GeneralSettingDialog::cbCopyHasChanged() { return (bAutoCbCopy != mAutoCbCopy->isChecked()); }
 
 QString GeneralSettingDialog::theme() { return mThemeBox->currentData().toString(); }
@@ -644,6 +649,9 @@ void GeneralSettingDialog::saveSettings() {
     }
     if (autoSaveDelayHasChanged()) {
         settings.setValue("generalsettings/projects/autosaveDelay", mAutoSaveDelayBox->value());
+    }
+    if (autoFFmpegHasChanged()){
+        settings.setValue("ffmpeg_check", mAutoFFmpegBox->isChecked());
     }
     if (cbCopyHasChanged()) {
         settings.setValue("generalsettings/keys/autocb", mAutoCbCopy->isChecked());

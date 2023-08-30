@@ -83,10 +83,11 @@ private:
     bool onStartup = true;
     bool themeChangeWarned = false;
     bool exporting = false;
-    QWidget* exportWidget = new QWidget;
+    QDialog* exportWidget = new QDialog;
     ExportWidgetUI* exportUI = new ExportWidgetUI;
     void regenerateWidget(){
-        exportWidget = new QWidget;
+        exportWidget = new QDialog;
+        // Allows for the export UI to be created
         exporting = false;
     }
 

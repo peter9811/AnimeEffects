@@ -84,12 +84,14 @@ private:
     bool themeChangeWarned = false;
     bool exporting = false;
     QDialog* exportWidget = new QDialog;
+    QDialog* gpDiag = new QDialog;
     ExportWidgetUI* exportUI = new ExportWidgetUI;
     void regenerateWidget(){
         exportWidget = new QDialog;
         // Allows for the export UI to be created
         exporting = false;
     }
+    void regenerateGeneralPurposeDiag(){ gpDiag = new QDialog; }
 
     ctrl::System& mSystem;
     GUIResources& mGUIResources;

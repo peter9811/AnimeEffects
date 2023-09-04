@@ -4,9 +4,9 @@
 #include "core/Project.h"
 
 namespace {
-static const int kParaThreadCount = 4;
-static const int kStandardFps = 60;
-static const int kDefaultMaxFrame = 60 * 10;
+const int kParaThreadCount = 4;
+const int kStandardFps = 24;
+const int kDefaultMaxFrame = 60 * 10;
 } // namespace
 
 namespace core {

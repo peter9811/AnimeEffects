@@ -29,6 +29,8 @@
 #include <QtWidgets/QWidget>
 #include <QDir>
 #include <QFileDialog>
+#include <QPlainTextEdit>
+#include <QDialogButtonBox>
 
 QT_BEGIN_NAMESPACE
 
@@ -54,7 +56,7 @@ public:
     QCheckBox *customPaletteCheckBox;
     QSpinBox *firstFrameSpinBox;
     QSpinBox *heightSpinBox;
-    QCheckBox *forePipeCheckBox;
+    QCheckBox * forcePipeCheckBox;
     QComboBox *intermediateTypeCombo;
     QLabel *widthLabel;
     QRadioButton *oneToOneRatio;
@@ -108,7 +110,7 @@ public:
     QLabel *postLabel;
     QFrame *customLine;
     QPushButton *addPresetToIntermediate;
-    QPushButton *AddPressetToPost;
+    QPushButton * addPresetToPost;
     QLabel *presetLabel;
     QComboBox *presetCombo;
     QPushButton *removePreset;
@@ -120,10 +122,22 @@ public:
     QHBoxLayout *exportLayout;
     QPushButton *exportButton;
     QPushButton *cancelButton;
-
     QDir paletteDir;
     QVector<QSpinBox *> initialFrames;
     QVector<QSpinBox *> lastFrames;
+
+    // Ask UI
+    QGridLayout *gl;
+    QGridLayout *gl_2;
+    QScrollArea *scrollArea;
+    QWidget *scrollWidget;
+    QDialogButtonBox *yesNoBox;
+    QSpacerItem *hS;
+    QLabel *questionLabel;
+    QSpacerItem *hS2;
+    QPlainTextEdit *textEdit;
+    bool askOperationCancelled = false;
+
 
     static QString tr(const QString& input){
         return QCoreApplication::translate("ExportDiag", input.toStdString().c_str());
@@ -255,10 +269,10 @@ public:
 
         gridLayout_2->addWidget(heightSpinBox, 4, 1, 1, 1);
 
-        forePipeCheckBox = new QCheckBox(globalParamScrollContents);
-        forePipeCheckBox->setObjectName(QString::fromUtf8("forePipeCheckBox"));
+        forcePipeCheckBox = new QCheckBox(globalParamScrollContents);
+        forcePipeCheckBox->setObjectName(QString::fromUtf8("forcePipeCheckBox"));
 
-        gridLayout_2->addWidget(forePipeCheckBox, 14, 0, 1, 2);
+        gridLayout_2->addWidget(forcePipeCheckBox, 14, 0, 1, 2);
 
         intermediateTypeCombo = new QComboBox(globalParamScrollContents);
         intermediateTypeCombo->addItem(QString());
@@ -639,10 +653,10 @@ public:
 
         customParamLayout->addWidget(addPresetToIntermediate, 7, 1, 1, 1);
 
-        AddPressetToPost = new QPushButton(customParam);
-        AddPressetToPost->setObjectName(QString::fromUtf8("AddPressetToPost"));
+        addPresetToPost = new QPushButton(customParam);
+        addPresetToPost->setObjectName(QString::fromUtf8("addPresetToPost"));
 
-        customParamLayout->addWidget(AddPressetToPost, 7, 2, 1, 1);
+        customParamLayout->addWidget(addPresetToPost, 7, 2, 1, 1);
 
         presetLabel = new QLabel(customParam);
         presetLabel->setObjectName(QString::fromUtf8("presetLabel"));
@@ -774,7 +788,7 @@ public:
         insertFrameRangeButton->setText(QCoreApplication::translate("exportWidget", "Insert range", nullptr));
         removeFrameRangeButton->setText(QCoreApplication::translate("exportWidget", "Remove range", nullptr));
         customPaletteCheckBox->setText(QCoreApplication::translate("exportWidget", "Custom palette", nullptr));
-        forePipeCheckBox->setText(QCoreApplication::translate("exportWidget", "Force piped export ", nullptr));
+        forcePipeCheckBox->setText(QCoreApplication::translate("exportWidget", "Force piped export ", nullptr));
         intermediateTypeCombo->setItemText(0, QCoreApplication::translate("exportWidget", "PNG", nullptr));
         intermediateTypeCombo->setItemText(1, QCoreApplication::translate("exportWidget", "BMP", nullptr));
         intermediateTypeCombo->setItemText(2, QCoreApplication::translate("exportWidget", "JPG", nullptr));
@@ -854,7 +868,7 @@ public:
         intermediateLabel->setText(QCoreApplication::translate("exportWidget", "<html><head/><body><p align=\"center\">Intermediate:</p></body></html>", nullptr));
         postLabel->setText(QCoreApplication::translate("exportWidget", "<html><head/><body><p align=\"center\">Post:</p></body></html>", nullptr));
         addPresetToIntermediate->setText(QCoreApplication::translate("exportWidget", "Add to Intermediate pass", nullptr));
-        AddPressetToPost->setText(QCoreApplication::translate("exportWidget", "Add to Post", nullptr));
+        addPresetToPost->setText(QCoreApplication::translate("exportWidget", "Add to Post", nullptr));
         presetLabel->setText(QCoreApplication::translate("exportWidget", "<html><head/><body><p align=\"center\">Presets:</p></body></html>", nullptr));
 
         removePreset->setText(QCoreApplication::translate("exportWidget", "Remove preset", nullptr));
@@ -871,6 +885,48 @@ public:
 
     void errorHandler(){
         Q_UNIMPLEMENTED();
+    }
+    void askForTextUI(QWidget *windowWidget, const QString& questionLbl){
+        askOperationCancelled = false;
+        windowWidget->resize(400, 200);
+        gl = new QGridLayout(windowWidget);
+        gl->setObjectName(QString::fromUtf8("gridLayout"));
+        scrollArea = new QScrollArea(windowWidget);
+        scrollArea->setObjectName(QString::fromUtf8("scrollArea"));
+        scrollArea->setWidgetResizable(true);
+        scrollWidget = new QWidget();
+        scrollWidget->setObjectName(QString::fromUtf8("scrollWidget"));
+        scrollWidget->setGeometry(QRect(0, 0, 376, 276));
+        gl_2 = new QGridLayout(scrollWidget);
+        gl_2->setObjectName(QString::fromUtf8("gridLayout_2"));
+        yesNoBox = new QDialogButtonBox(scrollWidget);
+        yesNoBox->setObjectName(QString::fromUtf8("buttonBox"));
+        yesNoBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+        gl_2->addWidget(yesNoBox, 2, 1, 1, 1);
+        hS = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        gl_2->addItem(hS, 0, 0, 1, 1);
+        questionLabel = new QLabel(scrollWidget);
+        questionLabel->setObjectName(QString::fromUtf8("questionLabel"));
+        questionLabel->setAlignment(Qt::AlignCenter);
+        questionLabel->setText(questionLbl);
+        gl_2->addWidget(questionLabel, 0, 1, 1, 1);
+        hS2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        gl_2->addItem(hS2, 0, 2, 1, 1);
+        textEdit = new QPlainTextEdit(scrollWidget);
+        textEdit->setObjectName(QString::fromUtf8("textEdit"));
+        gl_2->addWidget(textEdit, 1, 0, 1, 3);
+        scrollArea->setWidget(scrollWidget);
+        gl->addWidget(scrollArea, 0, 0, 1, 1);
+        QMetaObject::connectSlotsByName(windowWidget);
+
+        QWidget::connect(yesNoBox, &QDialogButtonBox::accepted, [=]() mutable{
+            if (!textEdit->toPlainText().isEmpty()) {
+                askOperationCancelled = false; windowWidget->close();
+            }
+        });
+        QWidget::connect(yesNoBox, &QDialogButtonBox::rejected, [=]() mutable{
+            askOperationCancelled = true; windowWidget->close();
+        });
     }
 };
 

@@ -67,7 +67,7 @@ namespace ctrl {
         int nativeHeight = 0;
         int exportWidth = 0;
         int exportHeight = 0;
-        targetRatio targetRatio = keep;
+        targetRatio aspectRatio = keep;
         int nativeFPS = 1;
         int fps = 24;
         int bitrate = 0;
@@ -96,7 +96,7 @@ namespace ctrl {
     class exportParam {
         public:
             exportParam();
-            exportTarget exportTarget;
+            exportTarget exportType;
             GeneralParams generalParams;
             // One of these will be ignored on export //
             VideoParams videoParams;
@@ -127,24 +127,25 @@ namespace ctrl {
                 return nullptr;
             }
             template <typename formatEnum>
-            formatEnum getFormatAsEnum(exportTarget target, QString format){
+            formatEnum getFormatAsEnum(exportTarget target, const QString& format){
                 switch (target){
                 case exportTarget::video:
                     return static_cast<formatEnum>(videoFormats.indexOf(format));
                 case exportTarget::image:
-                    return static_cast<formatEnum> (imageFormats.indexOf(format));
+                    return static_cast<formatEnum>(imageFormats.indexOf(format));
                 case exportTarget::pxFmt:
-                    return static_cast<formatEnum> (pxFormats.indexOf(format));
+                    return static_cast<formatEnum>(pxFormats.indexOf(format));
                 case exportTarget::aviEnc:
-                    return static_cast<formatEnum> (aviEnc.indexOf(format));
+                    return static_cast<formatEnum>(aviEnc.indexOf(format));
                 case exportTarget::mkvEnc:
-                    return static_cast<formatEnum> (mkvEnc.indexOf(format));
+                    return static_cast<formatEnum>(mkvEnc.indexOf(format));
                 case exportTarget::movEnc:
-                    return static_cast<formatEnum> (movEnc.indexOf(format));
+                    return static_cast<formatEnum>(movEnc.indexOf(format));
                 case exportTarget::mp4Enc:
-                    return static_cast<formatEnum> (mp4Enc.indexOf(format));
+                    return static_cast<formatEnum>(mp4Enc.indexOf(format));
                 case exportTarget::webmEnc:
-                    return static_cast<formatEnum> (webmEnc.indexOf(format));
+                    return static_cast<formatEnum>(webmEnc.indexOf(format));
+                default: return static_cast<formatEnum> (0);
                 }
             }
 
@@ -152,14 +153,11 @@ namespace ctrl {
                 QStringList formatsWithTransparency{
                     "apng", "gif", "png", "webp", "webm", "tiff"
                 };
-                if (formatsWithTransparency.contains(format)){
-                    return true;
-                }
+                if (formatsWithTransparency.contains(format)){ return true; }
                 return false;
             }
 
-            exportParam::exportParam(){
-                exportTarget = exportTarget::video;
+            exportParam::exportParam(){ exportType = exportTarget::video;
             }
 }
 

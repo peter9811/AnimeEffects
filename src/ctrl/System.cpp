@@ -11,7 +11,7 @@
 using namespace core;
 
 namespace {
-static const int kStandardFps = 60;
+static const int kStandardFps = 24;
 }
 
 namespace ctrl {

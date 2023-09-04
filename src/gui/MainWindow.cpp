@@ -948,16 +948,10 @@ void MainWindow::onExportTriggered() {
             QFileInfo ffmpeg_file;
             QString ffmpeg;
 
-            if (networking.os() == "win") {
-                ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
-            } else {
-                ffmpeg_file = QFileInfo("./tools/ffmpeg");
-            }
-            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) {
-                ffmpeg = "ffmpeg";
-            } else {
-                ffmpeg = ffmpeg_file.absoluteFilePath();
-            }
+            if (networking.os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
+            else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
+            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
+            else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
 
             // Exists?
             bool fExists = networking.libExists(ffmpeg, "-version");
@@ -994,27 +988,17 @@ void MainWindow::onExportTriggered() {
     exportWidget->setParent(this, Qt::Window);
     exportUI->setupUi(exportWidget, mGUIResources.getThemeLocation());
 
+    // Initialize general purpose dialog
+    gpDiag->setAttribute(Qt::WA_DeleteOnClose,true);
+    connect(gpDiag, &QObject::destroyed, [=](){regenerateGeneralPurposeDiag();});
+    gpDiag->setParent(exportWidget, Qt::Window);
+
     // Initialize export and general parameters
     auto* exParam = new ctrl::exportParam();
     ctrl::GeneralParams genParam;
     genParam.nativeWidth = mCurrent->attribute().imageSize().width();
     genParam.nativeHeight = mCurrent->attribute().imageSize().height();
     genParam.nativeFPS = mCurrent->attribute().fps();
-    
-    // This one is only to stop IDE's from thinking operationCancelled will always be true //
-    if(exportUI->exportButton->isChecked()){ operationCancelled = false; }
-
-    // Connections
-    connect(exportUI->cancelButton, &QPushButton::clicked,
-            [=]() mutable {operationCancelled = true; exportWidget->close();});
-    connect(exportUI->exportButton, &QPushButton::clicked,
-            [=]() mutable {operationCancelled = false; exportWidget->close();});
-    connect(exportUI->setWidthNative, &QPushButton::clicked,
-            [=](){exportUI->widthSpinBox->setValue(genParam.nativeWidth);});
-    connect(exportUI->setHeightNative, &QPushButton::clicked,
-            [=](){exportUI->heightSpinBox->setValue(genParam.nativeHeight);});
-    connect(exportUI->setFPSNative, &QPushButton::clicked,
-            [=](){exportUI->fpsCombo->setValue(genParam.nativeFPS);});
 
     // Get generics
     QVariant aspectRatioV = settings.value("export_aspect_ratio");
@@ -1024,22 +1008,19 @@ void MainWindow::onExportTriggered() {
     QVariant allowInterParamV = settings.value("export_allow_param_inter");
     QVariant allowPostParamV = settings.value("export_allow_param_post");
     QVariant useCustomPaletteV = settings.value("export_custom_palette");
+    QVariant forcePipeV = settings.value("export_force_piped");
 
     int aspectRatio = 0; int intermediateType = 0;
     bool allowTransparency = false; bool allowCustomParam = false; bool allowInterParam = false ;
-    bool allowPostParam = false; bool useCustomPalette = false;
+    bool allowPostParam = false; bool useCustomPalette = false; bool forcePipe = false;
 
-    QVector<QVariant *> intValues {
-        &aspectRatioV, &intermediateTypeV
-    };
-    QVector<int> intVariables {
-        aspectRatio, intermediateType
-    };
+    QVector<QVariant *> intValues { &aspectRatioV, &intermediateTypeV };
+    QVector<int> intVariables{ aspectRatio, intermediateType };
     QVector<QVariant *> boolValues {
-        &allowTransparencyV, &allowCustomParamV, &allowInterParamV, &allowPostParamV, &useCustomPaletteV
+        &allowTransparencyV, &allowCustomParamV, &allowInterParamV, &allowPostParamV, &useCustomPaletteV, &forcePipeV
     };
     QVector<bool> boolVariables {
-        allowTransparency, allowCustomParam, allowInterParam, allowPostParam, useCustomPalette
+        allowTransparency, allowCustomParam, allowInterParam, allowPostParam, useCustomPalette, forcePipe
     };
 
     int x = 0;
@@ -1093,20 +1074,105 @@ void MainWindow::onExportTriggered() {
     webmEncoder = ctrl::getFormatAsEnum<ctrl::webmEncoders>(ctrl::exportTarget::webmEnc, webmEncV.toString());
 
     // Get custom parameters
-    QVariant interPassV = settings.value("export_inter_params");
-    QVariant postPassV = settings.value("export_post_params");
-
-
+    QVariant customParamsV = settings.value("export_custom_params");
+    QVariant customParamsStringsV = settings.value("export_custom_params_str");
+    QStringList *customParams =
+        customParamsV.isValid()? new QStringList(customParamsV.toStringList()) : new QStringList();
+    QStringList *customParamsStrings =
+        customParamsStringsV.isValid()? new QStringList(customParamsStringsV.toStringList()) : new QStringList();
 
     // Value initialization
+    switch(aspectRatio){
+        case 0: exportUI->oneToOneRatio->setChecked(true); break;
+        case 1: exportUI->keepAspectRatio->setChecked(true); break;
+        case 2: exportUI->customRatio->setChecked(true); break;
+        default: break;
+    }
+    exportUI->intermediateTypeCombo->setCurrentIndex(intermediateType);
+    exportUI->transparencyCheckBox->setChecked(allowTransparency);
+    exportUI->forcePipeCheckBox->setChecked(forcePipe);
+    exportUI->allowParamsCheckBox->setChecked(allowCustomParam);
+    exportUI->intermediateParamCheckBox->setChecked(allowInterParam);
+    exportUI->postParamCheckBox->setChecked(allowPostParam);
+    exportUI->customPaletteCheckBox->setChecked(useCustomPalette);
+    exportUI->pixelFormatCombo->setCurrentIndex(static_cast<int>(pixelFormat));
+    exportUI->aviCombo->setCurrentIndex(static_cast<int>(aviEncoder));
+    exportUI->mkvCombo->setCurrentIndex(static_cast<int>(mkvEncoder));
+    exportUI->movCombo->setCurrentIndex(static_cast<int>(movEncoder));
+    exportUI->mp4Combo->setCurrentIndex(static_cast<int>(mp4Encoder));
+    exportUI->webmCombo->setCurrentIndex(static_cast<int>(webmEncoder));
+    exportUI->presetCombo->addItems(*customParamsStrings);
+    // Project specific values
     exportUI->widthSpinBox->setValue(genParam.nativeWidth);
     exportUI->heightSpinBox->setValue(genParam.nativeHeight);
     exportUI->fpsCombo->setValue(genParam.nativeFPS);
     exportUI->lastFrameSpinBox->setValue(mCurrent->currentTimeInfo().frameMax);
+    // This one is only to stop IDE's from thinking operationCancelled will always be true //
+    if(exportUI->exportButton->isChecked()){ operationCancelled = false; }
+    // Connections, yes I know...
+    connect(exportUI->cancelButton, &QPushButton::clicked, [=]() mutable{
+        operationCancelled = true; exportWidget->close();
+    });
+    connect(exportUI->exportButton, &QPushButton::clicked, [=]() mutable{
+        operationCancelled = false; exportWidget->close();
+    });
+    connect(exportUI->setWidthNative, &QPushButton::clicked, [=](){
+        exportUI->widthSpinBox->setValue(genParam.nativeWidth);
+    });
+    connect(exportUI->setHeightNative, &QPushButton::clicked, [=](){
+        exportUI->heightSpinBox->setValue(genParam.nativeHeight);
+    });
+    connect(exportUI->setFPSNative, &QPushButton::clicked, [=](){
+        exportUI->fpsCombo->setValue(genParam.nativeFPS);
+    });
+    connect(exportUI->saveIntermediateParamAsPreset, &QToolButton::clicked, [=]() mutable{
+        regenerateGeneralPurposeDiag();
+        customParams->append(exportUI->intermediateParamTextEdit->toPlainText());
+        exportUI->askForTextUI(gpDiag, tr("Select your preset name"));
+        gpDiag->exec();
+        if(exportUI->askOperationCancelled){
+            return;
+        }
+        customParamsStrings->append(exportUI->textEdit->toPlainText());
+        exportUI->presetCombo->addItem(exportUI->textEdit->toPlainText());
+        exportUI->presetCombo->setCurrentIndex(customParamsStrings->indexOf(exportUI->textEdit->toPlainText()));
+    });
+    connect(exportUI->savePostParamAsPreset, &QToolButton::clicked, [=]() mutable{
+        regenerateGeneralPurposeDiag();
+        customParams->append(exportUI->postParamTextEdit->toPlainText());
+        exportUI->askForTextUI(gpDiag, tr("Select your preset name"));
+        gpDiag->exec();
+        if(exportUI->askOperationCancelled){
+            return;
+        }
+        customParamsStrings->append(exportUI->textEdit->toPlainText());
+        exportUI->presetCombo->addItem(exportUI->textEdit->toPlainText());
+        exportUI->presetCombo->setCurrentIndex(customParamsStrings->indexOf(exportUI->textEdit->toPlainText()));
+    });
+    connect(exportUI->removePreset, &QPushButton::clicked, [=]() mutable{
+        int index = exportUI->presetCombo->currentIndex();
+        customParams->removeAt(index);
+        customParamsStrings->removeAt(index);
+        exportUI->presetCombo->removeItem(index);
+    });
+    connect(exportUI->addPresetToIntermediate, &QPushButton::clicked, [=](){
+        int index = exportUI->presetCombo->currentIndex();
+        if(!customParams->isEmpty() && customParams->length() >= index){
+                exportUI->intermediateParamTextEdit->append(customParams->at(index));
+            }
+    });
+    connect(exportUI->addPresetToPost, &QPushButton::clicked, [=](){
+        int index = exportUI->presetCombo->currentIndex();
+        if(!customParams->isEmpty() && customParams->length() >= index){
+            exportUI->postParamTextEdit->append(customParams->at(index));
+        }
+    });
 
     // Execute and gather params
     QGuiApplication::restoreOverrideCursor();
     exportWidget->exec();
+
+    // TODO: remember to save all the new settings
     if (operationCancelled) { return; }
 
 
@@ -1126,7 +1192,7 @@ void MainWindow::onExportImageSeqTriggered(const QString& aSuffix) {
     // make sure existing
     if (dirName.isEmpty())
         return;
-    if (!QFileInfo(dirName).exists())
+    if (!QFileInfo::exists(dirName))
         return;
 
     // export param

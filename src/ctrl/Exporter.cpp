@@ -364,7 +364,7 @@ Exporter::Result Exporter::execute() {
             return result;
     }
 
-    while (1) {
+    while (true) {
         if (!update())
             break;
 

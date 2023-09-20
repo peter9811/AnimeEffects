@@ -40,17 +40,17 @@ QByteArray NetworkUtil::getByteArray(QString aURL) {
     return response;
 }
 
-QJsonDocument NetworkUtil::getJsonFrom(QString aURL) {
+QJsonDocument NetworkUtil::getJsonFrom(const QString& aURL) {
     QByteArray data = getByteArray(aURL);
     if (data == "NetworkUtil Error") {
-        return QJsonDocument();
+        return {};
     }
     return QJsonDocument::fromJson(data.data());
 }
 
-bool NetworkUtil::libExists(QString aLib, QString versionType) {
+bool NetworkUtil::libExists(const QString& aLib, QString versionType) {
     QProcess process;
-    process.start(aLib, {versionType}, QProcess::ReadWrite);
+    process.start(aLib, {std::move(versionType)}, QProcess::ReadWrite);
     process.waitForFinished();
     if (process.exitStatus() == 0) {
         return true;
@@ -106,7 +106,7 @@ QList<QString> NetworkUtil::libArgs(QList<QString> aArgument, QString aType) {
 
 // Function written in consideration of the "releases/{version}" api, e.g.
 // https://api.github.com/repos/author/project/releases/latest
-QFileInfo NetworkUtil::downloadGithubFile(QString aURL, QString aFile, int aID, QWidget* aParent) {
+QFileInfo NetworkUtil::downloadGithubFile(const QString& aURL, const QString& aFile, int aID, QWidget* aParent) {
     QJsonObject jsonResponse = this->getJsonFrom(aURL).object();
     QString downloadURL = "null";
 
@@ -130,7 +130,7 @@ QFileInfo NetworkUtil::downloadGithubFile(QString aURL, QString aFile, int aID, 
         }
     }
     if (downloadURL == "null") {
-        return QFileInfo();
+        return {};
     }
     QString downloadPath = QDir::tempPath() + "/" + aFile;
     QList<QString> args = this->libArgs({downloadURL, downloadPath}, "download");
@@ -170,10 +170,10 @@ QFileInfo NetworkUtil::downloadGithubFile(QString aURL, QString aFile, int aID, 
     if (QFile(downloadPath).exists()) {
         return QFileInfo(QFile(downloadPath));
     }
-    return QFileInfo();
+    return {};
 }
 
-void NetworkUtil::checkForUpdate(QString url, NetworkUtil networking, QWidget* aParent, bool showWithoutUpdate) {
+void NetworkUtil::checkForUpdate(const QString& url, NetworkUtil networking, QWidget* aParent, bool showWithoutUpdate) {
     qDebug("--------");
     qInfo() << "Checking for updates on : " << url;
     QJsonDocument jsonResponse = networking.getJsonFrom(url);

@@ -31,6 +31,8 @@
 #include <QFileDialog>
 #include <QPlainTextEdit>
 #include <QDialogButtonBox>
+#include <QDebug>
+#include "util/SelectArgs.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -82,7 +84,7 @@ public:
     QLabel *firstFrameLabel;
     QLabel *bitrateLabel;
     QCheckBox *allowParamsCheckBox;
-    QSpinBox *fpsCombo;
+    QSpinBox * fpsSpinBox;
     QToolButton *selectPalettePathButton;
     QWidget *formatParam;
     QVBoxLayout *verticalLayout_4;
@@ -123,9 +125,10 @@ public:
     QPushButton *exportButton;
     QPushButton *cancelButton;
     QDir paletteDir;
-    QVector<QSpinBox *> initialFrames;
-    QVector<QSpinBox *> lastFrames;
-
+    QVector<QSpinBox *>* initialFrames = new QVector<QSpinBox *>;
+    QVector<QSpinBox *>* lastFrames = new QVector<QSpinBox *>;
+    bool operationCancelled = true;
+    bool mSizeUpdating = false;
     // Ask UI
     QGridLayout *gl;
     QGridLayout *gl_2;
@@ -137,13 +140,16 @@ public:
     QSpacerItem *hS2;
     QPlainTextEdit *textEdit;
     bool askOperationCancelled = false;
-
+    int latestHeight = 0;
+    int latestWidth = 0;
+    int nativeW;
+    int nativeH;
 
     static QString tr(const QString& input){
         return QCoreApplication::translate("ExportDiag", input.toStdString().c_str());
     }
 
-    void setupUi(QWidget *exportWidget, QString themePath)
+    void setupUi(QWidget *exportWidget, const QString& themePath)
     {
         if (exportWidget->objectName().isEmpty())
             exportWidget->setObjectName(QString::fromUtf8("exportWidget"));
@@ -160,7 +166,7 @@ public:
         tabVBox->setObjectName(QString::fromUtf8("tabVBox"));
         settingsTab = new QTabWidget(exportWidget);
         settingsTab->setObjectName(QString::fromUtf8("settingsTab"));
-        settingsTab->setTabShape(QTabWidget::Triangular);
+        settingsTab->setTabShape(QTabWidget::Rounded);
         globalParam = new QWidget();
         globalParam->setObjectName(QString::fromUtf8("globalParam"));
         verticalLayout_3 = new QVBoxLayout(globalParam);
@@ -253,6 +259,7 @@ public:
         firstFrameSpinBox = new QSpinBox(globalParamScrollContents);
         firstFrameSpinBox->setObjectName(QString::fromUtf8("firstFrameSpinBox"));
         firstFrameSpinBox->setMaximum(INT32_MAX);
+        firstFrameSpinBox->setMinimum(0);
         QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
         sizePolicy3.setHorizontalStretch(0);
         sizePolicy3.setVerticalStretch(0);
@@ -261,11 +268,12 @@ public:
 
         gridLayout_2->addWidget(firstFrameSpinBox, 22, 1, 1, 1);
 
-        initialFrames.append(firstFrameSpinBox);
+        initialFrames->append(firstFrameSpinBox);
 
         heightSpinBox = new QSpinBox(globalParamScrollContents);
         heightSpinBox->setObjectName(QString::fromUtf8("heightSpinBox"));
         heightSpinBox->setMaximum(INT32_MAX);
+        heightSpinBox->setMinimum(0);
 
         gridLayout_2->addWidget(heightSpinBox, 4, 1, 1, 1);
 
@@ -342,6 +350,7 @@ public:
         sizePolicy5.setHeightForWidth(widthSpinBox->sizePolicy().hasHeightForWidth());
         widthSpinBox->setSizePolicy(sizePolicy5);
         widthSpinBox->setMaximum(INT32_MAX);
+        widthSpinBox->setMinimum(0);
 
         gridLayout_2->addWidget(widthSpinBox, 3, 1, 1, 1);
 
@@ -403,12 +412,13 @@ public:
         lastFrameSpinBox = new QSpinBox(globalParamScrollContents);
         lastFrameSpinBox->setObjectName(QString::fromUtf8("lastFrameSpinBox"));
         lastFrameSpinBox->setMaximum(INT32_MAX);
+        lastFrameSpinBox->setMinimum(0);
         sizePolicy3.setHeightForWidth(lastFrameSpinBox->sizePolicy().hasHeightForWidth());
         lastFrameSpinBox->setSizePolicy(sizePolicy3);
 
         gridLayout_2->addWidget(lastFrameSpinBox, 22, 2, 1, 1);
 
-        lastFrames.append(lastFrameSpinBox);
+        lastFrames->append(lastFrameSpinBox);
 
         bitrateLineEdit = new QLineEdit(globalParamScrollContents);
         bitrateLineEdit->setObjectName(QString::fromUtf8("bitrateLineEdit"));
@@ -458,13 +468,13 @@ public:
 
         gridLayout_2->addWidget(allowParamsCheckBox, 16, 0, 1, 3);
 
-        fpsCombo = new QSpinBox(globalParamScrollContents);
-        fpsCombo->setObjectName(QString::fromUtf8("fpsCombo"));
+        fpsSpinBox = new QSpinBox(globalParamScrollContents);
+        fpsSpinBox->setObjectName(QString::fromUtf8("fpsSpinBox"));
         // Go nuts I guess
-        fpsCombo->setMinimum(1);
-        fpsCombo->setMaximum(INT32_MAX);
+        fpsSpinBox->setMinimum(1);
+        fpsSpinBox->setMaximum(INT32_MAX);
 
-        gridLayout_2->addWidget(fpsCombo, 10, 1, 1, 1);
+        gridLayout_2->addWidget(fpsSpinBox, 10, 1, 1, 1);
 
         setFPSNative = new QPushButton(globalParamScrollContents);
         setFPSNative->setObjectName(QString::fromUtf8("setFPSNative"));
@@ -483,7 +493,8 @@ public:
         QWidget::connect(selectPalettePathButton, &QPushButton::clicked, [=]()mutable
                          {
                              paletteDir = QDir(
-                                 QFileDialog::getOpenFileName(exportWidget, tr("Open Palette"),nullptr, tr("FFmpeg palette file (*.png)"))
+                                 QFileDialog::getOpenFileName(exportWidget, tr("Open Palette"),
+                                                              nullptr, tr("FFmpeg palette file (*.png)"))
                                  );
                              QString lbl = QFileInfo(paletteDir.absolutePath()).fileName();
                              selectPalettePathButton->setText(lbl);
@@ -532,8 +543,6 @@ public:
         gridLayout->addWidget(mkvLabel, 3, 0, 1, 1);
 
         pixelFormatCombo = new QComboBox(formatParamScrollContents);
-        pixelFormatCombo->addItem(QString());
-        pixelFormatCombo->addItem(QString());
         pixelFormatCombo->addItem(QString());
         pixelFormatCombo->addItem(QString());
         pixelFormatCombo->addItem(QString());
@@ -735,6 +744,44 @@ public:
 
         retranslateUi(exportWidget);
 
+        // For some reason QSpinBox does not keep a delta of the changes,
+        // so we have to do it ourselves via scuffed implementation
+
+        QWidget::connect(widthSpinBox, util::SelectArgs<int>::from(&QSpinBox::valueChanged), [=](int aValue){
+            if (mSizeUpdating) { return; }
+            if (latestWidth == 0){
+                latestWidth = aValue;
+                return;
+            }
+            mSizeUpdating = true;
+            if(oneToOneRatio->isChecked()){
+                heightSpinBox->setValue(heightSpinBox->value() + (aValue - latestWidth));
+            }
+            else if(keepAspectRatio->isChecked()) {
+                heightSpinBox->setValue((nativeH * aValue) / nativeW);
+            }
+            latestWidth = aValue;
+            latestHeight = heightSpinBox->value();
+            mSizeUpdating = false;
+        });
+        QWidget::connect(heightSpinBox,  util::SelectArgs<int>::from(&QSpinBox::valueChanged), [=](int aValue){
+            if (mSizeUpdating) { return; }
+            if (latestHeight == 0){
+                latestHeight = aValue;
+                return;
+            }
+            mSizeUpdating = true;
+            if(oneToOneRatio->isChecked()){
+                widthSpinBox->setValue(widthSpinBox->value() + (aValue - latestHeight));
+            }
+            else if(keepAspectRatio->isChecked()) {
+                widthSpinBox->setValue((nativeW * aValue) / nativeH);
+            }
+            latestHeight = aValue;
+            latestWidth = widthSpinBox->value();
+            mSizeUpdating = false;
+        });
+
         settingsTab->setCurrentIndex(0);
 
 
@@ -742,14 +789,16 @@ public:
     } // setupUi
     struct Pos { int row = -1, col = -1; };
 
-    void addRange(){
+    void addRange() const{
         qDebug("Adding range");
         auto* newFirstRange = new QSpinBox;
         auto* newLastRange = new QSpinBox;
         newFirstRange->setMaximum(INT32_MAX);
+        newFirstRange->setMinimum(0);
         newLastRange->setMaximum(INT32_MAX);
-        int FRIndex = gridLayout_2->indexOf(initialFrames.last());
-        int LRIndex = gridLayout_2->indexOf(lastFrames.last());
+        newLastRange->setMinimum(0);
+        int FRIndex = gridLayout_2->indexOf(initialFrames->last());
+        int LRIndex = gridLayout_2->indexOf(lastFrames->last());
         int unused;
         Pos frPos;
         Pos lrPos;
@@ -758,22 +807,22 @@ public:
         frPos.row++;
         lrPos.row++;
         gridLayout_2->addWidget(newFirstRange, frPos.row, frPos.col);
-        initialFrames.append(newFirstRange);
+        initialFrames->append(newFirstRange);
         gridLayout_2->addWidget(newLastRange, lrPos.row, lrPos.col);
-        lastFrames.append(newLastRange);
+        lastFrames->append(newLastRange);
     }
 
-    void removeRange(){
+    void removeRange() const{
         qDebug("Removing range");
         // No crashing the app please
-        if(initialFrames.empty()){ addRange(); return; }
-        else if(initialFrames.size() == 1){ return; }
-        gridLayout_2->removeWidget(initialFrames.last());
-        gridLayout_2->removeWidget(lastFrames.last());
-        initialFrames.last()->deleteLater();
-        lastFrames.last()->deleteLater();
-        initialFrames.removeLast();
-        lastFrames.removeLast();
+        if(initialFrames->empty()){ addRange(); return; }
+        else if(initialFrames->size() == 1){ return; }
+        gridLayout_2->removeWidget(initialFrames->last());
+        gridLayout_2->removeWidget(lastFrames->last());
+        initialFrames->last()->deleteLater();
+        lastFrames->last()->deleteLater();
+        initialFrames->removeLast();
+        lastFrames->removeLast();
     }
 
     void retranslateUi(QWidget *exportWidget) const
@@ -806,7 +855,7 @@ public:
         exportTypeCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Animation", nullptr));
         exportTypeCombo->setItemText(1, QCoreApplication::translate("exportWidget", "Image sequence", nullptr));
         setFPSNative->setText(QCoreApplication::translate("exportWidget", "Set to native", nullptr));
-        transparencyCheckBox->setText(QCoreApplication::translate("exportWidget", "Allow transparency when supported", nullptr));
+        transparencyCheckBox->setText(QCoreApplication::translate("exportWidget", "Export with transparency", nullptr));
         bitrateLineEdit->setPlaceholderText(QCoreApplication::translate("exportWidget", "Auto", nullptr));
         setBitrateAuto->setText(QCoreApplication::translate("exportWidget", "Set to auto", nullptr));
         renderedFramesLabel->setText(QCoreApplication::translate("exportWidget", "Frames rendered: ", nullptr));
@@ -818,20 +867,19 @@ public:
         pixelFormatLabel->setText(QCoreApplication::translate("exportWidget", "<html><head/><body><p>Pixel format:</p></body></html>", nullptr));
         movLabel->setText(QCoreApplication::translate("exportWidget", "MOV", nullptr));
         aviCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        aviCombo->setItemText(1, QCoreApplication::translate("exportWidget", "MPEG-4", nullptr));
-        aviCombo->setItemText(2, QCoreApplication::translate("exportWidget", "MPEG-2", nullptr));
+        aviCombo->setItemText(1, QCoreApplication::translate("exportWidget", "mpeg2", nullptr));
+        aviCombo->setItemText(2, QCoreApplication::translate("exportWidget", "mpeg4", nullptr));
 
         mkvLabel->setText(QCoreApplication::translate("exportWidget", "MKV", nullptr));
+        // "yuv420p", "yuva420p", "rgb24", "rgba", "bgr24", "bgra", "gray"
         pixelFormatCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        pixelFormatCombo->setItemText(1, QCoreApplication::translate("exportWidget", "yuv410p", nullptr));
-        pixelFormatCombo->setItemText(2, QCoreApplication::translate("exportWidget", "yuv410p", nullptr));
-        pixelFormatCombo->setItemText(3, QCoreApplication::translate("exportWidget", "yuv420p", nullptr));
-        pixelFormatCombo->setItemText(4, QCoreApplication::translate("exportWidget", "yuv422p", nullptr));
-        pixelFormatCombo->setItemText(5, QCoreApplication::translate("exportWidget", "yuv444p", nullptr));
-        pixelFormatCombo->setItemText(6, QCoreApplication::translate("exportWidget", "yuyv422", nullptr));
-        pixelFormatCombo->setItemText(7, QCoreApplication::translate("exportWidget", "rgb24", nullptr));
-        pixelFormatCombo->setItemText(8, QCoreApplication::translate("exportWidget", "bgr24", nullptr));
-        pixelFormatCombo->setItemText(9, QCoreApplication::translate("exportWidget", "gray", nullptr));
+        pixelFormatCombo->setItemText(1, QCoreApplication::translate("exportWidget", "yuv420p", nullptr));
+        pixelFormatCombo->setItemText(2, QCoreApplication::translate("exportWidget", "yuva420p", nullptr));
+        pixelFormatCombo->setItemText(3, QCoreApplication::translate("exportWidget", "rgb24", nullptr));
+        pixelFormatCombo->setItemText(4, QCoreApplication::translate("exportWidget", "rgba", nullptr));
+        pixelFormatCombo->setItemText(5, QCoreApplication::translate("exportWidget", "bgr24", nullptr));
+        pixelFormatCombo->setItemText(6, QCoreApplication::translate("exportWidget", "bgra", nullptr));
+        pixelFormatCombo->setItemText(7, QCoreApplication::translate("exportWidget", "gray", nullptr));
 
     #if QT_CONFIG(tooltip)
         pixelFormatCombo->setToolTip(QCoreApplication::translate("exportWidget", "Pixel Format availability depends on the selected format, we recommend you stick to yuv420p", nullptr));
@@ -845,24 +893,24 @@ public:
         mp4Label->setText(QCoreApplication::translate("exportWidget", "MP4", nullptr));
         aviLabel->setText(QCoreApplication::translate("exportWidget", "AVI", nullptr));
         webmCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        webmCombo->setItemText(1, QCoreApplication::translate("exportWidget", "VP8", nullptr));
-        webmCombo->setItemText(2, QCoreApplication::translate("exportWidget", "VP9", nullptr));
+        webmCombo->setItemText(1, QCoreApplication::translate("exportWidget", "vp8", nullptr));
+        webmCombo->setItemText(2, QCoreApplication::translate("exportWidget", "vp9", nullptr));
 
         mp4Combo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        mp4Combo->setItemText(1, QCoreApplication::translate("exportWidget", "MPEG-4", nullptr));
-        mp4Combo->setItemText(2, QCoreApplication::translate("exportWidget", "H264", nullptr));
+        mp4Combo->setItemText(1, QCoreApplication::translate("exportWidget", "mpeg4", nullptr));
+        mp4Combo->setItemText(2, QCoreApplication::translate("exportWidget", "h264", nullptr));
 
         webmLabel->setText(QCoreApplication::translate("exportWidget", "WEBM", nullptr));
         mkvCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
         mkvCombo->setItemText(1, QCoreApplication::translate("exportWidget", "x264", nullptr));
         mkvCombo->setItemText(2, QCoreApplication::translate("exportWidget", "x265", nullptr));
-        mkvCombo->setItemText(3, QCoreApplication::translate("exportWidget", "VP8", nullptr));
-        mkvCombo->setItemText(4, QCoreApplication::translate("exportWidget", "VP9", nullptr));
-        mkvCombo->setItemText(5, QCoreApplication::translate("exportWidget", "AV1", nullptr));
-        mkvCombo->setItemText(6, QCoreApplication::translate("exportWidget", "FFV1", nullptr));
-        mkvCombo->setItemText(7, QCoreApplication::translate("exportWidget", "MagicYUV", nullptr));
-        mkvCombo->setItemText(8, QCoreApplication::translate("exportWidget", "HuffYUV", nullptr));
-        mkvCombo->setItemText(9, QCoreApplication::translate("exportWidget", "Theora", nullptr));
+        mkvCombo->setItemText(3, QCoreApplication::translate("exportWidget", "vp8", nullptr));
+        mkvCombo->setItemText(4, QCoreApplication::translate("exportWidget", "vp9", nullptr));
+        mkvCombo->setItemText(5, QCoreApplication::translate("exportWidget", "av1", nullptr));
+        mkvCombo->setItemText(6, QCoreApplication::translate("exportWidget", "ffv1", nullptr));
+        mkvCombo->setItemText(7, QCoreApplication::translate("exportWidget", "magicyuv", nullptr));
+        mkvCombo->setItemText(8, QCoreApplication::translate("exportWidget", "huffyuv", nullptr));
+        mkvCombo->setItemText(9, QCoreApplication::translate("exportWidget", "theora", nullptr));
 
         settingsTab->setTabText(settingsTab->indexOf(formatParam), QCoreApplication::translate("exportWidget", "Format Parameters", nullptr));
         intermediateLabel->setText(QCoreApplication::translate("exportWidget", "<html><head/><body><p align=\"center\">Intermediate:</p></body></html>", nullptr));
@@ -883,9 +931,6 @@ public:
         cancelButton->setText(QCoreApplication::translate("exportWidget", "Cancel", nullptr));
     } // retranslateUi
 
-    void errorHandler(){
-        Q_UNIMPLEMENTED();
-    }
     void askForTextUI(QWidget *windowWidget, const QString& questionLbl){
         askOperationCancelled = false;
         windowWidget->resize(400, 200);

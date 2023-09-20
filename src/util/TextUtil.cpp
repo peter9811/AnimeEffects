@@ -20,7 +20,7 @@ float TextUtil::getShiftJisScore(const char* aStr, size_t aSize) {
     if (aStr == NULL || aSize <= 0)
         return kFailureScore;
 
-    const unsigned char* p = (const unsigned char*)aStr;
+    const auto* p = (const unsigned char*)aStr;
     long long scoreSum = 0;
     int prev = -1;
     int count = 0;

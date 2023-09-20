@@ -400,7 +400,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             QString ffmpeg;
             QMessageBox ffmpegNotif;
 
-            if (networking.os() == "win") {
+            if (util::NetworkUtil::os() == "win") {
                 ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
             } else {
                 ffmpeg_file = QFileInfo("./tools/ffmpeg");
@@ -412,7 +412,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             }
 
             // Exists?
-            bool fExists = networking.libExists(ffmpeg, "-version");
+            bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
 
             if (!fExists) {
                 ffmpegNotif.setWindowTitle(tr("FFmpeg error"));
@@ -428,8 +428,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             QProcess gif;
             gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
             gif.waitForFinished();
-            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo("gif.gif").exists();
-            qDebug() << "Gif exists: " << QFileInfo("gif.gif").exists()
+            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo::exists("gif.gif");
+            qDebug() << "Gif exists: " << QFileInfo::exists("gif.gif")
                      << "| Gif remove: " << QFile("gif.gif").remove();
             gif.deleteLater();
 
@@ -445,7 +445,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             QProcess palettegen;
             palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"}, QProcess::ReadWrite);
             palettegen.waitForFinished();
-            bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo("palette.png").exists();
+            bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo::exists("palette.png");
             if (!pGenSuccess) {
                 ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
                 ffmpegNotif.setText(
@@ -455,8 +455,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                 ffmpegNotif.exec();
                 return;
             }
-            qDebug() << "Palette exists: " << QFileInfo("palette.png").exists()
-                     << "| Palete remove: " << QFile("palette.png").remove();
+            qDebug() << "Palette exists: " << QFileInfo::exists("palette.png")
+                     << "| Palette remove: " << QFile("palette.png").remove();
             palettegen.deleteLater();
 
 
@@ -482,9 +482,9 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             if (!dir.exists()) {
                 dir.mkpath(dir.absolutePath());
             }
-            QString file = net.os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
+            QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
 
-            if (QFileInfo(dir.absolutePath() + file).exists()) {
+            if (QFileInfo::exists(dir.absolutePath() + file)) {
                 QFile(dir.absolutePath() + file).moveToTrash();
             }
 
@@ -508,12 +508,12 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             if (!dir.exists()) {
                 dir.mkpath(dir.absolutePath());
             }
-            QString file = networking.os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
-            if (QFileInfo(dir.absolutePath() + file).exists()) {
+            QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
+            if (QFileInfo::exists(dir.absolutePath() + file)) {
                 QFile(dir.absolutePath() + file).moveToTrash();
             }
-            QString os = networking.os();
-            QString arch = networking.arch();
+            QString os = util::NetworkUtil::os();
+            QString arch = util::NetworkUtil::arch();
             QString gitFile;
             // ID checking is probably overkill, but security is important!
             int id;
@@ -556,10 +556,11 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             }
             QMessageBox error;
             error.setWindowTitle(tr("Error"));
-            error.setText(tr("An error has ocurred, please send the bellow info to the developers."));
+            error.setText(tr("An error has occurred, please send the bellow info to the developers."));
             error.setDetailedText(
-                "Filename : " + ffmpeg.fileName() + "\nIs Executable : " + ffmpeg.isExecutable() +
-                "\nDownload params : " + "Hardcoded API | " + gitFile + " | " + id
+                "Filename : " + ffmpeg.fileName() + "\nIs Executable : " + QString(ffmpeg.isExecutable()) +
+                "\nDownload params : " + "Hardcoded API | " + gitFile + " | " + QString::number(id) +
+                "\nDownload path : " + dir.absolutePath()
             );
             error.exec();
         });

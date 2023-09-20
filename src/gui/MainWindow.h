@@ -27,13 +27,14 @@
 #include "res/res_ResourceUpdater.h"
 #include "exportdiag.h"
 
+
 namespace gui {
 
 class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(ctrl::System& aSystem, GUIResources& aResources, const LocaleParam& aLocaleParam);
+    MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocaleParam  aLocaleParam);
     ~MainWindow();
 
     void showWithSettings();
@@ -83,14 +84,11 @@ private:
     bool onStartup = true;
     bool themeChangeWarned = false;
     bool exporting = false;
+    // For some reason you need these here or the widget will only show properly once :/
+    ExportWidgetUI *exportUI = new ExportWidgetUI;
     QDialog* exportWidget = new QDialog;
     QDialog* gpDiag = new QDialog;
-    ExportWidgetUI* exportUI = new ExportWidgetUI;
-    void regenerateWidget(){
-        exportWidget = new QDialog;
-        // Allows for the export UI to be created
-        exporting = false;
-    }
+    void regenerateWidget(){ exportWidget = new QDialog; exporting = false; }
     void regenerateGeneralPurposeDiag(){ gpDiag = new QDialog; }
 
     ctrl::System& mSystem;

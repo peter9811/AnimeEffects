@@ -1,55 +1,52 @@
 #include "core/AbstractCursor.h"
 #include "XC.h"
 
-namespace core
-{
-AbstractCursor::Button getEventButtonFrom(Qt::MouseButton aButton)
-{
-    switch (aButton)
-    {
-    case Qt::LeftButton:  return AbstractCursor::Button_Left;
-    case Qt::MidButton:   return AbstractCursor::Button_Middle;
-    case Qt::RightButton: return AbstractCursor::Button_Right;
-    default:              return AbstractCursor::Button_TERM;
+namespace core {
+AbstractCursor::Button getEventButtonFrom(Qt::MouseButton aButton) {
+    switch (aButton) {
+    case Qt::LeftButton:
+        return AbstractCursor::Button_Left;
+    case Qt::MidButton:
+        return AbstractCursor::Button_Middle;
+    case Qt::RightButton:
+        return AbstractCursor::Button_Right;
+    default:
+        return AbstractCursor::Button_TERM;
     }
 }
 
 //-------------------------------------------------------------------------------------------------
-AbstractCursor::AbstractCursor()
-    : mEventType(Event_TERM)
-    , mEventButton(Button_TERM)
-    , mIsPressed()
-    , mIsDouble()
-    , mScreenPoint()
-    , mScreenPos()
-    , mScreenVel()
-    , mWorldPos()
-    , mWorldVel()
-    , mPressure(1.0f)
-    , mIsPressedTablet()
-    , mSuspendedCount(0)
-    , mBlankAfterSuspending()
-{
-    for (int i = 0; i < Button_TERM; ++i)
-    {
+AbstractCursor::AbstractCursor():
+    mEventType(Event_TERM),
+    mEventButton(Button_TERM),
+    mIsPressed(),
+    mIsDouble(),
+    mScreenPoint(),
+    mScreenPos(),
+    mScreenVel(),
+    mWorldPos(),
+    mWorldVel(),
+    mPressure(1.0f),
+    mIsPressedTablet(),
+    mSuspendedCount(0),
+    mBlankAfterSuspending() {
+    for (int i = 0; i < Button_TERM; ++i) {
         mIsPressed[i] = false;
         mIsDouble[i] = false;
         mBlankAfterSuspending[i] = false;
     }
 }
 
-bool AbstractCursor::setMousePress(QMouseEvent* aEvent, const CameraInfo& aCameraInfo)
-{
+bool AbstractCursor::setMousePress(QMouseEvent* aEvent, const CameraInfo& aCameraInfo) {
     return setMousePressImpl(aEvent->button(), aEvent->pos(), aCameraInfo);
 }
 
-bool AbstractCursor::setMousePressImpl(Qt::MouseButton aButton, QPoint aPos, const CameraInfo& aCameraInfo)
-{
-    //qDebug() << "press" << aButton;
+bool AbstractCursor::setMousePressImpl(Qt::MouseButton aButton, QPoint aPos, const CameraInfo& aCameraInfo) {
+    // qDebug() << "press" << aButton;
     mEventType = Event_Press;
     mEventButton = getEventButtonFrom(aButton);
 
-    if (mEventButton != Button_TERM) // fail safe code
+    if (mEventButton != Button_TERM) // fail-safe code
     {
         if (mIsPressed[mEventButton]) // duplicate event?
         {
@@ -69,13 +66,11 @@ bool AbstractCursor::setMousePressImpl(Qt::MouseButton aButton, QPoint aPos, con
     return mSuspendedCount == 0;
 }
 
-bool AbstractCursor::setMouseMove(QMouseEvent* aEvent, const CameraInfo& aCameraInfo)
-{
+bool AbstractCursor::setMouseMove(QMouseEvent* aEvent, const CameraInfo& aCameraInfo) {
     return setMouseMoveImpl(aEvent->button(), aEvent->pos(), aCameraInfo);
 }
 
-bool AbstractCursor::setMouseMoveImpl(Qt::MouseButton, QPoint aPos, const CameraInfo& aCameraInfo)
-{
+bool AbstractCursor::setMouseMoveImpl(Qt::MouseButton, QPoint aPos, const CameraInfo& aCameraInfo) {
     QVector2D prevScreenPos = mScreenPos;
     QVector2D prevWorldPos = mWorldPos;
 
@@ -91,14 +86,12 @@ bool AbstractCursor::setMouseMoveImpl(Qt::MouseButton, QPoint aPos, const Camera
     return mSuspendedCount == 0;
 }
 
-bool AbstractCursor::setMouseRelease(QMouseEvent* aEvent, const CameraInfo& aCameraInfo)
-{
+bool AbstractCursor::setMouseRelease(QMouseEvent* aEvent, const CameraInfo& aCameraInfo) {
     return setMouseReleaseImpl(aEvent->button(), aEvent->pos(), aCameraInfo);
 }
 
-bool AbstractCursor::setMouseReleaseImpl(Qt::MouseButton aButton, QPoint aPos, const CameraInfo& aCameraInfo)
-{
-    //qDebug() << "release" << aButton;
+bool AbstractCursor::setMouseReleaseImpl(Qt::MouseButton aButton, QPoint aPos, const CameraInfo& aCameraInfo) {
+    // qDebug() << "release" << aButton;
     QVector2D prevScreenPos = mScreenPos;
     QVector2D prevWorldPos = mWorldPos;
 
@@ -106,7 +99,7 @@ bool AbstractCursor::setMouseReleaseImpl(Qt::MouseButton aButton, QPoint aPos, c
     mEventButton = getEventButtonFrom(aButton);
 
     bool isDuplicateEvent = false;
-    if (mEventButton != Button_TERM) // fail safe code
+    if (mEventButton != Button_TERM) // fail-safe code
     {
         if (!mIsPressed[mEventButton]) // duplicate event?
         {
@@ -123,22 +116,16 @@ bool AbstractCursor::setMouseReleaseImpl(Qt::MouseButton aButton, QPoint aPos, c
     mWorldVel = mWorldPos - prevWorldPos;
 
     bool shouldUpdate = true;
-    if (mSuspendedCount > 0)
-    {
+    if (mSuspendedCount > 0) {
         shouldUpdate = false;
-    }
-    else if (mEventButton != Button_TERM && mBlankAfterSuspending.at(mEventButton))
-    {
+    } else if (mEventButton != Button_TERM && mBlankAfterSuspending.at(mEventButton)) {
         mBlankAfterSuspending.at(mEventButton) = false;
         shouldUpdate = false;
-    }
-    else if (isDuplicateEvent)
-    {
+    } else if (isDuplicateEvent) {
         shouldUpdate = false;
     }
 
-    if (!shouldUpdate)
-    {
+    if (!shouldUpdate) {
         mEventType = Event_TERM;
         mEventButton = Button_TERM;
     }
@@ -146,11 +133,10 @@ bool AbstractCursor::setMouseReleaseImpl(Qt::MouseButton aButton, QPoint aPos, c
     return shouldUpdate;
 }
 
-bool AbstractCursor::setMouseDoubleClick(QMouseEvent* aEvent, const CameraInfo& aCameraInfo)
-{
+bool AbstractCursor::setMouseDoubleClick(QMouseEvent* aEvent, const CameraInfo& aCameraInfo) {
     setMousePress(aEvent, aCameraInfo);
 
-    if (mEventButton != Button_TERM) // fail safe code
+    if (mEventButton != Button_TERM) // fail-safe code
     {
         mIsDouble[mEventButton] = true;
     }
@@ -159,28 +145,21 @@ bool AbstractCursor::setMouseDoubleClick(QMouseEvent* aEvent, const CameraInfo& 
 }
 
 #ifdef Q_OS_MAC
-bool AbstractCursor::setTabledEvent(QTabletEvent* aEvent, const CameraInfo& aCameraInfo)
-{
+bool AbstractCursor::setTabledEvent(QTabletEvent* aEvent, const CameraInfo& aCameraInfo) {
     auto type = aEvent->type();
     auto pressure = aEvent->pressure();
 
     bool shouldUpdate = false;
-    if (type == QEvent::TabletPress)
-    {
+    if (type == QEvent::TabletPress) {
         shouldUpdate = setMousePressImpl(aEvent->button(), aEvent->pos(), aCameraInfo);
         mIsPressedTablet = true;
         mPressure = pressure;
-    }
-    else if (type == QEvent::TabletMove)
-    {
+    } else if (type == QEvent::TabletMove) {
         shouldUpdate = setMouseMoveImpl(aEvent->button(), aEvent->pos(), aCameraInfo);
-        if (mIsPressedTablet)
-        {
+        if (mIsPressedTablet) {
             mPressure = 0.5f * mPressure + 0.5f * pressure;
         }
-    }
-    else if (type == QEvent::TabletRelease)
-    {
+    } else if (type == QEvent::TabletRelease) {
         shouldUpdate = setMouseReleaseImpl(aEvent->button(), aEvent->pos(), aCameraInfo);
         mIsPressedTablet = false;
         mPressure = 1.0f;
@@ -189,39 +168,29 @@ bool AbstractCursor::setTabledEvent(QTabletEvent* aEvent, const CameraInfo& aCam
     return shouldUpdate;
 }
 #else
-void AbstractCursor::setTabletPressure(QTabletEvent* aEvent)
-{
+void AbstractCursor::setTabletPressure(QTabletEvent* aEvent) {
     auto type = aEvent->type();
     auto pressure = aEvent->pressure();
 
-    if (type == QEvent::TabletPress)
-    {
+    if (type == QEvent::TabletPress) {
         mIsPressedTablet = true;
         mPressure = pressure;
-    }
-    else if (type == QEvent::TabletMove)
-    {
-        if (mIsPressedTablet)
-        {
+    } else if (type == QEvent::TabletMove) {
+        if (mIsPressedTablet) {
             mPressure = 0.5f * mPressure + 0.5f * pressure;
         }
-    }
-    else if (type == QEvent::TabletRelease)
-    {
+    } else if (type == QEvent::TabletRelease) {
         mIsPressedTablet = false;
         mPressure = 1.0f;
     }
 }
 #endif
 
-void AbstractCursor::suspendEvent(const std::function<void()>& aEventReflector)
-{
+void AbstractCursor::suspendEvent(const std::function<void()>& aEventReflector) {
     XC_ASSERT(mSuspendedCount >= 0);
     ++mSuspendedCount;
-    if (mSuspendedCount == 1)
-    {
-        for (int i = 0; i < Button_TERM; ++i)
-        {
+    if (mSuspendedCount == 1) {
+        for (int i = 0; i < Button_TERM; ++i) {
             if (mIsPressed[i]) // invoke a release event
             {
                 mEventType = Event_Release;
@@ -237,53 +206,39 @@ void AbstractCursor::suspendEvent(const std::function<void()>& aEventReflector)
     }
 }
 
-void AbstractCursor::resumeEvent()
-{
+void AbstractCursor::resumeEvent() {
     XC_ASSERT(mSuspendedCount > 0);
     --mSuspendedCount;
 
-    if (mSuspendedCount == 0)
-    {
-        for (int i = 0; i < Button_TERM; ++i)
-        {
+    if (mSuspendedCount == 0) {
+        for (int i = 0; i < Button_TERM; ++i) {
             mBlankAfterSuspending[i] = mIsPressed[i]; // set a flag to ignore release event once
         }
     }
 }
 
-bool AbstractCursor::emitsLeftPressedEvent() const
-{
-    return mEventType == Event_Press && mEventButton == Button_Left;
-}
+bool AbstractCursor::emitsLeftPressedEvent() const { return mEventType == Event_Press && mEventButton == Button_Left; }
 
-bool AbstractCursor::emitsLeftDraggedEvent() const
-{
+bool AbstractCursor::emitsLeftDraggedEvent() const {
     return mEventType == Event_Move && mIsPressed[Button_Left] && !mBlankAfterSuspending.at(Button_Left);
 }
 
-bool AbstractCursor::emitsLeftReleasedEvent() const
-{
+bool AbstractCursor::emitsLeftReleasedEvent() const {
     return mEventType == Event_Release && mEventButton == Button_Left;
 }
 
-bool AbstractCursor::emitsRightPressedEvent() const
-{
+bool AbstractCursor::emitsRightPressedEvent() const {
     return mEventType == Event_Press && mEventButton == Button_Right;
 }
 
-bool AbstractCursor::emitsRightDraggedEvent() const
-{
+bool AbstractCursor::emitsRightDraggedEvent() const {
     return mEventType == Event_Move && mIsPressed[Button_Right] && !mBlankAfterSuspending.at(Button_Right);
 }
 
-bool AbstractCursor::emitsRightReleasedEvent() const
-{
+bool AbstractCursor::emitsRightReleasedEvent() const {
     return mEventType == Event_Release && mEventButton == Button_Right;
 }
 
-bool AbstractCursor::emitsPressedEvent() const
-{
-    return mEventType == Event_Press;
-}
+bool AbstractCursor::emitsPressedEvent() const { return mEventType == Event_Press; }
 
 } // namespace core

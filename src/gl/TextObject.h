@@ -4,27 +4,25 @@
 #include <memory>
 #include "gl/Texture.h"
 
-namespace gl
-{
+namespace gl {
 
-class TextObject
-{
+class TextObject {
 public:
-    struct MapKey
-    {
+    struct MapKey {
         quint16 checksum;
         QString text;
 
-        MapKey()
-            : checksum(), text() {}
-        MapKey(quint16 aChecksum, const QString& aText)
-            : checksum(aChecksum), text(aText) {}
+        MapKey(): checksum(), text() {}
+        MapKey(quint16 aChecksum, const QString& aText): checksum(aChecksum), text(aText) {}
 
-        bool operator <(const MapKey& aRhs) const
-        {
-            if (checksum < aRhs.checksum) { return true; }
-            else if (checksum == aRhs.checksum) { return text < aRhs.text; }
-            else { return false; }
+        bool operator<(const MapKey& aRhs) const {
+            if (checksum < aRhs.checksum) {
+                return true;
+            } else if (checksum == aRhs.checksum) {
+                return text < aRhs.text;
+            } else {
+                return false;
+            }
         }
     };
 

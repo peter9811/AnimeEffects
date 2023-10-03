@@ -16,23 +16,17 @@
 #include "ctrl/ffd/ffd_Target.h"
 #include "ctrl/ffd/ffd_IMode.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class FFDEditor : public IEditor
-{
+class FFDEditor: public IEditor {
 public:
-    FFDEditor(core::Project& aProject,
-              DriverResources& aDriverResources,
-              UILogger& aUILogger);
+    FFDEditor(core::Project& aProject, DriverResources& aDriverResources, UILogger& aUILogger);
     ~FFDEditor();
 
     virtual bool setTarget(core::ObjectNode* aTarget);
 
     void updateParam(const FFDParam& aParam);
-    virtual bool updateCursor(
-            const core::CameraInfo& aCamera,
-            const core::AbstractCursor& aCursor);
+    virtual bool updateCursor(const core::CameraInfo& aCamera, const core::AbstractCursor& aCursor);
     virtual void updateEvent(EventType);
 
     virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);

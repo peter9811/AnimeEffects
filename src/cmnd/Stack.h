@@ -11,14 +11,12 @@
 #include "cmnd/Base.h"
 #include "cmnd/Listener.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
 class ScopedMacro;
 class ScopedUndoSuspender;
 
-class Stack
-{
+class Stack {
 public:
     Stack();
     ~Stack();
@@ -37,8 +35,7 @@ public:
     void setOnEditStatusChanged(const std::function<void(bool)>&);
 
 private:
-    class Macro : public Base
-    {
+    class Macro: public Base {
     public:
         Macro(const QString& aName);
         ~Macro();
@@ -50,6 +47,7 @@ private:
         virtual bool tryRedo();
         virtual bool tryUndo();
         virtual bool isUseless() const;
+
     private:
         void killListeners();
         QList<Base*> mCommands;

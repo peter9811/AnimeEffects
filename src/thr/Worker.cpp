@@ -2,22 +2,15 @@
 #include <QDebug>
 #include "thr/Worker.h"
 
-//#define THR_WORKER_DUMP(...) qDebug(__VA_ARGS__)
+// #define THR_WORKER_DUMP(...) qDebug(__VA_ARGS__)
 #define THR_WORKER_DUMP(...)
 
-namespace thr
-{
+namespace thr {
 
 //-------------------------------------------------------------------------------------------------
-Worker::Thread::Thread(TaskQueue& aQueue)
-    : mQueue(aQueue)
-    , mExitLock()
-    , mExit(false)
-{
-}
+Worker::Thread::Thread(TaskQueue& aQueue): mQueue(aQueue), mExitLock(), mExit(false) {}
 
-Worker::Thread::~Thread()
-{
+Worker::Thread::~Thread() {
     // exit
     {
         QWriteLocker locker(&mExitLock);
@@ -31,13 +24,10 @@ Worker::Thread::~Thread()
     THR_WORKER_DUMP("destruct worker");
 }
 
-void Worker::Thread::run()
-{
-    while (!isExit())
-    {
+void Worker::Thread::run() {
+    while (!isExit()) {
         Task* task = mQueue.waitPop(1 * 1000);
-        if (task)
-        {
+        if (task) {
             task->setRun();
             task->run();
             task->setFinish();
@@ -46,22 +36,14 @@ void Worker::Thread::run()
     }
 }
 
-bool Worker::Thread::isExit()
-{
+bool Worker::Thread::isExit() {
     QReadLocker locker(&mExitLock);
     return mExit;
 }
 
 //-------------------------------------------------------------------------------------------------
-Worker::Worker(TaskQueue& aQueue)
-    : mThread(aQueue)
-{
-}
+Worker::Worker(TaskQueue& aQueue): mThread(aQueue) {}
 
-void Worker::start(QThread::Priority aPriority)
-{
-    mThread.start(aPriority);
-}
+void Worker::start(QThread::Priority aPriority) { mThread.start(aPriority); }
 
 } // namespace thr
-

@@ -4,23 +4,27 @@
 #include "util/Easing.h"
 #include "core/TimeKey.h"
 
-namespace core
-{
+namespace core {
 
-class RotateKey : public TimeKey
-{
+class RotateKey: public TimeKey {
 public:
-    class Data
-    {
+    class Data {
         util::Easing::Param mEasing;
         float mRotate;
         void clamp();
+
     public:
         Data();
         util::Easing::Param& easing() { return mEasing; }
         const util::Easing::Param& easing() const { return mEasing; }
-        void setRotate(float aRotate) { mRotate = aRotate; clamp(); }
-        void addRotate(float aAdd) { mRotate += aAdd; clamp(); }
+        void setRotate(float aRotate) {
+            mRotate = aRotate;
+            clamp();
+        }
+        void addRotate(float aAdd) {
+            mRotate += aAdd;
+            clamp();
+        }
         const float& rotate() const { return mRotate; }
     };
 

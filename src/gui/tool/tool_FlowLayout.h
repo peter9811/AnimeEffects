@@ -9,34 +9,32 @@
 namespace gui {
 namespace tool {
 
-class FlowLayout : public QLayout
-{
-public:
-    FlowLayout(QWidget* aParent, int aMargin = -1,
-               int aHSpacing = -1, int aVSpacing = -1);
-    FlowLayout(int aMargin = -1, int aHSpacing = -1, int aVSpacing = -1);
-    ~FlowLayout();
+    class FlowLayout: public QLayout {
+    public:
+        FlowLayout(QWidget* aParent, int aMargin = -1, int aHSpacing = -1, int aVSpacing = -1);
+        FlowLayout(int aMargin = -1, int aHSpacing = -1, int aVSpacing = -1);
+        ~FlowLayout();
 
-    void addItem(QLayoutItem* aItem);
-    int horizontalSpacing() const;
-    int verticalSpacing() const;
-    bool hasHeightForWidth() const;
-    int heightForWidth(int) const;
-    int count() const;
-    QLayoutItem* itemAt(int aIndex) const;
-    QSize minimumSize() const;
-    void setGeometry(const QRect& aRect);
-    QSize sizeHint() const;
-    QLayoutItem* takeAt(int aIndex);
+        void addItem(QLayoutItem* aItem);
+        int horizontalSpacing() const;
+        int verticalSpacing() const;
+        bool hasHeightForWidth() const;
+        int heightForWidth(int) const;
+        int count() const;
+        QLayoutItem* itemAt(int aIndex) const;
+        QSize minimumSize() const;
+        void setGeometry(const QRect& aRect);
+        QSize sizeHint() const;
+        QLayoutItem* takeAt(int aIndex);
 
-private:
-    int doLayout(const QRect& aRect, bool aTestOnly) const;
-    int smartSpacing(QStyle::PixelMetric aMetric) const;
+    private:
+        int doLayout(const QRect& aRect, bool aTestOnly) const;
+        int smartSpacing(QStyle::PixelMetric aMetric) const;
 
-    QList<QLayoutItem*> mItemList;
-    int mHSpace;
-    int mVSpace;
-};
+        QList<QLayoutItem*> mItemList;
+        int mHSpace;
+        int mVSpace;
+    };
 
 } // namespace tool
 } // namespace gui

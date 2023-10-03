@@ -11,11 +11,9 @@
 #include "gl/Vector2I.h"
 #include "gl/Vector4I.h"
 
-namespace gl
-{
+namespace gl {
 
-class EasyShaderProgram
-{
+class EasyShaderProgram {
 public:
     EasyShaderProgram();
     ~EasyShaderProgram();
@@ -34,28 +32,37 @@ public:
 
     int attributeLocation(const char* aName) const;
 
-    void setAttributeBuffer(
-            const char* aName, BufferObject& aObj,
-            GLenum aType, int aTuple, int aOffset = 0);
+    void setAttributeBuffer(const char* aName, BufferObject& aObj, GLenum aType, int aTuple, int aOffset = 0);
 
-    void setAttributeBuffer(
-            int aLocation, GLenum aType, int aTuple, int aOffset = 0);
+    void setAttributeBuffer(int aLocation, GLenum aType, int aTuple, int aOffset = 0);
 
     void setRawAttributeArray(
-            const char* aName, GLenum aType, GLsizeiptr aTypeSize,
-            const void* aArray, int aCount, int aTuple, int aStride = 0);
+        const char* aName,
+        GLenum aType,
+        GLsizeiptr aTypeSize,
+        const void* aArray,
+        int aCount,
+        int aTuple,
+        int aStride = 0
+    );
 
     void setRawAttributeArray(
-            int aLocation, GLenum aType, GLsizeiptr aTypeSize,
-            const void* aArray, int aCount, int aTuple, int aStride = 0);
+        int aLocation, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride = 0
+    );
 
     void setRawAttributeIArray(
-            const char* aName, GLenum aType, GLsizeiptr aTypeSize,
-            const void* aArray, int aCount, int aTuple, int aStride = 0);
+        const char* aName,
+        GLenum aType,
+        GLsizeiptr aTypeSize,
+        const void* aArray,
+        int aCount,
+        int aTuple,
+        int aStride = 0
+    );
 
     void setRawAttributeIArray(
-            int aLocation, GLenum aType, GLsizeiptr aTypeSize,
-            const void* aArray, int aCount, int aTuple, int aStride = 0);
+        int aLocation, GLenum aType, GLsizeiptr aTypeSize, const void* aArray, int aCount, int aTuple, int aStride = 0
+    );
 
     void setAttributeArray(const char* aName, const GLfloat* aArray, int aCount);
     void setAttributeArray(const char* aName, const gl::Vector2* aArray, int aCount);
@@ -73,31 +80,26 @@ public:
     int uniformLocation(const char* aName) const;
 
     template<typename tType>
-    void setUniformValue(const char* aName, const tType& aValue)
-    {
+    void setUniformValue(const char* aName, const tType& aValue) {
         mImpl.setUniformValue(aName, aValue);
     }
     template<typename tType>
-    void setUniformValue(int aLocation, const tType& aValue)
-    {
+    void setUniformValue(int aLocation, const tType& aValue) {
         mImpl.setUniformValue(aLocation, aValue);
     }
 
     template<typename tType>
-    void setUniformValueArray(const char* aName, const tType* aValue, int aCount)
-    {
+    void setUniformValueArray(const char* aName, const tType* aValue, int aCount) {
         mImpl.setUniformValueArray(aName, aValue, aCount);
     }
 
     template<typename tType>
-    void setUniformValueArray(const char* aName, const util::ArrayBlock<tType>& aValue)
-    {
+    void setUniformValueArray(const char* aName, const util::ArrayBlock<tType>& aValue) {
         mImpl.setUniformValueArray(aName, aValue.array(), aValue.count());
     }
 
     template<typename tType>
-    void setTupleUniformValueArray(const char* aName, const tType* aValue, int aCount, int aTuple)
-    {
+    void setTupleUniformValueArray(const char* aName, const tType* aValue, int aCount, int aTuple) {
         mImpl.setUniformValueArray(aName, aValue, aCount, aTuple);
     }
 

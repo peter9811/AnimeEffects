@@ -7,11 +7,9 @@
 #include "cmnd/Vector.h"
 #include "cmnd/Listener.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
-class Scalable : public cmnd::Base
-{
+class Scalable: public cmnd::Base {
 public:
     Scalable();
     virtual ~Scalable();
@@ -33,16 +31,14 @@ private:
     bool mExecuted;
 };
 
-class LambdaScalable : public cmnd::Scalable
-{
+class LambdaScalable: public cmnd::Scalable {
     typedef std::function<void(Vector&)> InitializerType;
     InitializerType mInitializer;
 
     virtual void initialize() { mInitializer(commands()); }
 
 public:
-    LambdaScalable(const InitializerType& aInitializer)
-        : mInitializer(aInitializer) {}
+    LambdaScalable(const InitializerType& aInitializer): mInitializer(aInitializer) {}
 };
 
 } // namespace cmnd

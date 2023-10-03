@@ -9,36 +9,30 @@
 namespace ctrl {
 namespace ffd {
 
-class DragMode : public IMode
-{
-public:
-    DragMode(core::Project& aProject, Targets& aTargets);
-    virtual void updateParam(const FFDParam&);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    class DragMode: public IMode {
+    public:
+        DragMode(core::Project& aProject, Targets& aTargets);
+        virtual void updateParam(const FFDParam&);
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    enum State
-    {
-        State_Idle,
-        State_Drag,
-        State_Miss
+    private:
+        enum State { State_Idle, State_Drag, State_Miss };
+        void clearState();
+        bool executeFocusTask(const QVector2D& aPos);
+        void executeDragTask(const QVector2D& aMove);
+        void assignDragging(const QVector2D& aMove);
+
+        core::Project& mProject;
+        Targets& mTargets;
+        FFDParam mParam;
+        State mState;
+        bool mFocusing;
+        Target* mFocusTarget;
+        int mFocusIndex;
+        QVector2D mFocusPos;
+        cmnd::ModifiableAssign<gl::Vector3>* mCommandRef;
     };
-    void clearState();
-    bool executeFocusTask(const QVector2D& aPos);
-    void executeDragTask(const QVector2D& aMove);
-    void assignDragging(const QVector2D& aMove);
-
-    core::Project& mProject;
-    Targets& mTargets;
-    FFDParam mParam;
-    State mState;
-    bool mFocusing;
-    Target* mFocusTarget;
-    int mFocusIndex;
-    QVector2D mFocusPos;
-    cmnd::ModifiableAssign<gl::Vector3>* mCommandRef;
-};
 
 } // namespace ffd
 } // namespace ctrl

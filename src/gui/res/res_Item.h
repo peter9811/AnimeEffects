@@ -8,23 +8,22 @@
 namespace gui {
 namespace res {
 
-class Item : public QTreeWidgetItem
-{
-public:
-    static Item* cast(QTreeWidgetItem* aItem);
-    static const Item* cast(const QTreeWidgetItem* aItem);
+    class Item: public QTreeWidgetItem {
+    public:
+        static Item* cast(QTreeWidgetItem* aItem);
+        static const Item* cast(const QTreeWidgetItem* aItem);
 
-    Item(const QTreeWidget& aTree, img::ResourceNode& aNode, const QString& aIdentifier);
-    img::ResourceNode& node() { return mNode; }
-    const img::ResourceNode& node() const { return mNode; }
-    bool isTopNode() const { return !mNode.parent(); }
+        Item(const QTreeWidget& aTree, img::ResourceNode& aNode, const QString& aIdentifier);
+        img::ResourceNode& node() { return mNode; }
+        const img::ResourceNode& node() const { return mNode; }
+        bool isTopNode() const { return !mNode.parent(); }
 
-    util::TreePos treePos();
+        util::TreePos treePos();
 
-private:
-    const QTreeWidget& mTree;
-    img::ResourceNode& mNode;
-};
+    private:
+        const QTreeWidget& mTree;
+        img::ResourceNode& mNode;
+    };
 
 } // namespace res
 } // namespace gui

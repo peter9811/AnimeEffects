@@ -18,15 +18,13 @@
 #include "gui/ViaPoint.h"
 #include "gui/GUIResources.h"
 
-namespace gui
-{
+namespace gui {
 
-class TimeLineWidget : public QScrollArea
-{
+class TimeLineWidget: public QScrollArea {
     Q_OBJECT
 
 public:
-    //typedef std::function<void(const core::TimeInfo&)> PlayBackFunc;
+    // typedef std::function<void(const core::TimeInfo&)> PlayBackFunc;
 
     TimeLineWidget(GUIResources& aResources, ViaPoint& aViaPoint, core::Animator& aAnimator, QWidget* aParent);
 
@@ -82,7 +80,6 @@ private:
     core::Frame mBeginFrame;
     core::Frame mLastFrame;
     bool mDoesLoop;
-
 };
 
 } // namespace gui

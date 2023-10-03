@@ -3,14 +3,11 @@
 
 #include "XC.h"
 
-namespace util
-{
+namespace util {
 
 template<typename tObject>
-class PlacePointer
-{
-    union Align
-    {
+class PlacePointer {
+    union Align {
         tObject* ptr;
         long long dummy0;
         size_t dummy1;
@@ -18,94 +15,63 @@ class PlacePointer
     };
 
     Align mAlign;
-    /*alignas(tObject)*/ char mBuffer[sizeof(tObject)]; // @todo msvc c++11 bug?
-                                                        // Yukusai - Current builds use MinGW, has anyone run into this issue?
+    /*alignas(tObject)*/ char
+        mBuffer[sizeof(tObject)]; // @todo msvc c++11 bug?
+                                  // The use of MSVC 2019+ is advised, specially now with support for CMake
 
 public:
-    PlacePointer()
-        : mAlign()
-    {
-        mAlign.ptr = NULL;
-    }
+    PlacePointer(): mAlign() { mAlign.ptr = NULL; }
 
-    PlacePointer(const PlacePointer<tObject>& aRhs)
-        : mAlign()
-    {
+    PlacePointer(const PlacePointer<tObject>& aRhs): mAlign() {
         mAlign.ptr = NULL;
-        if (aRhs.mAlign.ptr)
-        {
+        if (aRhs.mAlign.ptr) {
             construct(*aRhs.mAlign.ptr);
         }
     }
 
-    ~PlacePointer()
-    {
-        destruct();
-    }
+    ~PlacePointer() { destruct(); }
 
-    PlacePointer<tObject>& operator=(const PlacePointer<tObject>& aRhs)
-    {
-        if (!mAlign.ptr)
-        {
+    PlacePointer<tObject>& operator=(const PlacePointer<tObject>& aRhs) {
+        if (!mAlign.ptr) {
             construct(*aRhs.mAlign.ptr);
-        }
-        else
-        {
+        } else {
             *mAlign.ptr = *aRhs.mAlign.ptr;
         }
         return *this;
     }
 
     template<typename... tArgs>
-    void construct(tArgs&&... aArgs)
-    {
+    void construct(tArgs&&... aArgs) {
         destruct();
         mAlign.ptr = new (mBuffer) tObject(std::forward<tArgs>(aArgs)...);
     }
 
-    void destruct()
-    {
-        if (mAlign.ptr)
-        {
+    void destruct() {
+        if (mAlign.ptr) {
             mAlign.ptr->~tObject();
             mAlign.ptr = NULL;
         }
     }
 
-    tObject* operator->() const
-    {
+    tObject* operator->() const {
         XC_PTR_ASSERT(mAlign.ptr);
         return mAlign.ptr;
     }
 
-    tObject& operator*() const
-    {
+    tObject& operator*() const {
         XC_PTR_ASSERT(mAlign.ptr);
         return *mAlign.ptr;
     }
 
-    tObject* get() const
-    {
-        return mAlign.ptr;
-    }
+    tObject* get() const { return mAlign.ptr; }
 
-    explicit operator bool() const
-    {
-        return mAlign.ptr != NULL;
-    }
+    explicit operator bool() const { return mAlign.ptr != NULL; }
 
-    bool operator==(const tObject* aRhs)
-    {
-        return mAlign.ptr == aRhs;
-    }
+    bool operator==(const tObject* aRhs) { return mAlign.ptr == aRhs; }
 
-    bool operator==(const PlacePointer<tObject>& aRhs)
-    {
-        return mAlign.ptr == aRhs.mAlign.ptr;
-    }
+    bool operator==(const PlacePointer<tObject>& aRhs) { return mAlign.ptr == aRhs.mAlign.ptr; }
 };
 
 } // namespace util
 
 #endif // UTIL_PLACEPOINTER
-

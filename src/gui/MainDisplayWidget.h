@@ -21,14 +21,16 @@
 #include "ctrl/Painter.h"
 #include "gui/MainViewSetting.h"
 #include "gui/CanvasMover.h"
-namespace gui { class ProjectTabBar; }
-namespace gui { class ViaPoint; }
+namespace gui {
+class ProjectTabBar;
+}
+namespace gui {
+class ViaPoint;
+}
 
-namespace gui
-{
+namespace gui {
 
-class MainDisplayWidget : public QOpenGLWidget
-{
+class MainDisplayWidget: public QOpenGLWidget {
     Q_OBJECT
 public:
     MainDisplayWidget(ViaPoint& aViaPoint, QWidget* aParent);
@@ -53,11 +55,11 @@ public:
     void onProjectAttributeUpdated();
 
 private:
-    class GLContextAccessor : public gl::ContextAccessor
-    {
+    class GLContextAccessor: public gl::ContextAccessor {
         MainDisplayWidget* mOwner;
+
     public:
-        GLContextAccessor(MainDisplayWidget* aOwner) : mOwner(aOwner) {}
+        GLContextAccessor(MainDisplayWidget* aOwner): mOwner(aOwner) {}
         virtual void makeCurrent() { mOwner->makeCurrent(); }
         virtual void doneCurrent() { mOwner->doneCurrent(); }
     };

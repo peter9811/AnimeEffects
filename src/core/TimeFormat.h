@@ -8,16 +8,14 @@
 #include "util/Range.h"
 #include "util/MathUtil.h"
 
-namespace core
-{
+namespace core {
 
-enum TimeFormatType
-{
-    TimeFormatType_Frames_From0,      // (FF)
-    TimeFormatType_Frames_From1,      // (FF+1)
-    TimeFormatType_Relative_FPS,      // (FF / FPS)
-    TimeFormatType_Seconds_Frames,    // (SS:FF)
-    TimeFormatType_Timecode_SMPTE,    // (HH:MM:SS:FF)
+enum TimeFormatType {
+    TimeFormatType_Frames_From0, // (FF)
+    TimeFormatType_Frames_From1, // (FF+1)
+    TimeFormatType_Relative_FPS, // (FF / FPS)
+    TimeFormatType_Seconds_Frames, // (SS:FF)
+    TimeFormatType_Timecode_SMPTE, // (HH:MM:SS:FF)
     TimeFormatType_Timecode_HHMMSSmmm // (HH:MM:SS:mmm)
 };
 
@@ -29,8 +27,7 @@ struct DDHHMMSSmmm {
     int milliseconds = 0;
 };
 
-class TimeFormat
-{
+class TimeFormat {
 public:
     TimeFormat(util::Range aRange, int aFps);
 

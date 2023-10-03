@@ -5,18 +5,11 @@
 #include "XC.h"
 #include "util/NonCopyable.h"
 
-namespace gl
-{
+namespace gl {
 
-class ComputeTexture1D : private util::NonCopyable
-{
+class ComputeTexture1D: private util::NonCopyable {
 public:
-    enum CompoType
-    {
-        CompoType_S32,
-        CompoType_F32,
-        CompoType_TERM
-    };
+    enum CompoType { CompoType_S32, CompoType_F32, CompoType_TERM };
 
     ComputeTexture1D(CompoType aCompoType, int aCompoCount);
     ~ComputeTexture1D();
@@ -39,8 +32,7 @@ private:
     GLenum mType;
 };
 
-class ComputeTexture1DList
-{
+class ComputeTexture1DList {
 public:
     typedef QVector<ComputeTexture1D*> ListType;
 

@@ -5,33 +5,19 @@
 #include "cmnd/Stack.h"
 #include "cmnd/Listener.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
-class ScopedMacro
-{
+class ScopedMacro {
     Stack& mStack;
+
 public:
-    ScopedMacro(Stack& aStack, const QString& aText)
-        : mStack(aStack)
-    {
-        mStack.beginMacro(aText);
-    }
+    ScopedMacro(Stack& aStack, const QString& aText): mStack(aStack) { mStack.beginMacro(aText); }
 
-    ~ScopedMacro()
-    {
-        mStack.endMacro();
-    }
+    ~ScopedMacro() { mStack.endMacro(); }
 
-    void setValidLink(util::LifeLink& aLink)
-    {
-        mStack.setMacroValidLink(aLink);
-    }
+    void setValidLink(util::LifeLink& aLink) { mStack.setMacroValidLink(aLink); }
 
-    void grabListener(Listener* aListener)
-    {
-        mStack.grabMacroListener(aListener);
-    }
+    void grabListener(Listener* aListener) { mStack.grabMacroListener(aListener); }
 };
 
 } // namespace cmnd

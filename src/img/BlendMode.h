@@ -3,11 +3,9 @@
 
 #include <QString>
 
-namespace img
-{
+namespace img {
 
-enum BlendMode
-{
+enum BlendMode {
     BlendMode_Normal,
 
     BlendMode_Darken,
@@ -49,4 +47,3 @@ BlendMode getBlendModeFromQuadId(const QString& aName);
 } // namespace img
 
 #endif // IMG_BLENDMODE_H
-

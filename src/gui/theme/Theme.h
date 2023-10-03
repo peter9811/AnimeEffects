@@ -6,11 +6,9 @@
 
 #include <QPalette>
 
-namespace theme
-{
+namespace theme {
 
-class Theme
-{
+class Theme {
 
 public:
     Theme();

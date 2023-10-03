@@ -8,21 +8,19 @@
 namespace ctrl {
 namespace bone {
 
-struct KeyOwner
-{
-    KeyOwner() : key(), ownsKey() {}
+    struct KeyOwner {
+        KeyOwner(): key(), ownsKey() {}
 
-    explicit operator bool() const { return key; }
-    bool owns() const { return ownsKey; }
-    void pushOwnsKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);
-    void deleteOwnsKey();
+        explicit operator bool() const { return key; }
+        bool owns() const { return ownsKey; }
+        void pushOwnsKey(cmnd::Stack& aStack, core::TimeLine& aLine, int aFrame);
+        void deleteOwnsKey();
 
-    core::BoneKey* key;
-    bool ownsKey;
-};
+        core::BoneKey* key;
+        bool ownsKey;
+    };
 
 } // namespace bone
 } // namespace ctrl
 
 #endif // CTRL_BONE_KEYOWNER_H
-

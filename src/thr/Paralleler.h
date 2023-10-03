@@ -8,11 +8,9 @@
 #include "thr/TaskQueue.h"
 #include "thr/Worker.h"
 
-namespace thr
-{
+namespace thr {
 
-class Paralleler : private util::NonCopyable
-{
+class Paralleler: private util::NonCopyable {
 public:
     Paralleler(int aWorkerCount);
 

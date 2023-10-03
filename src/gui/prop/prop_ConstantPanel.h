@@ -11,30 +11,29 @@
 namespace gui {
 namespace prop {
 
-class ConstantPanel : public Panel
-{
-    Q_OBJECT
-public:
-    ConstantPanel(ViaPoint& aViaPoint, core::Project& aProject, const QString& aTitle, QWidget* aParent);
-    void setTarget(core::ObjectNode* aTarget);
-    void setPlayBackActivity(bool aIsActive);
-    void updateAttribute();
+    class ConstantPanel: public Panel {
+        Q_OBJECT
+    public:
+        ConstantPanel(ViaPoint& aViaPoint, core::Project& aProject, const QString& aTitle, QWidget* aParent);
+        void setTarget(core::ObjectNode* aTarget);
+        void setPlayBackActivity(bool aIsActive);
+        void updateAttribute();
 
-private:
-    void assignBlendMode(core::Project&, core::ObjectNode*, img::BlendMode);
-    void assignClipped(core::Project&, core::ObjectNode*, bool);
+    private:
+        void assignBlendMode(core::Project&, core::ObjectNode*, img::BlendMode);
+        void assignClipped(core::Project&, core::ObjectNode*, bool);
 
-    void build();
+        void build();
 
-    ViaPoint& mViaPoint;
-    core::Project& mProject;
-    core::ObjectNode* mTarget;
-    int mLabelWidth;
+        ViaPoint& mViaPoint;
+        core::Project& mProject;
+        core::ObjectNode* mTarget;
+        int mLabelWidth;
 
-    AttrGroup* mRenderingAttributes;
-    ComboItem* mBlendMode;
-    CheckItem* mClipped;
-};
+        AttrGroup* mRenderingAttributes;
+        ComboItem* mBlendMode;
+        CheckItem* mClipped;
+    };
 
 } // namespace prop
 } // namespace gui

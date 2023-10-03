@@ -2,65 +2,46 @@
 #include "img/BlendMode.h"
 #include "core/ResourceHolder.h"
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-ResourceHolder::ResourceHolder()
-    : mImageTrees()
-    , mRootPath()
-{
-    mRootPath = QDir::currentPath();
-}
+ResourceHolder::ResourceHolder(): mImageTrees(), mRootPath() { mRootPath = QDir::currentPath(); }
 
-ResourceHolder::~ResourceHolder()
-{
-    destroy();
-}
+ResourceHolder::~ResourceHolder() { destroy(); }
 
-QString ResourceHolder::relativeFilePath(const QString& aAbsFilePath) const
-{
+QString ResourceHolder::relativeFilePath(const QString& aAbsFilePath) const {
     QDir dir(mRootPath);
     return dir.relativeFilePath(aAbsFilePath);
 }
 
-void ResourceHolder::setRootPath(const QString& aRootPath)
-{
+void ResourceHolder::setRootPath(const QString& aRootPath) {
     QDir oldDir(mRootPath);
     QDir newDir(aRootPath);
     mRootPath = aRootPath;
 
-    for (auto& data : mImageTrees)
-    {
+    for (auto& data : mImageTrees) {
         auto absFilePath = oldDir.absoluteFilePath(data.filePath);
         data.filePath = newDir.relativeFilePath(absFilePath);
     }
 }
 
-void ResourceHolder::pushImageTree(
-        img::ResourceNode& aGrabNode,
-        const QString& aFilePath)
-{
+void ResourceHolder::pushImageTree(img::ResourceNode& aGrabNode, const QString& aFilePath) {
     ImageTree data;
     data.topNode = &aGrabNode;
     data.filePath = relativeFilePath(aFilePath);
     mImageTrees.push_back(data);
 }
 
-ResourceHolder::ImageTree ResourceHolder::popImageTree()
-{
+ResourceHolder::ImageTree ResourceHolder::popImageTree() {
     ImageTree tree = mImageTrees.back();
     mImageTrees.pop_back();
     return tree;
 }
 
-void ResourceHolder::insertImageTree(const ImageTree& aTree, int aIndex)
-{
+void ResourceHolder::insertImageTree(const ImageTree& aTree, int aIndex) {
     int index = 0;
-    for (auto itr = mImageTrees.begin(); itr != mImageTrees.end(); ++itr)
-    {
-        if (index == aIndex)
-        {
+    for (auto itr = mImageTrees.begin(); itr != mImageTrees.end(); ++itr) {
+        if (index == aIndex) {
             mImageTrees.insert(itr, aTree);
             return;
         }
@@ -70,13 +51,10 @@ void ResourceHolder::insertImageTree(const ImageTree& aTree, int aIndex)
     mImageTrees.push_back(aTree);
 }
 
-void ResourceHolder::removeImageTree(int aIndex)
-{
+void ResourceHolder::removeImageTree(int aIndex) {
     int index = 0;
-    for (auto itr = mImageTrees.begin(); itr != mImageTrees.end(); ++itr)
-    {
-        if (index == aIndex)
-        {
+    for (auto itr = mImageTrees.begin(); itr != mImageTrees.end(); ++itr) {
+        if (index == aIndex) {
             mImageTrees.erase(itr);
             return;
         }
@@ -85,27 +63,21 @@ void ResourceHolder::removeImageTree(int aIndex)
     XC_ASSERT(0);
 }
 
-ResourceHolder::ImageTree ResourceHolder::imageTree(int aIndex) const
-{
+ResourceHolder::ImageTree ResourceHolder::imageTree(int aIndex) const {
     int index = 0;
-    for (auto itr = mImageTrees.begin(); itr != mImageTrees.end(); ++itr)
-    {
-        if (index == aIndex) return *itr;
+    for (auto itr = mImageTrees.begin(); itr != mImageTrees.end(); ++itr) {
+        if (index == aIndex)
+            return *itr;
         ++index;
     }
     return ImageTree();
 }
 
-QString ResourceHolder::changeAbsoluteFilePath(
-        img::ResourceNode& aTopNode,
-        const QString& aAbsFilePath)
-{
+QString ResourceHolder::changeAbsoluteFilePath(img::ResourceNode& aTopNode, const QString& aAbsFilePath) {
     QDir dir(mRootPath);
 
-    for (auto& data : mImageTrees)
-    {
-        if (data.topNode == &aTopNode)
-        {
+    for (auto& data : mImageTrees) {
+        if (data.topNode == &aTopNode) {
             data.filePath = dir.relativeFilePath(aAbsFilePath);
             return data.filePath;
         }
@@ -113,43 +85,33 @@ QString ResourceHolder::changeAbsoluteFilePath(
     return QString();
 }
 
-QString ResourceHolder::findAbsoluteFilePath(const img::ResourceNode& aTopNode) const
-{
-    for (auto& data : mImageTrees)
-    {
-        if (data.topNode == &aTopNode)
-        {
+QString ResourceHolder::findAbsoluteFilePath(const img::ResourceNode& aTopNode) const {
+    for (auto& data : mImageTrees) {
+        if (data.topNode == &aTopNode) {
             return QDir(mRootPath).absoluteFilePath(data.filePath);
         }
     }
     return QString();
 }
 
-QString ResourceHolder::findRelativeFilePath(const img::ResourceNode& aTopNode) const
-{
-    for (auto& data : mImageTrees)
-    {
-        if (data.topNode == &aTopNode)
-        {
+QString ResourceHolder::findRelativeFilePath(const img::ResourceNode& aTopNode) const {
+    for (auto& data : mImageTrees) {
+        if (data.topNode == &aTopNode) {
             return data.filePath;
         }
     }
     return QString();
 }
 
-void ResourceHolder::destroy()
-{
-    for (auto data : mImageTrees)
-    {
+void ResourceHolder::destroy() {
+    for (auto data : mImageTrees) {
         delete data.topNode;
     }
     mImageTrees.clear();
 }
 
-bool ResourceHolder::serialize(Serializer& aOut) const
-{
-    static const std::array<uint8, 8> kSignature =
-        { 'R', 'e', 's', 'o', 'u', 'r', 'c', 'e' };
+bool ResourceHolder::serialize(Serializer& aOut) const {
+    static const std::array<uint8, 8> kSignature = {'R', 'e', 's', 'o', 'u', 'r', 'c', 'e'};
 
     // signature
     auto pos = aOut.beginBlock(kSignature);
@@ -157,14 +119,12 @@ bool ResourceHolder::serialize(Serializer& aOut) const
     // top node count
     aOut.write((int)mImageTrees.size());
 
-    for (auto data : mImageTrees)
-    {
+    for (auto data : mImageTrees) {
         // file path
         aOut.write(data.filePath);
 
         // write nodes
-        if (!serializeNode(aOut, *data.topNode))
-        {
+        if (!serializeNode(aOut, *data.topNode)) {
             return false;
         }
     }
@@ -175,10 +135,8 @@ bool ResourceHolder::serialize(Serializer& aOut) const
     return aOut.checkStream();
 }
 
-bool ResourceHolder::serializeNode(Serializer& aOut, const img::ResourceNode& aNode) const
-{
-    static const std::array<uint8, 8> kSignature =
-        { 'R', 'e', 's', 'N', 'o', 'd', 'e', '_' };
+bool ResourceHolder::serializeNode(Serializer& aOut, const img::ResourceNode& aNode) const {
+    static const std::array<uint8, 8> kSignature = {'R', 'e', 's', 'N', 'o', 'd', 'e', '_'};
 
     // block begin
     auto pos = aOut.beginBlock(kSignature);
@@ -192,7 +150,7 @@ bool ResourceHolder::serializeNode(Serializer& aOut, const img::ResourceNode& aN
     // reference id
     aOut.writeID(&aNode);
 
-    // is layer
+    // is a layer
     aOut.write(aNode.data().isLayer());
 
     // rect
@@ -208,18 +166,15 @@ bool ResourceHolder::serializeNode(Serializer& aOut, const img::ResourceNode& aN
     aOut.endBlock(pos);
 
     // check failure
-    if (aOut.failure())
-    {
+    if (aOut.failure()) {
         return false;
     }
 
     // iterate children
-    for (auto child : aNode.children())
-    {
+    for (auto child : aNode.children()) {
         XC_PTR_ASSERT(child);
 
-        if (!serializeNode(aOut, *child))
-        {
+        if (!serializeNode(aOut, *child)) {
             return false;
         }
     }
@@ -227,8 +182,7 @@ bool ResourceHolder::serializeNode(Serializer& aOut, const img::ResourceNode& aN
     return aOut.checkStream();
 }
 
-bool ResourceHolder::deserialize(Deserializer& aIn)
-{
+bool ResourceHolder::deserialize(Deserializer& aIn) {
     destroy();
 
     // check block begin
@@ -244,15 +198,13 @@ bool ResourceHolder::deserialize(Deserializer& aIn)
     aIn.read(topNodeCount);
 
     // each tree
-    for (int i = 0; i < topNodeCount; ++i)
-    {
+    for (int i = 0; i < topNodeCount; ++i) {
         ImageTree data;
         // file path
         aIn.read(data.filePath);
 
         // deserialize node
-        if (!deserializeNode(aIn, &data.topNode))
-        {
+        if (!deserializeNode(aIn, &data.topNode)) {
             return false;
         }
 
@@ -272,8 +224,7 @@ bool ResourceHolder::deserialize(Deserializer& aIn)
     return aIn.checkStream();
 }
 
-bool ResourceHolder::deserializeNode(Deserializer& aIn, img::ResourceNode** aDst)
-{
+bool ResourceHolder::deserializeNode(Deserializer& aIn, img::ResourceNode** aDst) {
     *aDst = nullptr;
 
     // check block begin
@@ -297,12 +248,11 @@ bool ResourceHolder::deserializeNode(Deserializer& aIn, img::ResourceNode** aDst
         return aIn.errored("failed to create resource node");
 
     // reference id
-    if (!aIn.bindIDData(nodePtr))
-    {
+    if (!aIn.bindIDData(nodePtr)) {
         return aIn.errored("failed to bind reference id");
     }
 
-    // is layer
+    // is a layer
     bool isLayer = false;
     aIn.read(isLayer);
     nodePtr->data().setIsLayer(isLayer);
@@ -317,8 +267,7 @@ bool ResourceHolder::deserializeNode(Deserializer& aIn, img::ResourceNode** aDst
         QString blendName;
         aIn.readFixedString(blendName, 4);
         auto blendMode = img::getBlendModeFromQuadId(blendName);
-        if (blendMode == img::BlendMode_TERM)
-        {
+        if (blendMode == img::BlendMode_TERM) {
             return aIn.errored("invalid image blending mode");
         }
         nodePtr->data().setBlendMode(blendMode);
@@ -326,13 +275,11 @@ bool ResourceHolder::deserializeNode(Deserializer& aIn, img::ResourceNode** aDst
 
     // memory block
     XCMemBlock block;
-    if (!aIn.readImage(block))
-    {
+    if (!aIn.readImage(block)) {
         return aIn.errored("invalid image resource");
     }
 
-    if (block.data)
-    {
+    if (block.data) {
         nodePtr->data().grabImage(block, rect.size(), img::Format_RGBA8);
     }
 
@@ -345,18 +292,17 @@ bool ResourceHolder::deserializeNode(Deserializer& aIn, img::ResourceNode** aDst
         return aIn.errored("stream error");
 
     // iterate children
-    for (int i = 0; i < childCount; ++i)
-    {
+    for (int i = 0; i < childCount; ++i) {
         img::ResourceNode* child = nullptr;
-        if (!deserializeNode(aIn, &child)) return false;
+        if (!deserializeNode(aIn, &child))
+            return false;
 
         XC_PTR_ASSERT(child);
         nodePtr->children().pushBack(child);
     }
 
     // end
-    if (!aIn.checkStream())
-    {
+    if (!aIn.checkStream()) {
         return false;
     }
 

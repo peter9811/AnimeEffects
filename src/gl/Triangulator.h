@@ -7,13 +7,11 @@
 #include "XC.h"
 #include "gl/Vector2.h"
 
-namespace gl
-{
+namespace gl {
 
-// south east coordinate
+// south-east coordinate
 // triangulate a simple clockwise polygon by ear clipping algorithm.
-class Triangulator
-{
+class Triangulator {
 public:
     Triangulator(const QPoint* aPoints, int aCount);
     Triangulator(const QPointF* aPoints, int aCount);
@@ -22,15 +20,15 @@ public:
     const QVector<gl::Vector2>& triangles() const { return mTriangles; }
 
 private:
-    struct Point
-    {
-        Point() : pos(), prev(), next() {}
+    struct Point {
+        Point(): pos(), prev(), next() {}
         QVector2D pos;
         Point* prev;
         Point* next;
     };
 
-    template<typename tPointType> void makeRoundChain(const tPointType* aPoints, int aCount);
+    template<typename tPointType>
+    void makeRoundChain(const tPointType* aPoints, int aCount);
 
     bool triangulate();
     bool isConvex(const Point& aPoint) const;
@@ -43,14 +41,12 @@ private:
 };
 
 template<typename tPointType>
-void Triangulator::makeRoundChain(const tPointType* aPoints, int aCount)
-{
+void Triangulator::makeRoundChain(const tPointType* aPoints, int aCount) {
     mPoints.resize(aCount);
 
     // make round chain
     Point* prev = &(mPoints[aCount - 1]);
-    for (int i = 0; i < aCount; ++i)
-    {
+    for (int i = 0; i < aCount; ++i) {
         auto& curr = mPoints[i];
         curr.pos = QVector2D(aPoints[i]);
         prev->next = &curr;

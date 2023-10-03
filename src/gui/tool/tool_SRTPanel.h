@@ -12,31 +12,30 @@
 namespace gui {
 namespace tool {
 
-class SRTPanel : public QGroupBox
-{
-    Q_OBJECT
-public:
-    SRTPanel(QWidget* aParent, GUIResources& aResources);
+    class SRTPanel: public QGroupBox {
+        Q_OBJECT
+    public:
+        SRTPanel(QWidget* aParent, GUIResources& aResources);
 
-    int updateGeometry(const QPoint& aPos, int aWidth);
+        int updateGeometry(const QPoint& aPos, int aWidth);
 
-    const ctrl::SRTParam& param() const { return mParam; }
+        const ctrl::SRTParam& param() const { return mParam; }
 
-    // boost like signals
-    util::Signaler<void(bool)> onParamUpdated; // a argment will be true when the layout is changed.
+        // boost like signals
+        util::Signaler<void(bool)> onParamUpdated; // argument will be true when the layout is changed.
 
-private:
-    void createMode();
-    void updateTypeParam(int aType);
+    private:
+        void createMode();
+        void updateTypeParam(int aType);
 
-    GUIResources& mResources;
-    ctrl::SRTParam mParam;
-    QScopedPointer<SingleOutItem> mTypeGroup;
-    QScopedPointer<CheckBoxItem> mAddMove;
-    QScopedPointer<CheckBoxItem> mAddRotate;
-    QScopedPointer<CheckBoxItem> mAddScale;
-    QScopedPointer<CheckBoxItem> mAdjust;
-};
+        GUIResources& mResources;
+        ctrl::SRTParam mParam;
+        QScopedPointer<SingleOutItem> mTypeGroup;
+        QScopedPointer<CheckBoxItem> mAddMove;
+        QScopedPointer<CheckBoxItem> mAddRotate;
+        QScopedPointer<CheckBoxItem> mAddScale;
+        QScopedPointer<CheckBoxItem> mAdjust;
+    };
 
 } // namespace tool
 } // namespace gui

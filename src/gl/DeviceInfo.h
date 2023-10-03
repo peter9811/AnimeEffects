@@ -4,11 +4,9 @@
 #include <string>
 #include <QGL>
 
-namespace gl
-{
+namespace gl {
 
-struct DeviceInfo
-{
+struct DeviceInfo {
     static void setInstance(const DeviceInfo* aInstance);
     static bool validInstanceExists();
     static const DeviceInfo& instance();

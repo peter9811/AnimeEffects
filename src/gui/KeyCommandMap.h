@@ -8,20 +8,14 @@
 #include <QSettings>
 #include "ctrl/KeyBinding.h"
 
-namespace gui
-{
+namespace gui {
 
-class KeyCommandMap : public QObject
-{
+class KeyCommandMap: public QObject {
     Q_OBJECT
 public:
-    struct KeyCommand
-    {
+    struct KeyCommand {
         KeyCommand();
-        KeyCommand(const QString& aKey,
-                   const QString& aGroup,
-                   const QString& aLabel,
-                   const ctrl::KeyBinding& aBinding);
+        KeyCommand(const QString& aKey, const QString& aGroup, const QString& aLabel, const ctrl::KeyBinding& aBinding);
         QString key;
         QString group;
         QString label;
@@ -47,8 +41,7 @@ public:
     const ListType& subKeyCommands() const { return mSubKeyCommands; }
 
 private:
-    void addNewKey(const QString& aKey, const QString& aGroup,
-                   const QString& aName, const ctrl::KeyBinding& aBinding);
+    void addNewKey(const QString& aKey, const QString& aGroup, const QString& aName, const ctrl::KeyBinding& aBinding);
     void readValue(const QSettings& aSrc, KeyCommand& aCommand);
     void eraseValue(const QSettings& aSrc, KeyCommand& aCommand);
     void writeValue(QSettings& aDest, const KeyCommand& aCommand);

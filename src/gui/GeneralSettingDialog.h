@@ -9,17 +9,15 @@
 #include "core/TimeFormat.h"
 #include "qspinbox.h"
 
-namespace gui
-{
+namespace gui {
 
-class GeneralSettingDialog : public EasyDialog
-{
+class GeneralSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     GeneralSettingDialog(GUIResources& aGUIResources, QWidget* aParent);
-    QFormLayout* createTab(const QString& aTitle, QFormLayout *aForm);
-    void selectTab(int aIndex){
-        //General - 0 ; Project settings - 1 ; FFmpeg settings - 2 ; Animation keys - 3 ; Keybindings - 4
+    QFormLayout* createTab(const QString& aTitle, QFormLayout* aForm);
+    void selectTab(int aIndex) {
+        // General - 0 ; Project settings - 1 ; FFmpeg settings - 2 ; Animation keys - 3 ; Keybindings - 4
         mTabs->setCurrentIndex(aIndex);
     }
     bool easingHasChanged();
@@ -28,10 +26,12 @@ public:
     bool timeFormatHasChanged();
     bool autoSaveHasChanged();
     bool autoSaveDelayHasChanged();
+    bool autoFFmpegHasChanged();
     bool themeHasChanged();
     bool cbCopyHasChanged();
     bool keyDelayHasChanged();
     QString theme();
+
 private:
     void saveSettings();
 
@@ -57,6 +57,9 @@ private:
 
     int mAutoSaveDelay;
     QSpinBox* mAutoSaveDelayBox;
+
+    bool mAutoFFmpegCheck;
+    QCheckBox* mAutoFFmpegBox;
 
     bool bAutoCbCopy;
     QCheckBox* mAutoCbCopy;

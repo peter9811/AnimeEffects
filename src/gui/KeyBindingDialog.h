@@ -8,21 +8,17 @@
 #include "gui/EasyDialog.h"
 #include "gui/KeyCommandMap.h"
 
-namespace gui
-{
+namespace gui {
 
-class KeyBindingDialog : public EasyDialog
-{
+class KeyBindingDialog: public EasyDialog {
     Q_OBJECT
 public:
     KeyBindingDialog(KeyCommandMap& aMap, QWidget* aParent);
 
 private:
-    class KeyEdit : public QLineEdit
-    {
+    class KeyEdit: public QLineEdit {
     public:
-        KeyEdit(KeyCommandMap::KeyCommand& aOrigin,
-                KeyBindingDialog& aParent);
+        KeyEdit(KeyCommandMap::KeyCommand& aOrigin, KeyBindingDialog& aParent);
 
         const QString& label() const { return mOrigin.label; }
         const QString& text() const { return mText; }
@@ -34,7 +30,7 @@ private:
 
     private:
         virtual void keyPressEvent(QKeyEvent* aEvent);
-        virtual void focusOutEvent(QFocusEvent *event);
+        virtual void focusOutEvent(QFocusEvent* event);
 
         KeyBindingDialog& mParent;
         KeyCommandMap::KeyCommand& mOrigin;

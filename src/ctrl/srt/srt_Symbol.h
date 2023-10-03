@@ -9,27 +9,24 @@
 namespace ctrl {
 namespace srt {
 
-class Symbol
-{
-public:
-    typedef std::pair<FocusType, QVector2D> FocusData;
+    class Symbol {
+    public:
+        typedef std::pair<FocusType, QVector2D> FocusData;
 
-    Symbol();
+        Symbol();
 
-    void build(const QMatrix4x4& aLocalMtx,
-               const QMatrix4x4& aWorldMtx,
-               const core::CameraInfo& aCamera);
+        void build(const QMatrix4x4& aLocalMtx, const QMatrix4x4& aWorldMtx, const core::CameraInfo& aCamera);
 
-    FocusData findFocus(const QVector2D& aWorldPos);
+        FocusData findFocus(const QVector2D& aWorldPos);
 
-    void draw(const core::RenderInfo& aInfo, QPainter& aPainter, FocusType aFocus);
+        void draw(const core::RenderInfo& aInfo, QPainter& aPainter, FocusType aFocus);
 
-private:
-    QPointF c;
-    QPointF p[4];
-    QPointF v[4];
-    QPointF ev[4];
-};
+    private:
+        QPointF c;
+        QPointF p[4];
+        QPointF v[4];
+        QPointF ev[4];
+    };
 
 } // namespace srt
 } // namespace ctrl

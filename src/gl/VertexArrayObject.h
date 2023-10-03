@@ -4,11 +4,9 @@
 #include <QGL>
 #include "util/NonCopyable.h"
 
-namespace gl
-{
+namespace gl {
 
-class VertexArrayObject : private util::NonCopyable
-{
+class VertexArrayObject: private util::NonCopyable {
 public:
     VertexArrayObject();
     ~VertexArrayObject();

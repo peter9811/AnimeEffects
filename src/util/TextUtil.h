@@ -5,14 +5,11 @@
 #include <QTextDecoder>
 #include <QStringList>
 
-namespace util
-{
+namespace util {
 
-class TextUtil
-{
+class TextUtil {
 public:
-    class ShiftJisDecoder
-    {
+    class ShiftJisDecoder {
     public:
         ShiftJisDecoder();
         ~ShiftJisDecoder();

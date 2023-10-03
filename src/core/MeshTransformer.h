@@ -8,23 +8,26 @@
 #include "gl/BufferObject.h"
 #include "core/TimeKeyExpans.h"
 #include "core/LayerMesh.h"
-namespace core { class MeshTransformerResource; }
+namespace core {
+class MeshTransformerResource;
+}
 
-namespace core
-{
+namespace core {
 
-class MeshTransformer : private util::NonCopyable
-{
+class MeshTransformer: private util::NonCopyable {
 public:
     MeshTransformer(const QString& aShaderPath);
     MeshTransformer(MeshTransformerResource& aResource);
     ~MeshTransformer();
 
-    void callGL(const TimeKeyExpans& aExpans,
-                LayerMesh::MeshBuffer& aMeshBuffer,
-                const QVector2D& aOriginOffset,
-                util::ArrayBlock<const gl::Vector3> aPositions,
-                bool aNonPosed = false, bool aUseInfluence = true);
+    void callGL(
+        const TimeKeyExpans& aExpans,
+        LayerMesh::MeshBuffer& aMeshBuffer,
+        const QVector2D& aOriginOffset,
+        util::ArrayBlock<const gl::Vector3> aPositions,
+        bool aNonPosed = false,
+        bool aUseInfluence = true
+    );
 
     gl::BufferObject& positions() { return *mOutPositions; }
     const gl::BufferObject& positions() const { return *mOutPositions; }

@@ -4,11 +4,9 @@
 #include <cstring>
 #include "XC.h"
 
-namespace util
-{
+namespace util {
 
-class ByteBuffer
-{
+class ByteBuffer {
 public:
     ByteBuffer();
     ByteBuffer(const ByteBuffer& aRhs);
@@ -33,4 +31,3 @@ private:
 } // namespace util
 
 #endif // UTIL_BUFFER
-

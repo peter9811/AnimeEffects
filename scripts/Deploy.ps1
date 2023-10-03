@@ -1,5 +1,6 @@
 # Set up on your IDE the following arguments to run from the scripts folder:
 # "CompilerBin", meaning the bin folder of your compiler (Example: C:\Qt\5.15.2\mingw81_64\bin)
+# This is for default GCC/MSVC and not for cmake.
 
 param(
     [Parameter()]

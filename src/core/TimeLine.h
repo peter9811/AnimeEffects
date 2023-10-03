@@ -9,16 +9,20 @@
 #include "core/TimeKeyType.h"
 #include "core/Serializer.h"
 #include "core/Deserializer.h"
-namespace core { class Project; }
-namespace core { class ObjectNode; }
-namespace core { class TimeKeyExpans; }
+namespace core {
+class Project;
+}
+namespace core {
+class ObjectNode;
+}
+namespace core {
+class TimeKeyExpans;
+}
 
 
-namespace core
-{
+namespace core {
 
-class TimeLine
-{
+class TimeLine {
 public:
     enum { kDefaultKeyIndex = -1 };
 
@@ -62,8 +66,7 @@ public:
 private:
     void clear();
     int serializeTypeCount() const;
-    void pushRemoveCommands(
-            TimeKeyType aType, int aFrame, cmnd::Vector& aCommands);
+    void pushRemoveCommands(TimeKeyType aType, int aFrame, cmnd::Vector& aCommands);
     bool serializeTimeKey(Serializer& aOut, const TimeKey& aTimeKey) const;
     bool deserializeTimeKey(Deserializer& aIn, TimeKeyType aType, int aIndex);
 

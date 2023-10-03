@@ -3,11 +3,9 @@
 
 #include "core/Frame.h"
 
-namespace core
-{
+namespace core {
 
-class Animator
-{
+class Animator {
 public:
     virtual ~Animator() {}
     virtual Frame currentFrame() const = 0;
@@ -17,7 +15,6 @@ public:
     virtual bool isSuspended() const = 0;
 };
 
-}
+} // namespace core
 
 #endif // CORE_ANIMATOR
-

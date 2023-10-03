@@ -5,11 +5,9 @@
 #include "util/StreamWriter.h"
 #include "core/Project.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class ProjectSaver
-{
+class ProjectSaver {
 public:
     ProjectSaver();
     bool save(const QString& aFilePath, const core::Project& aProject);

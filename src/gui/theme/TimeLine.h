@@ -4,14 +4,12 @@
 #include <QColor>
 #include <QPalette>
 
-namespace theme
-{
+namespace theme {
 
 /*
  * Used to pass theme values to the ctrl::time::time_Renderer
  */
-class TimeLine
-{
+class TimeLine {
 
 public:
     TimeLine();
@@ -19,25 +17,25 @@ public:
     void reset();
 
     QColor headerContentColor() const;
-    void setHeaderContentColor(const QColor &headerContentColor);
+    void setHeaderContentColor(const QColor& headerContentColor);
 
     QColor headerBackgroundColor() const;
-    void setHeaderBackgroundColor(const QColor &headerBackgroundColor);
+    void setHeaderBackgroundColor(const QColor& headerBackgroundColor);
 
     QColor trackColor() const;
-    void setTrackColor(const QColor &trackColor);
+    void setTrackColor(const QColor& trackColor);
 
     QColor trackEdgeColor() const;
-    void setTrackEdgeColor(const QColor &trackEdgeColor);
+    void setTrackEdgeColor(const QColor& trackEdgeColor);
 
     QColor trackTextColor() const;
-    void setTrackTextColor(const QColor &trackTextColor);
+    void setTrackTextColor(const QColor& trackTextColor);
 
     QColor trackSelectColor() const;
-    void setTrackSelectColor(const QColor &trackSelectColor);
+    void setTrackSelectColor(const QColor& trackSelectColor);
 
     QColor trackSeperatorColor() const;
-    void setTrackSeperatorColor(const QColor &trackSeperatorColor);
+    void setTrackSeperatorColor(const QColor& trackSeperatorColor);
 
 private:
     void shade();

@@ -9,11 +9,9 @@
 #include "gui/ResourceDialog.h"
 #include "gui/ResourceTreeWidget.h"
 
-namespace gui
-{
+namespace gui {
 
-class ResourceDialog : public EasyDialog
-{
+class ResourceDialog: public EasyDialog {
     Q_OBJECT
 public:
     typedef QList<img::ResourceNode*> NodeList;

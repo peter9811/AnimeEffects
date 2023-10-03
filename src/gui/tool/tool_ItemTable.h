@@ -6,23 +6,21 @@
 namespace gui {
 namespace tool {
 
-class ItemTable
-{
-public:
-    ItemTable(const QPoint& aLTPos, int aWidth,
-              const QSize& aItemSize, const QSize& aGap = QSize());
-    void pushGeometry(QWidget& aItem);
-    int height() const;
+    class ItemTable {
+    public:
+        ItemTable(const QPoint& aLTPos, int aWidth, const QSize& aItemSize, const QSize& aGap = QSize());
+        void pushGeometry(QWidget& aItem);
+        int height() const;
 
-private:
-    QPoint mLTPos;
-    int mWidth;
-    QSize mItemSize;
-    int mColumn;
-    int mRowIndex;
-    int mColIndex;
-    QSize mGap;
-};
+    private:
+        QPoint mLTPos;
+        int mWidth;
+        QSize mItemSize;
+        int mColumn;
+        int mRowIndex;
+        int mColIndex;
+        QSize mGap;
+    };
 
 } // namespace tool
 } // namespace gui

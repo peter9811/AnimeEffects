@@ -3,13 +3,13 @@
 
 #include <QGL>
 #include <QSize>
-namespace gl { class BufferObject; }
+namespace gl {
+class BufferObject;
+}
 
-namespace gl
-{
+namespace gl {
 
-class Util
-{
+class Util {
 public:
     static void clearColorBuffer(GLclampf r, GLclampf g, GLclampf b, GLclampf a);
     static void setViewportAsActualPixels(const QSize& aSize);

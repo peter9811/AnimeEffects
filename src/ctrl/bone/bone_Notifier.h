@@ -9,39 +9,26 @@
 namespace ctrl {
 namespace bone {
 
-class Notifier : public cmnd::Listener
-{
-public:
-    Notifier(
-            core::Project& aProject,
-            core::ObjectNode& aTarget,
-            core::BoneKey& aKey,
-            core::TimeLineEvent::Type aType);
+    class Notifier: public cmnd::Listener {
+    public:
+        Notifier(
+            core::Project& aProject, core::ObjectNode& aTarget, core::BoneKey& aKey, core::TimeLineEvent::Type aType
+        );
 
-    void notify(bool aIsUndo = false);
+        void notify(bool aIsUndo = false);
 
-    virtual void onExecuted()
-    {
-        notify();
-    }
+        virtual void onExecuted() { notify(); }
 
-    virtual void onUndone()
-    {
-        notify(true);
-    }
+        virtual void onUndone() { notify(true); }
 
-    virtual void onRedone()
-    {
-        notify();
-    }
+        virtual void onRedone() { notify(); }
 
-private:
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    core::BoneKey& mKey;
-    core::TimeLineEvent mEvent;
-
-};
+    private:
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        core::BoneKey& mKey;
+        core::TimeLineEvent mEvent;
+    };
 
 } // namespace bone
 } // namespace ctrl

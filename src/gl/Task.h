@@ -4,11 +4,9 @@
 #include <QGL>
 #include "util/NonCopyable.h"
 
-namespace gl
-{
+namespace gl {
 
-class Task : private util::NonCopyable
-{
+class Task: private util::NonCopyable {
 public:
     Task();
     virtual ~Task();

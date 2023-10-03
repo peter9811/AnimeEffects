@@ -4,7 +4,6 @@
 #include <QFileDialog>
 #include <QDockWidget>
 #include <QGraphicsDropShadowEffect>
-#include <QShortcut>
 #include <QElapsedTimer>
 #include <QMessageBox>
 #include <QFileSystemWatcher>
@@ -14,55 +13,51 @@
 #include "ctrl/Exporter.h"
 #include "gui/MainWindow.h"
 #include "gui/ExportDialog.h"
-// New Exporter
-#include "gui/exportdiag.h"
-//---//
 #include "gui/NewProjectDialog.h"
-#include "gui/ResourceDialog.h"
 #include "gui/ProjectHook.h"
 #include "gui/menu/menu_ProgressReporter.h"
 #include "util/NetworkUtil.h"
+#include <set>
+#include <utility>
+// This thing is held by duct tape and OOP hell I swear...
+#include "ctrl/ExportParams.h"
 
-namespace
-{
-class EventSuspender
-{
+namespace {
+class EventSuspender {
     QWriteLocker mRenderingLocker;
+
 public:
-    EventSuspender(gui::MainDisplayWidget& aMainDisplay, gui::TargetWidget& aTarget)
-        : mRenderingLocker(&aMainDisplay.renderingLock())
-    {
+    EventSuspender(gui::MainDisplayWidget& aMainDisplay, gui::TargetWidget& aTarget):
+        mRenderingLocker(&aMainDisplay.renderingLock()) {
         // stop animation
         aTarget.stop();
     }
 };
 
-}
+} // namespace
 
-namespace gui
-{
+namespace gui {
 
-MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const LocaleParam& aLocaleParam)
-    : QMainWindow(nullptr)
-    , mSystem(aSystem)
-    , mGUIResources(aResources)
-    , mViaPoint(this)
-    , mKeyCommandMap()
-    , mKeyCommandInvoker()
-    , mMouseSetting()
-    , mMainMenuBar()
-    , mMainViewSetting()
-    , mMainDisplayStyle()
-    , mMainDisplay()
-    , mProjectTabBar()
-    , mTarget()
-    , mProperty()
-    , mTool()
-    , mResourceDialog()
-    , mDriverHolder()
-    , mCurrent()
-    , mLocaleParam(aLocaleParam)
-{
+MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocaleParam  aLocaleParam):
+    QMainWindow(nullptr),
+    mSystem(aSystem),
+    mGUIResources(aResources),
+    mViaPoint(this),
+    mKeyCommandMap(),
+    mKeyCommandInvoker(),
+    mMouseSetting(),
+    mMainMenuBar(),
+    mMainViewSetting(),
+    mMainDisplayStyle(),
+    mMainDisplay(),
+    mProjectTabBar(),
+    mTarget(),
+    mProperty(),
+    mTool(),
+    mResourceDialog(),
+    mDriverHolder(),
+    mCurrent(),
+    mLocaleParam(std::move(aLocaleParam)) {
     // setup default opengl format
     {
         QSurfaceFormat format;
@@ -98,9 +93,12 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     {
         mKeyCommandMap.reset(new KeyCommandMap(*this));
 
-        QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                           QApplication::organizationName(),
-                           QApplication::applicationName());
+        QSettings settings(
+            QSettings::IniFormat,
+            QSettings::UserScope,
+            QApplication::organizationName(),
+            QApplication::applicationName()
+        );
         settings.beginGroup("keybindings");
         mKeyCommandMap->readFrom(settings);
         settings.endGroup();
@@ -132,8 +130,10 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
         const float fontScale = 1.3f;
 #endif
         auto font = this->font();
-        if (font.pixelSize() > 0) font.setPixelSize((int)(font.pixelSize() * fontScale));
-        else font.setPointSizeF(font.pointSizeF() * fontScale);
+        if (font.pixelSize() > 0)
+            font.setPixelSize(font.pixelSize() * fontScale);
+        else
+            font.setPointSizeF(font.pointSizeF() * fontScale);
         mMainDisplayStyle.reset(new MainDisplayStyle(font, mGUIResources));
         mMainDisplay = new MainDisplayWidget(mViaPoint, this);
         this->setCentralWidget(mMainDisplay);
@@ -145,7 +145,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
 
     // create targeting widget
     {
-        QDockWidget* dockWidget = new QDockWidget(this);
+        auto* dockWidget = new QDockWidget(this);
         dockWidget->setWindowTitle(tr("Animation Dock"));
         dockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         dockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
@@ -157,7 +157,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
 
     // create property widget
     {
-        QDockWidget* dockWidget = new QDockWidget(this);
+        auto* dockWidget = new QDockWidget(this);
         dockWidget->setWindowTitle(tr("Property Dock"));
         dockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         dockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -195,14 +195,14 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
 
     // create tool widget
     {
-        QDockWidget* dockWidget = new QDockWidget(this);
+        auto* dockWidget = new QDockWidget(this);
         dockWidget->setWindowTitle(tr("Tool Dock"));
         dockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         this->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
 
         mDockToolWidget = dockWidget;
 
-		mTool = new ToolWidget(mViaPoint, mGUIResources, *mKeyCommandMap, QSize(192, 136), dockWidget);
+        mTool = new ToolWidget(mViaPoint, mGUIResources, *mKeyCommandMap, QSize(192, 136), dockWidget);
         dockWidget->setWidget(mTool);
     }
 
@@ -213,9 +213,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
     }
 
     // create driver holder
-    {
-        mDriverHolder.reset(new DriverHolder(mViaPoint));
-    }
+    { mDriverHolder.reset(new DriverHolder(mViaPoint)); }
 
     // connection
     /// @note Maybe a sequence of connections is meaningful.
@@ -276,95 +274,99 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, const Lo
 #else
     {
         auto key = mKeyCommandMap->get("Undo");
-        if (key) key->invoker = [=](){ this->onUndoTriggered(); };
+        if (key)
+            key->invoker = [=]() { this->onUndoTriggered(); };
     }
     {
         auto key = mKeyCommandMap->get("Redo");
-        if (key) key->invoker = [=](){ this->onRedoTriggered(); };
+        if (key)
+            key->invoker = [=]() { this->onRedoTriggered(); };
     }
     {
         auto key = mKeyCommandMap->get("SaveProject");
-        if (key) key->invoker = [=](){ this->onSaveProjectTriggered(); };
+        if (key)
+            key->invoker = [=]() { this->onSaveProjectTriggered(); };
     }
     {
         auto key = mKeyCommandMap->get("PlayPause");
-        if (key) key->invoker = [=](){ this->onPlayPauseTriggered(); };
+        if (key)
+            key->invoker = [=]() { this->onPlayPauseTriggered(); };
     }
     {
         auto key = mKeyCommandMap->get("ToggleDocks");
-        if (key) key->invoker = [=](){ this->onDockToggle(); };
+        if (key)
+            key->invoker = [=]() { this->onDockToggle(); };
     }
     {
         auto key = mKeyCommandMap->get("ToggleRepeat");
-        if (key) key->invoker = [=](){ this->onLoopToggle(); };
+        if (key)
+            key->invoker = [=]() { this->onLoopToggle(); };
     }
     {
         auto key = mKeyCommandMap->get("MoveRight");
-        if (key) key->invoker = [=](){ this->onDisplacementTriggered(1);};
+        if (key)
+            key->invoker = [=]() { this->onDisplacementTriggered(1); };
     }
     {
         auto key = mKeyCommandMap->get("MoveLeft");
-        if (key) key->invoker = [=](){ this->onDisplacementTriggered(-1);};
+        if (key)
+            key->invoker = [=]() { this->onDisplacementTriggered(-1); };
     }
     {
         auto key = mKeyCommandMap->get("MoveToInit");
-        if (key) key->invoker = [=](){ this->onMovementTriggered("Init");};
+        if (key)
+            key->invoker = [=]() { this->onMovementTriggered("Init"); };
     }
     {
         auto key = mKeyCommandMap->get("MoveToLast");
-        if (key) key->invoker = [=](){ this->onMovementTriggered("Last");};
+        if (key)
+            key->invoker = [=]() { this->onMovementTriggered("Last"); };
     }
 #endif
 
     // autosave
 
     QSettings settings;
-    bool autosave = settings.value("generalsettings/projects/autosaveEnabled").isValid()?
-                settings.value("generalsettings/projects/autosaveEnabled").toBool() : false;
+    bool autosave = settings.value("generalsettings/projects/autosaveEnabled").isValid() &&
+        settings.value("generalsettings/projects/autosaveEnabled").toBool();
 
-    if (autosave){
+    if (autosave) {
         autosaveTimer = new QTimer(this);
         connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
         autosaveTimer->start();
     }
 }
 
-MainWindow::~MainWindow()
-{
-    closeAllProjects();
-}
+MainWindow::~MainWindow() { closeAllProjects(); }
 
-void MainWindow::autoSave(){
+void MainWindow::autoSave() {
     QSettings settings;
-    int autoDelay = settings.value("generalsettings/projects/autosaveDelay").isValid()?
-                settings.value("generalsettings/projects/autosaveDelay").toInt() : 5;
-    autosaveTimer->setInterval(autoDelay*60000);
-    if (mCurrent && !mCurrent->isNameless() && mCurrent->isModified())
-    {
-        mViaPoint.pushLog("Automatically saved project: " + QFileInfo(mCurrent->fileName()).fileName(), ctrl::UILogType_Info);
+    int autoDelay = settings.value("generalsettings/projects/autosaveDelay").isValid()
+        ? settings.value("generalsettings/projects/autosaveDelay").toInt()
+        : 5;
+    autosaveTimer->setInterval(autoDelay * 60000);
+    if (mCurrent && !mCurrent->isNameless() && mCurrent->isModified()) {
+        mViaPoint.pushLog(
+            "Automatically saved project: " + QFileInfo(mCurrent->fileName()).fileName(), ctrl::UILogType_Info
+        );
         // qDebug() << "Interval of " + QString(std::to_string(autoDelay*60000).c_str()) + " milliseconds has elapsed.";
         processProjectSaving(*mCurrent);
     }
 }
 
-void MainWindow::showWithSettings()
-{
+void MainWindow::showWithSettings() {
 #if defined(QT_NO_DEBUG) || 1
     QSettings settings;
     auto winSize = settings.value("mainwindow/size");
     auto isMax = settings.value("mainwindow/ismaximized");
 
-    if (winSize.isValid())
-    {
+    if (winSize.isValid()) {
         this->resize(winSize.toSize());
     }
 
-    if (!isMax.isValid() || isMax.toBool())
-    {
+    if (!isMax.isValid() || isMax.toBool()) {
         this->showMaximized();
-    }
-    else
-    {
+    } else {
         this->show();
     }
 #else
@@ -372,15 +374,12 @@ void MainWindow::showWithSettings()
 #endif
 }
 
-void MainWindow::saveCurrentSettings(int aResultCode)
-{
+void MainWindow::saveCurrentSettings(int aResultCode) {
 #if defined(QT_NO_DEBUG) || 1
-    if (aResultCode == 0)
-    {
+    if (aResultCode == 0) {
         QSettings settings;
         settings.setValue("mainwindow/ismaximized", this->isMaximized());
-        if (!this->isMaximized())
-        {
+        if (!this->isMaximized()) {
             settings.setValue("mainwindow/size", this->size());
         }
     }
@@ -389,18 +388,15 @@ void MainWindow::saveCurrentSettings(int aResultCode)
 #endif
 }
 
-void MainWindow::testNewProject(const QString& aFilePath)
-{
+void MainWindow::testNewProject(const QString& aFilePath) {
     resetProjectRefs(nullptr);
 
     menu::ProgressReporter progress(false, this);
 
     core::Project::Attribute attribute;
-    auto result = mSystem.newProject(
-                aFilePath, attribute, new ProjectHook(), progress, false);
+    auto result = mSystem.newProject(aFilePath, attribute, new ProjectHook(), progress, false);
 
-    if (result)
-    {
+    if (result) {
         resetProjectRefs(result.project);
         mProjectTabBar->pushProject(*result.project);
 
@@ -408,25 +404,20 @@ void MainWindow::testNewProject(const QString& aFilePath)
     }
 }
 
-void MainWindow::closeAllProjects()
-{
+void MainWindow::closeAllProjects() {
     mProjectTabBar->removeAllProject();
     resetProjectRefs(nullptr);
-    mSystem.closeAllProjects();   
+    mSystem.closeAllProjects();
 }
 
-void MainWindow::resetProjectRefs(core::Project* aProject)
-{
+void MainWindow::resetProjectRefs(core::Project* aProject) {
     mCurrent = aProject;
 
     /// @note Maybe a sequence of connections is meaningful.
 
-    if (aProject)
-    {
+    if (aProject) {
         mDriverHolder->create(*aProject, *mMainDisplayStyle);
-    }
-    else
-    {
+    } else {
         mDriverHolder->destroy();
     }
 
@@ -441,24 +432,17 @@ void MainWindow::resetProjectRefs(core::Project* aProject)
     mTool->setDriver(mDriverHolder->driver());
 }
 
-void MainWindow::onProjectTabChanged(core::Project& aProject)
-{
-    resetProjectRefs(&aProject);
-}
+void MainWindow::onProjectTabChanged(core::Project& aProject) { resetProjectRefs(&aProject); }
 
-void MainWindow::onThemeUpdated(theme::Theme &aTheme)
-{
-    QFile stylesheet(aTheme.path()+"/stylesheet/standard.ssa");
-    if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+void MainWindow::onThemeUpdated(theme::Theme& aTheme) {
+    QFile stylesheet(aTheme.path() + "/stylesheet/standard.ssa");
+    if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QString fontOption;
         {
             auto hasFamily = !mLocaleParam.fontFamily.isEmpty();
             auto hasSize = !mLocaleParam.fontSize.isEmpty();
-            fontOption = "QWidget {" +
-                    (hasFamily ? ("font-family: " + mLocaleParam.fontFamily + ";") : "") +
-                    (hasSize ? ("font-size: " + mLocaleParam.fontSize + ";") : "") +
-                    " }\n";
+            fontOption = "QWidget {" + (hasFamily ? ("font-family: " + mLocaleParam.fontFamily + ";") : "") +
+                (hasSize ? ("font-size: " + mLocaleParam.fontSize + ";") : "") + " }\n";
         }
 
         this->setStyleSheet(fontOption + QTextStream(&stylesheet).readAll());
@@ -466,19 +450,32 @@ void MainWindow::onThemeUpdated(theme::Theme &aTheme)
         stylesheet.close();
     }
 
-    stylesheet.setFileName(aTheme.path()+"/stylesheet/propertywidget.ssa");
-    if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    stylesheet.setFileName(aTheme.path() + "/stylesheet/propertywidget.ssa");
+    if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {
         mDockPropertyWidget->setStyleSheet(QTextStream(&stylesheet).readAll());
         stylesheet.close();
     }
 
 
-    stylesheet.setFileName(aTheme.path()+"/stylesheet/toolwidget.ssa");
-    if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    stylesheet.setFileName(aTheme.path() + "/stylesheet/toolwidget.ssa");
+    if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {
         mDockToolWidget->setStyleSheet(QTextStream(&stylesheet).readAll());
         stylesheet.close();
+    }
+
+    if (!onStartup && !themeChangeWarned) {
+        QMessageBox visualArtifactWarning;
+        visualArtifactWarning.setWindowTitle(tr("Theme changed"));
+        visualArtifactWarning.setText(
+            tr("There may be visual artifacts after changing themes, we recommend you restart "
+               "the application.")
+        );
+        visualArtifactWarning.setDefaultButton(QMessageBox::Ok);
+        visualArtifactWarning.exec();
+        themeChangeWarned = true;
+    }
+    else{
+        onStartup = false;
     }
 }
 
@@ -525,14 +522,13 @@ void MainWindow::keyPressEvent(QKeyEvent* aEvent)
 
 QList<QString> disallowedRepeats = {"MoveCanvas", "RotateCanvas", "SaveProject"};
 
-void MainWindow::keyPressEvent(QKeyEvent* aEvent)
-{
-    //qDebug() << "input key =" << aEvent->key() << "text =" << aEvent->text();
-    if (aEvent->isAutoRepeat()){
-        for (auto command : mKeyCommandMap->commands()){
-            if (disallowedRepeats.contains(command->key)){
+void MainWindow::keyPressEvent(QKeyEvent* aEvent) {
+    // qDebug() << "input key =" << aEvent->key() << "text =" << aEvent->text();
+    if (aEvent->isAutoRepeat()) {
+        for (auto command : mKeyCommandMap->commands()) {
+            if (disallowedRepeats.contains(command->key)) {
                 const ctrl::KeyBinding keyBind(aEvent->key(), aEvent->modifiers());
-                if (command->binding.matchesExactlyWith(keyBind)){
+                if (command->binding.matchesExactlyWith(keyBind)) {
                     return;
                 }
             }
@@ -541,30 +537,27 @@ void MainWindow::keyPressEvent(QKeyEvent* aEvent)
         QSettings settings;
         auto delay = settings.value("generalsettings/keybindings/keyDelay");
         qint64 delayInMs = delay.isValid() ? delay.toInt() : 125;
-        if (lastPress + delayInMs < timeElapsed.elapsed()){
+        if (lastPress + delayInMs < timeElapsed.elapsed()) {
             lastPress = timeElapsed.elapsed();
             mKeyCommandInvoker->onKeyPressed(aEvent);
             QMainWindow::keyPressEvent(aEvent);
-        }
-        else{
+        } else {
             // qDebug() << "Time elapsed is :" << (lastPress+500)-timeElapsed.elapsed();
             return;
         }
-    }
-    else{
+    } else {
         mKeyCommandInvoker->onKeyPressed(aEvent);
         QMainWindow::keyPressEvent(aEvent);
     }
 }
 
-void MainWindow::keyReleaseEvent(QKeyEvent* aEvent)
-{
-    //qDebug() << "release key =" << aEvent->key() << "text =" << aEvent->text();
-    if (aEvent->isAutoRepeat()){
-        for (auto command : mKeyCommandMap->commands()){
-            if (disallowedRepeats.contains(command->key)){
+void MainWindow::keyReleaseEvent(QKeyEvent* aEvent) {
+    // qDebug() << "release key =" << aEvent->key() << "text =" << aEvent->text();
+    if (aEvent->isAutoRepeat()) {
+        for (auto command : mKeyCommandMap->commands()) {
+            if (disallowedRepeats.contains(command->key)) {
                 const ctrl::KeyBinding keyBind(aEvent->key(), aEvent->modifiers());
-                if (command->binding.matchesExactlyWith(keyBind)){
+                if (command->binding.matchesExactlyWith(keyBind)) {
                     return;
                 }
             }
@@ -573,46 +566,38 @@ void MainWindow::keyReleaseEvent(QKeyEvent* aEvent)
         QSettings settings;
         auto delay = settings.value("generalsettings/keybindings/keyDelay");
         qint64 delayInMs = delay.isValid() ? delay.toInt() : 125;
-        if (lastRelease + delayInMs < timeElapsed.elapsed()){
+        if (lastRelease + delayInMs < timeElapsed.elapsed()) {
             lastRelease = timeElapsed.elapsed();
             mKeyCommandInvoker->onKeyReleased(aEvent);
             QMainWindow::keyPressEvent(aEvent);
-        }
-        else{
+        } else {
             // qDebug() << "time elapsed is :" << (lastPress+500)-timeElapsed.elapsed();
             return;
         }
-    }
-    else{
+    } else {
         mKeyCommandInvoker->onKeyReleased(aEvent);
         QMainWindow::keyReleaseEvent(aEvent);
     }
 }
 
-void MainWindow::closeEvent(QCloseEvent* aEvent)
-{
-    if (mSystem.hasModifiedProject())
-    {
+void MainWindow::closeEvent(QCloseEvent* aEvent) {
+    if (mSystem.hasModifiedProject()) {
         auto result = confirmProjectClosing(false);
 
-        if (result == QMessageBox::Yes)
-        {
+        if (result == QMessageBox::Yes) {
             // save all
-            for (int i = 0; i < mSystem.projectCount(); ++i)
-            {
+            for (int i = 0; i < mSystem.projectCount(); ++i) {
                 auto project = mSystem.project(i);
                 XC_PTR_ASSERT(project);
-                if (!project->isModified()) continue;
+                if (!project->isModified())
+                    continue;
 
-                if (!processProjectSaving(*mSystem.project(i)))
-                { // failed or canceled
+                if (!processProjectSaving(*mSystem.project(i))) { // failed or canceled
                     aEvent->ignore();
                     return;
                 }
             }
-        }
-        else if (result == QMessageBox::Cancel)
-        {
+        } else if (result == QMessageBox::Cancel) {
             aEvent->ignore();
             return;
         }
@@ -620,27 +605,23 @@ void MainWindow::closeEvent(QCloseEvent* aEvent)
     aEvent->accept();
 }
 
-int MainWindow::confirmProjectClosing(bool aCurrentOnly)
-{
+int MainWindow::confirmProjectClosing(bool aCurrentOnly) {
     QString singleName;
 
-    if (aCurrentOnly)
-    {
-        if (mCurrent)
-        {
+    if (aCurrentOnly) {
+        if (mCurrent) {
             singleName = mProjectTabBar->getTabName(*mCurrent);
         }
-    }
-    else
-    {
+    } else {
         bool found = false;
-        for (int i = 0; i < mSystem.projectCount(); ++i)
-        {
+        for (int i = 0; i < mSystem.projectCount(); ++i) {
             auto project = mSystem.project(i);
             XC_PTR_ASSERT(project);
-            if (project->isModified())
-            {
-                if (found) { singleName.clear(); break; }
+            if (project->isModified()) {
+                if (found) {
+                    singleName.clear();
+                    break;
+                }
                 singleName = mProjectTabBar->getTabName(*project);
                 found = true;
             }
@@ -649,12 +630,9 @@ int MainWindow::confirmProjectClosing(bool aCurrentOnly)
 
     QMessageBox msgBox;
 
-    if (!singleName.isEmpty())
-    {
+    if (!singleName.isEmpty()) {
         msgBox.setText(singleName + tr(" has been modified. Save changes?"));
-    }
-    else
-    {
+    } else {
         msgBox.setText(tr("Some projects have been modified. Save changes?"));
     }
 
@@ -664,90 +642,88 @@ int MainWindow::confirmProjectClosing(bool aCurrentOnly)
     msgBox.setDefaultButton(cancel);
     msgBox.exec();
     auto clicked = msgBox.clickedButton();
-    if (clicked)
-    {
+    if (clicked) {
         auto role = msgBox.buttonRole(clicked);
-        if (role == QMessageBox::YesRole) return QMessageBox::Yes;
-        else if (role == QMessageBox::NoRole) return QMessageBox::No;
-        else if (role == QMessageBox::RejectRole) return QMessageBox::Cancel;
+        if (role == QMessageBox::YesRole)
+            return QMessageBox::Yes;
+        else if (role == QMessageBox::NoRole)
+            return QMessageBox::No;
+        else if (role == QMessageBox::RejectRole)
+            return QMessageBox::Cancel;
     }
     return QMessageBox::Cancel;
 }
 
-void MainWindow::onUndoTriggered()
-{
-    if (mCurrent)
-    {
+void MainWindow::onUndoTriggered() {
+    if (mCurrent) {
         bool undone = false;
         auto ret = mCurrent->commandStack().undo(&undone);
-        if (undone)
-        {
+        if (undone) {
             mViaPoint.pushUndoneLog(tr("Undone : ") + ret);
             mMainDisplay->updateRender();
         }
     }
 }
 
-void MainWindow::onDisplacementTriggered(int frameDisplacement)
-{
+void MainWindow::onDisplacementTriggered(int frameDisplacement) {
     mTarget->timeLineWidget().setFrame(mTarget->currentFrame().added(frameDisplacement));
 }
 
-void MainWindow::onPlayPauseTriggered()
-{
+void MainWindow::onPlayPauseTriggered() {
     mTarget->playBackWidget().PlayPause(); // If it's not playing then it will begin playback
 }
 
-void MainWindow::onMovementTriggered(QString frameMovement)
-{
-    if (frameMovement == "Init"){
-    mTarget->timeLineWidget().setFrame(core::Frame(mCurrent->attribute().maxFrame()));
-    }
-    else{
-    mTarget->timeLineWidget().setFrame(core::Frame(0));
+void MainWindow::onMovementTriggered(const QString& frameMovement) {
+    if (frameMovement == "Init") {
+        mTarget->timeLineWidget().setFrame(core::Frame(mCurrent->attribute().maxFrame()));
+    } else {
+        mTarget->timeLineWidget().setFrame(core::Frame(0));
     }
 }
 
 void MainWindow::onDockToggle() // For some reason it does not work without this travesty
 {
-    if (mDockPropertyWidget->isHidden()){mDockPropertyWidget->show();}
-    else if (!mDockPropertyWidget->isHidden()){mDockPropertyWidget->hide();}
+    if (mDockPropertyWidget->isHidden()) {
+        mDockPropertyWidget->show();
+    } else if (!mDockPropertyWidget->isHidden()) {
+        mDockPropertyWidget->hide();
+    }
 
-    if (mDockToolWidget->isHidden()) {mDockToolWidget->show();}
-    else if (!mDockToolWidget->isHidden()) {mDockToolWidget->hide();}
+    if (mDockToolWidget->isHidden()) {
+        mDockToolWidget->show();
+    } else if (!mDockToolWidget->isHidden()) {
+        mDockToolWidget->hide();
+    }
 
-    if (mTarget->isHidden()){mTarget->show();}
-    else if (!mTarget->isHidden()){mTarget->hide();}
+    if (mTarget->isHidden()) {
+        mTarget->show();
+    } else if (!mTarget->isHidden()) {
+        mTarget->hide();
+    }
 }
 
-void MainWindow::onLoopToggle()
-{
-    if (mTarget->playBackWidget().isLoopChecked()){
+void MainWindow::onLoopToggle() {
+    if (mTarget->playBackWidget().isLoopChecked()) {
         mTarget->timeLineWidget().setPlayBackLoop(false);
         mTarget->playBackWidget().checkLoop(false);
-    }
-    else{
+    } else {
         mTarget->timeLineWidget().setPlayBackLoop(true);
         mTarget->playBackWidget().checkLoop(true);
     }
 }
 
-void MainWindow::onRedoTriggered()
-{
-    if (mCurrent)
-    {
+void MainWindow::onRedoTriggered() {
+    if (mCurrent) {
         bool redone = false;
         auto ret = mCurrent->commandStack().redo(&redone);
-        if (redone)
-        {
+        if (redone) {
             mViaPoint.pushRedoneLog(tr("Redone : ") + ret);
             mMainDisplay->updateRender();
         }
     }
 }
 
-void MainWindow::onNewProjectTriggered()
-{
+void MainWindow::onNewProjectTriggered() {
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
 
@@ -759,8 +735,7 @@ void MainWindow::onNewProjectTriggered()
         QScopedPointer<NewProjectDialog> dialog(new NewProjectDialog(this));
 
         dialog->exec();
-        if (dialog->result() != QDialog::Accepted)
-        {
+        if (dialog->result() != QDialog::Accepted) {
             return;
         }
         attribute = dialog->attribute();
@@ -776,24 +751,18 @@ void MainWindow::onNewProjectTriggered()
     {
         menu::ProgressReporter progress(false, this);
 
-        result = mSystem.newProject(
-                    fileName, attribute, new ProjectHook(),
-                    progress, specifiesCanvasSize);
+        result = mSystem.newProject(fileName, attribute, new ProjectHook(), progress, specifiesCanvasSize);
     }
 
-    if (result.project)
-    {
+    if (result.project) {
         resetProjectRefs(result.project);
         mProjectTabBar->pushProject(*result.project);
 
         mMainDisplay->resetCamera();
-    }
-    else
-    {
+    } else {
         QMessageBox::warning(nullptr, tr("Loading Error"), result.messages());
 
-        if (mProjectTabBar->currentProject())
-        {
+        if (mProjectTabBar->currentProject()) {
             resetProjectRefs(mProjectTabBar->currentProject());
         }
     }
@@ -801,40 +770,36 @@ void MainWindow::onNewProjectTriggered()
 
 QFileSystemWatcher* globalWatcher = new QFileSystemWatcher();
 
-QFileSystemWatcher* MainWindow::getWatcher(){
-    return globalWatcher;
-}
+QFileSystemWatcher* MainWindow::getWatcher() { return globalWatcher; }
 
-void MainWindow::showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed)
-{
+void MainWindow::showInfoPopup(
+    const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed
+) {
     QMessageBox box;
-    if(aIcon == "Info"){
+    if (aIcon == "Info") {
         box.setIcon(QMessageBox::Information);
-    }
-    else if (aIcon == "Warn"){
+    } else if (aIcon == "Warn") {
         box.setIcon(QMessageBox::Warning);
-    }
-    else if (aIcon == "Critical"){
+    } else if (aIcon == "Critical") {
         box.setIcon(QMessageBox::Critical);
     }
     box.setStandardButtons(QMessageBox::Ok);
     box.setDefaultButton(QMessageBox::Ok);
     box.setWindowTitle(aTitle);
     box.setText(aDetailText);
-    if (aDetailed != "nullptr"){
+    if (aDetailed != "nullptr") {
         box.setDetailedText(aDetailed);
     }
     box.exec();
 }
 
-void MainWindow::onOpenProjectTriggered()
-{
+void MainWindow::onOpenProjectTriggered() {
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
 
-    QString fileName = QFileDialog::getOpenFileName(
-                this, tr("Open File"), "", "ProjectFile (*.anie)");
-    if (fileName.isEmpty()) return;
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", "ProjectFile (*.anie)");
+    if (fileName.isEmpty())
+        return;
 
     // clear old project
     resetProjectRefs(nullptr);
@@ -846,30 +811,25 @@ void MainWindow::onOpenProjectTriggered()
         result = mSystem.openProject(fileName, new ProjectHook(), progress);
     }
 
-    if (result)
-        {
+    if (result) {
         resetProjectRefs(result.project);
         mProjectTabBar->pushProject(*result.project);
 
         mMainDisplay->resetCamera();
-        }
-    else
-    {
+    } else {
         QMessageBox::warning(nullptr, tr("Loading Error"), result.messages());
 
-        if (mProjectTabBar->currentProject())
-        {
+        if (mProjectTabBar->currentProject()) {
             resetProjectRefs(mProjectTabBar->currentProject());
         }
     }
 }
 
-void MainWindow::onOpenRecentTriggered(QString aFileName)
-{
+void MainWindow::onOpenRecentTriggered(QString aFileName) {
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
 
-    QString fileName = aFileName;
+    QString fileName = std::move(aFileName);
 
     // clear old project
     resetProjectRefs(nullptr);
@@ -881,42 +841,33 @@ void MainWindow::onOpenRecentTriggered(QString aFileName)
         result = mSystem.openProject(fileName, new ProjectHook(), progress);
     }
 
-    if (result)
-    {
+    if (result) {
         resetProjectRefs(result.project);
         mProjectTabBar->pushProject(*result.project);
 
         mMainDisplay->resetCamera();
-    }
-    else
-    {
+    } else {
         QMessageBox::warning(nullptr, tr("Loading Error"), result.messages());
 
-        if (mProjectTabBar->currentProject())
-        {
+        if (mProjectTabBar->currentProject()) {
             resetProjectRefs(mProjectTabBar->currentProject());
         }
     }
 }
 
-bool MainWindow::processProjectSaving(core::Project& aProject, bool aRename)
-{
+bool MainWindow::processProjectSaving(core::Project& aProject, bool aRename) {
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
 
-    if (aProject.isNameless() || aRename)
-    {
-        QString fileName = QFileDialog::getSaveFileName(
-                    this, tr("Save File"), "", "ProjectFile (*.anie)");
+    if (aProject.isNameless() || aRename) {
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", "ProjectFile (*.anie)");
 
         // check cancel
-        if (fileName.isEmpty())
-        {
+        if (fileName.isEmpty()) {
             return false;
         }
 
-        if (QFileInfo(fileName).suffix().isEmpty())
-        {
+        if (QFileInfo(fileName).suffix().isEmpty()) {
             fileName += ".anie";
         }
         aProject.setFileName(fileName);
@@ -924,8 +875,7 @@ bool MainWindow::processProjectSaving(core::Project& aProject, bool aRename)
 
     // save
     auto result = mSystem.saveProject(aProject);
-    if (!result)
-    {
+    if (!result) {
         QMessageBox::warning(nullptr, "Saving Error", result.message);
         return false; // failed
     }
@@ -934,45 +884,35 @@ bool MainWindow::processProjectSaving(core::Project& aProject, bool aRename)
     return true;
 }
 
-void MainWindow::onSaveProjectTriggered()
-{
-    if (mCurrent)
-    {
+void MainWindow::onSaveProjectTriggered() {
+    if (mCurrent) {
         processProjectSaving(*mCurrent);
     }
 }
 
-void MainWindow::onSaveProjectAsTriggered()
-{
-    if (mCurrent)
-    {
+void MainWindow::onSaveProjectAsTriggered() {
+    if (mCurrent) {
         processProjectSaving(*mCurrent, true);
     }
 }
 
-void MainWindow::onCloseProjectTriggered()
-{
-    if (mCurrent)
-    {
-
+void MainWindow::onCloseProjectTriggered() {
+    if (mCurrent) {
         // Sneaky potential crash
         QFileSystemWatcher* watcher = MainWindow::getWatcher();
-        for (unsigned int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1){
-            if (watcher->files().contains(mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode))){
-                watcher->removePath(mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode));
+        for (int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1) {
+            if (watcher->files().contains(
+                    mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode)
+                )) {
+                watcher->removePath(
+                    mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode)
+                );
             }
         }
 
-        if (mCurrent->isModified())
-        {
-            auto result = confirmProjectClosing(true);
-
-            if (result == QMessageBox::Cancel)
-            {
-                return;
-            }
-            else if (result == QMessageBox::Yes && !processProjectSaving(*mCurrent))
-            {
+        if (mCurrent->isModified()) {
+            int result = confirmProjectClosing(true);
+            if (result == QMessageBox::Cancel || (result == QMessageBox::Yes && !processProjectSaving(*mCurrent))){
                 return;
             }
         }
@@ -982,42 +922,465 @@ void MainWindow::onCloseProjectTriggered()
         resetProjectRefs(nullptr); ///@note update mCurrent
         mSystem.closeProject(*closeProject);
 
-        if (mProjectTabBar->currentProject())
-        {
+        if (mProjectTabBar->currentProject()) {
             resetProjectRefs(mProjectTabBar->currentProject());
         }
     }
 }
 
-void MainWindow::onExportTriggered(){
-    if (!mCurrent) return;
-    // stop animation and main display rendering
-    EventSuspender suspender(*mMainDisplay, *mTarget);
-    // TODO , remember to insert the ffmpeg check here
-
-    qDebug() << "Exporting";
-
-    QString aSuffix = "Testing";
-
-    // export param
-    ctrl::Exporter::CommonParam cparam;
-    ctrl::Exporter::ImageParam iparam;
-    {
-        QScopedPointer<ExportClasses> dialog(
-                    new ExportClasses(*mCurrent, aSuffix, this));
-
-        dialog->exec();
-        if (dialog->result() != QDialog::Accepted) return;
-
-        cparam = dialog->commonParam();
-        iparam = dialog->imageParam();
+// Variable is set both locally and in the settings, a bit overkill ;)
+void updateSettings(QVariant *var, QSettings *settings, int value, const QString& key){
+    if(var->toInt() != value){
+        var->setValue(value);
+        settings->setValue(key, value);
     }
-
+}
+void updateSettings(QVariant *var, QSettings *settings, bool value, const QString& key){
+    if(var->toBool() != value){
+        var->setValue(value);
+        settings->setValue(key, value);
+    }
+}
+void updateSettings(QVariant *var, QSettings *settings, const QString& value, const QString& key){
+    if(var->toString() != value){
+        var->setValue(value);
+        settings->setValue(key, value);
+    }
+}
+void updateSettings(QVariant *var, QSettings *settings, const QStringList& value, const QString& key){
+    if(QStringList(var->toStringList()) != value){
+        var->setValue(value);
+        settings->setValue(key, value);
+    }
 }
 
-void MainWindow::onExportImageSeqTriggered(const QString& aSuffix)
-{
-    if (!mCurrent) return;
+void exportProject(const exportParam& exParam, core::Project* mCurrent){
+    qDebug("Exporting");
+    //TODO: Implement with ExportParams.h
+}
+
+void MainWindow::onExportTriggered() {
+    if (!mCurrent) { return; }
+    if (exporting) { exportWidget->showNormal(); return; }
+    // Stop animation and main display rendering
+    EventSuspender suspender(*mMainDisplay, *mTarget);
+    QGuiApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    // FFmpeg Check
+    QSettings settings;
+    auto ffCheck = settings.value("ffmpeg_check");
+    if (!ffCheck.isValid() || ffCheck.toBool()) {
+        util::NetworkUtil networking;
+        QFileInfo ffmpeg_file;
+        QString ffmpeg;
+
+        if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
+        else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
+        if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
+        else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
+
+        // Exists?
+        bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
+
+        if (!fExists) {
+            QMessageBox message;
+            message.setIcon(QMessageBox::Warning);
+            message.setText(tr("FFmpeg was not found."));
+            auto infoText =
+                tr("Exporting video requires FFmpeg to be installed on your computer, "
+                   "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
+                   "In the following screen you can instruct AnimeEffects to download and install it automatically for "
+                   "you, "
+                   "or you can download it by yourself and tell AnimeEffects where it is.");
+            message.setInformativeText(infoText);
+            message.setStandardButtons(QMessageBox::Ok);
+            message.setDefaultButton(QMessageBox::Ok);
+            message.exec();
+
+            auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+            generalSettingsDialog->selectTab(2);
+            generalSettingsDialog->exec();
+            return;
+        }
+        ffCheck.setValue(false);
+    }
+
+    // Initialize export diag
+    exporting = true;
+    // Avoid weird bugs
+    exportWidget = new QDialog;
+    exportUI = new ExportWidgetUI;
+    // Set up UI
+    exportWidget->setParent(this, Qt::Window);
+    exportUI->setupUi(exportWidget, mGUIResources.getThemeLocation());
+    // Initialize gpDiag
+    gpDiag->setAttribute(Qt::WA_DeleteOnClose,true);
+    gpDiag->setParent(exportWidget, Qt::Window);
+
+    // Initialize export and general parameters
+    auto* exParam = new exportParam();
+    GeneralParams genParam;
+    genParam.nativeWidth = mCurrent->attribute().imageSize().width();
+    genParam.nativeHeight = mCurrent->attribute().imageSize().height();
+    genParam.nativeFPS = mCurrent->attribute().fps();
+    genParam.nativeFrameRange = frameExportRange{0, mCurrent->attribute().maxFrame()};
+
+    // Get generics
+    QVariant aspectRatioV = settings.value("export_aspect_ratio");
+    if(!aspectRatioV.isValid()) { aspectRatioV.setValue(1); } // Aspect ratio = keep
+    QVariant intermediateTypeV = settings.value("export_intermediate_type");
+    QVariant allowTransparencyV = settings.value("export_allow_transparency");
+    if(!allowTransparencyV.isValid()) {allowTransparencyV.setValue(true); } // Allow transparency = true
+    QVariant allowCustomParamV = settings.value("export_allow_params");
+    QVariant allowInterParamV = settings.value("export_allow_param_inter");
+    QVariant allowPostParamV = settings.value("export_allow_param_post");
+    QVariant useCustomPaletteV = settings.value("export_custom_palette");
+    QVariant forcePipeV = settings.value("export_force_piped");
+
+    int *aspectRatio = new int; int *intermediateType = new int;
+    bool *allowTransparency = new bool; bool *allowCustomParam = new bool; bool *allowInterParam = new bool;
+    bool *allowPostParam = new bool; bool *useCustomPalette = new bool; bool *forcePipe = new bool;
+
+    QVector<QVariant *> intValues { &aspectRatioV, &intermediateTypeV };
+    QVector<int *> intVariables{ aspectRatio, intermediateType };
+    QVector<QVariant *> boolValues {
+        &allowTransparencyV, &allowCustomParamV, &allowInterParamV, &allowPostParamV, &useCustomPaletteV, &forcePipeV
+    };
+    QVector<bool *> boolVariables {
+        allowTransparency, allowCustomParam, allowInterParam, allowPostParam, useCustomPalette, forcePipe
+    };
+
+    int x = 0;
+    for(auto variant : intValues){
+        if(!variant->isValid()){
+            variant->setValue(0);
+            settings.sync();
+        }
+        *intVariables[x] = variant->toInt();
+        x++;
+    }
+    x= 0;
+    for(auto variant : boolValues){
+        if(!variant->isValid()){
+            variant->setValue(false);
+            settings.sync();
+        }
+        *boolVariables[x] = variant->toBool();
+        x++;
+    }
+
+    // Get formats
+
+    QVariant pixelFormatV = settings.value("export_pixel_format");
+    QVariant aviEncV = settings.value("export_avi_encoder");
+    QVariant mkvEncV = settings.value("export_mkv_encoder");
+    QVariant movEncV = settings.value("export_mov_encoder");
+    QVariant mp4EncV = settings.value("export_mp4_encoder");
+    QVariant webmEncV = settings.value("export_webm_encoder");
+    pixelFormats pixelFormat;
+    aviEncoders aviEncoder;
+    mkvEncoders mkvEncoder;
+    movEncoders movEncoder;
+    mp4Encoders mp4Encoder;
+    webmEncoders webmEncoder;
+
+    QVector<QVariant *> formats {
+        &pixelFormatV, &aviEncV, &mkvEncV, &movEncV, &mp4EncV, &webmEncV
+    };
+    for(auto variant: formats){
+        if(!variant->isValid()){
+            variant->setValue(QString("Auto"));
+            settings.sync();
+        }
+    }
+    pixelFormat = getFormatAsEnum<pixelFormats>(exportTarget::pxFmt, pixelFormatV.toString());
+    aviEncoder = getFormatAsEnum<aviEncoders>(exportTarget::aviEnc, aviEncV.toString());
+    mkvEncoder = getFormatAsEnum<mkvEncoders>(exportTarget::mkvEnc, mkvEncV.toString());
+    movEncoder = getFormatAsEnum<movEncoders>(exportTarget::movEnc, movEncV.toString());
+    mp4Encoder = getFormatAsEnum<mp4Encoders>(exportTarget::mp4Enc, mp4EncV.toString());
+    webmEncoder = getFormatAsEnum<webmEncoders>(exportTarget::webmEnc, webmEncV.toString());
+
+    // Get custom parameters
+    QVariant customParamsV = settings.value("export_custom_params");
+    QVariant customParamsStringsV = settings.value("export_custom_params_str");
+    QStringList *customParams =
+        customParamsV.isValid()? new QStringList(customParamsV.toStringList()) : new QStringList();
+    QStringList *customParamsStrings =
+        customParamsStringsV.isValid()? new QStringList(customParamsStringsV.toStringList()) : new QStringList();
+
+    // Sync
+    settings.sync();
+
+    // Value initialization
+    switch(*aspectRatio){
+        case 0: exportUI->oneToOneRatio->setChecked(true); break;
+        case 1: exportUI->keepAspectRatio->setChecked(true); break;
+        case 2: exportUI->customRatio->setChecked(true); break;
+        default: break;
+    }
+    exportUI->intermediateTypeCombo->setCurrentIndex(*intermediateType);
+    exportUI->transparencyCheckBox->setChecked(*allowTransparency);
+    exportUI->forcePipeCheckBox->setChecked(*forcePipe);
+    exportUI->allowParamsCheckBox->setChecked(*allowCustomParam);
+    exportUI->intermediateParamCheckBox->setChecked(*allowInterParam);
+    exportUI->postParamCheckBox->setChecked(*allowPostParam);
+    exportUI->customPaletteCheckBox->setChecked(*useCustomPalette);
+    exportUI->pixelFormatCombo->setCurrentIndex(int(pixelFormat));
+    exportUI->aviCombo->setCurrentIndex(int(aviEncoder));
+    exportUI->mkvCombo->setCurrentIndex(int(mkvEncoder));
+    exportUI->movCombo->setCurrentIndex(int(movEncoder));
+    exportUI->mp4Combo->setCurrentIndex(int(mp4Encoder));
+    exportUI->webmCombo->setCurrentIndex(int(webmEncoder));
+    exportUI->presetCombo->addItems(*customParamsStrings);
+    exportUI->nativeH = genParam.nativeHeight;
+    exportUI->nativeW = genParam.nativeWidth;
+    exportUI->latestHeight = exportUI->nativeH;
+    exportUI->latestWidth = exportUI->nativeW;
+    // Project specific values
+    QSignalBlocker wSB(exportUI->widthSpinBox);
+    QSignalBlocker hSB(exportUI->heightSpinBox);
+    wSB.reblock(); hSB.reblock();
+    exportUI->widthSpinBox->setValue(genParam.nativeWidth);
+    exportUI->heightSpinBox->setValue(genParam.nativeHeight);
+    wSB.unblock(); hSB.unblock();
+    exportUI->fpsSpinBox->setValue(genParam.nativeFPS);
+    exportUI->lastFrameSpinBox->setValue(mCurrent->currentTimeInfo().frameMax);
+    // Connections
+    // This is to force a refresh and to avoid any weird bugs or memory leaks
+    connect(exportWidget, &QDialog::destroyed, [=](){
+        regenerateWidget();
+    });
+    connect(exportWidget, &QDialog::finished, [=](){
+        exportWidget->deleteLater();
+    });
+    connect(gpDiag, &QDialog::destroyed, [=](){
+        regenerateGeneralPurposeDiag();
+    });
+    // ---------------------------------------------------------------------- //
+    connect(exportUI->cancelButton, &QPushButton::clicked, [=]() mutable{
+        exportUI->operationCancelled = true; exportWidget->close();
+    });
+    connect(exportUI->exportButton, &QPushButton::clicked, [=]() mutable{
+        exportUI->operationCancelled = false; exportWidget->close();
+    });
+    connect(exportUI->setWidthNative, &QPushButton::clicked, [=](){
+        exportUI->widthSpinBox->setValue(genParam.nativeWidth);
+    });
+    connect(exportUI->setHeightNative, &QPushButton::clicked, [=](){
+        exportUI->heightSpinBox->setValue(genParam.nativeHeight);
+    });
+    connect(exportUI->setFPSNative, &QPushButton::clicked, [=](){
+        exportUI->fpsSpinBox->setValue(genParam.nativeFPS);
+    });
+    connect(exportUI->saveIntermediateParamAsPreset, &QToolButton::clicked, [=]() mutable{
+        regenerateGeneralPurposeDiag();
+        customParams->append(exportUI->intermediateParamTextEdit->toPlainText());
+        exportUI->askForTextUI(gpDiag, tr("Select your preset name"));
+        gpDiag->exec();
+        if(exportUI->askOperationCancelled){
+            return;
+        }
+        customParamsStrings->append(exportUI->textEdit->toPlainText());
+        exportUI->presetCombo->addItem(exportUI->textEdit->toPlainText());
+        exportUI->presetCombo->setCurrentIndex(customParamsStrings->indexOf(exportUI->textEdit->toPlainText()));
+    });
+    connect(exportUI->savePostParamAsPreset, &QToolButton::clicked, [=]() mutable{
+        regenerateGeneralPurposeDiag();
+        customParams->append(exportUI->postParamTextEdit->toPlainText());
+        exportUI->askForTextUI(gpDiag, tr("Select your preset name"));
+        gpDiag->exec();
+        if(exportUI->askOperationCancelled){
+            return;
+        }
+        customParamsStrings->append(exportUI->textEdit->toPlainText());
+        exportUI->presetCombo->addItem(exportUI->textEdit->toPlainText());
+        exportUI->presetCombo->setCurrentIndex(customParamsStrings->indexOf(exportUI->textEdit->toPlainText()));
+    });
+    connect(exportUI->removePreset, &QPushButton::clicked, [=]() mutable{
+        int index = exportUI->presetCombo->currentIndex();
+        customParams->removeAt(index);
+        customParamsStrings->removeAt(index);
+        exportUI->presetCombo->removeItem(index);
+    });
+    connect(exportUI->addPresetToIntermediate, &QPushButton::clicked, [=](){
+        int index = exportUI->presetCombo->currentIndex();
+        if(!customParams->isEmpty() && customParams->length() >= index){
+                exportUI->intermediateParamTextEdit->append(customParams->at(index));
+            }
+    });
+    connect(exportUI->addPresetToPost, &QPushButton::clicked, [=](){
+        int index = exportUI->presetCombo->currentIndex();
+        if(!customParams->isEmpty() && customParams->length() >= index){
+            exportUI->postParamTextEdit->append(customParams->at(index));
+        }
+    });
+
+    // Execute
+    QGuiApplication::restoreOverrideCursor();
+    exportWidget->exec();
+
+    // Save all settings
+    int aspectRatioIndex = 0;
+    if (exportUI->oneToOneRatio->isChecked()) { aspectRatioIndex = 0; }
+    else if (exportUI->keepAspectRatio->isChecked()) { aspectRatioIndex = 1; }
+    else { aspectRatioIndex = 2; }
+    {
+        updateSettings(&aspectRatioV, &settings, aspectRatioIndex,
+                       "export_aspect_ratio");
+        updateSettings(&intermediateTypeV, &settings, exportUI->intermediateTypeCombo->currentIndex(),
+                       "export_intermediate_type");
+        updateSettings(&allowTransparencyV, &settings, exportUI->transparencyCheckBox->isChecked(),
+                       "export_allow_transparency");
+        updateSettings(&allowCustomParamV, &settings, exportUI->allowParamsCheckBox->isChecked(),
+                       "export_allow_params");
+        updateSettings(&allowInterParamV, &settings, exportUI->intermediateParamCheckBox->isChecked(),
+                       "export_allow_param_inter");
+        updateSettings(&allowPostParamV, &settings, exportUI->postParamCheckBox->isChecked(),
+                       "export_allow_param_post");
+        updateSettings(&useCustomPaletteV, &settings, exportUI->customPaletteCheckBox->isChecked(),
+                       "export_custom_palette");
+        updateSettings(&forcePipeV, &settings, exportUI->forcePipeCheckBox->isChecked(),
+                       "export_force_piped");
+        updateSettings(&pixelFormatV, &settings, exportUI->pixelFormatCombo->currentText(),
+                       "export_pixel_format");
+        updateSettings(&aviEncV, &settings, exportUI->aviCombo->currentText(),
+                       "export_avi_encoder");
+        updateSettings(&mkvEncV, &settings, exportUI->mkvCombo->currentText(),
+                       "export_mkv_encoder");
+        updateSettings(&movEncV, &settings, exportUI->movCombo->currentText(),
+                       "export_mov_encoder");
+        updateSettings(&mp4EncV, &settings, exportUI->mp4Combo->currentText(),
+                       "export_mp4_encoder");
+        updateSettings(&webmEncV, &settings, exportUI->webmCombo->currentText(),
+                       "export_webm_encoder");
+        updateSettings(&customParamsV, &settings, *customParams,
+                       "export_custom_params");
+        updateSettings(&customParamsStringsV, &settings, *customParamsStrings,
+                       "export_custom_params_str");
+        settings.sync();
+    }
+
+    // Get file name and folder for export
+    if (exportUI->operationCancelled) { return; }
+
+    QFileDialog fileDiag;
+    fileDiag.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
+    fileDiag.setFileMode(QFileDialog::AnyFile);
+    QStringList videoFormats;
+    QStringList videoFormatDescriptor{
+        tr("Animated PNG"), tr("AVI"), tr("Flash Video"), tr("Flash Video"),
+        tr("GIF"), tr("Matroska"), tr("QuickTime Movie"), tr("MPEG-2"),
+        tr("MPEG-4"), tr("Ogg Video"), ("Shockwave Flash"), tr("WEBM"), tr("WEBP")
+    };
+    QStringList imageFormats;
+    QStringList imageFormatDescriptor{
+        tr("BitMap"), tr("JPEG"), tr("JPEG"), tr("PNG"), tr("Portable PixelMap"),
+        tr("X11 BitMap"), tr("X11 PixelMap"), tr("Tagged Image"), tr("WEBP")
+    };
+    x = 0;
+    for(auto &format: videoFormats){
+        format.push_front(videoFormatDescriptor[x] + " (*.");
+        format.push_back(')');
+        x++;
+    }
+    x = 0;
+    for(auto &format: imageFormats){
+        format.push_front(imageFormatDescriptor[x] + " (*.");
+        format.push_back(')');
+        x++;
+    }
+    if(exportUI->exportTypeCombo->currentIndex() == 0) { fileDiag.setNameFilters(videoFormats); }
+    else{ fileDiag.setNameFilters(imageFormats); }
+    // Generate parameters prior to exportUI destructor
+    genParam.fileName = mCurrent->fileName();
+    genParam.nativeWidth = mCurrent->attribute().imageSize().width();
+    genParam.nativeHeight = mCurrent->attribute().imageSize().height();
+    genParam.exportWidth = exportUI->widthSpinBox->value();
+    genParam.exportHeight = exportUI->heightSpinBox->value();
+    switch(aspectRatioIndex){
+    case 0:
+        genParam.aspectRatio = targetRatio::oneToOne;
+        break;
+    case 1:
+        genParam.aspectRatio = targetRatio::keep;
+        break;
+    case 2:
+        genParam.aspectRatio = targetRatio::custom;
+        break;
+    default:
+        genParam.aspectRatio = targetRatio::keep;
+    }
+    genParam.nativeFPS = mCurrent->attribute().fps();
+    genParam.fps = exportUI->fpsSpinBox->value();
+    genParam.bitrate =
+        // Does it contain only the word auto?
+        exportUI->bitrateLineEdit->text().trimmed().contains(QRegExp("^(?i)(auto(matic)?)$"))
+        ? 0 :
+        // Does it contain only a positive number? If not then set to -1 for error handling.
+        exportUI->bitrateLineEdit->text().trimmed().contains(QRegExp("^(?!0\\d+)\\d+$"))
+            ? exportUI->bitrateLineEdit->text().toInt() : -1;
+    genParam.allowTransparency = exportUI->transparencyCheckBox->isChecked();
+    genParam.forcePipe = exportUI->forcePipeCheckBox->isChecked();
+    genParam.useCustomParam = exportUI->allowParamsCheckBox->isChecked();
+    genParam.useIntermediate = exportUI->intermediateParamCheckBox->isChecked();
+    genParam.usePost = exportUI->postParamCheckBox->isChecked();
+    genParam.useCustomPalette = exportUI->customPaletteCheckBox->isChecked();
+    genParam.palettePath = exportUI->paletteDir;
+    auto* exportRanges = new QVector<frameExportRange>;
+    for(int ferIndex = 0; ferIndex < exportUI->initialFrames->size(); ferIndex++){
+        frameExportRange fer;
+        fer.firstFrame = exportUI->initialFrames->at(ferIndex)->value();
+        fer.lastFrame = exportUI->lastFrames->at(ferIndex)->value();
+        exportRanges->append(fer);
+    }
+    genParam.exportRange = *exportRanges;
+    genParam.customInterCommand = exportUI->intermediateParamTextEdit->toPlainText();
+    genParam.customPostCommand = exportUI->postParamTextEdit->toPlainText();
+
+    exParam->exportType = exportUI->exportTypeCombo->currentIndex() == 0 ? exportTarget::video :
+                                                                         exportTarget::image;
+    if(exParam->exportType == exportTarget::video){
+
+        exParam->videoParams.intermediateFormat = getFormatAsEnum<availableImageFormats>
+            (exportTarget::image, exportUI->intermediateTypeCombo->currentText().toLower());
+        exParam->videoParams.pixelFormat =
+            getFormatAsEnum<pixelFormats>(exportTarget::pxFmt,
+                                                      exportUI->pixelFormatCombo->currentText());
+        defaultEncoders encoders;
+        encoders.avi = getFormatAsEnum<aviEncoders>(exportTarget::aviEnc, exportUI->aviCombo->currentText());
+        encoders.mkv = getFormatAsEnum<mkvEncoders>(exportTarget::mkvEnc, exportUI->mkvCombo->currentText());
+        encoders.mov = getFormatAsEnum<movEncoders>(exportTarget::movEnc, exportUI->movCombo->currentText());
+        encoders.mp4 = getFormatAsEnum<mp4Encoders>(exportTarget::mp4Enc, exportUI->mp4Combo->currentText());
+        encoders.webm = getFormatAsEnum<webmEncoders>(exportTarget::webmEnc, exportUI->webmCombo->currentText());
+        exParam->videoParams.encoders = encoders;
+    }
+    // Get file via OS diag
+    fileDiag.setViewMode(QFileDialog::Detail);
+    QString selectedFile;
+    if(fileDiag.exec()){ selectedFile = fileDiag.selectedFiles()[0]; }
+    else{ return; }
+    // Generate export parameters
+    genParam.exportName = QFileInfo(selectedFile).fileName();
+    genParam.exportDirectory = QFileInfo(selectedFile).absoluteDir();
+    genParam.exportFileName = QDir(selectedFile);
+    genParam.osExportTarget = selectedFile;
+    qDebug() << "Exporting: " << genParam.osExportTarget;
+    exParam->generalParams = genParam;
+    if(exParam->exportType == exportTarget::video) {
+        exParam->videoParams.format = getFormatAsEnum<availableVideoFormats>(
+            exportTarget::video, QFileInfo(genParam.osExportTarget).suffix()
+        );
+    }
+    else{
+        exParam->imageParams.format = getFormatAsEnum<availableImageFormats>
+            (exportTarget::image,QFileInfo(genParam.osExportTarget).suffix());
+    }
+    if(isExportParamValid(exParam, exportWidget)) { exportProject(*exParam, mCurrent); }
+    else{ qDebug("User has canceled export."); }
+}
+
+void MainWindow::onExportImageSeqTriggered(const QString& aSuffix) {
+    if (!mCurrent)
+        return;
 
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
@@ -1026,26 +1389,27 @@ void MainWindow::onExportImageSeqTriggered(const QString& aSuffix)
     QString dirName = QFileDialog::getExistingDirectory(this, tr("Export Folder"));
 
     // make sure existing
-    if (dirName.isEmpty()) return;
-    if (!QFileInfo(dirName).exists()) return;
+    if (dirName.isEmpty())
+        return;
+    if (!QFileInfo::exists(dirName))
+        return;
 
     // export param
     ctrl::Exporter::CommonParam cparam;
     ctrl::Exporter::ImageParam iparam;
     {
-        QScopedPointer<ImageExportDialog> dialog(
-                    new ImageExportDialog(*mCurrent, dirName, aSuffix, this));
+        QScopedPointer<ImageExportDialog> dialog(new ImageExportDialog(*mCurrent, dirName, aSuffix, this));
 
         dialog->exec();
-        if (dialog->result() != QDialog::Accepted) return;
+        if (dialog->result() != QDialog::Accepted)
+            return;
 
         cparam = dialog->commonParam();
         iparam = dialog->imageParam();
     }
 
     // gui for confirm overwrite
-    auto overwriteConfirmer = [=](const QString&) -> bool
-    {
+    auto overwriteConfirmer = [=](const QString&) -> bool {
         QMessageBox msgBox;
         msgBox.setText(tr("File already exists."));
         msgBox.setInformativeText(tr("Do you want to overwrite the existing file?"));
@@ -1061,59 +1425,56 @@ void MainWindow::onExportImageSeqTriggered(const QString& aSuffix)
     exporter.setProgressReporter(progress);
 
     // execute
-    if (!exporter.execute(cparam, iparam))
-    {
+    if (!exporter.execute(cparam, iparam)) {
         progress.cancel();
 
-        if (!exporter.isCanceled())
-        {
+        if (!exporter.isCanceled()) {
             QMessageBox::warning(nullptr, tr("Export Error"), exporter.log());
         }
         return;
     }
 }
-void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat)
-{
-    if (!mCurrent) return;
+void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
+    if (!mCurrent)
+        return;
     QSettings settings;
     settings.sync();
     auto ffCheck = settings.value("ffmpeg_check");
-    if(!ffCheck.isValid() || ffCheck == true){
+    if (!ffCheck.isValid() || ffCheck.toBool()) {
         util::NetworkUtil networking;
         QFileInfo ffmpeg_file;
         QString ffmpeg;
 
-        if (networking.os() == "win"){
+        if (util::NetworkUtil::os() == "win") {
             ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
-        }
-        else {
+        } else {
             ffmpeg_file = QFileInfo("./tools/ffmpeg");
         }
-        if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()){
+        if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) {
             ffmpeg = "ffmpeg";
-        }
-        else{
+        } else {
             ffmpeg = ffmpeg_file.absoluteFilePath();
         }
 
         // Exists?
-        bool fExists = networking.libExists(ffmpeg, "-version");
+        bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
 
-        if(!fExists){
+        if (!fExists) {
             QMessageBox message;
             message.setIcon(QMessageBox::Warning);
             message.setText(tr("FFmpeg was not found."));
             auto infoText =
-                       tr("Exporting video requires FFmpeg to be installed on your computer, "
-                       "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
-                       "In the following screen you can instruct AnimeEffects to download and install it automatically for you, "
-                       "or you can download it by yourself and tell AnimeEffects where it is.");
+                tr("Exporting video requires FFmpeg to be installed on your computer, "
+                   "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
+                   "In the following screen you can instruct AnimeEffects to download and install it automatically for "
+                   "you, "
+                   "or you can download it by yourself and tell AnimeEffects where it is.");
             message.setInformativeText(infoText);
             message.setStandardButtons(QMessageBox::Ok);
             message.setDefaultButton(QMessageBox::Ok);
             message.exec();
 
-            GeneralSettingDialog *generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+            auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
             generalSettingsDialog->selectTab(2);
             generalSettingsDialog->exec();
             return;
@@ -1129,24 +1490,23 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat)
 
     // get export file name
     QString fileName = QFileDialog::getSaveFileName(
-                this,
-                tr("Export File"),
-                QString(), // dir
-                targetVideos);
+        this,
+        tr("Export File"),
+        QString(), // dir
+        targetVideos
+    );
     const QFileInfo fileInfo(fileName);
 
     // make sure existing
-    if (fileName.isEmpty()) return;
-    if (!fileInfo.dir().exists()) return;
+    if (fileName.isEmpty())
+        return;
+    if (!fileInfo.dir().exists())
+        return;
 
-    if (fileInfo.suffix().isEmpty())
-    {
+    if (fileInfo.suffix().isEmpty()) {
         fileName += "." + suffix; // makesure suffix
-    }
-    else if (fileInfo.suffix() != suffix)
-    {
-        QMessageBox::warning(nullptr, tr("Operation Error"),
-                             tr("Invalid extension specified."));
+    } else if (fileInfo.suffix() != suffix) {
+        QMessageBox::warning(nullptr, tr("Operation Error"), tr("Invalid extension specified."));
         return;
     }
 
@@ -1154,63 +1514,50 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat)
     ctrl::Exporter::CommonParam cparam;
     ctrl::Exporter::VideoParam vparam;
     ctrl::Exporter::GifParam gparam;
-    if (isGif)
-    {
-        QScopedPointer<GifExportDialog> dialog(
-                    new GifExportDialog(*mCurrent, fileName, this));
+    if (isGif) {
+        QScopedPointer<GifExportDialog> dialog(new GifExportDialog(*mCurrent, fileName, this));
         dialog->exec();
-        if (dialog->result() != QDialog::Accepted) return;
+        if (dialog->result() != QDialog::Accepted)
+            return;
 
         cparam = dialog->commonParam();
         gparam = dialog->gifParam();
-    }
-    else
-    {
-        QScopedPointer<VideoExportDialog> dialog(
-                    new VideoExportDialog(
-                        *mCurrent, fileName, aFormat, this));
+    } else {
+        QScopedPointer<VideoExportDialog> dialog(new VideoExportDialog(*mCurrent, fileName, aFormat, this));
         dialog->exec();
-        if (dialog->result() != QDialog::Accepted) return;
+        if (dialog->result() != QDialog::Accepted)
+            return;
 
         cparam = dialog->commonParam();
         vparam = dialog->videoParam();
     }
-    //vparam.codec = codec;
+    // vparam.codec = codec;
 
     menu::LoggableProgressReporter progress(true, this);
     ctrl::Exporter exporter(*mCurrent);
-    exporter.setOverwriteConfirmer([=](const QString&)->bool { return true; });
+    exporter.setOverwriteConfirmer([=](const QString&) -> bool { return true; });
     exporter.setProgressReporter(progress);
     exporter.setUILogger(progress);
 
     // execute
-    auto result = isGif ?
-                exporter.execute(cparam, gparam) :
-                exporter.execute(cparam, vparam);
+    auto result = isGif ? exporter.execute(cparam, gparam) : exporter.execute(cparam, vparam);
 
-    if (!result)
-    {
+    if (!result) {
         progress.cancel();
 
-        if (result.code == ctrl::Exporter::ResultCode_Canceled)
-        {
-        }
-        else if (result.code == ctrl::Exporter::ResultCode_FFMpegFailedToStart)
-        {
+        if (result.code == ctrl::Exporter::ResultCode_Canceled) {
+        } else if (result.code == ctrl::Exporter::ResultCode_FFMpegFailedToStart) {
             QMessageBox message;
             message.setIcon(QMessageBox::Warning);
             message.setText(tr("FFmpeg was not found."));
-            auto infoText =
-                    tr("Video export requires FFmpeg.") + "\n" +
-                    tr("Install FFmpeg on the system, or place a FFmpeg executable "
-                       "under \"/tools\" in the folder where you installed AnimeEffects.");
+            auto infoText = tr("Video export requires FFmpeg.") + "\n" +
+                tr("Install FFmpeg on the system, or place a FFmpeg executable "
+                   "under \"/tools\" in the folder where you installed AnimeEffects.");
             message.setInformativeText(infoText);
             message.setStandardButtons(QMessageBox::Ok);
             message.setDefaultButton(QMessageBox::Ok);
             message.exec();
-        }
-        else
-        {
+        } else {
             QMessageBox::warning(nullptr, tr("Export Error"), exporter.log());
         }
     }

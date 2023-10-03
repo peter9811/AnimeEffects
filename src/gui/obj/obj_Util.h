@@ -5,18 +5,15 @@
 #include "util/TreePos.h"
 #include "gui/ObjectTreeWidget.h"
 
-namespace gui
-{
-namespace obj
-{
+namespace gui {
+namespace obj {
 
-class Util
-{
-public:
-    static QTreeWidgetItem* findItem(ObjectTreeWidget& aTree, const util::TreePos& aPos);
-    static QTreeWidgetItem* removeItem(ObjectTreeWidget& aTree, const util::TreePos& aPos);
-    static void insertItem(ObjectTreeWidget& aTree, const util::TreePos& aPos, QTreeWidgetItem& aItem);
-};
+    class Util {
+    public:
+        static QTreeWidgetItem* findItem(ObjectTreeWidget& aTree, const util::TreePos& aPos);
+        static QTreeWidgetItem* removeItem(ObjectTreeWidget& aTree, const util::TreePos& aPos);
+        static void insertItem(ObjectTreeWidget& aTree, const util::TreePos& aPos, QTreeWidgetItem& aItem);
+    };
 
 } // namespace obj
 } // namespace gui

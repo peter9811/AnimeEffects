@@ -12,15 +12,12 @@
 #include "core/TimeKey.h"
 #include "core/LayerMesh.h"
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-template <typename tParent, typename tChild>
-struct MeshLinkNode
-{
-    MeshLinkNode()
-        : parent(), child(), prev(), next() {}
+template<typename tParent, typename tChild>
+struct MeshLinkNode {
+    MeshLinkNode(): parent(), child(), prev(), next() {}
 
     tParent* parent;
     tChild* child;
@@ -38,8 +35,7 @@ typedef MeshEdgeLinkNode* MeshEdgeLink;
 typedef MeshFaceLinkNode* MeshFaceLink;
 
 //-------------------------------------------------------------------------------------------------
-class MeshVtx : private util::NonCopyable
-{
+class MeshVtx: private util::NonCopyable {
 public:
     float x;
     float y;
@@ -50,8 +46,14 @@ public:
     MeshVtx(const QVector2D& aPos);
     QVector2D vec() const { return QVector2D(x, y); }
     MeshEdgeLink edges() const { return mEdges; }
-    void set(float aX, float aY) { x = aX; y = aY; }
-    void set(const QVector2D& aPos) { x = aPos.x(); y = aPos.y(); }
+    void set(float aX, float aY) {
+        x = aX;
+        y = aY;
+    }
+    void set(const QVector2D& aPos) {
+        x = aPos.x();
+        y = aPos.y();
+    }
     bool hasOtherParents(const QVector<MeshEdge*>& aEdges) const;
     bool hasParent() const { return mEdges; }
     void setIndex(int aIndex) { mIndex = aIndex; }
@@ -68,8 +70,7 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class MeshEdge : private util::NonCopyable
-{
+class MeshEdge: private util::NonCopyable {
 public:
     MeshEdge();
     ~MeshEdge();
@@ -102,12 +103,10 @@ private:
 
     MeshEdgeLinkNode mLink[2];
     MeshFaceLink mFaces;
-
 };
 
 //-------------------------------------------------------------------------------------------------
-class MeshFace : private util::NonCopyable
-{
+class MeshFace: private util::NonCopyable {
 public:
     MeshFace();
     ~MeshFace();
@@ -140,11 +139,9 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class MeshKey : public TimeKey
-{
+class MeshKey: public TimeKey {
 public:
-    class Data : public LayerMesh
-    {
+    class Data: public LayerMesh {
     public:
         typedef QList<MeshVtx*> VtxList;
         typedef QList<MeshEdge*> EdgeList;
@@ -172,9 +169,7 @@ public:
         virtual GLsizei indexCount() const { return mIndices.count(); }
         virtual gl::BufferObject& getIndexBuffer();
         virtual MeshBuffer& getMeshBuffer();
-        virtual void resetArrayedConnection(
-                ArrayedConnectionList& aDest,
-                const gl::Vector3* aPositions) const;
+        virtual void resetArrayedConnection(ArrayedConnectionList& aDest, const gl::Vector3* aPositions) const;
         virtual Frame frameSign() const { return Frame(mOwner->frame()); }
         virtual QVector2D originOffset() const { return mOriginOffset; }
 
@@ -208,18 +203,18 @@ public:
     const Data& data() const { return mData; }
 
     ///@attention "aDst" will be assigned when the command executed.
-    cmnd::Vector createTrianglePusher(
-            const QVector<QVector2D>& aPos,
-            const QVector<MeshVtx*>& aRef,
-            MeshFace** aDst);
+    cmnd::Vector createTrianglePusher(const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, MeshFace** aDst);
     cmnd::Vector createRemover(MeshVtx& aVtx);
     cmnd::Vector createRemover(MeshFace& aFace);
+    cmnd::Vector createSplitter(MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, MeshVtx** aTail);
     cmnd::Vector createSplitter(
-            MeshFace& aFace, MeshEdge& aEdgeSide,
-            const QVector2D& aPosOnEdge, MeshVtx** aTail);
-    cmnd::Vector createSplitter(
-            MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0,
-            MeshEdge& aEdge1, const QVector2D& aPos1, MeshVtx** aTail);
+        MeshFace& aFace,
+        MeshEdge& aEdge0,
+        const QVector2D& aPos0,
+        MeshEdge& aEdge1,
+        const QVector2D& aPos1,
+        MeshVtx** aTail
+    );
     void moveVtx(MeshVtx& aVtx, const QVector2D& aPos);
     void updateGLAttribute();
 
@@ -233,18 +228,18 @@ public:
     void updateVtxIndices();
 
 private:
-    MeshFace* createTriangle(
-            const QVector<QVector2D>& aPos,
-            const QVector<MeshVtx*>& aRef,
-            cmnd::Vector& aCommands);
+    MeshFace* createTriangle(const QVector<QVector2D>& aPos, const QVector<MeshVtx*>& aRef, cmnd::Vector& aCommands);
     void listNeedToRemove(MeshVtx& aStartingVtx, cmnd::Vector& aCommands);
     void listNeedToRemove(MeshFace& aStartingFace, cmnd::Vector& aCommands);
+    MeshVtx* splitTriangle(MeshFace& aFace, MeshEdge& aEdgeSide, const QVector2D& aPosOnEdge, cmnd::Vector& aCommands);
     MeshVtx* splitTriangle(
-            MeshFace& aFace, MeshEdge& aEdgeSide,
-            const QVector2D& aPosOnEdge, cmnd::Vector& aCommands);
-    MeshVtx* splitTriangle(
-            MeshFace& aFace, MeshEdge& aEdge0, const QVector2D& aPos0,
-            MeshEdge& aEdge1, const QVector2D& aPos1, cmnd::Vector& aCommands);
+        MeshFace& aFace,
+        MeshEdge& aEdge0,
+        const QVector2D& aPos0,
+        MeshEdge& aEdge1,
+        const QVector2D& aPos1,
+        cmnd::Vector& aCommands
+    );
 
     Data mData;
 };

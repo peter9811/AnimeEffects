@@ -9,17 +9,17 @@
 #include "core/Bone2.h"
 #include "core/BoneInfluenceMap.h"
 #include "core/ObjectNode.h"
-namespace core { class Project; }
+namespace core {
+class Project;
+}
 
-namespace core
-{
+namespace core {
 
-class BoneKey : public TimeKey
-{
+class BoneKey: public TimeKey {
 public:
-    class Data
-    {
+    class Data {
         QList<Bone2*> mTopBones;
+
     public:
         Data();
         Data(const Data& aRhs);
@@ -33,8 +33,7 @@ public:
         Bone2* findBinderBone(const ObjectNode& aNode);
     };
 
-    class Cache
-    {
+    class Cache {
         BoneInfluenceMap mInfluence;
         util::LinkPointer<ObjectNode> mNode;
         QMatrix4x4 mInnerMtx;
@@ -53,8 +52,7 @@ public:
     };
     typedef QList<Cache*> CacheList;
 
-    class BindingCache
-    {
+    class BindingCache {
     public:
         BindingCache();
         ObjectNode* node;
@@ -77,8 +75,7 @@ public:
     // reset cache list and rewrite influences
     void resetCaches(Project& aProject, ObjectNode& aOwner);
     // rewrite influences of unique roots specified
-    void updateCaches(Project& aProject, ObjectNode& aOwner,
-                      const QVector<ObjectNode*>& aUniqueRoots);
+    void updateCaches(Project& aProject, ObjectNode& aOwner, const QVector<ObjectNode*>& aUniqueRoots);
 
     virtual TimeKeyType type() const { return TimeKeyType_Bone; }
     virtual bool canHoldChild() const { return true; }

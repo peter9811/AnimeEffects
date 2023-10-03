@@ -13,43 +13,32 @@
 #include "core/BoneKeyUpdater.h"
 #include "core/ImageKeyUpdater.h"
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-class SortAndRenderCall
-{
-    static bool compareDepth(Renderer::SortUnit a, Renderer::SortUnit b)
-    {
-        return a.depth < b.depth;
-    }
+class SortAndRenderCall {
+    static bool compareDepth(Renderer::SortUnit a, Renderer::SortUnit b) { return a.depth < b.depth; }
 
-    void pushNodeRecursive(ObjectNode* aNode, bool aPush)
-    {
-        if (!aNode || !aNode->isVisible()) return;
+    void pushNodeRecursive(ObjectNode* aNode, bool aPush) {
+        if (!aNode || !aNode->isVisible())
+            return;
 
         auto renderer = aNode->renderer();
-        if (renderer)
-        {
-            if (aPush)
-            {
-                if (!renderer->isClipped())
-                {
+        if (renderer) {
+            if (aPush) {
+                if (!renderer->isClipped()) {
                     Renderer::SortUnit unit;
                     unit.renderer = renderer;
                     unit.depth = mAccessor->get(*aNode).worldDepth();
                     mArray.push_back(unit);
-                }
-                else
-                {
+                } else {
                     aPush = false;
                 }
             }
         }
 
         auto& children = aNode->children();
-        for (auto itr = children.rbegin(); itr != children.rend(); ++itr)
-        {
+        for (auto itr = children.rbegin(); itr != children.rend(); ++itr) {
             pushNodeRecursive(*itr, aPush);
         }
     }
@@ -58,27 +47,17 @@ class SortAndRenderCall
     const TimeCacheAccessor* mAccessor;
 
 public:
+    SortAndRenderCall(): mArray(), mAccessor() {}
 
-    SortAndRenderCall()
-        : mArray()
-        , mAccessor()
-    {
-    }
-
-    void invoke(ObjectNode* aTopNode,
-                const RenderInfo& aInfo,
-                const TimeCacheAccessor& aAccessor)
-    {
+    void invoke(ObjectNode* aTopNode, const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor) {
         mAccessor = &aAccessor;
 
         // prerender
         {
             ObjectNode::Iterator itr(aTopNode);
-            while (itr.hasNext())
-            {
+            while (itr.hasNext()) {
                 auto renderer = itr.next()->renderer();
-                if (renderer)
-                {
+                if (renderer) {
                     renderer->prerender(aInfo, aAccessor);
                 }
             }
@@ -90,53 +69,41 @@ public:
         std::stable_sort(mArray.begin(), mArray.end(), compareDepth);
 
         // render
-        for (auto data : mArray)
-        {
+        for (auto data : mArray) {
             data.renderer->render(aInfo, aAccessor);
         }
     }
 };
 
-}
+} // namespace core
 
-namespace core
-{
+namespace core {
 
 //-------------------------------------------------------------------------------------------------
-ObjectTree::ObjectTree()
-    : mLifeLink()
-    , mTopNode()
-    , mCaller(new SortAndRenderCall())
-    , mShaderHolder()
-    , mTimeCacheLock()
-{
-}
+ObjectTree::ObjectTree():
+    mLifeLink(), mTopNode(), mCaller(new SortAndRenderCall()), mShaderHolder(), mTimeCacheLock() {}
 
-ObjectTree::~ObjectTree()
-{
-}
+ObjectTree::~ObjectTree() {}
 
-void ObjectTree::render(const RenderInfo& aInfo, bool aUseWorkingCache)
-{
-    if (mTopNode.data())
-    {
-        TimeCacheAccessor accessor(
-                    *mTopNode.data(), mTimeCacheLock, aInfo.time, aUseWorkingCache);
+void ObjectTree::render(const RenderInfo& aInfo, bool aUseWorkingCache) {
+    if (mTopNode.data()) {
+        TimeCacheAccessor accessor(*mTopNode.data(), mTimeCacheLock, aInfo.time, aUseWorkingCache);
         mCaller->invoke(mTopNode.data(), aInfo, accessor);
     }
 }
 
-cmnd::Vector ObjectTree::createNodeDeleter(ObjectNode& aNode)
-{
+cmnd::Vector ObjectTree::createNodeDeleter(ObjectNode& aNode) {
     cmnd::Vector commands;
 
     core::ObjectNode* parent = aNode.parent();
     XC_PTR_ASSERT(parent);
-    if (!parent) return commands; // fail safe code
+    if (!parent)
+        return commands; // fail-safe code
 
     auto index = parent->children().indexOf(&aNode);
     XC_ASSERT(index >= 0);
-    if (index < 0) return commands; // fail safe code
+    if (index < 0)
+        return commands; // fail-safe code
 
     commands.push(BoneKeyUpdater::createNodeUnbinderForDelete(aNode));
     commands.push(ImageKeyUpdater::createResourceSleeperForDelete(aNode));
@@ -186,64 +153,55 @@ cmnd::Vector ObjectTree::createNodeMover(
 }
 #endif
 
-cmnd::Vector ObjectTree::createNodesMover(const QVector<util::TreePos>& aRemoved, const QVector<util::TreePos>& aInserted)
-{
-    class MoveNodesCommand : public cmnd::Stable
-    {
+cmnd::Vector
+ObjectTree::createNodesMover(const QVector<util::TreePos>& aRemoved, const QVector<util::TreePos>& aInserted) {
+    class MoveNodesCommand: public cmnd::Stable {
         util::LinkPointer<ObjectTree> mTree;
         QVector<util::TreePos> mRemoved;
         QVector<util::TreePos> mInserted;
         BoneUnbindWorkspacePtr mWorkspace;
 
     public:
-        MoveNodesCommand(ObjectTree& aTree,
-                         const QVector<util::TreePos>& aRemoved,
-                         const QVector<util::TreePos>& aInserted,
-                         const BoneUnbindWorkspacePtr& aWorkspace)
-            : mTree(aTree.pointee())
-            , mRemoved(aRemoved)
-            , mInserted(aInserted)
-            , mWorkspace(aWorkspace)
-        {
-        }
+        MoveNodesCommand(
+            ObjectTree& aTree,
+            const QVector<util::TreePos>& aRemoved,
+            const QVector<util::TreePos>& aInserted,
+            const BoneUnbindWorkspacePtr& aWorkspace
+        ):
+            mTree(aTree.pointee()), mRemoved(aRemoved), mInserted(aInserted), mWorkspace(aWorkspace) {}
 
-        virtual void exec()
-        {
+        virtual void exec() {
             redo();
             mWorkspace.reset();
         }
 
-        virtual void undo()
-        {
-            if (!mTree) return;
+        virtual void undo() {
+            if (!mTree)
+                return;
 
             QVector<ObjectNode*> nodes;
-            for (auto itr = mInserted.rbegin(); itr != mInserted.rend(); ++itr)
-            {
+            for (auto itr = mInserted.rbegin(); itr != mInserted.rend(); ++itr) {
                 ObjectNode* node = mTree->eraseNode(*itr);
                 XC_PTR_ASSERT(node);
                 nodes.push_back(node);
             }
             {
                 auto nodeItr = nodes.begin();
-                for (auto itr = mRemoved.rbegin(); itr != mRemoved.rend(); ++itr)
-                {
+                for (auto itr = mRemoved.rbegin(); itr != mRemoved.rend(); ++itr) {
                     mTree->insertNode(*itr, *nodeItr);
                     ++nodeItr;
                 }
             }
         }
 
-        virtual void redo()
-        {
-            if (!mTree) return;
+        virtual void redo() {
+            if (!mTree)
+                return;
 
             QVector<ObjectNode*> nodes;
-            for (auto itr = mRemoved.begin(); itr != mRemoved.end(); ++itr)
-            {
+            for (auto itr = mRemoved.begin(); itr != mRemoved.end(); ++itr) {
                 // record one node
-                if (mWorkspace)
-                {
+                if (mWorkspace) {
                     ObjectNode* node = mTree->findNode(*itr);
                     XC_PTR_ASSERT(node);
                     mWorkspace->push(*node);
@@ -256,9 +214,8 @@ cmnd::Vector ObjectTree::createNodesMover(const QVector<util::TreePos>& aRemoved
                 }
             }
             {
-                auto nodeItr =nodes.begin();
-                for (auto itr = mInserted.begin(); itr != mInserted.end(); ++itr)
-                {
+                auto nodeItr = nodes.begin();
+                for (auto itr = mInserted.begin(); itr != mInserted.end(); ++itr) {
                     mTree->insertNode(*itr, *nodeItr);
                     ++nodeItr;
                 }
@@ -273,101 +230,84 @@ cmnd::Vector ObjectTree::createNodesMover(const QVector<util::TreePos>& aRemoved
     return commands;
 }
 
-ObjectNode* ObjectTree::findNode(const util::TreePos& aPos)
-{
-    if (!aPos.isValid()) return nullptr;
+ObjectNode* ObjectTree::findNode(const util::TreePos& aPos) {
+    if (!aPos.isValid())
+        return nullptr;
 
     ObjectNode::Children::Iterator itr;
     ObjectNode* current = topNode();
 
-    for (int i = 1; i < aPos.depth() - 1; ++i)
-    {
+    for (int i = 1; i < aPos.depth() - 1; ++i) {
         itr = current->children().at(aPos.row(i));
-        if (itr == current->children().end()) return nullptr;
+        if (itr == current->children().end())
+            return nullptr;
         current = *itr;
     }
 
     itr = current->children().at(aPos.tailRow());
-    if (itr == current->children().end()) return nullptr;
+    if (itr == current->children().end())
+        return nullptr;
 
     ObjectNode* target = *itr;
     return target;
 }
 
-ObjectNode* ObjectTree::eraseNode(const util::TreePos& aPos)
-{
+ObjectNode* ObjectTree::eraseNode(const util::TreePos& aPos) {
     ObjectNode::Children::Iterator itr;
     ObjectNode* current = topNode();
 
-    for (int i = 1; i < aPos.depth() - 1; ++i)
-    {
+    for (int i = 1; i < aPos.depth() - 1; ++i) {
         itr = current->children().at(aPos.row(i));
         current = *itr;
     }
 
     itr = current->children().at(aPos.tailRow());
-    //qDebug() << "erase" << current->name() << aPos.tailRow() << (itr != current->children().end() ? (*itr)->name() : "invalid");
+    // qDebug() << "erase" << current->name() << aPos.tailRow() << (itr != current->children().end() ? (*itr)->name() :
+    // "invalid");
 
     ObjectNode* target = *itr;
     current->children().erase(itr);
     return target;
 }
 
-void ObjectTree::insertNode(const util::TreePos& aPos, ObjectNode* aNode)
-{
+void ObjectTree::insertNode(const util::TreePos& aPos, ObjectNode* aNode) {
     XC_PTR_ASSERT(aNode);
     ObjectNode::Children::Iterator itr;
     ObjectNode* current = topNode();
 
-    for (int i = 1; i < aPos.depth() - 1; ++i)
-    {
+    for (int i = 1; i < aPos.depth() - 1; ++i) {
         itr = current->children().at(aPos.row(i));
         current = *itr;
     }
 
     itr = current->children().at(aPos.tailRow());
     current->children().insert(itr, aNode);
-    //qDebug() << "insert" << current->name() << aPos.tailRow() << aNode->name();
+    // qDebug() << "insert" << current->name() << aPos.tailRow() << aNode->name();
 }
 
-cmnd::Vector ObjectTree::createResourceUpdater(const ResourceEvent& aEvent)
-{
+cmnd::Vector ObjectTree::createResourceUpdater(const ResourceEvent& aEvent) {
     cmnd::Vector result;
-    if (mTopNode)
-    {
+    if (mTopNode) {
         ObjectNode::Iterator itr(mTopNode.data());
-        while (itr.hasNext())
-        {
+        while (itr.hasNext()) {
             result.push(itr.next()->createResourceUpdater(aEvent));
         }
     }
     return result;
 }
 
-void ObjectTree::onTimeLineModified(TimeLineEvent& aEvent, bool)
-{
-    BoneKeyUpdater::onTimeLineModified(aEvent);
-}
+void ObjectTree::onTimeLineModified(TimeLineEvent& aEvent, bool) { BoneKeyUpdater::onTimeLineModified(aEvent); }
 
-void ObjectTree::onTreeRestructured(ObjectTreeEvent& aEvent, bool)
-{
-    BoneKeyUpdater::onTreeRestructured(aEvent);
-}
+void ObjectTree::onTreeRestructured(ObjectTreeEvent& aEvent, bool) { BoneKeyUpdater::onTreeRestructured(aEvent); }
 
-void ObjectTree::onResourceModified(ResourceEvent& aEvent, bool)
-{
-    BoneKeyUpdater::onResourceModified(aEvent);
-}
+void ObjectTree::onResourceModified(ResourceEvent& aEvent, bool) { BoneKeyUpdater::onResourceModified(aEvent); }
 
-void ObjectTree::onProjectAttributeModified(ProjectEvent& aEvent, bool)
-{
+void ObjectTree::onProjectAttributeModified(ProjectEvent& aEvent, bool) {
     BoneKeyUpdater::onProjectAttributeModified(aEvent);
 }
 
-bool ObjectTree::serialize(Serializer& aOut) const
-{
-    static const std::array<uint8, 8> kSignature =
-        { 'O', 'b', 'j', 'T', 'r', 'e', 'e', '_' };
+bool ObjectTree::serialize(Serializer& aOut) const {
+    static const std::array<uint8, 8> kSignature = {'O', 'b', 'j', 'T', 'r', 'e', 'e', '_'};
 
     // signature
     auto pos = aOut.beginBlock(kSignature);
@@ -376,10 +316,8 @@ bool ObjectTree::serialize(Serializer& aOut) const
     aOut.write(topNode() ? 1 : 0);
 
     // nodes
-    if (topNode())
-    {
-        if (!serializeNode(aOut, *topNode()))
-        {
+    if (topNode()) {
+        if (!serializeNode(aOut, *topNode())) {
             return false;
         }
     }
@@ -389,10 +327,8 @@ bool ObjectTree::serialize(Serializer& aOut) const
     return aOut.checkStream();
 }
 
-bool ObjectTree::serializeNode(Serializer& aOut, const ObjectNode& aNode) const
-{
-    static const std::array<uint8, 8> kSignature =
-        { 'O', 'b', 'j', 'N', 'o', 'd', 'e', '_' };
+bool ObjectTree::serializeNode(Serializer& aOut, const ObjectNode& aNode) const {
+    static const std::array<uint8, 8> kSignature = {'O', 'b', 'j', 'N', 'o', 'd', 'e', '_'};
 
     // block begin
     auto pos = aOut.beginBlock(kSignature);
@@ -407,8 +343,7 @@ bool ObjectTree::serializeNode(Serializer& aOut, const ObjectNode& aNode) const
     aOut.writeID(&aNode);
 
     // serialize object node
-    if (!aNode.serialize(aOut))
-    {
+    if (!aNode.serialize(aOut)) {
         return false;
     }
 
@@ -416,20 +351,16 @@ bool ObjectTree::serializeNode(Serializer& aOut, const ObjectNode& aNode) const
     aOut.endBlock(pos);
 
     // check failure
-    if (aOut.failure())
-    {
+    if (aOut.failure()) {
         return false;
     }
 
     // iterate children
-    if (aNode.canHoldChild())
-    {
-        for (auto child : aNode.children())
-        {
+    if (aNode.canHoldChild()) {
+        for (auto child : aNode.children()) {
             XC_PTR_ASSERT(child);
 
-            if (!serializeNode(aOut, *child))
-            {
+            if (!serializeNode(aOut, *child)) {
                 return false;
             }
         }
@@ -438,8 +369,7 @@ bool ObjectTree::serializeNode(Serializer& aOut, const ObjectNode& aNode) const
     return !aOut.failure();
 }
 
-bool ObjectTree::deserialize(Deserializer& aIn)
-{
+bool ObjectTree::deserialize(Deserializer& aIn) {
     // clear
     mTopNode.reset();
 
@@ -454,17 +384,15 @@ bool ObjectTree::deserialize(Deserializer& aIn)
     int topNodeCount = 0;
     aIn.read(topNodeCount);
 
-    if (topNodeCount == 1)
-    {
+    if (topNodeCount == 1) {
         aIn.pushLogScope("ObjectNodes");
 
         // deserialize each node
-        if (!deserializeNode(aIn, nullptr)) return false;
+        if (!deserializeNode(aIn, nullptr))
+            return false;
 
         aIn.popLogScope();
-    }
-    else if (topNodeCount != 0)
-    {
+    } else if (topNodeCount != 0) {
         return aIn.errored("invalid top node count");
     }
 
@@ -479,8 +407,7 @@ bool ObjectTree::deserialize(Deserializer& aIn)
     return aIn.checkStream();
 }
 
-bool ObjectTree::deserializeNode(Deserializer &aIn, ObjectNode* aParent)
-{
+bool ObjectTree::deserializeNode(Deserializer& aIn, ObjectNode* aParent) {
     // check block begin
     if (!aIn.beginBlock("ObjNode_"))
         return aIn.errored("invalid signature of object node");
@@ -507,26 +434,21 @@ bool ObjectTree::deserializeNode(Deserializer &aIn, ObjectNode* aParent)
         return aIn.errored("failed to create node");
 
     // reference id
-    if (!aIn.bindIDData(node))
-    {
+    if (!aIn.bindIDData(node)) {
         delete node;
         return aIn.errored("failed to bind reference id");
     }
 
     // deserialize node
-    if (!node->deserialize(aIn))
-    {
+    if (!node->deserialize(aIn)) {
         delete node;
         return aIn.errored("failed to deserialize node");
     }
 
     // push to tree
-    if (!aParent)
-    {
+    if (!aParent) {
         grabTopNode(node);
-    }
-    else
-    {
+    } else {
         aParent->children().pushBack(node);
     }
 
@@ -543,9 +465,9 @@ bool ObjectTree::deserializeNode(Deserializer &aIn, ObjectNode* aParent)
         return aIn.errored("invalid holdability");
 
     // iterate children
-    for (int i = 0; i < childCount; ++i)
-    {
-        if (!deserializeNode(aIn, node)) return false;
+    for (int i = 0; i < childCount; ++i) {
+        if (!deserializeNode(aIn, node))
+            return false;
     }
 
     // rise log scope
@@ -559,18 +481,14 @@ bool ObjectTree::deserializeNode(Deserializer &aIn, ObjectNode* aParent)
     return aIn.checkStream();
 }
 
-ObjectNode* ObjectTree::createSerialNode(int aType)
-{
+ObjectNode* ObjectTree::createSerialNode(int aType) {
     ObjectNode* node = nullptr;
 
-    if (aType == ObjectType_Layer)
-    {
+    if (aType == ObjectType_Layer) {
         LayerNode* layer = new LayerNode(QString("no name"), mShaderHolder);
         layer->setVisibility(true);
         node = layer;
-    }
-    else if (aType == ObjectType_Folder)
-    {
+    } else if (aType == ObjectType_Folder) {
         FolderNode* folder = new FolderNode(QString("no name"));
         folder->setVisibility(true);
         node = folder;

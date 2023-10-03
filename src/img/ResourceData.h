@@ -5,13 +5,13 @@
 #include <QPoint>
 #include "img/Buffer.h"
 #include "img/BlendMode.h"
-namespace img { class ResourceNode; }
+namespace img {
+class ResourceNode;
+}
 
-namespace img
-{
+namespace img {
 
-class ResourceData
-{
+class ResourceData {
 public:
     typedef std::function<bool(ResourceData& aData)> ImageLoader;
 

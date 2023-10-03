@@ -25,18 +25,16 @@
 #include "gui/MouseSetting.h"
 #include "qfilesystemwatcher.h"
 #include "res/res_ResourceUpdater.h"
+#include "exportdiag.h"
 
-namespace gui
-{
 
-class MainWindow : public QMainWindow
-{
+namespace gui {
+
+class MainWindow: public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(ctrl::System& aSystem,
-               GUIResources& aResources,
-               const LocaleParam& aLocaleParam);
+    MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocaleParam  aLocaleParam);
     ~MainWindow();
 
     void showWithSettings();
@@ -47,10 +45,12 @@ public:
     QElapsedTimer timeElapsed;
     qint64 lastPress;
     qint64 lastRelease;
-    static void showInfoPopup(const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString &aDetailed = "nullptr");
-    QTimer *autosaveTimer;
-    public slots:
-        void autoSave();
+    static void showInfoPopup(
+        const QString& aTitle, const QString& aDetailText, const QString& aIcon, const QString& aDetailed = "nullptr"
+    );
+    QTimer* autosaveTimer;
+public slots:
+    void autoSave();
 
 public:
     void onNewProjectTriggered();
@@ -65,7 +65,7 @@ public:
     void onPlayPauseTriggered();
     void onDockToggle();
     void onDisplacementTriggered(int frameDisplacement);
-    void onMovementTriggered(QString frameMovement);
+    void onMovementTriggered(const QString& frameMovement);
     void onUndoTriggered();
     void onLoopToggle();
     void onRedoTriggered();
@@ -81,10 +81,20 @@ private:
     void onProjectTabChanged(core::Project&);
     void onThemeUpdated(theme::Theme&);
 
+    bool onStartup = true;
+    bool themeChangeWarned = false;
+    bool exporting = false;
+    // For some reason you need these here or the widget will only show properly once :/
+    ExportWidgetUI *exportUI = new ExportWidgetUI;
+    QDialog* exportWidget = new QDialog;
+    QDialog* gpDiag = new QDialog;
+    void regenerateWidget(){ exportWidget = new QDialog; exporting = false; }
+    void regenerateGeneralPurposeDiag(){ gpDiag = new QDialog; }
+
     ctrl::System& mSystem;
     GUIResources& mGUIResources;
     ViaPoint mViaPoint;
-	QScopedPointer<KeyCommandMap> mKeyCommandMap;
+    QScopedPointer<KeyCommandMap> mKeyCommandMap;
     QScopedPointer<KeyCommandInvoker> mKeyCommandInvoker;
     MouseSetting mMouseSetting;
     MainMenuBar* mMainMenuBar;

@@ -8,18 +8,18 @@
 #include "gl/DeviceInfo.h"
 #include "core/Project.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class ProjectLoader
-{
+class ProjectLoader {
 public:
     ProjectLoader();
 
     bool load(
-            const QString& aPath, core::Project& aProject,
-            const gl::DeviceInfo& aGLDeviceInfo,
-            util::IProgressReporter& aReporter);
+        const QString& aPath,
+        core::Project& aProject,
+        const gl::DeviceInfo& aGLDeviceInfo,
+        util::IProgressReporter& aReporter
+    );
 
     const QStringList& log() const { return mLog; }
 

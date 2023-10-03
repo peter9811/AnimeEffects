@@ -2,33 +2,25 @@
 #include "gl/Global.h"
 #include "core/LayerMesh.h"
 
-namespace core
-{
+namespace core {
 
-LayerMesh::MeshBuffer::GLBinder::GLBinder()
-{
-    gl::Global::makeCurrent();
-}
+LayerMesh::MeshBuffer::GLBinder::GLBinder() { gl::Global::makeCurrent(); }
 
-LayerMesh::MeshBuffer::MeshBuffer()
-    : workPositions(GL_TRANSFORM_FEEDBACK_BUFFER)
-    , workXArrows(GL_TRANSFORM_FEEDBACK_BUFFER)
-    , workYArrows(GL_TRANSFORM_FEEDBACK_BUFFER)
-    , outPositions(GL_ARRAY_BUFFER)
-    , outXArrows(GL_ARRAY_BUFFER)
-    , outYArrows(GL_ARRAY_BUFFER)
-    , vtxCount(0)
-{
-}
+LayerMesh::MeshBuffer::MeshBuffer():
+    workPositions(GL_TRANSFORM_FEEDBACK_BUFFER),
+    workXArrows(GL_TRANSFORM_FEEDBACK_BUFFER),
+    workYArrows(GL_TRANSFORM_FEEDBACK_BUFFER),
+    outPositions(GL_ARRAY_BUFFER),
+    outXArrows(GL_ARRAY_BUFFER),
+    outYArrows(GL_ARRAY_BUFFER),
+    vtxCount(0) {}
 
-void LayerMesh::MeshBuffer::reserve(int aVtxCount)
-{
+void LayerMesh::MeshBuffer::reserve(int aVtxCount) {
     XC_ASSERT(aVtxCount >= 0);
-    if (vtxCount != aVtxCount)
-    {
+    if (vtxCount != aVtxCount) {
         vtxCount = aVtxCount;
 
-        const int reserve = vtxCount > 0 ? vtxCount : 1; // fail safe code
+        const int reserve = vtxCount > 0 ? vtxCount : 1; // fail-safe code
         workPositions.resetData<gl::Vector3>(reserve, GL_STREAM_COPY);
         workXArrows.resetData<gl::Vector3>(reserve, GL_STREAM_COPY);
         workYArrows.resetData<gl::Vector3>(reserve, GL_STREAM_COPY);
@@ -38,68 +30,41 @@ void LayerMesh::MeshBuffer::reserve(int aVtxCount)
     }
 }
 
-LayerMesh::MeshBuffer::~MeshBuffer()
-{
-    gl::Global::makeCurrent();
-}
+LayerMesh::MeshBuffer::~MeshBuffer() { gl::Global::makeCurrent(); }
 
-LayerMesh::ArrayedConnection::ArrayedConnection()
-    : positions()
-    , positionCount()
-    , vertexRange()
-{
-}
+LayerMesh::ArrayedConnection::ArrayedConnection(): positions(), positionCount(), vertexRange() {}
 
-void LayerMesh::ArrayedConnection::resetPositions()
-{
+void LayerMesh::ArrayedConnection::resetPositions() {
     positions.reset(new gl::Vector2[ArrayedConnection::kMaxCount]);
     positionCount = 0;
     vertexRange = util::Range();
 }
 
-void LayerMesh::ArrayedConnection::pushPosition(const gl::Vector2& aPos)
-{
+void LayerMesh::ArrayedConnection::pushPosition(const gl::Vector2& aPos) {
     XC_ASSERT(positionCount < kMaxCount);
     positions[positionCount] = aPos;
     ++positionCount;
 }
 
-LayerMesh::ArrayedConnectionList::ArrayedConnectionList()
-    : indexRanges()
-    , blocks()
-    , indexRangeCount()
-    , useBlockCount(0)
-{
-}
+LayerMesh::ArrayedConnectionList::ArrayedConnectionList():
+    indexRanges(), blocks(), indexRangeCount(), useBlockCount(0) {}
 
-LayerMesh::ArrayedConnectionList::~ArrayedConnectionList()
-{
-    destroyBlocks();
-}
+LayerMesh::ArrayedConnectionList::~ArrayedConnectionList() { destroyBlocks(); }
 
-void LayerMesh::ArrayedConnectionList::clearBlocks()
-{
-    useBlockCount = 0;
-}
+void LayerMesh::ArrayedConnectionList::clearBlocks() { useBlockCount = 0; }
 
-void LayerMesh::ArrayedConnectionList::destroyBlocks()
-{
+void LayerMesh::ArrayedConnectionList::destroyBlocks() {
     qDeleteAll(blocks);
     blocks.clear();
     useBlockCount = 0;
 }
 
-void LayerMesh::ArrayedConnectionList::destroyUnuseBlocks()
-{
+void LayerMesh::ArrayedConnectionList::destroyUnuseBlocks() {
     int index = 0;
-    for (auto itr = blocks.begin(); itr != blocks.end();)
-    {
-        if (index < useBlockCount)
-        {
+    for (auto itr = blocks.begin(); itr != blocks.end();) {
+        if (index < useBlockCount) {
             ++itr;
-        }
-        else
-        {
+        } else {
             auto block = *itr;
             itr = blocks.erase(itr);
             delete block;
@@ -108,47 +73,34 @@ void LayerMesh::ArrayedConnectionList::destroyUnuseBlocks()
     }
 }
 
-LayerMesh::ArrayedConnection* LayerMesh::ArrayedConnectionList::pushNewBlock()
-{
+LayerMesh::ArrayedConnection* LayerMesh::ArrayedConnectionList::pushNewBlock() {
     ++useBlockCount;
     const int blockCount = blocks.count();
 
-    if (blockCount < useBlockCount)
-    {
+    if (blockCount < useBlockCount) {
         blocks.push_back(new ArrayedConnection());
         blocks.back()->resetPositions();
         return blocks.back();
-    }
-    else
-    {
+    } else {
         auto reuseBlock = blocks.at(useBlockCount - 1);
         reuseBlock->resetPositions();
         return reuseBlock;
     }
 }
 
-void LayerMesh::ArrayedConnectionList::resetIndexRanges(int aCount)
-{
-    if (indexRangeCount != aCount)
-    {
+void LayerMesh::ArrayedConnectionList::resetIndexRanges(int aCount) {
+    if (indexRangeCount != aCount) {
         indexRangeCount = aCount;
-        if (aCount > 0)
-        {
+        if (aCount > 0) {
             indexRanges.reset(new gl::Vector2I[aCount]);
-        }
-        else
-        {
+        } else {
             indexRanges.reset();
         }
     }
 }
 
-LayerMesh::ArrayedConnectionWriter::ArrayedConnectionWriter(ArrayedConnectionList& aList, int aVertexCount)
-    : mList(aList)
-    , mVertexCount(aVertexCount)
-    , mCurBlock()
-    , mIndex(-1)
-{
+LayerMesh::ArrayedConnectionWriter::ArrayedConnectionWriter(ArrayedConnectionList& aList, int aVertexCount):
+    mList(aList), mVertexCount(aVertexCount), mCurBlock(), mIndex(-1) {
     mList.resetIndexRanges(aVertexCount);
     mList.clearBlocks();
 
@@ -156,24 +108,20 @@ LayerMesh::ArrayedConnectionWriter::ArrayedConnectionWriter(ArrayedConnectionLis
     mCurBlock->vertexRange.setMin(0);
 }
 
-LayerMesh::ArrayedConnectionWriter::~ArrayedConnectionWriter()
-{
-    if (mVertexCount > 0 && mCurBlock)
-    {
+LayerMesh::ArrayedConnectionWriter::~ArrayedConnectionWriter() {
+    if (mVertexCount > 0 && mCurBlock) {
         mCurBlock->vertexRange.setMax(mVertexCount - 1);
     }
     mList.destroyUnuseBlocks();
 }
 
-void LayerMesh::ArrayedConnectionWriter::beginOneVertex(int aMaxConnectionCount)
-{
+void LayerMesh::ArrayedConnectionWriter::beginOneVertex(int aMaxConnectionCount) {
     XC_ASSERT(aMaxConnectionCount < ArrayedConnection::kMaxCount);
 
     ++mIndex;
 
     // setup positions
-    if (mCurBlock->positionCount >= ArrayedConnection::kMaxCount - aMaxConnectionCount)
-    {
+    if (mCurBlock->positionCount >= ArrayedConnection::kMaxCount - aMaxConnectionCount) {
         mCurBlock->vertexRange.setMax(mIndex - 1);
 
         mCurBlock = mList.pushNewBlock();
@@ -184,10 +132,9 @@ void LayerMesh::ArrayedConnectionWriter::beginOneVertex(int aMaxConnectionCount)
     mList.indexRanges[mIndex].y = 0;
 }
 
-void LayerMesh::ArrayedConnectionWriter::pushPosition(const gl::Vector2& aPos)
-{
+void LayerMesh::ArrayedConnectionWriter::pushPosition(const gl::Vector2& aPos) {
     mCurBlock->pushPosition(aPos);
     ++(mList.indexRanges[mIndex].y);
 }
 
-} // namspace core
+} // namespace core

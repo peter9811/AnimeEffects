@@ -15,29 +15,28 @@
 namespace ctrl {
 namespace pose {
 
-class DrawBoneMode : public IMode
-{
-public:
-    DrawBoneMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
-    virtual void updateParam(const PoseParam&);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    class DrawBoneMode: public IMode {
+    public:
+        DrawBoneMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
+        virtual void updateParam(const PoseParam&);
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    void pullBone(core::Bone2& aTarget, const QVector2D& aPull, float aPullPosRate);
+    private:
+        void pullBone(core::Bone2& aTarget, const QVector2D& aPull, float aPullPosRate);
 
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    QMatrix4x4 mTargetMtx;
-    QMatrix4x4 mTargetInvMtx;
-    KeyOwner& mKeyOwner;
-    bone::Focuser mFocuser;
-    RotateBones* mCommandRef;
-    QVector2D mPullPos;
-    QVector2D mPullOffset;
-    float mPullPosRate;
-    float mPullWeight;
-};
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        QMatrix4x4 mTargetMtx;
+        QMatrix4x4 mTargetInvMtx;
+        KeyOwner& mKeyOwner;
+        bone::Focuser mFocuser;
+        RotateBones* mCommandRef;
+        QVector2D mPullPos;
+        QVector2D mPullOffset;
+        float mPullPosRate;
+        float mPullWeight;
+    };
 
 } // namespace pose
 } // namespace ctrl

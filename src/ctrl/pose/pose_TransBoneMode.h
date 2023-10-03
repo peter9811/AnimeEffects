@@ -15,25 +15,24 @@
 namespace ctrl {
 namespace pose {
 
-class TransBoneMode : public IMode
-{
-public:
-    TransBoneMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    class TransBoneMode: public IMode {
+    public:
+        TransBoneMode(core::Project& aProject, const Target& aTarget, KeyOwner& aKey);
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    void rotateBone(core::Bone2& aTarget, float aRotate);
+    private:
+        void rotateBone(core::Bone2& aTarget, float aRotate);
 
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    QMatrix4x4 mTargetMtx;
-    QMatrix4x4 mTargetInvMtx;
-    KeyOwner& mKeyOwner;
-    bone::Focuser mFocuser;
-    RotateBone* mCommandRef;
-    QVector2D mMoveOffset;
-};
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        QMatrix4x4 mTargetMtx;
+        QMatrix4x4 mTargetInvMtx;
+        KeyOwner& mKeyOwner;
+        bone::Focuser mFocuser;
+        RotateBone* mCommandRef;
+        QVector2D mMoveOffset;
+    };
 
 } // namespace pose
 } // namespace ctrl

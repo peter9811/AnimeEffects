@@ -18,266 +18,254 @@
 namespace gui {
 namespace prop {
 
-template <typename SpinBoxType>
-void stepByHelper(SpinBoxType *spinBox, int steps);
+    template<typename SpinBoxType>
+    void stepByHelper(SpinBoxType* spinBox, int steps);
 
-//-------------------------------------------------------------------------------------------------
-class SpinBox : public QSpinBox
-{
-    Q_OBJECT
+    //-------------------------------------------------------------------------------------------------
+    class SpinBox: public QSpinBox {
+        Q_OBJECT
 
-public:
-    SpinBox(QWidget *parent = nullptr);
+    public:
+        SpinBox(QWidget* parent = nullptr);
 
-    virtual void stepBy(int steps) override;
+        virtual void stepBy(int steps) override;
 
-    bool mTriggeredByArrows;
-};
+        bool mTriggeredByArrows;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class DoubleSpinBox : public QDoubleSpinBox
-{
-    Q_OBJECT
+    //-------------------------------------------------------------------------------------------------
+    class DoubleSpinBox: public QDoubleSpinBox {
+        Q_OBJECT
 
-public:
-    DoubleSpinBox(QWidget *parent = nullptr);
+    public:
+        DoubleSpinBox(QWidget* parent = nullptr);
 
-    virtual void stepBy(int steps) override;
+        virtual void stepBy(int steps) override;
 
-    bool mTriggeredByArrows;
-};
+        bool mTriggeredByArrows;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class CheckItem
-        : public ItemBase
-{
-public:
-    typedef std::function<void(bool)> UpdateType;
+    //-------------------------------------------------------------------------------------------------
+    class CheckItem: public ItemBase {
+    public:
+        typedef std::function<void(bool)> UpdateType;
 
-    CheckItem(QWidget* aParent);
+        CheckItem(QWidget* aParent);
 
-    QCheckBox& box() { return *mBox; }
-    const QCheckBox& box() const { return *mBox; }
+        QCheckBox& box() { return *mBox; }
+        const QCheckBox& box() const { return *mBox; }
 
-    bool value() const { return mBox->isChecked(); }
-    void setValue(bool aValue, bool aSignal);
+        bool value() const { return mBox->isChecked(); }
+        void setValue(bool aValue, bool aSignal);
 
-    virtual QWidget* itemWidget() { return mBox; }
-    virtual void setItemEnabled(bool aEnable);
-    virtual void setItemVisible(bool aVisible);
+        virtual QWidget* itemWidget() { return mBox; }
+        virtual void setItemEnabled(bool aEnable);
+        virtual void setItemVisible(bool aVisible);
 
-    UpdateType onValueUpdated;
+        UpdateType onValueUpdated;
 
-private:
-    void onEditingFinished();
+    private:
+        void onEditingFinished();
 
-    QCheckBox* mBox;
-    bool mStamp;
-    bool mSignal;
-    bool mIsEnable;
-};
+        QCheckBox* mBox;
+        bool mStamp;
+        bool mSignal;
+        bool mIsEnable;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class ComboItem
-        : public ItemBase
-{
-public:
-    typedef std::function<void(int, int)> UpdateType;
+    //-------------------------------------------------------------------------------------------------
+    class ComboItem: public ItemBase {
+    public:
+        typedef std::function<void(int, int)> UpdateType;
 
-    ComboItem(QWidget* aParent);
+        ComboItem(QWidget* aParent);
 
-    QComboBox& box() { return *mBox; }
-    const QComboBox& box() const { return *mBox; }
+        QComboBox& box() { return *mBox; }
+        const QComboBox& box() const { return *mBox; }
 
-    int value() const { return mBox->currentIndex(); }
-    void setValue(int aValue, bool aSignal);
+        int value() const { return mBox->currentIndex(); }
+        void setValue(int aValue, bool aSignal);
 
-    virtual QWidget* itemWidget() { return mBox; }
-    virtual void setItemEnabled(bool aEnable);
-    virtual void setItemVisible(bool aVisible);
+        virtual QWidget* itemWidget() { return mBox; }
+        virtual void setItemEnabled(bool aEnable);
+        virtual void setItemVisible(bool aVisible);
 
-    UpdateType onValueUpdated;
+        UpdateType onValueUpdated;
 
-private:
-    void onEditingFinished();
+    private:
+        void onEditingFinished();
 
-    QComboBox* mBox;
-    int mStamp;
-    bool mSignal;
-};
+        QComboBox* mBox;
+        int mStamp;
+        bool mSignal;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class Combo2DItem
-        : public ItemBase
-{
-public:
-    typedef std::function<void(QPoint, QPoint)> UpdateType;
+    //-------------------------------------------------------------------------------------------------
+    class Combo2DItem: public ItemBase {
+    public:
+        typedef std::function<void(QPoint, QPoint)> UpdateType;
 
-    Combo2DItem(QWidget* aParent);
+        Combo2DItem(QWidget* aParent);
 
-    QComboBox& box(int aIndex) { return *mBox.at(aIndex); }
-    const QComboBox& box(int aIndex) const { return *mBox.at(aIndex); }
+        QComboBox& box(int aIndex) { return *mBox.at(aIndex); }
+        const QComboBox& box(int aIndex) const { return *mBox.at(aIndex); }
 
-    QPoint value() const;
-    void setValue(QPoint aValue, bool aSignal);
+        QPoint value() const;
+        void setValue(QPoint aValue, bool aSignal);
 
-    virtual QLayout* itemLayout() { return mLayout; }
-    virtual void setItemEnabled(bool aEnable);
-    virtual void setItemVisible(bool aVisible);
+        virtual QLayout* itemLayout() { return mLayout; }
+        virtual void setItemEnabled(bool aEnable);
+        virtual void setItemVisible(bool aVisible);
 
-    UpdateType onValueUpdated;
+        UpdateType onValueUpdated;
 
-private:
-    void onEditingFinished();
+    private:
+        void onEditingFinished();
 
-    QHBoxLayout* mLayout;
-    std::array<QComboBox*, 2> mBox;
-    QPoint mStamp;
-    bool mSignal;
-};
+        QHBoxLayout* mLayout;
+        std::array<QComboBox*, 2> mBox;
+        QPoint mStamp;
+        bool mSignal;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class EasingItem
-        : public ItemBase
-{
-public:
-    typedef std::function<void(util::Easing::Param, util::Easing::Param)> UpdateType;
+    //-------------------------------------------------------------------------------------------------
+    class EasingItem: public ItemBase {
+    public:
+        typedef std::function<void(util::Easing::Param, util::Easing::Param)> UpdateType;
 
-    EasingItem(QWidget* aParent);
+        EasingItem(QWidget* aParent);
 
-    QComboBox& comboBox(int aIndex) { return *mBox.at(aIndex); }
-    const QComboBox& comboBox(int aIndex) const { return *mBox.at(aIndex); }
+        QComboBox& comboBox(int aIndex) { return *mBox.at(aIndex); }
+        const QComboBox& comboBox(int aIndex) const { return *mBox.at(aIndex); }
 
-    util::Easing::Param value() const;
-    void setValue(util::Easing::Param aValue, bool aSignal);
+        util::Easing::Param value() const;
+        void setValue(util::Easing::Param aValue, bool aSignal);
 
-    virtual QLayout* itemLayout() { return mLayout; }
-    virtual void setItemEnabled(bool aEnable);
-    virtual void setItemVisible(bool aVisible);
+        virtual QLayout* itemLayout() { return mLayout; }
+        virtual void setItemEnabled(bool aEnable);
+        virtual void setItemVisible(bool aVisible);
 
-    UpdateType onValueUpdated;
+        UpdateType onValueUpdated;
 
-private:
-    void onEditingFinished();
+    private:
+        void onEditingFinished();
 
-    QLayout* mLayout;
-    std::array<QComboBox*, 2> mBox;
-    DoubleSpinBox* mDBox;
-    util::Easing::Param mStamp;
-    bool mSignal;
-};
+        QLayout* mLayout;
+        std::array<QComboBox*, 2> mBox;
+        DoubleSpinBox* mDBox;
+        util::Easing::Param mStamp;
+        bool mSignal;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class IntegerItem
-        : public ItemBase
-{
-public:
-    typedef std::function<void(int, int)> UpdateType;
+    //-------------------------------------------------------------------------------------------------
+    class IntegerItem: public ItemBase {
+    public:
+        typedef std::function<void(int, int)> UpdateType;
 
-    IntegerItem(QWidget* aParent);
+        IntegerItem(QWidget* aParent);
 
-    SpinBox& box() { return *mBox; }
-    const SpinBox& box() const { return *mBox; }
+        SpinBox& box() { return *mBox; }
+        const SpinBox& box() const { return *mBox; }
 
-    int value() const { return mBox->value(); }
-    void setValue(int aValue) { mBox->setValue(aValue); mStamp = aValue; }
-    void setRange(int aMin, int aMax);
+        int value() const { return mBox->value(); }
+        void setValue(int aValue) {
+            mBox->setValue(aValue);
+            mStamp = aValue;
+        }
+        void setRange(int aMin, int aMax);
 
-    virtual QWidget* itemWidget() { return mBox; }
-    virtual void setItemEnabled(bool aEnable);
-    virtual void setItemVisible(bool aVisible);
+        virtual QWidget* itemWidget() { return mBox; }
+        virtual void setItemEnabled(bool aEnable);
+        virtual void setItemVisible(bool aVisible);
 
-    UpdateType onValueUpdated;
+        UpdateType onValueUpdated;
 
-private:
-    void onEditingFinished();
+    private:
+        void onEditingFinished();
 
-    SpinBox* mBox;
-    int mStamp;
-    bool mSignal;
-};
+        SpinBox* mBox;
+        int mStamp;
+        bool mSignal;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class DecimalItem
-        : public ItemBase
-{
-public:
-    typedef std::function<void(double, double)> UpdateType;
+    //-------------------------------------------------------------------------------------------------
+    class DecimalItem: public ItemBase {
+    public:
+        typedef std::function<void(double, double)> UpdateType;
 
-    DecimalItem(QWidget* aParent);
+        DecimalItem(QWidget* aParent);
 
-    DoubleSpinBox& box() { return *mBox; }
-    const DoubleSpinBox& box() const { return *mBox; }
+        DoubleSpinBox& box() { return *mBox; }
+        const DoubleSpinBox& box() const { return *mBox; }
 
-    double value() const { return mBox->value(); }
-    void setValue(double aValue) { mBox->setValue(aValue); mStamp = aValue; }
-    void setRange(double aMin, double aMax);
+        double value() const { return mBox->value(); }
+        void setValue(double aValue) {
+            mBox->setValue(aValue);
+            mStamp = aValue;
+        }
+        void setRange(double aMin, double aMax);
 
-    virtual QWidget* itemWidget() { return mBox; }
-    virtual void setItemEnabled(bool aEnable);
-    virtual void setItemVisible(bool aVisible);
+        virtual QWidget* itemWidget() { return mBox; }
+        virtual void setItemEnabled(bool aEnable);
+        virtual void setItemVisible(bool aVisible);
 
-    UpdateType onValueUpdated;
+        UpdateType onValueUpdated;
 
-private:
-    void onEditingFinished();
+    private:
+        void onEditingFinished();
 
-    DoubleSpinBox* mBox;
-    double mStamp;
-    bool mSignal;
-};
+        DoubleSpinBox* mBox;
+        double mStamp;
+        bool mSignal;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class Vector2DItem
-        : public ItemBase
-{
-public:
-    typedef std::function<void(QVector2D, QVector2D)> UpdateType;
+    //-------------------------------------------------------------------------------------------------
+    class Vector2DItem: public ItemBase {
+    public:
+        typedef std::function<void(QVector2D, QVector2D)> UpdateType;
 
-    Vector2DItem(QWidget* aParent);
+        Vector2DItem(QWidget* aParent);
 
-    QVector2D value() const;
-    void setValue(QVector2D aValue);
-    void setRange(float aMin, float aMax);
+        QVector2D value() const;
+        void setValue(QVector2D aValue);
+        void setRange(float aMin, float aMax);
 
-    virtual QLayout* itemLayout() { return mLayout; }
-    virtual void setItemEnabled(bool aEnable);
-    virtual void setItemVisible(bool aVisible);
+        virtual QLayout* itemLayout() { return mLayout; }
+        virtual void setItemEnabled(bool aEnable);
+        virtual void setItemVisible(bool aVisible);
 
-    UpdateType onValueUpdated;
+        UpdateType onValueUpdated;
 
-private:
-    void onEditingFinished();
+    private:
+        void onEditingFinished();
 
-    QLayout* mLayout;
-    DoubleSpinBox* mBox[2];
-    QVector2D mStamp;
-    bool mSignal;
-};
+        QLayout* mLayout;
+        DoubleSpinBox* mBox[2];
+        QVector2D mStamp;
+        bool mSignal;
+    };
 
-//-------------------------------------------------------------------------------------------------
-class BrowseItem
-        : public ItemBase
-{
-public:
-    typedef std::function<void()> UpdateType;
+    //-------------------------------------------------------------------------------------------------
+    class BrowseItem: public ItemBase {
+    public:
+        typedef std::function<void()> UpdateType;
 
-    BrowseItem(QWidget* aParent);
+        BrowseItem(QWidget* aParent);
 
-    QString value() const { return mLine->text(); }
-    void setValue(const QString& aValue);
+        QString value() const { return mLine->text(); }
+        void setValue(const QString& aValue);
 
-    virtual QLayout* itemLayout() { return mLayout; }
-    virtual void setItemEnabled(bool aEnable);
-    virtual void setItemVisible(bool aVisible);
+        virtual QLayout* itemLayout() { return mLayout; }
+        virtual void setItemEnabled(bool aEnable);
+        virtual void setItemVisible(bool aVisible);
 
-    UpdateType onButtonPushed;
+        UpdateType onButtonPushed;
 
-private:
-    QLayout* mLayout;
-    QLineEdit* mLine;
-    QPushButton* mButton;
-};
+    private:
+        QLayout* mLayout;
+        QLineEdit* mLine;
+        QPushButton* mButton;
+    };
 
 } // namespace prop
 } // namespace gui

@@ -4,23 +4,18 @@
 #include <QVector2D>
 #include "util/Segment2D.h"
 
-namespace util
-{
+namespace util {
 
-class Triangle2D
-{
+class Triangle2D {
 public:
-    Triangle2D(const QVector2D& aV0, const QVector2D& aV1, const QVector2D& aV2)
-    {
+    Triangle2D(const QVector2D& aV0, const QVector2D& aV1, const QVector2D& aV2) {
         v[0] = aV0;
         v[1] = aV1;
         v[2] = aV2;
     }
 
-    Triangle2D(const QVector2D aV[])
-    {
-        for (int i = 0; i < 3; ++i)
-        {
+    Triangle2D(const QVector2D aV[]) {
+        for (int i = 0; i < 3; ++i) {
             v[i] = aV[i];
         }
     }

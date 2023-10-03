@@ -1,11 +1,9 @@
 #ifndef UTIL_NONCOPYABLE
 #define UTIL_NONCOPYABLE
 
-namespace util
-{
+namespace util {
 
-class NonCopyable
-{
+class NonCopyable {
 protected:
     NonCopyable() {}
     ~NonCopyable() {}
@@ -18,4 +16,3 @@ private:
 } // namespace util
 
 #endif // UTIl_NONCOPYABLE
-

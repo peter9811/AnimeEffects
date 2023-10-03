@@ -3,11 +3,9 @@
 
 #include "XC.h"
 
-namespace util
-{
+namespace util {
 
-class PackBits
-{
+class PackBits {
 public:
     PackBits();
 

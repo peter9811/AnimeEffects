@@ -11,12 +11,10 @@
 #include "ctrl/VideoFormat.h"
 #include "gui/EasyDialog.h"
 
-namespace gui
-{
+namespace gui {
 
 //-------------------------------------------------------------------------------------------------
-class ExportDialog : public EasyDialog
-{
+class ExportDialog: public EasyDialog {
     Q_OBJECT
 public:
     ExportDialog(core::Project& aProject, const QString& aPath, QWidget* aParent);
@@ -39,13 +37,10 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class ImageExportDialog : public ExportDialog
-{
+class ImageExportDialog: public ExportDialog {
     Q_OBJECT
 public:
-    ImageExportDialog(
-            core::Project& aProject, const QString& aDirPath,
-            const QString& aSuffix, QWidget* aParent);
+    ImageExportDialog(core::Project& aProject, const QString& aDirPath, const QString& aSuffix, QWidget* aParent);
     const ctrl::Exporter::ImageParam& imageParam() const { return mImageParam; }
 
 private:
@@ -55,13 +50,10 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class GifExportDialog : public ExportDialog
-{
+class GifExportDialog: public ExportDialog {
     Q_OBJECT
 public:
-    GifExportDialog(
-            core::Project& aProject, const QString& aFilePath,
-            QWidget* aParent);
+    GifExportDialog(core::Project& aProject, const QString& aFilePath, QWidget* aParent);
     const ctrl::Exporter::GifParam& gifParam() const { return mGifParam; }
 
 private:
@@ -71,13 +63,12 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-class VideoExportDialog : public ExportDialog
-{
+class VideoExportDialog: public ExportDialog {
     Q_OBJECT
 public:
     VideoExportDialog(
-            core::Project& aProject, const QString& aFilePath,
-            const ctrl::VideoFormat& aFormat, QWidget* aParent);
+        core::Project& aProject, const QString& aFilePath, const ctrl::VideoFormat& aFormat, QWidget* aParent
+    );
     const ctrl::Exporter::VideoParam& videoParam() const { return mVideoParam; }
 
 private:

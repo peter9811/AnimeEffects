@@ -9,19 +9,17 @@
 #include "core/TimeKey.h"
 #include "gui/obj/obj_Item.h"
 
-namespace core
-{
+namespace core {
 
-class ImageKey : public TimeKey
-{
+class ImageKey: public TimeKey {
 public:
-    class Data
-    {
+    class Data {
         util::Easing::Param mEasing;
         img::ResourceHandle mResHandle;
         img::BlendMode mBlendMode;
         QVector2D mImageOffset;
         GridMesh mGridMesh;
+
     public:
         Data();
         Data(const Data& aRhs);
@@ -38,9 +36,9 @@ public:
         const GridMesh& gridMesh() const { return mGridMesh; }
     };
 
-    class Cache
-    {
+    class Cache {
         gl::Texture mTexture;
+
     public:
         Cache();
         gl::Texture& texture() { return mTexture; }

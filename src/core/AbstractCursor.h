@@ -6,27 +6,13 @@
 #include <QPoint>
 #include "core/CameraInfo.h"
 
-namespace core
-{
+namespace core {
 
-class AbstractCursor
-{
+class AbstractCursor {
 public:
-    enum Event
-    {
-        Event_Press,
-        Event_Move,
-        Event_Release,
-        Event_TERM
-    };
+    enum Event { Event_Press, Event_Move, Event_Release, Event_TERM };
 
-    enum Button
-    {
-        Button_Left,
-        Button_Middle,
-        Button_Right,
-        Button_TERM
-    };
+    enum Button { Button_Left, Button_Middle, Button_Right, Button_TERM };
 
     AbstractCursor();
 

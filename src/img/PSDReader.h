@@ -6,14 +6,11 @@
 #include "util/StreamReader.h"
 #include "img/PSDFormat.h"
 
-namespace img
-{
+namespace img {
 
-class PSDReader : public util::BEStreamReader
-{
+class PSDReader: public util::BEStreamReader {
 public:
-    enum ResultCode
-    {
+    enum ResultCode {
         ResultCode_Success,
         ResultCode_InvalidFileHandle,
         ResultCode_InvalidSignature,
@@ -41,7 +38,9 @@ private:
     bool loadColorModeData();
     bool loadImageResources();
     bool loadLayerAndMaskInfo();
-    bool loadAdditionalLayerInfo(std::list<PSDFormat::AdditionalLayerInfoPtr>& aList, PSDFormat::Layer* aLayer, std::ios::pos_type aEndPos);
+    bool loadAdditionalLayerInfo(
+        std::list<PSDFormat::AdditionalLayerInfoPtr>& aList, PSDFormat::Layer* aLayer, std::ios::pos_type aEndPos
+    );
     bool loadImageData();
     bool checkFailure();
     void skipPads(uint32 aDataSize, uint32 aAlign);

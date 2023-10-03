@@ -4,20 +4,18 @@
 #include <vector>
 #include <QString>
 
-namespace gl
-{
+namespace gl {
 
-class ExtendShader
-{
+class ExtendShader {
 public:
     ExtendShader();
-    bool openFromFile(const QString &aFilePath, QString &originalCode);
-    bool openFromFileVert(const QString &aFilePath);
-    bool openFromFileFrag(const QString &aFilePath);
+    bool openFromFile(const QString& aFilePath, QString& originalCode);
+    bool openFromFileVert(const QString& aFilePath);
+    bool openFromFileFrag(const QString& aFilePath);
 
-    void openFromText(const QString &aText, QString &originalCode);
-    void openFromTextVert(const QString &aText);
-    void openFromTextFrag(const QString &aText);
+    void openFromText(const QString& aText, QString& originalCode);
+    void openFromTextVert(const QString& aText);
+    void openFromTextFrag(const QString& aText);
 
     void setVariationValue(const QString& aName, const QString& aValue);
     bool resolveVariation();
@@ -28,7 +26,10 @@ public:
     const QString& log() const { return mLog; }
 
 private:
-    struct VariationUnit { QString name; QString value; };
+    struct VariationUnit {
+        QString name;
+        QString value;
+    };
     QString mOriginalCodeVert;
     QString mOriginalCodeFrag;
     QString mVertexCode;

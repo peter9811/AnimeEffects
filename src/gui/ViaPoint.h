@@ -8,21 +8,31 @@
 #include "gl/DeviceInfo.h"
 #include "core/Project.h"
 #include "ctrl/UILogger.h"
-namespace img { class ResourceNode; }
-namespace gui { class ResourceDialog; }
-namespace gui { class MainMenuBar; }
-namespace gui { class KeyCommandMap; }
-namespace gui { class KeyCommandInvoker; }
-namespace gui { class MainViewSetting; }
-namespace gui { class MouseSetting; }
+namespace img {
+class ResourceNode;
+}
+namespace gui {
+class ResourceDialog;
+}
+namespace gui {
+class MainMenuBar;
+}
+namespace gui {
+class KeyCommandMap;
+}
+namespace gui {
+class KeyCommandInvoker;
+}
+namespace gui {
+class MainViewSetting;
+}
+namespace gui {
+class MouseSetting;
+}
 
-namespace gui
-{
+namespace gui {
 
-class ViaPoint
-        : private util::NonCopyable
-        , public ctrl::UILogger
-{
+class ViaPoint: private util::NonCopyable, public ctrl::UILogger {
 public:
     ViaPoint(QWidget* aParent);
 

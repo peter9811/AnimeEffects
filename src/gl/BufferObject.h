@@ -4,23 +4,19 @@
 #include <QGL>
 #include "util/NonCopyable.h"
 
-namespace gl
-{
+namespace gl {
 
-class BufferObject : private util::NonCopyable
-{
+class BufferObject: private util::NonCopyable {
 public:
     BufferObject(GLenum aType);
     ~BufferObject();
 
     template<typename tValue>
-    void resetData(int aDataCount, GLenum aUsage, const tValue* aDataPtr = NULL)
-    {
+    void resetData(int aDataCount, GLenum aUsage, const tValue* aDataPtr = NULL) {
         resetRawData(sizeof(tValue), aDataPtr, aDataCount, aUsage);
     }
 
-    void resetRawData(GLsizeiptr aTypeSize, const GLvoid* aData,
-                      int aDataCount, GLenum aUsage);
+    void resetRawData(GLsizeiptr aTypeSize, const GLvoid* aData, int aDataCount, GLenum aUsage);
 
     void fastResize(int aDataCount);
 

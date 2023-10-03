@@ -9,17 +9,15 @@
 namespace ctrl {
 namespace bone {
 
-class IMode
-{
-public:
-    virtual ~IMode() {}
-    virtual void updateParam(const BoneParam&) {}
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&) = 0;
-    virtual void renderQt(const core::RenderInfo&, QPainter&) = 0;
-};
+    class IMode {
+    public:
+        virtual ~IMode() {}
+        virtual void updateParam(const BoneParam&) {}
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&) = 0;
+        virtual void renderQt(const core::RenderInfo&, QPainter&) = 0;
+    };
 
 } // namespace bone
 } // namespace ctrl
 
 #endif // CTRL_BONE_IMODE
-

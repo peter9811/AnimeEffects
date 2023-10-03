@@ -10,14 +10,9 @@
 #include "core/Deserializer.h"
 #include "core/TimeKeyType.h"
 
-namespace core
-{
+namespace core {
 
-class TimeKey
-        : public util::TreeNodeBase<TimeKey>
-        , public cmnd::SleepableObject
-        , private util::NonCopyable
-{
+class TimeKey: public util::TreeNodeBase<TimeKey>, public cmnd::SleepableObject, private util::NonCopyable {
 public:
     typedef util::TreeNodeBase<TimeKey>::Children ChildrenType;
     typedef util::TreeIterator<TimeKey, ChildrenType::Iterator> Iterator;
@@ -62,7 +57,10 @@ private:
     XC_MSG_ASSERT((aKey).type() == core::TimeKeyType_##aType, "timekey type error: %d", (aKey).type())
 
 #define TIMEKEY_PTR_TYPE_ASSERT(aKeyPtr, aType) \
-    do { XC_PTR_ASSERT(aKeyPtr); TIMEKEY_TYPE_ASSERT(*(aKeyPtr), aType); } while(0)
+    do { \
+        XC_PTR_ASSERT(aKeyPtr); \
+        TIMEKEY_TYPE_ASSERT(*(aKeyPtr), aType); \
+    } while (0)
 
 
 #endif // CORE_TIMEKEY_H

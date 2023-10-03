@@ -5,23 +5,15 @@
 #include "core/Project.h"
 #include "core/Animator.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class ScopedModifier
-{
+class ScopedModifier {
 public:
-    ScopedModifier(core::Project& aProject)
-        : mUndoSuspend(aProject.commandStack())
-        , mAnimator(aProject.animator())
-    {
+    ScopedModifier(core::Project& aProject): mUndoSuspend(aProject.commandStack()), mAnimator(aProject.animator()) {
         mAnimator.suspend();
     }
 
-    ~ScopedModifier()
-    {
-        mAnimator.resume();
-    }
+    ~ScopedModifier() { mAnimator.resume(); }
 
 private:
     cmnd::ScopedUndoSuspender mUndoSuspend;
@@ -31,4 +23,3 @@ private:
 } // namespace ctrl
 
 #endif // CTRL_SCOPEDMODIFIER
-

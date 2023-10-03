@@ -10,30 +10,29 @@
 namespace ctrl {
 namespace srt {
 
-//-------------------------------------------------------------------------------------------------
-class CentroidMode : public IMode
-{
-public:
-    CentroidMode(core::Project& aProject, core::ObjectNode& aTarget, KeyOwner& aKey);
-    virtual void updateParam(const SRTParam&);
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
-    virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
+    //-------------------------------------------------------------------------------------------------
+    class CentroidMode: public IMode {
+    public:
+        CentroidMode(core::Project& aProject, core::ObjectNode& aTarget, KeyOwner& aKey);
+        virtual void updateParam(const SRTParam&);
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&);
+        virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);
 
-private:
-    void moveCentroid(const QVector2D& aNewCentroid, const QVector2D& aNewPosition);
-    QVector2D getWorldSymbolPos() const;
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    KeyOwner& mKeyOwner;
+    private:
+        void moveCentroid(const QVector2D& aNewCentroid, const QVector2D& aNewPosition);
+        QVector2D getWorldSymbolPos() const;
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        KeyOwner& mKeyOwner;
 
-    bool mFocusing;
-    bool mMoving;
-    QVector2D mBaseVec;
-    QVector2D mBasePosition;
-    QVector2D mBaseCentroid;
-    CentroidMover* mCommandRef;
-    bool mAdjustPosition;
-};
+        bool mFocusing;
+        bool mMoving;
+        QVector2D mBaseVec;
+        QVector2D mBasePosition;
+        QVector2D mBaseCentroid;
+        CentroidMover* mCommandRef;
+        bool mAdjustPosition;
+    };
 
 } // namespace srt
 } // namespace ctrl

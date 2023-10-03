@@ -16,30 +16,26 @@
 #include "core/GridMesh.h"
 #include "core/Serializer.h"
 #include "core/Deserializer.h"
-namespace core { class ObjectTreeEvent; }
-namespace core { class ResourceEvent; }
+namespace core {
+class ObjectTreeEvent;
+}
+namespace core {
+class ResourceEvent;
+}
 
-namespace core
-{
+namespace core {
 
-class ObjectNode
-        : public util::TreeNodeBase<ObjectNode>
-        , private util::NonCopyable
-{
+class ObjectNode: public util::TreeNodeBase<ObjectNode>, private util::NonCopyable {
 public:
     typedef util::TreeNodeBase<ObjectNode>::Children ChildrenType;
     typedef util::TreeIterator<ObjectNode, ChildrenType::Iterator> Iterator;
     typedef util::TreeIterator<const ObjectNode, ChildrenType::ConstIterator> ConstIterator;
 
-    ObjectNode()
-        : TreeNodeBase(this)
-        , mLifeLink()
-    {}
+    ObjectNode(): TreeNodeBase(this), mLifeLink() {}
 
     virtual ~ObjectNode() {}
 
-    util::LifeLink::Pointee<ObjectNode> pointee()
-        { return mLifeLink.pointee<ObjectNode>(this); }
+    util::LifeLink::Pointee<ObjectNode> pointee() { return mLifeLink.pointee<ObjectNode>(this); }
 
     virtual ObjectType type() const = 0;
 

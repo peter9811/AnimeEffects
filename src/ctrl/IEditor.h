@@ -3,14 +3,11 @@
 
 #include "core/Project.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class IEditor
-{
+class IEditor {
 public:
-    enum EventType
-    {
+    enum EventType {
         EventType_Frame,
         EventType_TimeKey,
         EventType_Tree,
@@ -22,9 +19,7 @@ public:
 
     virtual bool setTarget(core::ObjectNode* aTarget) = 0;
 
-    virtual bool updateCursor(
-            const core::CameraInfo& aCamera,
-            const core::AbstractCursor& aCursor) = 0;
+    virtual bool updateCursor(const core::CameraInfo& aCamera, const core::AbstractCursor& aCursor) = 0;
 
     virtual void updateEvent(EventType aType) = 0;
 
@@ -34,4 +29,3 @@ public:
 } // namespace ctrl
 
 #endif // CTRL_IEDITOR
-

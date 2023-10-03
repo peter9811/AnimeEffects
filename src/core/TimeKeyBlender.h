@@ -11,14 +11,11 @@
 #include "core/TimeKeyGatherer.h"
 #include "core/TimeCacheLock.h"
 
-namespace core
-{
+namespace core {
 
-class TimeKeyBlender
-{
+class TimeKeyBlender {
 public:
-    struct SeekData
-    {
+    struct SeekData {
         ObjectNode* objNode;
         TimeKeyExpans* expans;
     };
@@ -26,26 +23,16 @@ public:
     typedef SeekerType::Position PositionType;
 
 
-    static QMatrix4x4 getLocalSRMatrix(
-            const ObjectNode& aNode, const TimeInfo& aTime);
+    static QMatrix4x4 getLocalSRMatrix(const ObjectNode& aNode, const TimeInfo& aTime);
 
-    static QMatrix4x4 getWorldCSRTMatrix(
-            ObjectNode& aNode, const TimeInfo& aTime);
-    static QMatrix4x4 getRelativeMatrix(
-            ObjectNode& aNode, const TimeInfo& aTime,
-            const ObjectNode* aParent);
-    static LayerMesh* getAreaMesh(
-            ObjectNode& aNode, const TimeInfo& aTime);
-    static BoneKey* getAreaBone(
-            ObjectNode& aNode, const TimeInfo& aTime);
-    static BoneKey* getNearestInfluencerBone(
-            ObjectNode& aNode, const TimeInfo& aTime);
-    static QVector2D getImageOffset(
-            ObjectNode& aNode, const TimeInfo& aTime);
-    static QVector2D getOriginOffset(
-            ObjectNode& aNode, const TimeInfo& aTime);
-    static QVector2D getCentroid(
-            const ObjectNode& aNode, const TimeInfo& aTime);
+    static QMatrix4x4 getWorldCSRTMatrix(ObjectNode& aNode, const TimeInfo& aTime);
+    static QMatrix4x4 getRelativeMatrix(ObjectNode& aNode, const TimeInfo& aTime, const ObjectNode* aParent);
+    static LayerMesh* getAreaMesh(ObjectNode& aNode, const TimeInfo& aTime);
+    static BoneKey* getAreaBone(ObjectNode& aNode, const TimeInfo& aTime);
+    static BoneKey* getNearestInfluencerBone(ObjectNode& aNode, const TimeInfo& aTime);
+    static QVector2D getImageOffset(ObjectNode& aNode, const TimeInfo& aTime);
+    static QVector2D getOriginOffset(ObjectNode& aNode, const TimeInfo& aTime);
+    static QVector2D getCentroid(const ObjectNode& aNode, const TimeInfo& aTime);
 
     TimeKeyBlender(ObjectTree& aTree);
     TimeKeyBlender(ObjectNode& aRootNode, bool aUseWorking);
@@ -73,13 +60,11 @@ private:
     void blendMeshKey(PositionType aPos, const TimeInfo& aTime);
     void blendFFDKey(PositionType aPos, const TimeInfo& aTime);
     void blendImageKey(PositionType aPos, const TimeInfo& aTime);
-    //void buildPosePalette(ObjectNode& aNode, PosePalette::KeyPairs& aPairs);
+    // void buildPosePalette(ObjectNode& aNode, PosePalette::KeyPairs& aPairs);
     void buildPosePalette(ObjectNode& aNode, PosePalette::KeyPair aPair);
-    void setBoneInfluenceMaps(ObjectNode& aNode, const BoneKey* aKey,
-                              const TimeInfo& aTime);
+    void setBoneInfluenceMaps(ObjectNode& aNode, const BoneKey* aKey, const TimeInfo& aTime);
     void setBinderBones(ObjectNode& aRootNode);
-    void setBindingMatrices(ObjectNode& aNode, bool aAffectedByBinding,
-                            bool aUnderOfBinding, QMatrix4x4 aBindingMtx);
+    void setBindingMatrices(ObjectNode& aNode, bool aAffectedByBinding, bool aUnderOfBinding, QMatrix4x4 aBindingMtx);
 
     SeekerType* mSeeker;
     SeekerType::Position mRoot;

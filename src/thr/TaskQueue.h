@@ -7,11 +7,9 @@
 #include "util/NonCopyable.h"
 #include "thr/Task.h"
 
-namespace thr
-{
+namespace thr {
 
-class TaskQueue : private util::NonCopyable
-{
+class TaskQueue: private util::NonCopyable {
 public:
     TaskQueue();
 

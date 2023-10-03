@@ -5,11 +5,9 @@
 #include <QGL>
 #include "util/NonCopyable.h"
 
-namespace gl
-{
+namespace gl {
 
-class Framebuffer : private util::NonCopyable
-{
+class Framebuffer: private util::NonCopyable {
 public:
     Framebuffer();
     ~Framebuffer();

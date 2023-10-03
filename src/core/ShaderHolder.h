@@ -6,11 +6,9 @@
 #include "gl/EasyShaderProgram.h"
 #include "img/BlendMode.h"
 
-namespace core
-{
+namespace core {
 
-class ShaderHolder
-{
+class ShaderHolder {
 public:
     ShaderHolder();
     ~ShaderHolder();

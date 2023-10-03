@@ -4,11 +4,9 @@
 #include <QScopedArrayPointer>
 #include "XC.h"
 
-namespace util
-{
+namespace util {
 
-class IndexTable
-{
+class IndexTable {
 public:
     static const uint32 kInvalidIndex;
 

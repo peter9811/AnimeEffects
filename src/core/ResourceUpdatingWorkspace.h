@@ -4,17 +4,16 @@
 #include <memory>
 #include <QList>
 #include "core/GridMesh.h"
-namespace core { class TimeKey; }
+namespace core {
+class TimeKey;
+}
 
-namespace core
-{
+namespace core {
 
-class ResourceUpdatingWorkspace
-{
+class ResourceUpdatingWorkspace {
 public:
-    struct Unit
-    {
-        Unit() : parent(), mesh(), trans() {}
+    struct Unit {
+        Unit(): parent(), mesh(), trans() {}
         const TimeKey* parent;
         const GridMesh* mesh;
         GridMesh::Transitions trans;
@@ -22,8 +21,7 @@ public:
     ResourceUpdatingWorkspace();
 
     // null parent means default parent
-    GridMesh::Transitions& makeSureTransitions(
-            const TimeKey* aParent, const GridMesh& aMesh);
+    GridMesh::Transitions& makeSureTransitions(const TimeKey* aParent, const GridMesh& aMesh);
 
     // null parent means default parent
     const Unit* findUnit(const TimeKey* aParent) const;

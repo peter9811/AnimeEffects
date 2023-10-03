@@ -4,23 +4,27 @@
 #include "util/Easing.h"
 #include "core/TimeKey.h"
 
-namespace core
-{
+namespace core {
 
-class DepthKey : public TimeKey
-{
+class DepthKey: public TimeKey {
 public:
-    class Data
-    {
+    class Data {
         util::Easing::Param mEasing;
         float mDepth;
         void clamp();
+
     public:
         Data();
         util::Easing::Param& easing() { return mEasing; }
         const util::Easing::Param& easing() const { return mEasing; }
-        void setDepth(float aDepth) { mDepth = aDepth; clamp(); }
-        void addDepth(float aAdd) { mDepth += aAdd; clamp(); }
+        void setDepth(float aDepth) {
+            mDepth = aDepth;
+            clamp();
+        }
+        void addDepth(float aAdd) {
+            mDepth += aAdd;
+            clamp();
+        }
         const float& depth() const { return mDepth; }
     };
 

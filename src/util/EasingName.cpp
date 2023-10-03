@@ -1,10 +1,7 @@
 #include "util/EasingName.h"
 
-namespace util
-{
+namespace util {
 
-EasingName::EasingName()
-{
-}
+EasingName::EasingName() {}
 
 } // namespace util

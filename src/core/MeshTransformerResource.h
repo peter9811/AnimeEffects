@@ -3,11 +3,9 @@
 
 #include "gl/EasyShaderProgram.h"
 
-namespace core
-{
+namespace core {
 
-class MeshTransformerResource
-{
+class MeshTransformerResource {
 public:
     MeshTransformerResource();
     void setup(const QString& aShaderPath);
@@ -16,9 +14,7 @@ public:
 
 private:
     void loadFile(const QString& aPath, QString& aDstCode);
-    void buildShader(
-            gl::EasyShaderProgram& aProgram, const QString& aCode,
-            bool aUseSkinning, bool aUseDualQuaternion);
+    void buildShader(gl::EasyShaderProgram& aProgram, const QString& aCode, bool aUseSkinning, bool aUseDualQuaternion);
 
     gl::EasyShaderProgram mProgram[3];
 };

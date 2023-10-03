@@ -10,19 +10,11 @@
 #include "gl/EasyShaderProgram.h"
 #include "gl/Texture.h"
 
-namespace gl
-{
+namespace gl {
 
-class PrimitiveDrawer
-{
+class PrimitiveDrawer {
 public:
-    enum PenStyle
-    {
-        PenStyle_Solid,
-        PenStyle_Dash,
-        PenStyle_Dot,
-        Style_TERM
-    };
+    enum PenStyle { PenStyle_Solid, PenStyle_Dash, PenStyle_Dot, Style_TERM };
 
     PrimitiveDrawer(int aVtxCountOfSlot = 512, int aSlotCount = 8);
     virtual ~PrimitiveDrawer();
@@ -65,66 +57,44 @@ public:
     void drawTexture(const QRectF& aRect, GLuint aTexture, const QSize& aTexSize, const QRectF& aSrcRect);
 
 private:
-    enum Type
-    {
-        Type_Draw,
-        Type_Brush,
-        Type_Pen,
-        Type_Texture,
-        Type_Ability,
-        Type_TERM
-    };
+    enum Type { Type_Draw, Type_Brush, Type_Pen, Type_Texture, Type_Ability, Type_TERM };
 
-    enum ShaderType
-    {
-        ShaderType_Plane,
-        ShaderType_Stipple,
-        ShaderType_Texture,
-        ShaderType_TERM
-    };
+    enum ShaderType { ShaderType_Plane, ShaderType_Stipple, ShaderType_Texture, ShaderType_TERM };
 
-    struct Command
-    {
+    struct Command {
         Type type;
-        union Attribute
-        {
-            struct Draw
-            {
+        union Attribute {
+            struct Draw {
                 GLenum prim;
                 int count;
                 bool usePen;
-            }draw;
+            } draw;
 
-            struct Brush
-            {
+            struct Brush {
                 QRgb color;
-            }brush;
+            } brush;
 
-            struct Pen
-            {
+            struct Pen {
                 QRgb color;
                 float width;
                 PenStyle style;
-            }pen;
+            } pen;
 
-            struct Texture
-            {
+            struct Texture {
                 GLuint id;
                 QRgb color;
-            }texture;
+            } texture;
 
-            struct Ability
-            {
+            struct Ability {
                 bool hasBrush;
                 bool hasPen;
                 bool hasMSAA;
-            }ability;
+            } ability;
 
-        }attr;
+        } attr;
     };
 
-    struct State
-    {
+    struct State {
         State();
         void set(const Command& aCommand);
         bool hasDifferentValueWith(const Command& aCommand) const;
@@ -141,8 +111,7 @@ private:
         bool hasMSAA;
     };
 
-    struct PlaneShader
-    {
+    struct PlaneShader {
         bool init();
         gl::EasyShaderProgram program;
         int locPosition;
@@ -150,8 +119,7 @@ private:
         int locColor;
     };
 
-    struct StippleShader
-    {
+    struct StippleShader {
         bool init();
         gl::EasyShaderProgram program;
         int locPosition;
@@ -162,8 +130,7 @@ private:
         int locWave;
     };
 
-    struct TextureShader
-    {
+    struct TextureShader {
         bool init();
         gl::EasyShaderProgram program;
         int locPosition;
@@ -179,9 +146,8 @@ private:
     void drawEllipseImpl(const QPointF& aCenter, float aRadiusX, float aRadiusY, int aDivision);
 
     void pushStateCommand(const Command& aCommand);
-    void pushDrawCommand(const Command& aCommand,
-                         const gl::Vector2* aPositions,
-                         const gl::Vector2* aSubCoords = nullptr);
+    void
+    pushDrawCommand(const Command& aCommand, const gl::Vector2* aPositions, const gl::Vector2* aSubCoords = nullptr);
     void flushCommands();
 
     void bindAppositeShader(int aSlotIndex);
@@ -211,7 +177,6 @@ private:
 
     QVector<gl::Vector2> mPosBuffer;
     QVector<gl::Vector2> mSubBuffer;
-
 };
 
 } // namespace gl

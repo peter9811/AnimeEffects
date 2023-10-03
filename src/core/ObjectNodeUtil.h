@@ -10,31 +10,29 @@
 #include "core/SRTExpans.h"
 #include "core/TimeCacheAccessor.h"
 
-namespace core
-{
+namespace core {
 
-namespace ObjectNodeUtil
-{
-float getInitialWorldDepth(ObjectNode& aNode);
+namespace ObjectNodeUtil {
+    float getInitialWorldDepth(ObjectNode& aNode);
 
-bool thereAreSomeKeysExceedingFrame(const ObjectNode* aRootNode, int aMaxFrame);
+    bool thereAreSomeKeysExceedingFrame(const ObjectNode* aRootNode, int aMaxFrame);
 
-void collectRenderClippees(ObjectNode& aNode,
-                           std::vector<Renderer::SortUnit>& aDest,
-                           const TimeCacheAccessor& aAccessor);
+    void collectRenderClippees(
+        ObjectNode& aNode, std::vector<Renderer::SortUnit>& aDest, const TimeCacheAccessor& aAccessor
+    );
 
-class AttributeNotifier : public cmnd::Listener
-{
-    Project& mProject;
-    ObjectNode& mTarget;
-public:
-    AttributeNotifier(Project& aProject, ObjectNode& aTarget);
-    virtual void onExecuted();
-    virtual void onUndone();
-    virtual void onRedone();
-};
+    class AttributeNotifier: public cmnd::Listener {
+        Project& mProject;
+        ObjectNode& mTarget;
 
-}
+    public:
+        AttributeNotifier(Project& aProject, ObjectNode& aTarget);
+        virtual void onExecuted();
+        virtual void onUndone();
+        virtual void onRedone();
+    };
+
+} // namespace ObjectNodeUtil
 
 } // namespace core
 

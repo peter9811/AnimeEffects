@@ -5,9 +5,15 @@
 #include "cmnd/Stable.h"
 #include "core/ObjectNode.h"
 #include "core/Project.h"
-namespace core { class MoveKey; }
-namespace core { class ImageKey; }
-namespace core { class MeshKey; }
+namespace core {
+class MoveKey;
+}
+namespace core {
+class ImageKey;
+}
+namespace core {
+class MeshKey;
+}
 
 namespace ctrl {
 namespace srt {
@@ -58,32 +64,33 @@ public:
     virtual void redo();
 };
 #else
-class CentroidMover : public cmnd::Stable
-{
-    core::Project& mProject;
-    core::ObjectNode& mTarget;
-    core::MoveKey* mKey;
-    QVector2D mCentroidMove;
-    QVector2D mPositionMove;
-    QVector2D mPrevPosition;
-    QVector2D mPrevCentroid;
-    int mFrame;
-    bool mAdjustPos;
-    bool mDone;
+    class CentroidMover: public cmnd::Stable {
+        core::Project& mProject;
+        core::ObjectNode& mTarget;
+        core::MoveKey* mKey;
+        QVector2D mCentroidMove;
+        QVector2D mPositionMove;
+        QVector2D mPrevPosition;
+        QVector2D mPrevCentroid;
+        int mFrame;
+        bool mAdjustPos;
+        bool mDone;
 
-public:
-    CentroidMover(core::Project& aProject,
-                  core::ObjectNode& aTarget,
-                  const QVector2D& aCentroidMove,
-                  const QVector2D& aPositionMove,
-                  int aFrame, bool aAdjustPos);
+    public:
+        CentroidMover(
+            core::Project& aProject,
+            core::ObjectNode& aTarget,
+            const QVector2D& aCentroidMove,
+            const QVector2D& aPositionMove,
+            int aFrame,
+            bool aAdjustPos
+        );
 
-    void modifyValue(const QVector2D& aNewCentroidMove,
-                     const QVector2D& aNewPositionMove);
-    virtual void exec();
-    virtual void undo();
-    virtual void redo();
-};
+        void modifyValue(const QVector2D& aNewCentroidMove, const QVector2D& aNewPositionMove);
+        virtual void exec();
+        virtual void undo();
+        virtual void redo();
+    };
 #endif
 
 } // namespace srt

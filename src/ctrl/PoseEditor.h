@@ -11,13 +11,15 @@
 #include "ctrl/pose/pose_IMode.h"
 #include "ctrl/pose/pose_KeyOwner.h"
 #include "ctrl/pose/pose_Target.h"
-namespace ctrl { namespace pose { class TransBoneMode; } }
+namespace ctrl {
+namespace pose {
+    class TransBoneMode;
+}
+} // namespace ctrl
 
-namespace ctrl
-{
+namespace ctrl {
 
-class PoseEditor : public IEditor
-{
+class PoseEditor: public IEditor {
 public:
     PoseEditor(core::Project& aProject, UILogger& aUILogger);
     ~PoseEditor();
@@ -25,9 +27,7 @@ public:
     virtual bool setTarget(core::ObjectNode* aTarget);
 
     void updateParam(const PoseParam& aParam);
-    virtual bool updateCursor(
-            const core::CameraInfo& aCamera,
-            const core::AbstractCursor& aCursor);
+    virtual bool updateCursor(const core::CameraInfo& aCamera, const core::AbstractCursor& aCursor);
     virtual void updateEvent(EventType);
 
     virtual void renderQt(const core::RenderInfo& aInfo, QPainter& aPainter);

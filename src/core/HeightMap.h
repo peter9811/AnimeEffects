@@ -7,11 +7,9 @@
 #include "XC.h"
 #include "img/Buffer.h"
 
-namespace core
-{
+namespace core {
 
-class HeightMap
-{
+class HeightMap {
 public:
     HeightMap(const QString& aName);
 

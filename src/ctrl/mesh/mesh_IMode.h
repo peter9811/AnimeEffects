@@ -9,14 +9,13 @@
 namespace ctrl {
 namespace mesh {
 
-class IMode
-{
-public:
-    virtual ~IMode() {}
-    virtual void updateParam(const MeshParam&) {}
-    virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&) = 0;
-    virtual void renderQt(const core::RenderInfo&, QPainter&) = 0;
-};
+    class IMode {
+    public:
+        virtual ~IMode() {}
+        virtual void updateParam(const MeshParam&) {}
+        virtual bool updateCursor(const core::CameraInfo&, const core::AbstractCursor&) = 0;
+        virtual void renderQt(const core::RenderInfo&, QPainter&) = 0;
+    };
 
 } // namespace mesh
 } // namespace ctrl

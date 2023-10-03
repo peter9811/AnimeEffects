@@ -11,28 +11,27 @@
 namespace ctrl {
 namespace mesh {
 
-class Renderer
-{
-public:
-    Renderer(QPainter& aPainter, const core::RenderInfo& aInfo);
+    class Renderer {
+    public:
+        Renderer(QPainter& aPainter, const core::RenderInfo& aInfo);
 
-    void setAntialiasing(bool aFlag);
-    void setTargetMatrix(const QMatrix4x4& aMtx);
-    void renderMesh(const MeshAccessor& aMesh);
-    void renderDangling(const QVector<QVector2D>& aDangling, const QVector2D& aCursor);
-    void renderFocus(const Focuser& aFocuser);
-    void renderSplitter(const QVector<QVector2D>& aRelay);
+        void setAntialiasing(bool aFlag);
+        void setTargetMatrix(const QMatrix4x4& aMtx);
+        void renderMesh(const MeshAccessor& aMesh);
+        void renderDangling(const QVector<QVector2D>& aDangling, const QVector2D& aCursor);
+        void renderFocus(const Focuser& aFocuser);
+        void renderSplitter(const QVector<QVector2D>& aRelay);
 
-private:
-    QPointF getScreenPointF(const QVector2D& aShapePos) const;
-    void setVtxBrush(bool aFocus) const;
-    void setEdgeBrush(bool aFocus) const;
-    void setFaceBrush(int aState) const;
+    private:
+        QPointF getScreenPointF(const QVector2D& aShapePos) const;
+        void setVtxBrush(bool aFocus) const;
+        void setEdgeBrush(bool aFocus) const;
+        void setFaceBrush(int aState) const;
 
-    QPainter& mPainter;
-    const core::RenderInfo& mInfo;
-    QMatrix4x4 mTargetMtx;
-};
+        QPainter& mPainter;
+        const core::RenderInfo& mInfo;
+        QMatrix4x4 mTargetMtx;
+    };
 
 } // namespace mesh
 } // namespace ctrl

@@ -11,13 +11,9 @@
 #include "img/ResourceHandle.h"
 #include "img/BlendMode.h"
 
-namespace img
-{
+namespace img {
 
-class ResourceNode
-        : public util::TreeNodeBase<ResourceNode>
-        , private util::NonCopyable
-{
+class ResourceNode: public util::TreeNodeBase<ResourceNode>, private util::NonCopyable {
 public:
     typedef util::TreeNodeBase<ResourceNode>::Children ChildrenType;
     typedef util::TreeIterator<ResourceNode, ChildrenType::Iterator> Iterator;

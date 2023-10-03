@@ -4,11 +4,9 @@
 #include <QRect>
 #include "core/ObjectNode.h"
 
-namespace ctrl
-{
+namespace ctrl {
 
-class TimeLineRow
-{
+class TimeLineRow {
 public:
     enum { kHeight = 22, kIncrease = 18 };
 
@@ -18,8 +16,7 @@ public:
     bool selecting;
 
     TimeLineRow();
-    TimeLineRow(core::ObjectNode* aNode, const QRect& aRect,
-                bool aClosedFolder, bool aSelecting);
+    TimeLineRow(core::ObjectNode* aNode, const QRect& aRect, bool aClosedFolder, bool aSelecting);
 
     float keyHeight(int aIndex, int aValidCount) const;
     static int calculateHeight(const core::ObjectNode& aNode);

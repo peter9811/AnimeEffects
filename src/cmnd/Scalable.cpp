@@ -1,104 +1,84 @@
 #include <QDebug>
 #include "cmnd/Scalable.h"
 
-namespace cmnd
-{
+namespace cmnd {
 
-Scalable::Scalable()
-    : mCommands()
-    , mListeners()
-    , mExecuted(false)
-{
-}
+Scalable::Scalable(): mCommands(), mListeners(), mExecuted(false) {}
 
-Scalable::~Scalable()
-{
+Scalable::~Scalable() {
     qDeleteAll(mCommands);
     qDeleteAll(mListeners);
 }
 
-void Scalable::grabListener(Listener* aListener)
-{
-    mListeners.push_back(aListener);
-}
+void Scalable::grabListener(Listener* aListener) { mListeners.push_back(aListener); }
 
-bool Scalable::isUseless() const
-{
-    if (!mExecuted) return false;
+bool Scalable::isUseless() const {
+    if (!mExecuted)
+        return false;
 
-    for (auto command : mCommands)
-    {
-        if (!command->isUseless()) return false;
+    for (auto command : mCommands) {
+        if (!command->isUseless())
+            return false;
     }
     return true;
 }
 
-bool Scalable::initializeAndExecute()
-{
+bool Scalable::initializeAndExecute() {
     initialize();
 
     bool succeed = false;
-    for (auto command : mCommands)
-    {
-        if (!command->isUseless())
-        {
-            if (command->tryExec()) succeed = true;
+    for (auto command : mCommands) {
+        if (!command->isUseless()) {
+            if (command->tryExec())
+                succeed = true;
         }
     }
     return succeed;
 }
 
-bool Scalable::tryExec()
-{
+bool Scalable::tryExec() {
     const bool succeed = initializeAndExecute();
     mExecuted = true;
 
     // call listener
-    for (auto listener : mListeners)
-    {
+    for (auto listener : mListeners) {
         listener->onExecuted();
     }
 
     return succeed;
 }
 
-bool Scalable::tryRedo()
-{
+bool Scalable::tryRedo() {
     bool succeed = false;
 
-    for (auto command : mCommands)
-    {
-        if (!command->isUseless())
-        {
-            if (command->tryRedo()) succeed = true;
+    for (auto command : mCommands) {
+        if (!command->isUseless()) {
+            if (command->tryRedo())
+                succeed = true;
         }
     }
 
     // call listener
-    for (auto listener : mListeners)
-    {
+    for (auto listener : mListeners) {
         listener->onRedone();
     }
 
     return succeed;
 }
 
-bool Scalable::tryUndo()
-{
+bool Scalable::tryUndo() {
     bool succeed = false;
 
-    for (auto itr = mCommands.rbegin(); itr != mCommands.rend(); ++itr)
-    {
+    for (auto itr = mCommands.rbegin(); itr != mCommands.rend(); ++itr) {
         Base* command = *itr;
-        if (!command->isUseless())
-        {
-            if (command->tryUndo()) succeed = true;
+        if (!command->isUseless()) {
+            if (command->tryUndo())
+                succeed = true;
         }
     }
 
     // call listener
-    for (auto listener : mListeners)
-    {
+    for (auto listener : mListeners) {
         listener->onUndone();
     }
 

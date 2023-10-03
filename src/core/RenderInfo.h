@@ -5,28 +5,28 @@
 #include "XC.h"
 #include "core/CameraInfo.h"
 #include "core/TimeInfo.h"
-namespace core { class ClippingFrame; }
-namespace core { class DestinationTexturizer; }
+namespace core {
+class ClippingFrame;
+}
+namespace core {
+class DestinationTexturizer;
+}
 
-namespace core
-{
+namespace core {
 
-class RenderInfo
-{
+class RenderInfo {
 public:
-    RenderInfo()
-        : camera()
-        , time()
-        , framebuffer()
-        , dest(0)
-        , isGrid(false)
-        , nonPosed(false)
-        , originMesh(false)
-        , clippingId(0)
-        , clippingFrame()
-        , destTexturizer()
-    {
-    }
+    RenderInfo():
+        camera(),
+        time(),
+        framebuffer(),
+        dest(0),
+        isGrid(false),
+        nonPosed(false),
+        originMesh(false),
+        clippingId(0),
+        clippingFrame(),
+        destTexturizer() {}
 
     CameraInfo camera;
     TimeInfo time;

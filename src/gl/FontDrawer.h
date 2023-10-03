@@ -9,11 +9,9 @@
 #include "gl/TextObject.h"
 #include "gl/EasyTextureDrawer.h"
 
-namespace gl
-{
+namespace gl {
 
-class FontDrawer
-{
+class FontDrawer {
 public:
     FontDrawer();
     void setColor(const QColor& aColor);
@@ -22,8 +20,9 @@ public:
 private:
     bool initShader();
     void updateWorkTextureCache(TextObject& aTextObj, const QSize& aNeedSize);
-    void createCascadePolygons(const QFont& aFont, const QFontMetrics& aMetrics,
-                               const QString& aText, QVector<gl::Vector2>& aDest);
+    void createCascadePolygons(
+        const QFont& aFont, const QFontMetrics& aMetrics, const QString& aText, QVector<gl::Vector2>& aDest
+    );
 
     gl::Framebuffer mFramebuffer;
     gl::EasyShaderProgram mShader;

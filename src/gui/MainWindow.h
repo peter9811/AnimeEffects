@@ -65,7 +65,7 @@ public:
     void onPlayPauseTriggered();
     void onDockToggle();
     void onDisplacementTriggered(int frameDisplacement);
-    void onMovementTriggered(QString frameMovement);
+    void onMovementTriggered(const QString& frameMovement);
     void onUndoTriggered();
     void onLoopToggle();
     void onRedoTriggered();

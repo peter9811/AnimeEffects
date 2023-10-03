@@ -4,11 +4,9 @@
 #include <QFileDialog>
 #include <QDockWidget>
 #include <QGraphicsDropShadowEffect>
-#include <QShortcut>
 #include <QElapsedTimer>
 #include <QMessageBox>
 #include <QFileSystemWatcher>
-#include <QFileDialog>
 #include "GeneralSettingDialog.h"
 #include "util/IProgressReporter.h"
 #include "gl/Global.h"
@@ -16,16 +14,13 @@
 #include "gui/MainWindow.h"
 #include "gui/ExportDialog.h"
 #include "gui/NewProjectDialog.h"
-#include "gui/ResourceDialog.h"
 #include "gui/ProjectHook.h"
 #include "gui/menu/menu_ProgressReporter.h"
 #include "util/NetworkUtil.h"
-#include <limits>
 #include <set>
 #include <utility>
 // This thing is held by duct tape and OOP hell I swear...
-#include "ctrl/ExportParams.hpp"
-// #include "ctrl/NewExporter.h"
+#include "ctrl/ExportParams.h"
 
 namespace {
 class EventSuspender {
@@ -136,7 +131,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocalePa
 #endif
         auto font = this->font();
         if (font.pixelSize() > 0)
-            font.setPixelSize((int)(font.pixelSize() * fontScale));
+            font.setPixelSize(font.pixelSize() * fontScale);
         else
             font.setPointSizeF(font.pointSizeF() * fontScale);
         mMainDisplayStyle.reset(new MainDisplayStyle(font, mGUIResources));
@@ -150,7 +145,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocalePa
 
     // create targeting widget
     {
-        QDockWidget* dockWidget = new QDockWidget(this);
+        auto* dockWidget = new QDockWidget(this);
         dockWidget->setWindowTitle(tr("Animation Dock"));
         dockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         dockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
@@ -162,7 +157,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocalePa
 
     // create property widget
     {
-        QDockWidget* dockWidget = new QDockWidget(this);
+        auto* dockWidget = new QDockWidget(this);
         dockWidget->setWindowTitle(tr("Property Dock"));
         dockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         dockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -200,7 +195,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocalePa
 
     // create tool widget
     {
-        QDockWidget* dockWidget = new QDockWidget(this);
+        auto* dockWidget = new QDockWidget(this);
         dockWidget->setWindowTitle(tr("Tool Dock"));
         dockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         this->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
@@ -678,7 +673,7 @@ void MainWindow::onPlayPauseTriggered() {
     mTarget->playBackWidget().PlayPause(); // If it's not playing then it will begin playback
 }
 
-void MainWindow::onMovementTriggered(QString frameMovement) {
+void MainWindow::onMovementTriggered(const QString& frameMovement) {
     if (frameMovement == "Init") {
         mTarget->timeLineWidget().setFrame(core::Frame(mCurrent->attribute().maxFrame()));
     } else {
@@ -834,7 +829,7 @@ void MainWindow::onOpenRecentTriggered(QString aFileName) {
     // stop animation and main display rendering
     EventSuspender suspender(*mMainDisplay, *mTarget);
 
-    QString fileName = aFileName;
+    QString fileName = std::move(aFileName);
 
     // clear old project
     resetProjectRefs(nullptr);
@@ -903,10 +898,9 @@ void MainWindow::onSaveProjectAsTriggered() {
 
 void MainWindow::onCloseProjectTriggered() {
     if (mCurrent) {
-
         // Sneaky potential crash
         QFileSystemWatcher* watcher = MainWindow::getWatcher();
-        for (unsigned int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1) {
+        for (int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1) {
             if (watcher->files().contains(
                     mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode)
                 )) {
@@ -917,11 +911,8 @@ void MainWindow::onCloseProjectTriggered() {
         }
 
         if (mCurrent->isModified()) {
-            auto result = confirmProjectClosing(true);
-
-            if (result == QMessageBox::Cancel) {
-                return;
-            } else if (result == QMessageBox::Yes && !processProjectSaving(*mCurrent)) {
+            int result = confirmProjectClosing(true);
+            if (result == QMessageBox::Cancel || (result == QMessageBox::Yes && !processProjectSaving(*mCurrent))){
                 return;
             }
         }
@@ -963,293 +954,9 @@ void updateSettings(QVariant *var, QSettings *settings, const QStringList& value
     }
 }
 
-QString tr(const QString& str){
-    return QCoreApplication::translate("MainWindow", str.toStdString().c_str());
-}
-
 void exportProject(const exportParam& exParam, core::Project* mCurrent){
     qDebug("Exporting");
-    //auto exporter = NewExporter(*mCurrent, exParam);
-    //exporter.exportProject();
-}
-
-bool isExportParamValid(exportParam *exParam, QWidget *widget) {
-    QStringList warnings;
-    QStringList warningDetail;
-    QStringList errors;
-    QStringList errorDetail;
-    // For convenience
-    GeneralParams params(exParam->generalParams);
-
-    if (params.exportHeight == 0) {
-        errors.append(tr("Export height is zero"));
-        errorDetail.append(tr("Export height was set to zero, please increase the resolution."));
-    }
-    if (params.exportWidth == 0) {
-        errors.append(tr("Export width is zero"));
-        errorDetail.append(tr("Export width was set to zero, please increase the resolution."));
-    }
-    if (params.exportHeight % 2 != 0) {
-        warnings.append(tr("Export height contains an odd number."));
-        warningDetail.append(
-            tr("Height is ") + QString::number(params.exportHeight) + tr(", please consider changing it to ") +
-            QString::number(params.exportHeight + 1) + tr(" or to ") + QString::number(params.exportHeight - 1) +
-            tr(" to avoid potential issues.")
-        );
-    }
-    if (params.exportWidth % 2 != 0) {
-        warnings.append(tr("Export width contains an odd number."));
-        warningDetail.append(
-            tr("Width is ") + QString::number(params.exportWidth) + tr(", please consider changing it to ") +
-            QString::number(params.exportWidth + 1) + tr(" or to ") + QString::number(params.exportWidth - 1) +
-            tr(" to avoid potential issues.")
-        );
-    }
-    double a = double(params.nativeHeight) / double(params.nativeWidth);
-    double b = double(params.exportHeight) / double(params.exportWidth);
-    double epsilon = std::numeric_limits<double>::epsilon();
-    bool aspectRatioKindaEqual = fabs(a - b) <= ((fabs(a) > fabs(b) ? fabs(b) : fabs(a)) * epsilon);
-    if (params.aspectRatio == targetRatio::keep && !aspectRatioKindaEqual) {
-        warnings.append(tr("Target aspect ratio is not met"));
-        warnings.append(tr("The aspect ratio was set to keep but the aspect ratio of the export is very "
-            "different to that of the original image, consider setting the aspect ratio to \"Custom\" or to change"
-            "the resolution while having \"Keep aspect ratio\" selected.")
-        );
-    }
-    if (!params.exportDirectory.exists()) {
-        errors.append(tr("Target directory could not be found"));
-        errorDetail.append(tr("The directory \"") + params.osExportTarget + tr("\" could not be found."));
-    }
-    QFileInfo exDir(params.exportDirectory.absolutePath());
-    if (!exDir.isWritable()) {
-        errors.append(tr("Target directory is protected"));
-        errorDetail.append(
-            tr("The directory \"") + params.osExportTarget +
-            tr("\" could not be written into as it's protected or otherwise inaccessible, "
-               "if you wish to save onto it please launch AnimeEffects as admin.")
-        );
-    }
-    if (params.fps > 10 && params.nativeFPS < 10) {
-        warnings.append(tr("Target framerate is low"));
-        warningDetail.append(tr(
-            "The target framerate for exporting is generally considered very low for "
-            "exporting animations and does not to seem intended as the project's fps is higher, consider raising it."
-        ));
-    }
-    if (params.bitrate > 5 * 1000) { // Recommended for standard 720p encoding at 24 fps (5 Mbps)
-        warnings.append(tr("Target bitrate is low"));
-        warningDetail.append(
-            tr("The target bitrate for encoding will generate a low quality export, we "
-               "recommend letting FFmpeg decide for you unless you know what you're doing.")
-        );
-    }
-
-    QString format = exParam->exportType == exportTarget::video
-        ? getFormatAsString(exportTarget::video, (int)exParam->videoParams.format)
-        : getFormatAsString(exportTarget::image, (int)exParam->imageParams.format);
-    QString intermediateFormat =  getFormatAsString(exportTarget::image,
-                                                         (int)exParam->videoParams.intermediateFormat);
-    QString pixelFormat = getFormatAsString(exportTarget::pxFmt,
-                                                  (int)exParam->videoParams.pixelFormat);
-
-    if(params.allowTransparency && !formatAllowsTransparency(format)){
-        warnings.append(tr("Export target does not support transparency"));
-        warningDetail.append(tr("Export with transparency was marked but the selected format does not "
-            "support an alpha layer, this means that if the export proceeds it will not have transparency."));
-    }
-    if(params.allowTransparency && !pixelFormatAllowsTransparency(pixelFormat)){
-        warnings.append(tr("Pixel format does not support transparency"));
-        warningDetail.append(tr("Export with transparency was marked but the selected pixel format does not "
-            "support alpha channels, this means that if the export proceeds it will not have transparency."));
-    }
-    if (!params.allowTransparency && pixelFormatAllowsTransparency(pixelFormat) && formatAllowsTransparency(format) &&
-        (exParam->exportType != exportTarget::video || formatAllowsTransparency(intermediateFormat))){
-            warnings.append(tr("Forced pixel format with transparency"));
-            warningDetail.append(
-                tr("A specific pixel format with an alpha channel, with all relevant formats having support "
-                   "for transparency but the option for a transparent export was not selected, please "
-                   "select it or change your format to one without the 'a' in it to avoid unintentional "
-                   "transparency.")
-            );
-        }
-    if(exParam->exportType == exportTarget::video) {
-        if(params.allowTransparency && params.forcePipe && format == "gif") {
-            warnings.append(tr("Export pipe does not support transparency"));
-            warningDetail.append(
-                tr("Forcing a piped export will make FFmpeg immediately begin the encoding "
-                   "process with no intermediate types, this makes it so we cannot gather the necessary components to "
-                   "allow for transparency for the gif format.")
-            );
-        }
-        if(params.allowTransparency && !formatAllowsTransparency(intermediateFormat)){
-            warnings.append(tr("Intermediate export target does not support transparency"));
-            warningDetail.append(tr("Export with transparency was marked but the selected intermediate format "
-                "does not support an alpha layer, this means that if the export proceeds it will not have transparency."));
-        }
-    }
-    if(params.useCustomPalette && params.palettePath.exists()) {
-        if (!params.palettePath.isReadable()) {
-            errors.append(tr("Selected palette is unreadable"));
-            errorDetail.append(
-                tr("The palette located at \"" + params.palettePath.absolutePath() +
-                   tr("\" could not be read, please ensure it's a valid file."))
-            );
-        }
-        QFileInfo customPalette(params.palettePath.absolutePath());
-        if (!customPalette.suffix().contains(QRegExp("(png|\\.png)"))) {
-            errors.append(tr("Selected palette format unsupported"));
-            errorDetail.append(
-                tr("The palette located at \"" + params.palettePath.absolutePath() +
-                   tr("\" seems to not be a PNG file, please convert it into one."))
-            );
-        }
-    }
-    else if(!params.palettePath.exists()){
-        errors.append(tr("Selected palette does not exist"));
-        errorDetail.append(
-            tr("The palette referenced at \"" + params.palettePath.absolutePath() +
-               tr("\" does not exist or is otherwise inaccessible."))
-        );
-    }
-    if(params.useCustomParam) {
-        if (params.customPostCommand.isEmpty() && params.customInterCommand.isEmpty()) {
-            warnings.append(tr("Param field is empty"));
-            warningDetail.append(
-                tr("Export with custom params was selected but both command fields are empty, "
-                   "the export process can continue without them should you choose to do so.")
-            );
-        }
-        else if (params.customPostCommand.isEmpty() && params.usePost ||
-                 params.customInterCommand.isEmpty() && params.usePost){
-            if(params.customPostCommand.isEmpty()) {
-                warnings.append(tr("Export with custom post parameter was selected but no command was "
-                    "given."));
-                warningDetail.append(tr("Custom post parameter not found, proceeding without it."));
-            }
-            else{
-                warnings.append(tr("Export with custom intermediate parameter was selected but no command was "
-                    "given."));
-                warningDetail.append(tr("Custom intermediate parameter not found, proceeding without it."));
-            }
-        }
-        if (!params.useIntermediate && !params.usePost) {
-            warnings.append(tr("Custom parameters disabled"));
-            warningDetail.append(
-                tr("Export with custom params was selected but both command types are disabled, "
-                   "the export process can continue as is should you choose to do so.")
-            );
-        }
-    }
-
-    if (params.exportRange.isEmpty()
-        || params.exportRange.size() == 1 && params.exportRange.first().firstFrame == 0 && params.exportRange.first().lastFrame == 0
-        || params.exportRange.first().firstFrame - params.exportRange.first().lastFrame >= 0){
-        errors.append(tr("Export range is empty"));
-        errorDetail.append(tr("The export range is either empty, set to zero or lasts less than one frame,"
-            " please select a range of one frame or more."));
-    }
-
-    if (params.exportRange.size() > 1) {
-        int x = 0;
-        for (auto exportRange : params.exportRange) {
-            if (exportRange.firstFrame > exportRange.lastFrame) {
-                warnings.append(tr("Export range at index ") + QString::number(x) + tr(" is invalid, swapping."));
-                int firstFrame = exportRange.lastFrame;
-                int lastFrame = exportRange.firstFrame;
-                params.exportRange[x].firstFrame = firstFrame;
-                params.exportRange[x].lastFrame = lastFrame;
-                warningDetail.append(tr("Swapped frames from range at index ") + QString::number(x) + tr("."));
-            }
-            if (exportRange.firstFrame == exportRange.lastFrame) {
-                warnings.append(tr("Export range at index " + QString::number(x) + tr(" is the same, removing.")));
-                params.exportRange.removeAt(x);
-                x--; // To compensate for the deletion range
-                warningDetail.append(tr("Removing zero frame range at ") + QString::number(x) + tr("."));
-            }
-            x++;
-        }
-    }
-
-    for(auto range : params.exportRange){
-        int rangeLow = range.firstFrame;
-        while(rangeLow < range.lastFrame + 1){
-            params.framesToBeExported.append(rangeLow);
-            rangeLow++;
-        }
-    }
-    // Hopefully remove duplicates
-    std::sort(params.framesToBeExported.begin(), params.framesToBeExported.end());
-    params.framesToBeExported.erase(std::unique(params.framesToBeExported.begin(), params.framesToBeExported.end()),
-                                    params.framesToBeExported.end());
-
-    QSettings settings;
-    QVariant customEncoderWarning = settings.value("export_custom_encoder_warning_shown");
-    if(!customEncoderWarning.isValid()){
-        settings.setValue("export_custom_encoder_warning_shown", false);
-        settings.sync();
-    }
-    bool customEncoderWarningShown = customEncoderWarning.toBool();
-    auto encoders = exParam->videoParams.encoders;
-    bool isUsingCustomEncoder =
-        encoders.webm != webmEncoders::Auto || encoders.mp4 != mp4Encoders::Auto || encoders.mkv != mkvEncoders::Auto
-        || encoders.avi != aviEncoders::Auto || encoders.mov != movEncoders::Auto;
-    if(!customEncoderWarningShown && isUsingCustomEncoder){
-        warnings.append(tr("Using custom encoder"));
-        warningDetail.append(tr("\nThis warning will only be shown once."
-            "You're using a custom encoder for one of our supported formats, these may "
-            "not support some of the features you may be expecting out of your export such as transparency, please "
-            "learn about the features, advantages and disadvantages of your selected encoder before using it."));
-    }
-    // Sync changes made by the error handler
-    exParam->generalParams = params;
-    bool proceedToExport = true;
-    bool shouldDisplayErrors = !errors.empty() || !warnings.empty();
-    if(shouldDisplayErrors){
-        QMessageBox msg;
-        bool error = !errors.empty();
-        msg.setIcon(error? QMessageBox::Icon::Critical : QMessageBox::Warning);
-        msg.setWindowTitle(error? tr("Critical errors have been found, cannot continue exporting.")
-                          : tr("Minor errors have been found, please review."));
-        QString conMsg = error? tr("You cannot proceed with the export until the critical issues found have been "
-                                    "resolved.")
-                                    : tr("You may ignore the errors and proceed should you choose to, click \"Ok\" "
-                                    "to export anyway or \"Cancel\" if you wish to cancel the export.");
-        QString textMsg =
-            tr("Some issues have been found while exporting, you can review them down bellow:\nCritical errors: ")
-            + QString::number(errors.size()) + tr(" | Warnings: ") + QString::number(warnings.size()) + "\n-----\n"
-            + conMsg;
-        msg.setText(textMsg);
-        QString detMsg = "-----\n" + tr("Critical errors (" + QString::number(errors.size()) +"): \n");
-        if(!errors.empty()){
-            int x = 0;
-            for(const auto& err: errors){
-                detMsg.append("-----\n" + tr("Error: ") + err + "\n");
-                detMsg.append(tr("Error detail: ") + errorDetail[x] + "\n");
-                x++;
-            }
-        }
-        else{ detMsg.append("-----\n" + tr("No errors found.\n")); }
-
-        detMsg.append("-----\n" + tr("Warnings (" + QString::number(warnings.size()) + "): \n"));
-        if(!warnings.empty()){
-            int x = 0;
-            for(const auto& warn : warnings){
-                detMsg.append(tr("Warning: ") + warn + "\n");
-                detMsg.append(tr("Warning detail: ") + warningDetail[x] + "\n");
-                x++;
-            }
-        }
-        else{ detMsg.append("-----\n" + tr("No warnings found.\n")); }
-        msg.setDetailedText(detMsg);
-        msg.setStandardButtons(error? QMessageBox::Cancel : QMessageBox::Ok | QMessageBox::Cancel);
-        msg.setParent(widget);
-        msg.setWindowFlag(Qt::Window);
-        int ret = msg.exec();
-        if(ret == QMessageBox::Cancel){
-            proceedToExport = false;
-        }
-    }
-    return proceedToExport;
+    //TODO: Implement with ExportParams.h
 }
 
 void MainWindow::onExportTriggered() {
@@ -1260,44 +967,43 @@ void MainWindow::onExportTriggered() {
     QGuiApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     // FFmpeg Check
     QSettings settings;
-    {
-        auto ffCheck = settings.value("ffmpeg_check");
-        if (!ffCheck.isValid() || ffCheck.toBool()) {
-            util::NetworkUtil networking;
-            QFileInfo ffmpeg_file;
-            QString ffmpeg;
+    auto ffCheck = settings.value("ffmpeg_check");
+    if (!ffCheck.isValid() || ffCheck.toBool()) {
+        util::NetworkUtil networking;
+        QFileInfo ffmpeg_file;
+        QString ffmpeg;
 
-            if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
-            else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
-            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
-            else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
+        if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
+        else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
+        if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
+        else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
 
-            // Exists?
-            bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
+        // Exists?
+        bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
 
-            if (!fExists) {
-                QMessageBox message;
-                message.setIcon(QMessageBox::Warning);
-                message.setText(tr("FFmpeg was not found."));
-                auto infoText =
-                    tr("Exporting video requires FFmpeg to be installed on your computer, "
-                       "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
-                       "In the following screen you can instruct AnimeEffects to download and install it automatically for "
-                       "you, "
-                       "or you can download it by yourself and tell AnimeEffects where it is.");
-                message.setInformativeText(infoText);
-                message.setStandardButtons(QMessageBox::Ok);
-                message.setDefaultButton(QMessageBox::Ok);
-                message.exec();
+        if (!fExists) {
+            QMessageBox message;
+            message.setIcon(QMessageBox::Warning);
+            message.setText(tr("FFmpeg was not found."));
+            auto infoText =
+                tr("Exporting video requires FFmpeg to be installed on your computer, "
+                   "FFmpeg is a free tool that AnimeEffects uses to create video files.\n"
+                   "In the following screen you can instruct AnimeEffects to download and install it automatically for "
+                   "you, "
+                   "or you can download it by yourself and tell AnimeEffects where it is.");
+            message.setInformativeText(infoText);
+            message.setStandardButtons(QMessageBox::Ok);
+            message.setDefaultButton(QMessageBox::Ok);
+            message.exec();
 
-                auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
-                generalSettingsDialog->selectTab(2);
-                generalSettingsDialog->exec();
-                return;
-            }
-            ffCheck.setValue(false);
+            auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+            generalSettingsDialog->selectTab(2);
+            generalSettingsDialog->exec();
+            return;
         }
+        ffCheck.setValue(false);
     }
+
     // Initialize export diag
     exporting = true;
     // Avoid weird bugs
@@ -1316,6 +1022,7 @@ void MainWindow::onExportTriggered() {
     genParam.nativeWidth = mCurrent->attribute().imageSize().width();
     genParam.nativeHeight = mCurrent->attribute().imageSize().height();
     genParam.nativeFPS = mCurrent->attribute().fps();
+    genParam.nativeFrameRange = frameExportRange{0, mCurrent->attribute().maxFrame()};
 
     // Get generics
     QVariant aspectRatioV = settings.value("export_aspect_ratio");
@@ -1438,7 +1145,7 @@ void MainWindow::onExportTriggered() {
     exportUI->fpsSpinBox->setValue(genParam.nativeFPS);
     exportUI->lastFrameSpinBox->setValue(mCurrent->currentTimeInfo().frameMax);
     // Connections
-    // This is to force a refresh and to avoid any weird bugs or memory leaks //
+    // This is to force a refresh and to avoid any weird bugs or memory leaks
     connect(exportWidget, &QDialog::destroyed, [=](){
         regenerateWidget();
     });
@@ -1558,13 +1265,13 @@ void MainWindow::onExportTriggered() {
     QFileDialog fileDiag;
     fileDiag.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     fileDiag.setFileMode(QFileDialog::AnyFile);
-    QStringList videoFormats(videoFormats);
+    QStringList videoFormats;
     QStringList videoFormatDescriptor{
         tr("Animated PNG"), tr("AVI"), tr("Flash Video"), tr("Flash Video"),
         tr("GIF"), tr("Matroska"), tr("QuickTime Movie"), tr("MPEG-2"),
         tr("MPEG-4"), tr("Ogg Video"), ("Shockwave Flash"), tr("WEBM"), tr("WEBP")
     };
-    QStringList imageFormats(imageFormats);
+    QStringList imageFormats;
     QStringList imageFormatDescriptor{
         tr("BitMap"), tr("JPEG"), tr("JPEG"), tr("PNG"), tr("Portable PixelMap"),
         tr("X11 BitMap"), tr("X11 PixelMap"), tr("Tagged Image"), tr("WEBP")

@@ -463,20 +463,7 @@ void LayerNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAcc
 
         shader.setUniformValue("setColor", bool(HSVData[3]));
 
-        // qDebug() << bool(HSVData[3]);
-        /*
-        QSettings settings;
-        auto setColor = settings.value("generalsettings/keys/hsvSetColor");
-        if (setColor.isValid()){
-            shader.setUniformValue("setColor", !setColor.toBool());
-        }
-        else{
-            shader.setUniformValue("setColor", false);
-        }
-        */
-
         float hue = (float)HSVData[0] / 360.0;
-
         float saturation = (float)(HSVData[1] + 100.0) / 200.0;
         float value = (float)(HSVData[2] + 100.0) / 200.0;
 

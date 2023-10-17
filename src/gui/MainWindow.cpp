@@ -1022,7 +1022,10 @@ void MainWindow::onExportTriggered() {
     genParam.nativeWidth = mCurrent->attribute().imageSize().width();
     genParam.nativeHeight = mCurrent->attribute().imageSize().height();
     genParam.nativeFPS = mCurrent->attribute().fps();
-    genParam.nativeFrameRange = frameExportRange{0, mCurrent->attribute().maxFrame()};
+    // I hate you gcc
+    frameExportRange fer;
+    fer.lastFrame = mCurrent->attribute().maxFrame();
+    genParam.nativeFrameRange = fer;
 
     // Get generics
     QVariant aspectRatioV = settings.value("export_aspect_ratio");

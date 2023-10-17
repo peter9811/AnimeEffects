@@ -19,6 +19,9 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QOpenGLFramebufferObject>
+#include "qdir.h"
+#include "qmessagebox.h"
+#include "gl/Global.h"
 #include "util/Range.h"
 #include "util/IProgressReporter.h"
 #include "ctrl/UILogger.h"
@@ -110,7 +113,7 @@ struct GeneralParams {
     QString customInterCommand = "";
     QString customPostCommand = "";
     QVector<int> framesToBeExported = QVector<int>();
-    frameExportRange nativeFrameRange = frameExportRange{0, 0};
+    frameExportRange nativeFrameRange = frameExportRange();
     bool exportAllFrames = false;
     bool exportToLast = false;
 };
@@ -594,7 +597,16 @@ namespace ffmpeg {
 }
 
 namespace exportRender {
-    class Exporter{
+enum ExporterResult{
+    ExportSuccess,
+    ExportWriteError,
+    ExportArgError,
+    ExportCanceled,
+    ExportUnknownError
+    
+};
+
+class Exporter{
     public:
         Exporter(core::Project& aProject);
         ~Exporter();
@@ -619,20 +631,20 @@ namespace exportRender {
             }
         }
 
-    };
-    Exporter::Exporter(core::Project& aProject):
-        mProject(aProject),
-        mFramebuffers(),
-        mClippingFrame(),
-        mDestinationTexturizer(),
-        mTextureDrawer(),
-        mOriginTimeInfo() {}
-    Exporter::~Exporter() {
+};
+Exporter::Exporter(core::Project& aProject):
+    mFramebuffers(),
+    mClippingFrame(),
+    mDestinationTexturizer(),
+    mTextureDrawer(),
+    mOriginTimeInfo(),
+    mProject(aProject) {}
+Exporter::~Exporter() {
         finish();
         // kill buffer
         gl::Global::makeCurrent();
         destroyFramebuffers();
-    }
+}
 }
 
 

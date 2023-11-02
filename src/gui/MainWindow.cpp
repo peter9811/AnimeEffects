@@ -956,6 +956,10 @@ void updateSettings(QVariant *var, QSettings *settings, const QStringList& value
 
 void exportProject(const exportParam& exParam, core::Project* mCurrent){
     qDebug("Exporting");
+    projectExporter::Exporter exporter(*mCurrent);
+    ffmpeg::ffmpegObject ffmpeg;
+    // If piped build piped argument, TODO is to account for this
+    ffmpeg.argument = ffmpeg::buildPipedArgument(exParam, mCurrent->attribute().loop());
     //TODO: Implement with ExportParams.h
 }
 
@@ -1377,7 +1381,10 @@ void MainWindow::onExportTriggered() {
         exParam->imageParams.format = getFormatAsEnum<availableImageFormats>
             (exportTarget::image,QFileInfo(genParam.osExportTarget).suffix());
     }
-    if(isExportParamValid(exParam, exportWidget)) { exportProject(*exParam, mCurrent); }
+    // Main export function
+    if(isExportParamValid(exParam, exportWidget)){
+        exportProject(*exParam, mCurrent);
+    }
     else{ qDebug("User has canceled export."); }
 }
 

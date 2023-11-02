@@ -586,29 +586,125 @@ namespace exportUI {
 }
 
 namespace ffmpeg {
-    struct ffmpegExec{
-        QString executable;
-        int tick = 0;
-        bool finished = false;
-        bool errored = false;
-        QStringList log; // Shown in a messagebox after export
-        QString errorLog; // ^^
+    enum exportResult{
+        ExportNotInitialized,
+        ExportOngoing,
+        ExportSuccess,
+        ExportCanceled,
+        ExportWriteError,
+        ExportArgError,
+        ExportUnknownError
     };
+    bool isExportFinished(const exportResult& result){
+        if(result == ExportNotInitialized || result == ExportOngoing){
+            return false;
+        }
+        return true;
+    }
+    // "Weird spacing it is" -CLion 2023
+    struct ffmpegObject{
+        QString executable;
+        QString argument;
+        int tick = 0;
+        exportResult result = ExportNotInitialized;
+        QStringList log; // Shown in a messagebox after export
+        QString errorLog; // Same as above
+    };
+    bool isAuto(const QString& str){
+        if(str == "Auto" || str == "auto"){
+            return true;
+        }
+        return false;
+    }
+    // Only animations get to build arguments so don't worry about image output
+    QString buildPipedArgument(const exportParam& exParam, bool loopGif){
+        // Default
+        QString argument = " -y -f image2pipe -i -";
+        // FPS
+        argument.append(" -r " + QString::number(exParam.generalParams.fps));
+        // Codec
+        switch(exParam.videoParams.format){
+        case(availableVideoFormats::avi):
+            if(isAuto(aviEnc[(int)exParam.videoParams.encoders.avi])) { break; }
+            argument.append(" -c:v " + aviEnc[(int)exParam.videoParams.encoders.avi]);
+            break;
+        case(availableVideoFormats::mkv):
+            if(isAuto(mkvEnc[(int)exParam.videoParams.encoders.mkv])) { break; }
+            argument.append(" -c:v " + mkvEnc[(int)exParam.videoParams.encoders.mkv]);
+            break;
+        case(availableVideoFormats::mov):
+            if(isAuto(movEnc[(int)exParam.videoParams.encoders.mov])) { break; }
+            argument.append(" -c:v " + movEnc[(int)exParam.videoParams.encoders.mov]);
+            break;
+        case(availableVideoFormats::mp4):
+            if(isAuto(mp4Enc[(int)exParam.videoParams.encoders.mp4])) { break; }
+            argument.append(" -c:v " + mp4Enc[(int)exParam.videoParams.encoders.mp4]);
+            break;
+        case(availableVideoFormats::webm):
+            if(isAuto(webmEnc[(int)exParam.videoParams.encoders.webm])) { break; }
+            argument.append(" -c:v " + webmEnc[(int)exParam.videoParams.encoders.webm]);
+            break;
+        default:
+            break; // We leave it to ffmpeg
+        }
+        // Bitrate
+        argument.append("\n-b:v " + QString::number(exParam.generalParams.bitrate));
+
+        // Pixel format
+        if(isAuto(pxFormats[(int)exParam.videoParams.pixelFormat])){
+            if(exParam.generalParams.allowTransparency){
+                if(formatAllowsTransparency(videoFormats[(int)exParam.videoParams.format])){
+                    argument.append(" -pix_fmt yuva420p");
+                }
+                else{ argument.append(" -pix_fmt yuv420p"); }
+            }
+            else{ argument.append(" -pix_fmt yuv420p"); }
+        }
+        else{
+            argument.append(" -pix_fmt " + pxFormats[(int)exParam.videoParams.pixelFormat]);
+        }
+        // Format
+        argument.append(" -f " + videoFormats[(int)exParam.videoParams.format]);
+
+        // Custom palette. To be completely honest with you, I've no idea the difference between these.
+        if(exParam.generalParams.useCustomPalette){
+            argument.append(" -i \"" + exParam.generalParams.palettePath.absolutePath() + "\"");
+            if(exParam.videoParams.format == availableVideoFormats::gif && exParam.generalParams.allowTransparency){
+                argument.append( " -lavfi paletteuse=alpha_threshold=128 -gifflags -offsetting");
+            }
+            else {
+                argument.append(" -filter_complex \"paletteuse\"");
+            }
+        }
+        else if(exParam.videoParams.format == availableVideoFormats::gif){
+            if(exParam.generalParams.allowTransparency) {
+                argument.append(
+                    " -lavfi split[v],palettegen,[v]paletteuse"
+                );
+            }
+            else{
+                argument.append(
+                    " -filter_complex\"split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1\""
+                );
+            }
+        }
+
+        // Looping gif
+        if(exParam.videoParams.format == availableVideoFormats::gif){
+            if(loopGif) { argument.append(" -loop 0"); }
+            else { argument.append(" -loop 1"); }
+        }
+        // Output
+        argument.append(" -o \"" + exParam.generalParams.exportFileName.absolutePath()) + "\"";
+
+        return argument;
+    }
 }
 
-namespace exportRender {
-enum ExporterResult{
-    ExportSuccess,
-    ExportWriteError,
-    ExportArgError,
-    ExportCanceled,
-    ExportUnknownError
-    
-};
-
+namespace projectExporter {
 class Exporter{
     public:
-        Exporter(core::Project& aProject);
+        explicit Exporter(core::Project& aProject);
         ~Exporter();
 
         typedef std::unique_ptr<QOpenGLFramebufferObject> FramebufferPtr;
@@ -619,7 +715,7 @@ class Exporter{
         gl::EasyTextureDrawer mTextureDrawer;
         core::TimeInfo mOriginTimeInfo;
         QScopedPointer<QProcess> mProcess;
-        ffmpeg::ffmpegExec ffmpegExec;
+        ffmpeg::ffmpegObject ffmpegObj;
         core::Project& mProject;
 
         void finish(){
@@ -646,6 +742,5 @@ Exporter::~Exporter() {
         destroyFramebuffers();
 }
 }
-
 
 #endif // ANIMEEFFECTS_EXPORTPARAMS_H

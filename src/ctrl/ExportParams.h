@@ -19,6 +19,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QOpenGLFramebufferObject>
+#include <utility>
 #include "qdir.h"
 #include "qmessagebox.h"
 #include "gl/Global.h"
@@ -507,6 +508,7 @@ namespace exportUI {
         QLabel* frameCounter;
         QProgressBar* progressBar;
         QLabel* pixmapLabel;
+        QPushButton* cancelButton;
 
         void setupUi(QWidget* Form) {
             if (Form->objectName().isEmpty())
@@ -524,6 +526,17 @@ namespace exportUI {
 
             gridLayout->addWidget(loadingMessage, 0, 0, 1, 1);
 
+            cancelButton = new QPushButton();
+            cancelButton->setParent(Form);
+            QSizePolicy sizePol1(QSizePolicy::Expanding, QSizePolicy::Maximum);
+            sizePol1.setHorizontalStretch(0);
+            sizePol1.setVerticalStretch(0);
+            sizePol1.setHeightForWidth(frameCounter->sizePolicy().hasHeightForWidth());
+            cancelButton->setSizePolicy(sizePol1);
+
+            gridLayout->addWidget(cancelButton, 4, 0, 1, 1);
+
+
             frameCounter = new QLabel(Form);
             frameCounter->setObjectName(QString::fromUtf8("frameCounter"));
             QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Maximum);
@@ -532,7 +545,7 @@ namespace exportUI {
             sizePolicy1.setHeightForWidth(frameCounter->sizePolicy().hasHeightForWidth());
             frameCounter->setSizePolicy(sizePolicy1);
 
-            gridLayout->addWidget(frameCounter, 4, 0, 1, 1);
+            gridLayout->addWidget(frameCounter, 5, 0, 1, 1);
 
             progressBar = new QProgressBar(Form);
             progressBar->setObjectName(QString::fromUtf8("progressBar"));
@@ -561,10 +574,13 @@ namespace exportUI {
             QMetaObject::connectSlotsByName(Form);
         } // setupUi
 
-        void retranslateUi(QWidget* Form) const {
+        void retranslateUi(QWidget* Form) {
             Form->setWindowTitle(QCoreApplication::translate("Form", "Form", nullptr));
             loadingMessage->setText(QCoreApplication::translate(
                 "Form", "<html><head/><body><p align=\"center\">Loading</p></body></html>", nullptr
+            ));
+            cancelButton->setText(QCoreApplication::translate(
+                "Form", "<html><head/><body><p align=\"center\">Cancel</p></body></html>", nullptr
             ));
             frameCounter->setText(QCoreApplication::translate(
                 "Form", "<html><head/><body><p align=\"center\">Frame rendered x/y | Frame exported x/y</p></body></html>", nullptr
@@ -582,7 +598,7 @@ namespace exportUI {
         msgBox.setDefaultButton(QMessageBox::Ok);
         int ret = msgBox.exec();
         return (ret == QMessageBox::Ok);
-    };
+    }
 }
 
 namespace ffmpeg {
@@ -608,7 +624,7 @@ namespace ffmpeg {
         int tick = 0;
         exportResult result = ExportNotInitialized;
         QStringList log; // Shown in a messagebox after export
-        QString errorLog; // Same as above
+        QStringList errorLog; // Same as above
     };
     bool isAuto(const QString& str){
         if(str == "Auto" || str == "auto"){
@@ -704,9 +720,9 @@ namespace ffmpeg {
 namespace projectExporter {
 class Exporter{
     public:
-        explicit Exporter(core::Project& aProject);
+        Exporter(core::Project& aProject, QDialog* widget, const exportParam& exParam, ffmpeg::ffmpegObject& ffmpeg);
         ~Exporter();
-
+        // Class initializers and other stuff
         typedef std::unique_ptr<QOpenGLFramebufferObject> FramebufferPtr;
         typedef std::list<FramebufferPtr> FramebufferList;
         FramebufferList mFramebuffers;
@@ -715,8 +731,32 @@ class Exporter{
         gl::EasyTextureDrawer mTextureDrawer;
         core::TimeInfo mOriginTimeInfo;
         QScopedPointer<QProcess> mProcess;
-        ffmpeg::ffmpegObject ffmpegObj;
+        ffmpeg::ffmpegObject& ffmpegObj;
         core::Project& mProject;
+        QDialog* mWidget;
+        const exportParam& mParam;
+        // Important class value
+        int mIndex;
+        int fTick;
+        int fFrameCount;
+        int eTick;
+        int eFrameCount;
+        float mProgress;
+        bool mExporting;
+        QPixmap currentFrame;
+
+        enum ResultType{
+            Success,
+            Canceled,
+            Errored,
+            Queued,
+            Ongoing
+        };
+
+        struct ExportResult{
+            ResultType resultType = Queued;
+            QString errorType;
+        };
 
         void finish(){
             Q_UNIMPLEMENTED();
@@ -727,20 +767,147 @@ class Exporter{
             }
         }
 
+        static void setTextureParam(QOpenGLFramebufferObject& aFbo){
+            auto id = aFbo.texture();
+            gl::Global::Functions& ggl = gl::Global::functions();
+            ggl.glBindTexture(GL_TEXTURE_2D, id);
+            ggl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            ggl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            ggl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            ggl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            ggl.glBindTexture(GL_TEXTURE_2D, 0);
+        };
+        void createFramebuffers(const QSize& aOriginSize, const QSize& aExportSize) {
+            destroyFramebuffers();
+
+            mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(aOriginSize));
+
+            // setup buffers for scaling
+            if (aOriginSize != aExportSize) {
+                static const int kMaxCount = 3;
+                QSize size = aOriginSize;
+
+                for (int i = 0; i < kMaxCount; ++i) {
+                    const double scaleX = aExportSize.width() / (double)size.width();
+                    const double scaleY = aExportSize.height() / (double)size.height();
+                    const double scaleMax = std::max(scaleX, scaleY);
+
+                    if (scaleMax >= 0.5 || i == kMaxCount - 1) {
+                        mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(aExportSize));
+                        break;
+                    } else {
+                        size.setWidth((int)(size.width() * 0.5));
+                        size.setHeight((int)(size.height() * 0.5));
+                        mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(size));
+                    }
+                }
+            }
+
+            // setup texture
+            for (auto& fbo : mFramebuffers) {
+                setTextureParam(*fbo);
+            }
+        }
+        ResultType initialize(){
+            // reset value
+            mIndex = 0;
+            mProgress = 0.0f;
+            fFrameCount = mParam.generalParams.framesToBeExported.count();
+
+            // initialize graphics
+            {
+                gl::Global::makeCurrent();
+
+                // texture drawer
+                if (!mTextureDrawer.init()) {
+                    ffmpegObj.errorLog.append("Failed to initialize TextureDrawer");
+                    return Errored;
+                }
+
+                // framebuffers
+                QSize size(mParam.generalParams.exportWidth, mParam.generalParams.exportHeight);
+                createFramebuffers(mProject.attribute().imageSize(), size);
+
+                // clipping frame
+                mClippingFrame.reset(new core::ClippingFrame());
+                mClippingFrame->resize(mProject.attribute().imageSize());
+
+                // create texturizer for destination colors of the framebuffer
+                mDestinationTexturizer.reset(new core::DestinationTexturizer());
+                mDestinationTexturizer->resize(mProject.attribute().imageSize());
+            }
+            mExporting = true;
+            return Success;
+        }
+        QString getProgressMessage(int dotTick) const{
+            QString sCenterL = "<html><head/><body><p align=\"center\">";
+            QString sCenterR = "</p></body></html>";
+            QString pDots;
+            QString currentStatus = (fTick == fFrameCount)? tr("Rendering") : tr("Exporting");
+            if(dotTick == 0){ return sCenterL + currentStatus + sCenterR; }
+            for(int x = 0; x < dotTick; x++){ pDots.append("."); }
+            return sCenterL + currentStatus + pDots + sCenterR;
+        }
+        QString getFrameMessage() const{
+            QString sCenterL = "<html><head/><body><p align=\"center\">";
+            QString sCenterR = "</p></body></html>";
+            QString rString = sCenterL + tr("Frame rendered: ") + QString::number(fTick) + "/" +
+                QString::number(fFrameCount) + " | " + tr("Frame exported: ") + QString::number(eTick) +
+                "/" + QString::number(eFrameCount) + sCenterR;
+            return rString;
+        }
+        bool update(){
+            currentFrame = QPixmap();
+            return false;
+        };
+        ExportResult exportAsImage(){
+            auto eaiResult = ExportResult();
+            auto* widget = new QWidget(mWidget);
+            auto* form = new exportUI::form;
+            form->setupUi(widget);
+            form->loadingMessage->setText(
+                tr("<html><head/><body><p align=\"center\">Initializing</p></body></html>")
+            );
+            widget->show();
+            auto initResult = initialize();
+            if(initResult == Errored){
+                eaiResult.errorType = "Failed to initialize";
+                eaiResult.resultType = Errored;
+                return eaiResult;
+            }
+            int progressTicks = 0;
+            while(true){
+                if(!update()){
+                    break;
+                }
+                progressTicks++;
+                if(progressTicks == 3) { progressTicks = 0; }
+                form->loadingMessage->setText(getProgressMessage(progressTicks));
+                form->frameCounter->setText(getFrameMessage());
+                form->pixmapLabel->setPixmap(currentFrame);
+                form->progressBar->setValue((int)(100 * mProgress));
+                
+            }
+        }
 };
-Exporter::Exporter(core::Project& aProject):
+
+Exporter::Exporter(
+    core::Project& aProject, QDialog* widget, const exportParam& exParam, ffmpeg::ffmpegObject& ffmpeg):
     mFramebuffers(),
     mClippingFrame(),
     mDestinationTexturizer(),
     mTextureDrawer(),
     mOriginTimeInfo(),
+    mWidget(widget),
+    mParam(exParam),
+    ffmpegObj(ffmpeg),
     mProject(aProject) {}
 Exporter::~Exporter() {
         finish();
         // kill buffer
         gl::Global::makeCurrent();
         destroyFramebuffers();
-}
+
 }
 
 #endif // ANIMEEFFECTS_EXPORTPARAMS_H

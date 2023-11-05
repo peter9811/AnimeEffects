@@ -954,10 +954,10 @@ void updateSettings(QVariant *var, QSettings *settings, const QStringList& value
     }
 }
 
-void exportProject(const exportParam& exParam, core::Project* mCurrent){
+void exportProject(const exportParam& exParam, core::Project* mCurrent, QDialog* widget){
     qDebug("Exporting");
-    projectExporter::Exporter exporter(*mCurrent);
-    ffmpeg::ffmpegObject ffmpeg;
+    auto* ffmpeg = new ffmpeg::ffmpegObject();
+    projectExporter::Exporter exporter(*mCurrent, widget, exParam, *ffmpeg);
     // If piped build piped argument, TODO is to account for this
     ffmpeg.argument = ffmpeg::buildPipedArgument(exParam, mCurrent->attribute().loop());
     //TODO: Implement with ExportParams.h
@@ -1383,7 +1383,7 @@ void MainWindow::onExportTriggered() {
     }
     // Main export function
     if(isExportParamValid(exParam, exportWidget)){
-        exportProject(*exParam, mCurrent);
+        exportProject(*exParam, mCurrent, exportWidget);
     }
     else{ qDebug("User has canceled export."); }
 }

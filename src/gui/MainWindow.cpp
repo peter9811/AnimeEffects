@@ -77,7 +77,7 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocalePa
         this->setFocusPolicy(Qt::NoFocus);
         this->setAcceptDrops(false);
         this->setTabShape(QTabWidget::Rounded);
-        this->setDockOptions(QMainWindow::AnimatedDocks);
+        this->setDockOptions(AnimatedDocks);
         this->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
     }
 
@@ -899,7 +899,7 @@ void MainWindow::onSaveProjectAsTriggered() {
 void MainWindow::onCloseProjectTriggered() {
     if (mCurrent) {
         // Sneaky potential crash
-        QFileSystemWatcher* watcher = MainWindow::getWatcher();
+        QFileSystemWatcher* watcher = getWatcher();
         for (int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1) {
             if (watcher->files().contains(
                     mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode)
@@ -959,7 +959,8 @@ void exportProject(const exportParam& exParam, core::Project* mCurrent, QDialog*
     auto* ffmpeg = new ffmpeg::ffmpegObject();
     projectExporter::Exporter exporter(*mCurrent, widget, exParam, *ffmpeg);
     // If piped build piped argument, TODO is to account for this
-    ffmpeg.argument = ffmpeg::buildPipedArgument(exParam, mCurrent->attribute().loop());
+    ffmpeg->argument = ffmpeg::buildPipedArgument(exParam, mCurrent->attribute().loop());
+    exporter.renderAndExport();
     //TODO: Implement with ExportParams.h
 }
 
@@ -1099,12 +1100,12 @@ void MainWindow::onExportTriggered() {
             settings.sync();
         }
     }
-    pixelFormat = getFormatAsEnum<pixelFormats>(exportTarget::pxFmt, pixelFormatV.toString());
-    aviEncoder = getFormatAsEnum<aviEncoders>(exportTarget::aviEnc, aviEncV.toString());
-    mkvEncoder = getFormatAsEnum<mkvEncoders>(exportTarget::mkvEnc, mkvEncV.toString());
-    movEncoder = getFormatAsEnum<movEncoders>(exportTarget::movEnc, movEncV.toString());
-    mp4Encoder = getFormatAsEnum<mp4Encoders>(exportTarget::mp4Enc, mp4EncV.toString());
-    webmEncoder = getFormatAsEnum<webmEncoders>(exportTarget::webmEnc, webmEncV.toString());
+    pixelFormat = static_cast<pixelFormats>(getFormatAsInt(exportTarget::pxFmt, pixelFormatV.toString()));
+    aviEncoder = static_cast<aviEncoders>(getFormatAsInt(exportTarget::aviEnc, aviEncV.toString()));
+    mkvEncoder = static_cast<mkvEncoders>(getFormatAsInt(exportTarget::mkvEnc, mkvEncV.toString()));
+    movEncoder = static_cast<movEncoders>(getFormatAsInt(exportTarget::movEnc, movEncV.toString()));
+    mp4Encoder = static_cast<mp4Encoders>(getFormatAsInt(exportTarget::mp4Enc, mp4EncV.toString()));
+    webmEncoder = static_cast<webmEncoders>(getFormatAsInt(exportTarget::webmEnc, webmEncV.toString()));
 
     // Get custom parameters
     QVariant customParamsV = settings.value("export_custom_params");
@@ -1131,12 +1132,12 @@ void MainWindow::onExportTriggered() {
     exportUI->intermediateParamCheckBox->setChecked(*allowInterParam);
     exportUI->postParamCheckBox->setChecked(*allowPostParam);
     exportUI->customPaletteCheckBox->setChecked(*useCustomPalette);
-    exportUI->pixelFormatCombo->setCurrentIndex(int(pixelFormat));
-    exportUI->aviCombo->setCurrentIndex(int(aviEncoder));
-    exportUI->mkvCombo->setCurrentIndex(int(mkvEncoder));
-    exportUI->movCombo->setCurrentIndex(int(movEncoder));
-    exportUI->mp4Combo->setCurrentIndex(int(mp4Encoder));
-    exportUI->webmCombo->setCurrentIndex(int(webmEncoder));
+    exportUI->pixelFormatCombo->setCurrentIndex(static_cast<int>(pixelFormat));
+    exportUI->aviCombo->setCurrentIndex(static_cast<int>(aviEncoder));
+    exportUI->mkvCombo->setCurrentIndex(static_cast<int>(mkvEncoder));
+    exportUI->movCombo->setCurrentIndex(static_cast<int>(movEncoder));
+    exportUI->mp4Combo->setCurrentIndex(static_cast<int>(mp4Encoder));
+    exportUI->webmCombo->setCurrentIndex(static_cast<int>(webmEncoder));
     exportUI->presetCombo->addItems(*customParamsStrings);
     exportUI->nativeH = genParam.nativeHeight;
     exportUI->nativeW = genParam.nativeWidth;
@@ -1272,31 +1273,31 @@ void MainWindow::onExportTriggered() {
     QFileDialog fileDiag;
     fileDiag.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     fileDiag.setFileMode(QFileDialog::AnyFile);
-    QStringList videoFormats;
+    QStringList vF = videoFormats;
     QStringList videoFormatDescriptor{
         tr("Animated PNG"), tr("AVI"), tr("Flash Video"), tr("Flash Video"),
         tr("GIF"), tr("Matroska"), tr("QuickTime Movie"), tr("MPEG-2"),
-        tr("MPEG-4"), tr("Ogg Video"), ("Shockwave Flash"), tr("WEBM"), tr("WEBP")
+        tr("MPEG-4"), tr("Ogg Video"), tr("Shockwave Flash"), tr("WEBM"), tr("WEBP")
     };
-    QStringList imageFormats;
+    QStringList iF = imageFormats;
     QStringList imageFormatDescriptor{
         tr("BitMap"), tr("JPEG"), tr("JPEG"), tr("PNG"), tr("Portable PixelMap"),
         tr("X11 BitMap"), tr("X11 PixelMap"), tr("Tagged Image"), tr("WEBP")
     };
     x = 0;
-    for(auto &format: videoFormats){
+    for(auto &format: vF){
         format.push_front(videoFormatDescriptor[x] + " (*.");
         format.push_back(')');
         x++;
     }
     x = 0;
-    for(auto &format: imageFormats){
+    for(auto &format: iF){
         format.push_front(imageFormatDescriptor[x] + " (*.");
         format.push_back(')');
         x++;
     }
-    if(exportUI->exportTypeCombo->currentIndex() == 0) { fileDiag.setNameFilters(videoFormats); }
-    else{ fileDiag.setNameFilters(imageFormats); }
+    if(exportUI->exportTypeCombo->currentIndex() == 0) { fileDiag.setNameFilters(vF); }
+    else{ fileDiag.setNameFilters(iF); }
     // Generate parameters prior to exportUI destructor
     genParam.fileName = mCurrent->fileName();
     genParam.nativeWidth = mCurrent->attribute().imageSize().width();
@@ -1305,16 +1306,16 @@ void MainWindow::onExportTriggered() {
     genParam.exportHeight = exportUI->heightSpinBox->value();
     switch(aspectRatioIndex){
     case 0:
-        genParam.aspectRatio = targetRatio::oneToOne;
+        genParam.aspectRatio = oneToOne;
         break;
     case 1:
-        genParam.aspectRatio = targetRatio::keep;
+        genParam.aspectRatio = keep;
         break;
     case 2:
-        genParam.aspectRatio = targetRatio::custom;
+        genParam.aspectRatio = custom;
         break;
     default:
-        genParam.aspectRatio = targetRatio::keep;
+        genParam.aspectRatio = keep;
     }
     genParam.nativeFPS = mCurrent->attribute().fps();
     genParam.fps = exportUI->fpsSpinBox->value();
@@ -1347,17 +1348,17 @@ void MainWindow::onExportTriggered() {
                                                                          exportTarget::image;
     if(exParam->exportType == exportTarget::video){
 
-        exParam->videoParams.intermediateFormat = getFormatAsEnum<availableImageFormats>
-            (exportTarget::image, exportUI->intermediateTypeCombo->currentText().toLower());
+        exParam->videoParams.intermediateFormat = static_cast<availableImageFormats>(getFormatAsInt(exportTarget::image,
+            exportUI->intermediateTypeCombo->currentText().toLower()));
         exParam->videoParams.pixelFormat =
-            getFormatAsEnum<pixelFormats>(exportTarget::pxFmt,
-                                                      exportUI->pixelFormatCombo->currentText());
+            static_cast<pixelFormats>(getFormatAsInt(exportTarget::pxFmt,
+                                                      exportUI->pixelFormatCombo->currentText()));
         defaultEncoders encoders;
-        encoders.avi = getFormatAsEnum<aviEncoders>(exportTarget::aviEnc, exportUI->aviCombo->currentText());
-        encoders.mkv = getFormatAsEnum<mkvEncoders>(exportTarget::mkvEnc, exportUI->mkvCombo->currentText());
-        encoders.mov = getFormatAsEnum<movEncoders>(exportTarget::movEnc, exportUI->movCombo->currentText());
-        encoders.mp4 = getFormatAsEnum<mp4Encoders>(exportTarget::mp4Enc, exportUI->mp4Combo->currentText());
-        encoders.webm = getFormatAsEnum<webmEncoders>(exportTarget::webmEnc, exportUI->webmCombo->currentText());
+        encoders.avi = static_cast<aviEncoders>(getFormatAsInt(exportTarget::aviEnc, exportUI->aviCombo->currentText()));
+        encoders.mkv = static_cast<mkvEncoders>(getFormatAsInt(exportTarget::mkvEnc, exportUI->mkvCombo->currentText()));
+        encoders.mov = static_cast<movEncoders>(getFormatAsInt(exportTarget::movEnc, exportUI->movCombo->currentText()));
+        encoders.mp4 = static_cast<mp4Encoders>(getFormatAsInt(exportTarget::mp4Enc, exportUI->mp4Combo->currentText()));
+        encoders.webm = static_cast<webmEncoders>(getFormatAsInt(exportTarget::webmEnc, exportUI->webmCombo->currentText()));
         exParam->videoParams.encoders = encoders;
     }
     // Get file via OS diag
@@ -1373,13 +1374,13 @@ void MainWindow::onExportTriggered() {
     qDebug() << "Exporting: " << genParam.osExportTarget;
     exParam->generalParams = genParam;
     if(exParam->exportType == exportTarget::video) {
-        exParam->videoParams.format = getFormatAsEnum<availableVideoFormats>(
-            exportTarget::video, QFileInfo(genParam.osExportTarget).suffix()
+        exParam->videoParams.format = static_cast<availableVideoFormats>(getFormatAsInt(
+            exportTarget::video, QFileInfo(genParam.osExportTarget).suffix())
         );
     }
     else{
-        exParam->imageParams.format = getFormatAsEnum<availableImageFormats>
-            (exportTarget::image,QFileInfo(genParam.osExportTarget).suffix());
+        exParam->imageParams.format = static_cast<availableImageFormats>(getFormatAsInt(
+            exportTarget::image,QFileInfo(genParam.osExportTarget).suffix()));
     }
     // Main export function
     if(isExportParamValid(exParam, exportWidget)){

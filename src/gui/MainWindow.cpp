@@ -954,7 +954,7 @@ void updateSettings(QVariant *var, QSettings *settings, const QStringList& value
     }
 }
 
-void exportProject(const exportParam& exParam, core::Project* mCurrent, QDialog* widget){
+void exportProject(exportParam& exParam, core::Project* mCurrent, QDialog* widget){
     qDebug("Exporting");
     auto* ffmpeg = new ffmpeg::ffmpegObject();
     projectExporter::Exporter exporter(*mCurrent, widget, exParam, *ffmpeg);
@@ -1299,7 +1299,7 @@ void MainWindow::onExportTriggered() {
     if(exportUI->exportTypeCombo->currentIndex() == 0) { fileDiag.setNameFilters(vF); }
     else{ fileDiag.setNameFilters(iF); }
     // Generate parameters prior to exportUI destructor
-    genParam.fileName = mCurrent->fileName();
+    genParam.fileName = mCurrent->fileName().isEmpty()? "New Export" : QString(mCurrent->fileName());
     genParam.nativeWidth = mCurrent->attribute().imageSize().width();
     genParam.nativeHeight = mCurrent->attribute().imageSize().height();
     genParam.exportWidth = exportUI->widthSpinBox->value();

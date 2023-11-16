@@ -628,8 +628,8 @@ void Exporter::createFramebuffers(const QSize& aOriginSize, const QSize& aExport
 
             if (scaleMax >= 0.5 || i == kMaxCount - 1) {
                 mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aExportSize)));
-                break;
-            } else {
+            }
+            else {
                 size.setWidth((int)(size.width() * 0.5));
                 size.setHeight((int)(size.height() * 0.5));
                 mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(size)));

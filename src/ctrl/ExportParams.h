@@ -525,13 +525,17 @@ public:
     QLabel* pixmapLabel = new QLabel();
     QPushButton* cancelButton = new QPushButton();
 
-    void setupUi(QWidget* Form) {
+    void setupUi(QWidget* Form) const {
+        loadingMessage->setTextFormat(Qt::RichText);
+        frameCounter->setTextFormat(Qt::RichText);
+        pixmapLabel->setAlignment(Qt::AlignHCenter);
+        cancelButton->setStyleSheet("text-align:center;");
+
+        Form->setWindowTitle(tr("Exporting"));
         if (Form->objectName().isEmpty())
             Form->setObjectName(QString::fromUtf8("Form"));
         Form->resize(500, 450);
-        gridLayout = new QGridLayout(Form);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        loadingMessage = new QLabel(Form);
         loadingMessage->setObjectName(QString::fromUtf8("loadingMessage"));
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
@@ -541,7 +545,6 @@ public:
 
         gridLayout->addWidget(loadingMessage, 0, 0, 1, 1);
 
-        cancelButton = new QPushButton();
         cancelButton->setParent(Form);
         QSizePolicy sizePol1(QSizePolicy::Expanding, QSizePolicy::Maximum);
         sizePol1.setHorizontalStretch(0);
@@ -552,7 +555,6 @@ public:
         gridLayout->addWidget(cancelButton, 4, 0, 1, 1);
 
 
-        frameCounter = new QLabel(Form);
         frameCounter->setObjectName(QString::fromUtf8("frameCounter"));
         QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Maximum);
         sizePolicy1.setHorizontalStretch(0);
@@ -562,7 +564,6 @@ public:
 
         gridLayout->addWidget(frameCounter, 5, 0, 1, 1);
 
-        progressBar = new QProgressBar(Form);
         progressBar->setObjectName(QString::fromUtf8("progressBar"));
         QSizePolicy sizePolicy2(QSizePolicy::Expanding, QSizePolicy::Fixed);
         sizePolicy2.setHorizontalStretch(0);
@@ -573,7 +574,6 @@ public:
 
         gridLayout->addWidget(progressBar, 1, 0, 1, 1);
 
-        pixmapLabel = new QLabel(Form);
         pixmapLabel->setObjectName(QString::fromUtf8("pixmapLabel"));
         QSizePolicy sizePolicy3(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy3.setHorizontalStretch(0);
@@ -581,8 +581,8 @@ public:
         sizePolicy3.setHeightForWidth(pixmapLabel->sizePolicy().hasHeightForWidth());
         pixmapLabel->setSizePolicy(sizePolicy3);
 
-        gridLayout->addWidget(pixmapLabel, 2, 0, 2, 1);
-
+        gridLayout->addWidget(pixmapLabel, 2, 0, 2, 3);
+        Form->setLayout(gridLayout);
 
         retranslateUi(Form);
 
@@ -595,7 +595,7 @@ public:
             "Form", "<html><head/><body><p align=\"center\">Loading</p></body></html>", nullptr
         ));
         cancelButton->setText(QCoreApplication::translate(
-            "Form", "<html><head/><body><p align=\"center\">Cancel</p></body></html>", nullptr
+            "Form", "Cancel", nullptr
         ));
         frameCounter->setText(QCoreApplication::translate(
             "Form",
@@ -738,7 +738,7 @@ inline bool export_errored(const exportResult& result) {
             else { argument.append(" -loop 1"); }
         }
         // Output
-        argument.append(" -o " + exParam.generalParams.exportFileName.absolutePath());
+        argument.append(" " + exParam.generalParams.exportFileName.absolutePath());
 
         return argument;
     }
@@ -747,7 +747,7 @@ inline bool export_errored(const exportResult& result) {
 namespace projectExporter {
 class Exporter {
 public:
-    Exporter(core::Project& aProject, QDialog* widget, const exportParam& exParam, ffmpeg::ffmpegObject& ffmpeg);
+    Exporter(core::Project& aProject, QDialog* widget, exportParam& exParam, ffmpeg::ffmpegObject& ffmpeg);
     ~Exporter();
     // Class initializers and other stuff
     typedef std::unique_ptr<QOpenGLFramebufferObject> FramebufferPtr;
@@ -761,7 +761,7 @@ public:
     ffmpeg::ffmpegObject& export_obj;
     core::Project& mProject;
     QDialog* mWidget;
-    const exportParam& mParam;
+    exportParam& mParam;
     int mIndex;
     int mDigitCount;
     int mFIndex;
@@ -770,7 +770,6 @@ public:
     bool mExporting;
     bool mCancelled;
     bool mSaveAsImage;
-    bool fpsIsConsistent;
     bool mOverwriteConfirmation;
     QImage currentFrame;
     QString dirAddress;
@@ -785,17 +784,19 @@ public:
 
     bool finish(const std::function<bool()>& aWaiter) {
         static constexpr int kMSec = 100;
-        XC_ASSERT(mProcess);
-        mProcess->closeWriteChannel();
-        while (!mProcess->waitForFinished(kMSec)) {
-            if (!aWaiter() || !isExportFinished(export_obj.result) || export_errored(export_obj.result))
-                break;
+        if(mProcess) {
+            mProcess->closeWriteChannel();
+            while (!mProcess->waitForFinished(kMSec)) {
+                if (!aWaiter() || !isExportFinished(export_obj.result) || export_errored(export_obj.result))
+                    break;
+            }
+            auto exitStatus = mProcess->exitStatus();
+            qDebug() << "exit status" << exitStatus;
+            qDebug() << "exit code" << mProcess->exitCode();
+            mProcess.reset();
+            return exitStatus == QProcess::NormalExit;
         }
-        auto exitStatus = mProcess->exitStatus();
-        qDebug() << "exit status" << exitStatus;
-        qDebug() << "exit code" << mProcess->exitCode();
-        mProcess.reset();
-        return exitStatus == QProcess::NormalExit;
+        return QProcess::NotRunning;
     }
     void destroyFramebuffers() {
         for (auto& fbo : mFramebuffers) {
@@ -826,11 +827,12 @@ public:
                 const double scaleMax = std::max(scaleX, scaleY);
 
                 if (scaleMax >= 0.5 || i == kMaxCount - 1) {
-                    mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(aExportSize));
-                } else {
+                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aExportSize)));
+                }
+                else {
                     size.setWidth(static_cast<int>(size.width() * 0.5));
                     size.setHeight(static_cast<int>(size.height() * 0.5));
-                    mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(size));
+                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(size)));
                 }
             }
         }
@@ -844,24 +846,25 @@ public:
         mIndex = 0;
         mProgress = 0.0f;
         mDigitCount = 0;
+        mOriginTimeInfo = mProject.currentTimeInfo();
         // Value initialization
         mFrameCount = mParam.generalParams.framesToBeExported.count();
-        fpsIsConsistent = mParam.generalParams.nativeFPS == mParam.generalParams.fps;
         mSaveAsImage = mParam.exportType == exportTarget::image;
+        //TODO: Move this to MainWindow.cpp
+        mParam.generalParams.fileName = QFileInfo(mParam.generalParams.exportFileName.absolutePath()).baseName();
         int ffc = mFrameCount;
-        while (ffc /= 10) {
-            mDigitCount++;
-        }
+        mDigitCount = trunc(log10(ffc)) + 1;
+        qDebug() << "Digit count " << mDigitCount;
         if(mSaveAsImage) {
             QDir dir = mParam.generalParams.exportDirectory.absolutePath();
+            dirAddress = dir.absolutePath() + "/" + mParam.generalParams.fileName;
             if (!QDir(dirAddress).exists()) {
-                if (!dir.mkdir(mParam.generalParams.exportName)) {
+                if (!dir.mkdir(mParam.generalParams.fileName)) {
                     export_obj.errorLog.append("Could not create directory for export");
                     return Errored;
                 }
             }
         }
-        dirAddress = mParam.generalParams.exportDirectory.absolutePath() + "/" + mParam.generalParams.exportName;
         imageSuffix = imageFormats[static_cast<int>(mParam.imageParams.format)];
         // Initialize graphics
         {
@@ -918,7 +921,7 @@ public:
 
     bool decideImagePath(int aIndex, QFileInfo& aPath) {
         QString number = QString("%1").arg(aIndex, mDigitCount, 10, QChar('0'));
-        QFileInfo filePath(dirAddress + "/" + mParam.generalParams.exportName + number + "." + imageSuffix);
+        QFileInfo filePath(dirAddress + "/" + mParam.generalParams.fileName + number + "." + imageSuffix);
         // check overwrite
         if (!checkOverwriting(filePath)) {
             return false;
@@ -938,6 +941,7 @@ public:
                 export_obj.errorLog.append("Unable to get image path");
                 return false;
             }
+            qDebug() << savePath;
             bool saveImage = aFboImage.save(
                 savePath.filePath(),
                 imageFormats[static_cast<int>(mParam.imageParams.format)].toUpper().toStdString().c_str()
@@ -966,23 +970,22 @@ public:
 
     bool updateTime(core::TimeInfo& aDst) {
         aDst = mOriginTimeInfo;
-        double current;
-        if (fpsIsConsistent) {
-            current = mIndex;
-        } else {
-            current = mIndex * mOriginTimeInfo.fps / static_cast<double>(mParam.generalParams.fps);
-        }
-        qDebug() << mIndex;
-        qDebug() << current;
-        double frame = mParam.generalParams.framesToBeExported.first() + current;
+        const double current = mIndex * mOriginTimeInfo.fps / (double)(mParam.generalParams.fps);
+        const double frame = mParam.generalParams.framesToBeExported.first() + current;
         // end of export
-        if (0 < mIndex && mParam.generalParams.framesToBeExported.last() < current) {
+        if (0 < mIndex && mParam.generalParams.framesToBeExported.last() < frame) {
             return false;
         }
-        aDst.frame = core::Frame::fromDecimal(static_cast<float>(frame));
+        if (mOriginTimeInfo.frameMax < (int)frame) {
+            return false;
+        }
+        aDst.frame = core::Frame::fromDecimal(frame);
         mProgress = static_cast<float>(current) / static_cast<float>(mFrameCount);
         // to next index
         mIndex++;
+        qDebug() << "Frame " << frame;
+        qDebug() << "Current " << current;
+        qDebug() << "Frame max " << mOriginTimeInfo.frameMax;
         return true;
     }
 
@@ -996,8 +999,7 @@ public:
         if (!updateTime(timeInfo)) {
             return false;
         }
-        if (mParam.generalParams.exportAllFrames ||
-            mParam.generalParams.framesToBeExported.contains(timeInfo.frame.get())) {
+        if (mParam.generalParams.framesToBeExported.contains(mOriginTimeInfo.frame.get())) {
             // begin rendering
             gl::Global::makeCurrent();
             gl::Global::Functions& ggl = gl::Global::functions();
@@ -1065,20 +1067,19 @@ public:
 
     ExportResult renderAndExport() {
         auto exportResult = ExportResult();
-        auto* widget = new QWidget(mWidget);
+        auto* widget = new QWidget();
         auto *form = new exportUI::form;
         form->setupUi(widget);
+        widget->show();
         form->loadingMessage->setText(tr("<html><head/><body><p align=\"center\">Initializing</p></body></html>"));
         QPushButton::connect(form->cancelButton, &QPushButton::clicked, [=] { mCancelled = true; });
-        widget->show();
         auto initResult = initialize();
         if (initResult == Errored) {
             exportResult.returnStr = "Failed to initialize";
             exportResult.resultType = Errored;
             return exportResult;
         }
-        int progressTicks = 0;
-        {
+        if(!mSaveAsImage){
             // Initialize export process.
             if(!startExport(export_obj.argument)){
                 exportResult.returnStr = "Failed to start ffmpeg";
@@ -1086,11 +1087,14 @@ public:
                 return exportResult;
             }
         }
+        int progressTicks = 0;
+
         while (true) {
             if (mCancelled) {
                 exportResult.returnStr = "Export cancelled";
                 exportResult.resultType = Cancelled;
                 finish([=]()->bool { return true; });
+                widget->deleteLater();
                 return exportResult;
             }
             if (!update()) {
@@ -1098,15 +1102,28 @@ public:
             }
             progressTicks++;
             if (progressTicks == 3) {
+                QApplication::processEvents();
+                form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame).scaled(500, 300, Qt::KeepAspectRatio));
                 progressTicks = 0;
             }
             form->loadingMessage->setText(getProgressMessage(progressTicks));
             form->frameCounter->setText(getFrameMessage());
-            form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame));
             form->progressBar->setValue(static_cast<int>(100 * mProgress));
         }
         exportResult.resultType = Success;
         exportResult.returnStr = "Export success";
+        qDebug("---------");
+        qDebug() << export_obj.argument;
+        qDebug("---------");
+        qDebug() << export_obj.executable;
+        qDebug("---------");
+        qDebug() << export_obj.tick;
+        qDebug("---------");
+        qDebug() << export_obj.errorLog;
+        qDebug("---------");
+        qDebug() << export_obj.log;
+        qDebug("---------");
+        widget->deleteLater();
         return exportResult;
     }
 
@@ -1161,7 +1178,7 @@ public:
 };
 
 inline Exporter::Exporter(
-    core::Project& aProject, QDialog* widget, const exportParam& exParam, ffmpeg::ffmpegObject& ffmpeg
+    core::Project& aProject, QDialog* widget, exportParam& exParam, ffmpeg::ffmpegObject& ffmpeg
 ):
     mWidget(widget),
     mParam(exParam),
@@ -1173,7 +1190,6 @@ inline Exporter::Exporter(
     mExporting(false),
     mCancelled(false),
     mSaveAsImage(false),
-    fpsIsConsistent(false),
     mOverwriteConfirmation(false),
     export_obj(ffmpeg),
     mProject(aProject) {}

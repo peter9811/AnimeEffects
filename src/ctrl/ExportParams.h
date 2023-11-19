@@ -21,14 +21,11 @@
 #include "qdir.h"
 #include "qmessagebox.h"
 #include "gl/Global.h"
-#include "util/Range.h"
 #include "gl/EasyTextureDrawer.h"
 #include "core/Project.h"
 #include "core/TimeInfo.h"
-#include "core/TimeKeyBlender.h"
 #include "core/ClippingFrame.h"
 #include "core/DestinationTexturizer.h"
-#include "ctrl/VideoFormat.h"
 #include "gl/Util.h"
 
 
@@ -43,6 +40,9 @@ enum class availableVideoFormats {
 };
 enum class availableImageFormats{
     bmp, jpeg, jpg, png, ppm, xbm, xpm, tiff, webp
+};
+enum class availableIntermediateFormats {
+    png, bmp, jpg
 };
 enum class pixelFormats{
     Auto, yuv420p, yuva420p, rgb24, rgba, bgr24, bgra, gray
@@ -67,6 +67,9 @@ QStringList const videoFormats {
 };
 QStringList const imageFormats {
     "bmp", "jpeg", "jpg", "png", "ppm", "xbm", "xpm", "tiff", "webp"
+};
+QStringList const intermediateImageFormats {
+    "PNG", "BMP", "JPG"
 };
 QStringList const pxFormats {
     "Auto", "yuv420p", "yuva420p", "rgb24", "rgba", "bgr24", "bgra", "gray"
@@ -121,7 +124,7 @@ struct GeneralParams {
 
 struct VideoParams {
     availableVideoFormats format = availableVideoFormats::gif;
-    availableImageFormats intermediateFormat = availableImageFormats::png;
+    availableIntermediateFormats intermediateFormat = availableIntermediateFormats::png;
     pixelFormats pixelFormat = pixelFormats::Auto;
     defaultEncoders encoders;
 };
@@ -188,7 +191,7 @@ inline int getFormatAsInt(exportTarget target, const QString& format) {
 
 inline bool formatAllowsTransparency(const QString& format) {
     QStringList formatsWithTransparency{"apng", "gif", "png", "webp", "webm", "tiff"};
-    return formatsWithTransparency.contains(format);
+    return formatsWithTransparency.contains(format) || formatsWithTransparency.contains(format.toUpper());
 }
 inline bool pixelFormatAllowsTransparency(const QString& format) {
     QStringList pxWithTransparency{"Auto", "yuva420p", "rgba", "bgra"};
@@ -239,7 +242,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     double b = static_cast<double>(params.exportHeight) / static_cast<double>(params.exportWidth);
     double epsilon = std::numeric_limits<double>::epsilon();
     bool aspectRatioKindaEqual = fabs(a - b) <= (fabs(a) > fabs(b) ? fabs(b) : fabs(a)) * epsilon;
-    if (params.aspectRatio == targetRatio::keep && !aspectRatioKindaEqual) {
+    if (params.aspectRatio == keep && !aspectRatioKindaEqual) {
         warnings.append(tr("Target aspect ratio is not met"));
         warnings.append(
             tr("The aspect ratio was set to keep but the aspect ratio of the export is very "
@@ -273,6 +276,14 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
             tr("The target bitrate for encoding will generate a low quality export, we "
                "recommend letting FFmpeg decide for you unless you know what you're doing.")
         );
+    }
+    if(params.bitrate == -1) {
+        warnings.append(tr("Target bitrate invalid"));
+        warningDetail.append(
+            tr("The target bitrate for encoding was invalid in some way, we have changed it to automatic so the"
+               " export process may continue without issues.")
+        );
+        params.bitrate = 0;
     }
 
     QString format = exParam->exportType == exportTarget::video
@@ -530,8 +541,6 @@ public:
         frameCounter->setTextFormat(Qt::RichText);
         pixmapLabel->setAlignment(Qt::AlignHCenter);
         cancelButton->setStyleSheet("text-align:center;");
-
-        Form->setWindowTitle(tr("Exporting"));
         if (Form->objectName().isEmpty())
             Form->setObjectName(QString::fromUtf8("Form"));
         Form->resize(500, 450);
@@ -590,7 +599,7 @@ public:
     } // setupUi
 
     void retranslateUi(QWidget* Form) const {
-        Form->setWindowTitle(QCoreApplication::translate("Form", "Form", nullptr));
+        Form->setWindowTitle(QCoreApplication::translate("Exporting window", "Exporting", nullptr));
         loadingMessage->setText(QCoreApplication::translate(
             "Form", "<html><head/><body><p align=\"center\">Loading</p></body></html>", nullptr
         ));
@@ -603,7 +612,7 @@ public:
             nullptr
         ));
         pixmapLabel->setText(QCoreApplication::translate(
-            "Form", "<html><head/><body><p align=\"center\">Pixmap goes here</p></body></html>", nullptr
+            "Form", "<html><head/><body><p align=\"center\">Initializing</p></body></html>", nullptr
         ));
     } // retranslateUi
 };
@@ -662,9 +671,9 @@ inline bool export_errored(const exportResult& result) {
     // Only animations get to build arguments so don't worry about image output
     inline QString buildPipedArgument(const exportParam& exParam, bool loopGif){
         // Default
-        QString argument = "-y -f image2pipe -i -";
-        // FPS
-        argument.append(" -r " + QString::number(exParam.generalParams.fps));
+        QString argument = "-y -f image2pipe";
+        // Framerate
+        argument.append(" -framerate " + QString::number(exParam.generalParams.fps));
         // Codec
         switch(exParam.videoParams.format){
         case availableVideoFormats::avi:
@@ -690,21 +699,26 @@ inline bool export_errored(const exportResult& result) {
         default:
             break; // We leave it to ffmpeg
         }
+        // Input
+        argument.append(" -i -");
         // Bitrate
         argument.append(" -b:v " + QString::number(exParam.generalParams.bitrate));
-
+        // FPS
+        argument.append(" -r " + QString::number(exParam.generalParams.fps));
         // Pixel format
-        if(isAuto(pxFormats[static_cast<int>(exParam.videoParams.pixelFormat)])){
-            if(exParam.generalParams.allowTransparency){
-                if(formatAllowsTransparency(videoFormats[static_cast<int>(exParam.videoParams.format)])){
-                    argument.append(" -pix_fmt yuva420p");
+        if(exParam.videoParams.format != availableVideoFormats::gif) {
+            if(isAuto(pxFormats[static_cast<int>(exParam.videoParams.pixelFormat)])){
+                if(exParam.generalParams.allowTransparency){
+                    if(formatAllowsTransparency(videoFormats[static_cast<int>(exParam.videoParams.format)])){
+                        argument.append(" -pix_fmt yuva420p");
+                    }
+                    else{ argument.append(" -pix_fmt yuv420p"); }
                 }
                 else{ argument.append(" -pix_fmt yuv420p"); }
             }
-            else{ argument.append(" -pix_fmt yuv420p"); }
-        }
-        else{
-            argument.append(" -pix_fmt " + pxFormats[static_cast<int>(exParam.videoParams.pixelFormat)]);
+            else{
+                argument.append(" -pix_fmt " + pxFormats[static_cast<int>(exParam.videoParams.pixelFormat)]);
+            }
         }
         // Format
         argument.append(" -f " + videoFormats[static_cast<int>(exParam.videoParams.format)]);
@@ -722,16 +736,15 @@ inline bool export_errored(const exportResult& result) {
         else if(exParam.videoParams.format == availableVideoFormats::gif){
             if(exParam.generalParams.allowTransparency) {
                 argument.append(
-                    " -lavfi split[v],palettegen,[v]paletteuse"
+                    " -lavfi split[v],palettegen,[v]paletteuse=alpha_threshold=128 -gifflags -offsetting"
                 );
             }
             else{
                 argument.append(
-                    " -filter_complex\"split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1\""
+                    " -lavfi split[v],palettegen,[v]paletteuse"
                 );
             }
         }
-
         // Looping gif
         if(exParam.videoParams.format == availableVideoFormats::gif){
             if(loopGif) { argument.append(" -loop 0"); }
@@ -739,7 +752,6 @@ inline bool export_errored(const exportResult& result) {
         }
         // Output
         argument.append(" " + exParam.generalParams.exportFileName.absolutePath());
-
         return argument;
     }
 }
@@ -787,7 +799,7 @@ public:
         if(mProcess) {
             mProcess->closeWriteChannel();
             while (!mProcess->waitForFinished(kMSec)) {
-                if (!aWaiter() || !isExportFinished(export_obj.result) || export_errored(export_obj.result))
+                if (!aWaiter() || isExportFinished(export_obj.result) || export_errored(export_obj.result))
                     break;
             }
             auto exitStatus = mProcess->exitStatus();
@@ -803,7 +815,7 @@ public:
             fbo.reset();
         }
     }
-    static void setTextureParam(QOpenGLFramebufferObject& aFbo) {
+    static void setTextureParam(const QOpenGLFramebufferObject& aFbo) {
         auto id = aFbo.texture();
         gl::Global::Functions& ggl = gl::Global::functions();
         ggl.glBindTexture(GL_TEXTURE_2D, id);
@@ -827,12 +839,12 @@ public:
                 const double scaleMax = std::max(scaleX, scaleY);
 
                 if (scaleMax >= 0.5 || i == kMaxCount - 1) {
-                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aExportSize)));
+                    mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(aExportSize));
                 }
                 else {
                     size.setWidth(static_cast<int>(size.width() * 0.5));
                     size.setHeight(static_cast<int>(size.height() * 0.5));
-                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(size)));
+                    mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(size));
                 }
             }
         }
@@ -853,7 +865,7 @@ public:
         //TODO: Move this to MainWindow.cpp
         mParam.generalParams.fileName = QFileInfo(mParam.generalParams.exportFileName.absolutePath()).baseName();
         int ffc = mFrameCount;
-        mDigitCount = trunc(log10(ffc)) + 1;
+        mDigitCount = static_cast<int>(trunc(log10(ffc))) + 1;
         qDebug() << "Digit count " << mDigitCount;
         if(mSaveAsImage) {
             QDir dir = mParam.generalParams.exportDirectory.absolutePath();
@@ -929,9 +941,12 @@ public:
         aPath = filePath;
         return true;
     }
-    void write(const QByteArray& bytes) const {
+    bool write(const QByteArray& bytes) const {
         XC_ASSERT(mProcess);
-        mProcess->write(bytes);
+        if(!mProcess->write(bytes)) {
+            return false;
+        }
+        return true;
     }
 
     bool exportImage(const QImage& aFboImage, int aIndex) {
@@ -956,12 +971,15 @@ public:
             QBuffer buffer(&byteArray);
             buffer.open(QIODevice::ReadWrite);
             aFboImage.save(
-                &buffer, videoFormats[static_cast<int>(mParam.videoParams.format)].toStdString().c_str(), -1
+                &buffer,
+                intermediateImageFormats[static_cast<int>(mParam.videoParams.intermediateFormat)].toStdString().c_str(), -1
                 );
             buffer.close();
-            write(byteArray);
+            if(!write(byteArray)) {
+                export_obj.errorLog.append("Failed to write to FFmpeg proccess.\n");
+            }
             if (export_errored(export_obj.result)) {
-                export_obj.errorLog.append("FFmpeg error occurred.\n" + export_obj.errorLog.join("\n"));
+                export_obj.errorLog.append("FFmpeg error occurred.\n");
                 return false;
             }
         }
@@ -970,16 +988,16 @@ public:
 
     bool updateTime(core::TimeInfo& aDst) {
         aDst = mOriginTimeInfo;
-        const double current = mIndex * mOriginTimeInfo.fps / (double)(mParam.generalParams.fps);
+        const double current = mIndex * mOriginTimeInfo.fps / static_cast<double>(mParam.generalParams.fps);
         const double frame = mParam.generalParams.framesToBeExported.first() + current;
         // end of export
         if (0 < mIndex && mParam.generalParams.framesToBeExported.last() < frame) {
             return false;
         }
-        if (mOriginTimeInfo.frameMax < (int)frame) {
+        if (mOriginTimeInfo.frameMax < static_cast<int>(frame)) {
             return false;
         }
-        aDst.frame = core::Frame::fromDecimal(frame);
+        aDst.frame = core::Frame::fromDecimal(static_cast<float>(frame));
         mProgress = static_cast<float>(current) / static_cast<float>(mFrameCount);
         // to next index
         mIndex++;
@@ -1069,6 +1087,7 @@ public:
         auto exportResult = ExportResult();
         auto* widget = new QWidget();
         auto *form = new exportUI::form;
+        widget->setWindowTitle(tr("Exporting"));
         form->setupUi(widget);
         widget->show();
         form->loadingMessage->setText(tr("<html><head/><body><p align=\"center\">Initializing</p></body></html>"));
@@ -1081,9 +1100,10 @@ public:
         }
         if(!mSaveAsImage){
             // Initialize export process.
-            if(!startExport(export_obj.argument)){
+            if(!startExport(export_obj.argument)) {
                 exportResult.returnStr = "Failed to start ffmpeg";
                 exportResult.resultType = Errored;
+                qDebug() << mProcess.data()->readAll();
                 return exportResult;
             }
         }
@@ -1095,6 +1115,15 @@ public:
                 exportResult.resultType = Cancelled;
                 finish([=]()->bool { return true; });
                 widget->deleteLater();
+                // Clean-up
+                if(!mSaveAsImage) {
+                    QFile(mParam.generalParams.exportFileName.absolutePath()).deleteLater();
+                }
+                else {
+                    QDir(
+                        mParam.generalParams.exportDirectory.absolutePath() + "/" + mParam.generalParams.fileName
+                        ).removeRecursively();
+                }
                 return exportResult;
             }
             if (!update()) {
@@ -1102,13 +1131,16 @@ public:
             }
             progressTicks++;
             if (progressTicks == 3) {
-                QApplication::processEvents();
-                form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame).scaled(500, 300, Qt::KeepAspectRatio));
                 progressTicks = 0;
+                form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame).scaled(500, 300, Qt::KeepAspectRatio));
+                QApplication::processEvents();
             }
             form->loadingMessage->setText(getProgressMessage(progressTicks));
             form->frameCounter->setText(getFrameMessage());
             form->progressBar->setValue(static_cast<int>(100 * mProgress));
+        }
+        if(!mSaveAsImage) {
+            mProcess->waitForFinished();
         }
         exportResult.resultType = Success;
         exportResult.returnStr = "Export success";
@@ -1127,7 +1159,7 @@ public:
         return exportResult;
     }
 
-    bool startExport(const QString& aArgments) {
+    bool startExport(const QString& aArguments) {
         #if defined(Q_OS_WIN)
         const QFileInfo localEncoderInfo("./tools/ffmpeg.exe");
         const bool hasLocalEncoder = localEncoderInfo.exists() && localEncoderInfo.isExecutable();
@@ -1143,36 +1175,29 @@ public:
         mProcess.reset(new QProcess(nullptr));
         mProcess->setProcessChannelMode(QProcess::MergedChannels);
 
-        auto process = mProcess.data();
-        mProcess->connect(process, &QProcess::readyRead, [=] {
-            if (this->mProcess) {
-                export_obj.log.push_back(QString(this->mProcess->readAll().data()));
-                // qDebug() << QString(process->readAll().data());
+        mProcess->connect(mProcess.data(), &QProcess::readyRead, [=] {
+            if (mProcess) {
+                export_obj.log.push_back(QString(mProcess->readAll().data()));
+                qDebug() << QString(mProcess->readAll().data());
             }
         });
 
-        mProcess->connect(process, &QProcess::errorOccurred, [=](QProcess::ProcessError aCode) {
+        mProcess->connect(mProcess.data(), &QProcess::errorOccurred, [=](QProcess::ProcessError aCode) {
             export_obj.result = static_cast<ffmpeg::exportResult>(aCode);
-            if (this->mProcess) {
-                export_obj.errorLog.append(this->mProcess->errorString());
+            if (mProcess) {
+                export_obj.errorLog.append(mProcess->errorString());
             }
             return false;
         });
         mProcess->connect(
-            process,
+            mProcess.data(),
             util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished),
             [=](int, QProcess::ExitStatus) {export_obj.result = ffmpeg::ExportSuccess; }
         );
 
-        // TODO improve the arguments build process
-        QStringList arguments = aArgments.split(' ');
-        /*
-        arguments.replaceInStrings("%20", " ");
-        if (arguments.contains("")) { arguments.removeAt(arguments.indexOf("")); }
-        */
-        qDebug() << "arguments : " << arguments;
+         QStringList arguments = aArguments.split(' ');
         mProcess->start(program, arguments, QIODevice::ReadWrite);
-        // qDebug() << mProcess->readAll().data();
+        mProcess->waitForStarted();
         return true;
     }
 };

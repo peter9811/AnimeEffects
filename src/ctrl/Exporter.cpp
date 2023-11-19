@@ -82,8 +82,7 @@ bool Exporter::FFMpeg::start(const QString& aArgments) {
     );
 
     // TODO improve the arguments build process
-    QStringList arguments;
-    arguments = aArgments.split(' ');
+    QStringList arguments = aArgments.split(' ');
     arguments.replaceInStrings("%20", " ");
     if (arguments.contains("")) {
         arguments.removeAt(arguments.indexOf(""));

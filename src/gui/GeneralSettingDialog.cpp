@@ -558,8 +558,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             error.setWindowTitle(tr("Error"));
             error.setText(tr("An error has occurred, please send the bellow info to the developers."));
             error.setDetailedText(
-                "Filename : " + ffmpeg.fileName() + "\nIs Executable : " + QString(ffmpeg.isExecutable()) +
-                "\nDownload params : " + "Hardcoded API | " + gitFile + " | " + QString::number(id) +
+                "Filename : " + ffmpeg.fileName() + "\nIs Executable : " + (ffmpeg.isExecutable()? "True" : "False") +
+                "\nDownload params : " + "Hardcoded API | gitFile: " + gitFile + " | ID: " + QString::number(id) +
                 "\nDownload path : " + dir.absolutePath()
             );
             error.exec();

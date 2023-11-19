@@ -1320,6 +1320,9 @@ void MainWindow::onExportTriggered() {
     genParam.nativeFPS = mCurrent->attribute().fps();
     genParam.fps = exportUI->fpsSpinBox->value();
     genParam.bitrate =
+        // Is it empty?
+        exportUI->bitrateLineEdit->text().trimmed().isEmpty()
+        ? 0 :
         // Does it contain only the word auto?
         exportUI->bitrateLineEdit->text().trimmed().contains(QRegExp("^(?i)(auto(matic)?)$"))
         ? 0 :
@@ -1348,8 +1351,7 @@ void MainWindow::onExportTriggered() {
                                                                          exportTarget::image;
     if(exParam->exportType == exportTarget::video){
 
-        exParam->videoParams.intermediateFormat = static_cast<availableImageFormats>(getFormatAsInt(exportTarget::image,
-            exportUI->intermediateTypeCombo->currentText().toLower()));
+        exParam->videoParams.intermediateFormat = static_cast<availableIntermediateFormats>(exportUI->intermediateTypeCombo->currentIndex());
         exParam->videoParams.pixelFormat =
             static_cast<pixelFormats>(getFormatAsInt(exportTarget::pxFmt,
                                                       exportUI->pixelFormatCombo->currentText()));

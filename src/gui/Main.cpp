@@ -13,6 +13,7 @@
 #include "gui/MSVCBackTracer.h"
 #include "gui/LocaleDecider.h"
 #include "util/NetworkUtil.h"
+#include <QLoggingCategory>
 
 
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
@@ -96,6 +97,7 @@ int entryPoint(int argc, char* argv[]) {
     // create qt application
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
+    QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, true);
     app.setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Round);
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     // app.setAttribute(Qt::AA_DontUseNativeDialogs);

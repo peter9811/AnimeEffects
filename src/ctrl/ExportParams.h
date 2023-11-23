@@ -244,10 +244,10 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     bool aspectRatioKindaEqual = fabs(a - b) <= (fabs(a) > fabs(b) ? fabs(b) : fabs(a)) * epsilon;
     if (params.aspectRatio == keep && !aspectRatioKindaEqual) {
         warnings.append(tr("Target aspect ratio is not met"));
-        warnings.append(
+        warningDetail.append(
             tr("The aspect ratio was set to keep but the aspect ratio of the export is very "
                "different to that of the original image, consider setting the aspect ratio to \"Custom\" or to change"
-               "the resolution while having \"Keep aspect ratio\" selected.")
+               " the resolution while having \"Keep aspect ratio\" selected.")
         );
     }
     if (!params.exportDirectory.exists()) {
@@ -419,9 +419,6 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
             x++;
         }
     }
-    qDebug() << params.exportRange.size();
-    qDebug() << params.exportRange.first().firstFrame;
-    qDebug() << params.exportRange.first().lastFrame;
     for (auto range : params.exportRange) {
         int rangeLow = range.firstFrame;
         while (rangeLow < range.lastFrame + 1) {
@@ -467,10 +464,10 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     // Sync changes made by the error handler
     exParam->generalParams = params;
     bool proceedToExport = true;
-    bool shouldDisplayErrors = !errors.empty() || !warnings.empty();
+    bool shouldDisplayErrors = !errors.isEmpty() || !warnings.isEmpty();
     if (shouldDisplayErrors) {
         QMessageBox msg;
-        bool error = !errors.empty();
+        bool error = !errors.isEmpty();
         msg.setIcon(error ? QMessageBox::Icon::Critical : QMessageBox::Warning);
         msg.setWindowTitle(
             error ? tr("Critical errors have been found, cannot continue exporting.")
@@ -486,7 +483,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
             conMsg;
         msg.setText(textMsg);
         QString detMsg = "-----\n" + tr("Critical errors (" + QString::number(errors.size()) + "): \n");
-        if (!errors.empty()) {
+        if (!errors.isEmpty()) {
             int x = 0;
             for (const auto& err : errors) {
                 detMsg.append("-----\n" + tr("Error: ") + err + "\n");
@@ -498,7 +495,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         }
 
         detMsg.append("-----\n" + tr("Warnings (" + QString::number(warnings.size()) + "): \n"));
-        if (!warnings.empty()) {
+        if (!warnings.isEmpty()) {
             int x = 0;
             for (const auto& warn : warnings) {
                 detMsg.append(tr("Warning: ") + warn + "\n");
@@ -608,11 +605,11 @@ public:
         ));
         frameCounter->setText(QCoreApplication::translate(
             "Form",
-            "<html><head/><body><p align=\"center\">Frame rendered x/y | Frame exported x/y</p></body></html>",
+            "<html><head/><body><p align=\"center\">Frame rendered x/y | Frame encoded x/y</p></body></html>",
             nullptr
         ));
         pixmapLabel->setText(QCoreApplication::translate(
-            "Form", "<html><head/><body><p align=\"center\">Initializing</p></body></html>", nullptr
+            "Form", "<html><head/><body><p align=\"center\">Initializing...</p></body></html>", nullptr
         ));
     } // retranslateUi
 };
@@ -671,7 +668,7 @@ inline bool export_errored(const exportResult& result) {
     // Only animations get to build arguments so don't worry about image output
     inline QString buildPipedArgument(const exportParam& exParam, bool loopGif){
         // Default
-        QString argument = "-y -f image2pipe";
+        QString argument = "-y -hwaccel auto -f image2pipe";
         // Framerate
         argument.append(" -framerate " + QString::number(exParam.generalParams.fps));
         // Codec
@@ -722,6 +719,9 @@ inline bool export_errored(const exportResult& result) {
         }
         // Format
         argument.append(" -f " + videoFormats[static_cast<int>(exParam.videoParams.format)]);
+
+        // Threads
+        argument.append(" -threads 0");
 
         // Custom palette. To be completely honest with you, I've no idea the difference between these.
         if(exParam.generalParams.useCustomPalette){
@@ -778,6 +778,7 @@ public:
     int mDigitCount;
     int mFIndex;
     int mFrameCount;
+    int* encodedFrame = new int(0);
     float mProgress;
     bool mExporting;
     bool mCancelled;
@@ -797,14 +798,18 @@ public:
     bool finish(const std::function<bool()>& aWaiter) {
         static constexpr int kMSec = 100;
         if(mProcess) {
+            QApplication::processEvents();
             mProcess->closeWriteChannel();
-            while (!mProcess->waitForFinished(kMSec)) {
-                if (!aWaiter() || isExportFinished(export_obj.result) || export_errored(export_obj.result))
+            while (!mProcess->waitForFinished()) {
+                qDebug() << "Waiting for encode finish: " << mProcess->readAll();
+                mProcess->waitForFinished(kMSec);
+                if (!aWaiter() || isExportFinished(export_obj.result) || export_errored(export_obj.result)) {
                     break;
+                }
             }
             auto exitStatus = mProcess->exitStatus();
-            qDebug() << "exit status" << exitStatus;
-            qDebug() << "exit code" << mProcess->exitCode();
+            qDebug() << "Exit status: " << exitStatus;
+            qDebug() << "Exit code: " << mProcess->exitCode();
             mProcess.reset();
             return exitStatus == QProcess::NormalExit;
         }
@@ -866,7 +871,6 @@ public:
         mParam.generalParams.fileName = QFileInfo(mParam.generalParams.exportFileName.absolutePath()).baseName();
         int ffc = mFrameCount;
         mDigitCount = static_cast<int>(trunc(log10(ffc))) + 1;
-        qDebug() << "Digit count " << mDigitCount;
         if(mSaveAsImage) {
             QDir dir = mParam.generalParams.exportDirectory.absolutePath();
             dirAddress = dir.absolutePath() + "/" + mParam.generalParams.fileName;
@@ -915,9 +919,16 @@ public:
         return sCenterL + currentStatus + pDots + sCenterR;
     }
     QString getFrameMessage() const {
-        QString rString = sCenterL + tr("Frame rendered: ") + QString::number(mIndex) + "/" +
-            QString::number(mFrameCount) + " | " + tr("Frame exported: ") + QString::number(mFIndex) + "/" +
-            QString::number(mFrameCount) + sCenterR;
+        QString rString;
+        if(mSaveAsImage) {
+            rString = sCenterL + tr("Current frame: ") + QString::number(mIndex) + "/" +
+                QString::number(mFrameCount) + sCenterR;
+        }
+        else {
+            rString = sCenterL + tr("Frame rendered: ") + QString::number(mIndex) + "/" +
+                QString::number(mFrameCount) + " | " + tr("Frame encoded: ") + QString::number(*encodedFrame) + "/" +
+                QString::number(mFrameCount) + sCenterR;
+        }
         return rString;
     }
 
@@ -956,7 +967,6 @@ public:
                 export_obj.errorLog.append("Unable to get image path");
                 return false;
             }
-            qDebug() << savePath;
             bool saveImage = aFboImage.save(
                 savePath.filePath(),
                 imageFormats[static_cast<int>(mParam.imageParams.format)].toUpper().toStdString().c_str()
@@ -977,6 +987,8 @@ public:
             buffer.close();
             if(!write(byteArray)) {
                 export_obj.errorLog.append("Failed to write to FFmpeg proccess.\n");
+                export_obj.result = ffmpeg::ExportWriteError;
+                return false;
             }
             if (export_errored(export_obj.result)) {
                 export_obj.errorLog.append("FFmpeg error occurred.\n");
@@ -1001,9 +1013,6 @@ public:
         mProgress = static_cast<float>(current) / static_cast<float>(mFrameCount);
         // to next index
         mIndex++;
-        qDebug() << "Frame " << frame;
-        qDebug() << "Current " << current;
-        qDebug() << "Frame max " << mOriginTimeInfo.frameMax;
         return true;
     }
 
@@ -1017,7 +1026,7 @@ public:
         if (!updateTime(timeInfo)) {
             return false;
         }
-        if (mParam.generalParams.framesToBeExported.contains(mOriginTimeInfo.frame.get())) {
+        if (mParam.generalParams.framesToBeExported.contains(timeInfo.frame.get())){
             // begin rendering
             gl::Global::makeCurrent();
             gl::Global::Functions& ggl = gl::Global::functions();
@@ -1087,7 +1096,6 @@ public:
         auto exportResult = ExportResult();
         auto* widget = new QWidget();
         auto *form = new exportUI::form;
-        widget->setWindowTitle(tr("Exporting"));
         form->setupUi(widget);
         widget->show();
         form->loadingMessage->setText(tr("<html><head/><body><p align=\"center\">Initializing</p></body></html>"));
@@ -1103,7 +1111,6 @@ public:
             if(!startExport(export_obj.argument)) {
                 exportResult.returnStr = "Failed to start ffmpeg";
                 exportResult.resultType = Errored;
-                qDebug() << mProcess.data()->readAll();
                 return exportResult;
             }
         }
@@ -1130,28 +1137,22 @@ public:
                 break;
             }
             progressTicks++;
-            if (progressTicks == 3) {
+            if (progressTicks == 4) {
                 progressTicks = 0;
-                form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame).scaled(500, 300, Qt::KeepAspectRatio));
-                QApplication::processEvents();
             }
+            form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame).scaled(500, 300, Qt::KeepAspectRatio));
             form->loadingMessage->setText(getProgressMessage(progressTicks));
             form->frameCounter->setText(getFrameMessage());
             form->progressBar->setValue(static_cast<int>(100 * mProgress));
+            QApplication::processEvents();
         }
         if(!mSaveAsImage) {
-            mProcess->waitForFinished();
+            finish([=]() -> bool { return true; });
         }
         exportResult.resultType = Success;
         exportResult.returnStr = "Export success";
         qDebug("---------");
         qDebug() << export_obj.argument;
-        qDebug("---------");
-        qDebug() << export_obj.executable;
-        qDebug("---------");
-        qDebug() << export_obj.tick;
-        qDebug("---------");
-        qDebug() << export_obj.errorLog;
         qDebug("---------");
         qDebug() << export_obj.log;
         qDebug("---------");
@@ -1159,6 +1160,7 @@ public:
         return exportResult;
     }
 
+    //TODO: Improve speed, as it is slower than the older export process for some reason.
     bool startExport(const QString& aArguments) {
         #if defined(Q_OS_WIN)
         const QFileInfo localEncoderInfo("./tools/ffmpeg.exe");
@@ -1174,15 +1176,22 @@ public:
         export_obj.errorLog.clear();
         mProcess.reset(new QProcess(nullptr));
         mProcess->setProcessChannelMode(QProcess::MergedChannels);
+        auto process = mProcess.data();
 
-        mProcess->connect(mProcess.data(), &QProcess::readyRead, [=] {
-            if (mProcess) {
-                export_obj.log.push_back(QString(mProcess->readAll().data()));
-                qDebug() << QString(mProcess->readAll().data());
+        mProcess->connect(process, &QProcess::readyRead, [=] {
+            if (this->mProcess) {
+                export_obj.log.push_back(QString(this->mProcess->readAll().data()));
+                QString lastLog = export_obj.log.last();
+                if(lastLog.contains("frame=")){
+                    QRegularExpression rx("(\\d+)");
+                    *encodedFrame = rx.match(lastLog).captured(0).toInt();
+                }
             }
         });
 
-        mProcess->connect(mProcess.data(), &QProcess::errorOccurred, [=](QProcess::ProcessError aCode) {
+        mProcess->connect(process, &QProcess::errorOccurred, [=](QProcess::ProcessError aCode) {
+            qDebug() << "Proc code: " + aCode;
+            qDebug() << "| Export result: " + static_cast<ffmpeg::exportResult>(aCode);
             export_obj.result = static_cast<ffmpeg::exportResult>(aCode);
             if (mProcess) {
                 export_obj.errorLog.append(mProcess->errorString());
@@ -1190,14 +1199,13 @@ public:
             return false;
         });
         mProcess->connect(
-            mProcess.data(),
+            process,
             util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished),
             [=](int, QProcess::ExitStatus) {export_obj.result = ffmpeg::ExportSuccess; }
         );
 
-         QStringList arguments = aArguments.split(' ');
+        QStringList arguments = aArguments.split(' ');
         mProcess->start(program, arguments, QIODevice::ReadWrite);
-        mProcess->waitForStarted();
         return true;
     }
 };

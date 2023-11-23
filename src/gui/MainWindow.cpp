@@ -1338,10 +1338,10 @@ void MainWindow::onExportTriggered() {
     genParam.palettePath = exportUI->paletteDir;
     auto* exportRanges = new QVector<frameExportRange>;
     for(int ferIndex = 0; ferIndex < exportUI->initialFrames->size(); ferIndex++){
-        frameExportRange fer;
-        fer.firstFrame = exportUI->initialFrames->at(ferIndex)->value();
-        fer.lastFrame = exportUI->lastFrames->at(ferIndex)->value();
-        exportRanges->append(fer);
+        frameExportRange fER;
+        fER.firstFrame = exportUI->initialFrames->at(ferIndex)->value();
+        fER.lastFrame = exportUI->lastFrames->at(ferIndex)->value();
+        exportRanges->append(fER);
     }
     genParam.exportRange = *exportRanges;
     genParam.customInterCommand = exportUI->intermediateParamTextEdit->toPlainText();

@@ -832,7 +832,7 @@ public:
     }
     void createFramebuffers(const QSize& aOriginSize, const QSize& aExportSize) {
         destroyFramebuffers();
-        mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(aOriginSize));
+        mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize)));
         // setup buffers for scaling
         if (aOriginSize != aExportSize) {
             static constexpr int kMaxCount = 3;
@@ -844,12 +844,12 @@ public:
                 const double scaleMax = std::max(scaleX, scaleY);
 
                 if (scaleMax >= 0.5 || i == kMaxCount - 1) {
-                    mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(aExportSize));
+                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize)));
                 }
                 else {
                     size.setWidth(static_cast<int>(size.width() * 0.5));
                     size.setHeight(static_cast<int>(size.height() * 0.5));
-                    mFramebuffers.emplace_back(std::make_unique<QOpenGLFramebufferObject>(size));
+                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize)));
                 }
             }
         }

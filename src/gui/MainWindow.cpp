@@ -1,12 +1,5 @@
 #include <QApplication>
-#include <QDesktopWidget>
-#include <QSettings>
-#include <QFileDialog>
 #include <QDockWidget>
-#include <QGraphicsDropShadowEffect>
-#include <QElapsedTimer>
-#include <QMessageBox>
-#include <QFileSystemWatcher>
 #include "GeneralSettingDialog.h"
 #include "util/IProgressReporter.h"
 #include "gl/Global.h"
@@ -125,13 +118,13 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocalePa
     // create main display
     {
 #if defined(Q_OS_WIN)
-        const float fontScale = 1.5f;
+        constexpr float fontScale = 1.5f;
 #else
         const float fontScale = 1.3f;
 #endif
         auto font = this->font();
         if (font.pixelSize() > 0)
-            font.setPixelSize(font.pixelSize() * fontScale);
+            font.setPixelSize(font.pixelSize() * static_cast<int>(fontScale));
         else
             font.setPointSizeF(font.pointSizeF() * fontScale);
         mMainDisplayStyle.reset(new MainDisplayStyle(font, mGUIResources));
@@ -974,10 +967,8 @@ void MainWindow::onExportTriggered() {
     QSettings settings;
     auto ffCheck = settings.value("ffmpeg_check");
     if (!ffCheck.isValid() || ffCheck.toBool()) {
-        util::NetworkUtil networking;
         QFileInfo ffmpeg_file;
         QString ffmpeg;
-
         if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
         else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
         if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
@@ -1296,8 +1287,14 @@ void MainWindow::onExportTriggered() {
         format.push_back(')');
         x++;
     }
-    if(exportUI->exportTypeCombo->currentIndex() == 0) { fileDiag.setNameFilters(vF); }
-    else{ fileDiag.setNameFilters(iF); }
+    if(exportUI->exportTypeCombo->currentIndex() == 0) {
+        fileDiag.setNameFilters(vF);
+        fileDiag.selectNameFilter("MPEG-4");
+    }
+    else {
+        fileDiag.setNameFilters(iF);
+        fileDiag.selectNameFilter("PNG");
+    }
     // Generate parameters prior to exportUI destructor
     genParam.fileName = mCurrent->fileName().isEmpty()? "New Export" : QString(mCurrent->fileName());
     genParam.nativeWidth = mCurrent->attribute().imageSize().width();
@@ -1329,6 +1326,7 @@ void MainWindow::onExportTriggered() {
         // Does it contain only a positive number? If not then set to -1 for error handling.
         exportUI->bitrateLineEdit->text().trimmed().contains(QRegExp("^(?!0\\d+)\\d+$"))
             ? exportUI->bitrateLineEdit->text().toInt() : -1;
+    genParam.imageExportQuality = exportUI->imageQualitySpinbox->value();
     genParam.allowTransparency = exportUI->transparencyCheckBox->isChecked();
     genParam.forcePipe = exportUI->forcePipeCheckBox->isChecked();
     genParam.useCustomParam = exportUI->allowParamsCheckBox->isChecked();
@@ -1338,10 +1336,10 @@ void MainWindow::onExportTriggered() {
     genParam.palettePath = exportUI->paletteDir;
     auto* exportRanges = new QVector<frameExportRange>;
     for(int ferIndex = 0; ferIndex < exportUI->initialFrames->size(); ferIndex++){
-        frameExportRange fER;
-        fER.firstFrame = exportUI->initialFrames->at(ferIndex)->value();
-        fER.lastFrame = exportUI->lastFrames->at(ferIndex)->value();
-        exportRanges->append(fER);
+        frameExportRange frame_export_range;
+        frame_export_range.firstFrame = exportUI->initialFrames->at(ferIndex)->value();
+        frame_export_range.lastFrame = exportUI->lastFrames->at(ferIndex)->value();
+        exportRanges->append(frame_export_range);
     }
     genParam.exportRange = *exportRanges;
     genParam.customInterCommand = exportUI->intermediateParamTextEdit->toPlainText();
@@ -1454,7 +1452,6 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
     settings.sync();
     auto ffCheck = settings.value("ffmpeg_check");
     if (!ffCheck.isValid() || ffCheck.toBool()) {
-        util::NetworkUtil networking;
         QFileInfo ffmpeg_file;
         QString ffmpeg;
 

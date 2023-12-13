@@ -120,6 +120,7 @@ struct GeneralParams {
     frameExportRange nativeFrameRange = frameExportRange();
     bool exportAllFrames = false;
     bool exportToLast = false;
+    int imageExportQuality = -1;
 };
 
 struct VideoParams {
@@ -778,6 +779,7 @@ public:
     int mDigitCount;
     int mFIndex;
     int mFrameCount;
+    QSize exportSize;
     int* encodedFrame = new int(0);
     float mProgress;
     bool mExporting;
@@ -801,7 +803,7 @@ public:
             QApplication::processEvents();
             mProcess->closeWriteChannel();
             while (!mProcess->waitForFinished()) {
-                qDebug() << "Waiting for encode finish: " << mProcess->readAll();
+                qDebug() << "Waiting for encode finish: " << this->mProcess->readAll().data();
                 mProcess->waitForFinished(kMSec);
                 if (!aWaiter() || isExportFinished(export_obj.result) || export_errored(export_obj.result)) {
                     break;
@@ -832,11 +834,11 @@ public:
     }
     void createFramebuffers(const QSize& aOriginSize, const QSize& aExportSize) {
         destroyFramebuffers();
-        mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize)));
+        mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize))); // NOLINT(*-make-unique)
         // setup buffers for scaling
         if (aOriginSize != aExportSize) {
             static constexpr int kMaxCount = 3;
-            QSize size = aOriginSize;
+            QSize size = aExportSize;
 
             for (int i = 0; i < kMaxCount; ++i) {
                 const double scaleX = aExportSize.width() / static_cast<double>(size.width());
@@ -844,12 +846,12 @@ public:
                 const double scaleMax = std::max(scaleX, scaleY);
 
                 if (scaleMax >= 0.5 || i == kMaxCount - 1) {
-                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize)));
+                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aExportSize))); // NOLINT(*-make-unique)
                 }
                 else {
                     size.setWidth(static_cast<int>(size.width() * 0.5));
                     size.setHeight(static_cast<int>(size.height() * 0.5));
-                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(aOriginSize)));
+                    mFramebuffers.emplace_back(FramebufferPtr(new QOpenGLFramebufferObject(size))); // NOLINT(*-make-unique)
                 }
             }
         }
@@ -864,6 +866,7 @@ public:
         mProgress = 0.0f;
         mDigitCount = 0;
         mOriginTimeInfo = mProject.currentTimeInfo();
+        exportSize = QSize(mParam.generalParams.exportWidth, mParam.generalParams.exportHeight);
         // Value initialization
         mFrameCount = mParam.generalParams.framesToBeExported.count();
         mSaveAsImage = mParam.exportType == exportTarget::image;
@@ -891,8 +894,7 @@ public:
                 return Errored;
             }
             // framebuffers
-            const QSize size(mParam.generalParams.exportWidth, mParam.generalParams.exportHeight);
-            createFramebuffers(mProject.attribute().imageSize(), size);
+            createFramebuffers(mProject.attribute().imageSize(), exportSize);
             // clipping frame
             mClippingFrame.reset(new core::ClippingFrame());
             mClippingFrame->resize(mProject.attribute().imageSize());
@@ -954,7 +956,7 @@ public:
     }
     bool write(const QByteArray& bytes) const {
         XC_ASSERT(mProcess);
-        if(!mProcess->write(bytes)) {
+        if(mProcess->write(bytes) == -1) {
             return false;
         }
         return true;
@@ -969,7 +971,8 @@ public:
             }
             bool saveImage = aFboImage.save(
                 savePath.filePath(),
-                imageFormats[static_cast<int>(mParam.imageParams.format)].toUpper().toStdString().c_str()
+                imageFormats[static_cast<int>(mParam.imageParams.format)].toUpper().toStdString().c_str(),
+                mParam.generalParams.imageExportQuality
             );
             if (!saveImage){
                 export_obj.errorLog.append("Unable to save image");
@@ -980,10 +983,12 @@ public:
             QByteArray byteArray;
             QBuffer buffer(&byteArray);
             buffer.open(QIODevice::ReadWrite);
-            aFboImage.save(
-                &buffer,
-                intermediateImageFormats[static_cast<int>(mParam.videoParams.intermediateFormat)].toStdString().c_str(), -1
-                );
+            if(!aFboImage.save(&buffer,
+                intermediateImageFormats[static_cast<int>(mParam.videoParams.intermediateFormat)].toStdString().c_str(),
+                mParam.generalParams.imageExportQuality)) {
+                buffer.close();
+                return false;
+            }
             buffer.close();
             if(!write(byteArray)) {
                 export_obj.errorLog.append("Failed to write to FFmpeg proccess.\n");
@@ -1006,7 +1011,7 @@ public:
         if (0 < mIndex && mParam.generalParams.framesToBeExported.last() < frame) {
             return false;
         }
-        if (mOriginTimeInfo.frameMax < static_cast<int>(frame)) {
+        if (mOriginTimeInfo.frameMax <static_cast<int>(frame)) {
             return false;
         }
         aDst.frame = core::Frame::fromDecimal(static_cast<float>(frame));
@@ -1124,7 +1129,7 @@ public:
                 widget->deleteLater();
                 // Clean-up
                 if(!mSaveAsImage) {
-                    QFile(mParam.generalParams.exportFileName.absolutePath()).deleteLater();
+                    QFile(mParam.generalParams.osExportTarget).deleteLater();
                 }
                 else {
                     QDir(
@@ -1177,15 +1182,12 @@ public:
         mProcess.reset(new QProcess(nullptr));
         mProcess->setProcessChannelMode(QProcess::MergedChannels);
         auto process = mProcess.data();
-
         mProcess->connect(process, &QProcess::readyRead, [=] {
             if (this->mProcess) {
                 export_obj.log.push_back(QString(this->mProcess->readAll().data()));
                 QString lastLog = export_obj.log.last();
-                if(lastLog.contains("frame=")){
-                    QRegularExpression rx("(\\d+)");
-                    *encodedFrame = rx.match(lastLog).captured(0).toInt();
-                }
+                QRegularExpression rx("frame=(\\d+)");
+                *encodedFrame = rx.match(lastLog).captured(1).toInt();
             }
         });
 
@@ -1213,6 +1215,8 @@ public:
 inline Exporter::Exporter(
     core::Project& aProject, QDialog* widget, exportParam& exParam, ffmpeg::ffmpegObject& ffmpeg
 ):
+    export_obj(ffmpeg),
+    mProject(aProject),
     mWidget(widget),
     mParam(exParam),
     mIndex(0),
@@ -1223,9 +1227,7 @@ inline Exporter::Exporter(
     mExporting(false),
     mCancelled(false),
     mSaveAsImage(false),
-    mOverwriteConfirmation(false),
-    export_obj(ffmpeg),
-    mProject(aProject) {}
+    mOverwriteConfirmation(false) {}
 inline Exporter::~Exporter() {
         finish([=]{return true;});
         // kill buffer

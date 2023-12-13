@@ -83,6 +83,9 @@ public:
     QFrame *renderLine2;
     QLabel *firstFrameLabel;
     QLabel *bitrateLabel;
+    QLabel *imageQualityLabel;
+    QSpinBox *imageQualitySpinbox;
+    QPushButton *setImageQualityToAuto;
     QCheckBox *allowParamsCheckBox;
     QSpinBox * fpsSpinBox;
     QToolButton *selectPalettePathButton;
@@ -153,7 +156,7 @@ public:
     {
         if (exportWidget->objectName().isEmpty())
             exportWidget->setObjectName(QString::fromUtf8("exportWidget"));
-        exportWidget->resize(525, 675);
+        exportWidget->resize(550, 700);
         QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -184,7 +187,7 @@ public:
         intermediateParamCheckBox->setChecked(true);
         intermediateParamCheckBox->setAutoExclusive(false);
 
-        gridLayout_2->addWidget(intermediateParamCheckBox, 17, 1, 1, 1);
+        gridLayout_2->addWidget(intermediateParamCheckBox, 18, 1, 1, 1);
 
         keepAspectRatio = new QRadioButton(globalParamScrollContents);
         keepAspectRatio->setObjectName(QString::fromUtf8("keepAspectRatio"));
@@ -200,7 +203,7 @@ public:
         sizePolicy1.setHeightForWidth(lastFrameLabel->sizePolicy().hasHeightForWidth());
         lastFrameLabel->setSizePolicy(sizePolicy1);
 
-        gridLayout_2->addWidget(lastFrameLabel, 21, 2, 1, 1);
+        gridLayout_2->addWidget(lastFrameLabel, 22, 2, 1, 1);
 
         exportTypeLabel = new QLabel(globalParamScrollContents);
         exportTypeLabel->setObjectName(QString::fromUtf8("exportTypeLabel"));
@@ -210,7 +213,7 @@ public:
         intermediateTypeLabel = new QLabel(globalParamScrollContents);
         intermediateTypeLabel->setObjectName(QString::fromUtf8("intermediateTypeLabel"));
 
-        gridLayout_2->addWidget(intermediateTypeLabel, 12, 0, 1, 1);
+        gridLayout_2->addWidget(intermediateTypeLabel, 13, 0, 1, 1);
 
         customRatio = new QRadioButton(globalParamScrollContents);
         customRatio->setObjectName(QString::fromUtf8("customRatio"));
@@ -228,7 +231,7 @@ public:
         icon.addFile(QString(themePath + "/icon/knockkey.png"), QSize(), QIcon::Normal, QIcon::Off);
         insertFrameRangeButton->setIcon(icon);
 
-        gridLayout_2->addWidget(insertFrameRangeButton, 22, 0, 1, 1);
+        gridLayout_2->addWidget(insertFrameRangeButton, 23, 0, 1, 1);
 
         QWidget::connect(insertFrameRangeButton, &QPushButton::clicked, [=](){ addRange();});
 
@@ -239,7 +242,7 @@ public:
         rfIcon.addFile(QString(themePath + "/icon/minus.png"), QSize(), QIcon::Normal, QIcon::Off);
         removeFrameRangeButton->setIcon(rfIcon);
 
-        gridLayout_2->addWidget(removeFrameRangeButton, 23, 0, 1, 1);
+        gridLayout_2->addWidget(removeFrameRangeButton, 24, 0, 1, 1);
 
         QWidget::connect(removeFrameRangeButton, &QPushButton::clicked, [=](){removeRange();});
 
@@ -254,7 +257,7 @@ public:
         customPaletteCheckBox->setObjectName(QString::fromUtf8("customPaletteCheckBox"));
         customPaletteCheckBox->setChecked(false);
 
-        gridLayout_2->addWidget(customPaletteCheckBox, 18, 0, 1, 1);
+        gridLayout_2->addWidget(customPaletteCheckBox, 19, 0, 1, 1);
 
         firstFrameSpinBox = new QSpinBox(globalParamScrollContents);
         firstFrameSpinBox->setObjectName(QString::fromUtf8("firstFrameSpinBox"));
@@ -266,7 +269,7 @@ public:
         sizePolicy3.setHeightForWidth(firstFrameSpinBox->sizePolicy().hasHeightForWidth());
         firstFrameSpinBox->setSizePolicy(sizePolicy3);
 
-        gridLayout_2->addWidget(firstFrameSpinBox, 22, 1, 1, 1);
+        gridLayout_2->addWidget(firstFrameSpinBox, 23, 1, 1, 1);
 
         initialFrames->append(firstFrameSpinBox);
 
@@ -280,7 +283,7 @@ public:
         forcePipeCheckBox = new QCheckBox(globalParamScrollContents);
         forcePipeCheckBox->setObjectName(QString::fromUtf8("forcePipeCheckBox"));
 
-        gridLayout_2->addWidget(forcePipeCheckBox, 14, 0, 1, 2);
+        gridLayout_2->addWidget(forcePipeCheckBox, 15, 0, 1, 2);
 
         intermediateTypeCombo = new QComboBox(globalParamScrollContents);
         intermediateTypeCombo->addItem(QString());
@@ -288,7 +291,7 @@ public:
         intermediateTypeCombo->addItem(QString());
         intermediateTypeCombo->setObjectName(QString::fromUtf8("intermediateTypeCombo"));
 
-        gridLayout_2->addWidget(intermediateTypeCombo, 12, 1, 1, 2);
+        gridLayout_2->addWidget(intermediateTypeCombo, 13, 1, 1, 2);
 
         widthLabel = new QLabel(globalParamScrollContents);
         widthLabel->setObjectName(QString::fromUtf8("widthLabel"));
@@ -335,12 +338,12 @@ public:
         postParamCheckBox->setChecked(true);
         postParamCheckBox->setAutoExclusive(false);
 
-        gridLayout_2->addWidget(postParamCheckBox, 17, 2, 1, 1);
+        gridLayout_2->addWidget(postParamCheckBox, 18, 2, 1, 1);
 
         paramsLabel = new QLabel(globalParamScrollContents);
         paramsLabel->setObjectName(QString::fromUtf8("paramsLabel"));
 
-        gridLayout_2->addWidget(paramsLabel, 17, 0, 1, 1);
+        gridLayout_2->addWidget(paramsLabel, 18, 0, 1, 1);
 
         widthSpinBox = new QSpinBox(globalParamScrollContents);
         widthSpinBox->setObjectName(QString::fromUtf8("widthSpinBox"));
@@ -407,7 +410,7 @@ public:
         transparencyCheckBox->setObjectName(QString::fromUtf8("transparencyCheckBox"));
         transparencyCheckBox->setChecked(true);
 
-        gridLayout_2->addWidget(transparencyCheckBox, 13, 0, 1, 2);
+        gridLayout_2->addWidget(transparencyCheckBox, 14, 0, 1, 2);
 
         lastFrameSpinBox = new QSpinBox(globalParamScrollContents);
         lastFrameSpinBox->setObjectName(QString::fromUtf8("lastFrameSpinBox"));
@@ -416,30 +419,43 @@ public:
         sizePolicy3.setHeightForWidth(lastFrameSpinBox->sizePolicy().hasHeightForWidth());
         lastFrameSpinBox->setSizePolicy(sizePolicy3);
 
-        gridLayout_2->addWidget(lastFrameSpinBox, 22, 2, 1, 1);
+        gridLayout_2->addWidget(lastFrameSpinBox, 23, 2, 1, 1);
 
         lastFrames->append(lastFrameSpinBox);
 
         bitrateLineEdit = new QLineEdit(globalParamScrollContents);
         bitrateLineEdit->setObjectName(QString::fromUtf8("bitrateLineEdit"));
 
+        imageQualitySpinbox = new QSpinBox(globalParamScrollContents);
+        imageQualitySpinbox->setObjectName(QString::fromUtf8("imageQualityEdit"));
+        imageQualitySpinbox->setRange(-1, 100);
+        imageQualitySpinbox->setValue(-1);
+
         gridLayout_2->addWidget(bitrateLineEdit, 11, 1, 1, 1);
+        gridLayout_2->addWidget(imageQualitySpinbox, 12, 1, 1, 1);
 
         setBitrateAuto = new QPushButton(globalParamScrollContents);
         setBitrateAuto->setObjectName(QString::fromUtf8("setBitrateAuto"));
 
+        setImageQualityToAuto = new QPushButton(globalParamScrollContents);
+        setImageQualityToAuto->setObjectName(QString::fromUtf8("setImageQualityToAuto"));
+
+        setImageQualityToAuto->setIcon(icon1);
         setBitrateAuto->setIcon(icon1);
         gridLayout_2->addWidget(setBitrateAuto, 11, 2, 1, 1);
+        gridLayout_2->addWidget(setImageQualityToAuto, 12, 2, 1, 1);
 
         QWidget::connect(setBitrateAuto, &QPushButton::clicked,
-                         [=](){bitrateLineEdit->setText("Auto");});
+                         [=]{bitrateLineEdit->setText("Auto");});
+        QWidget::connect(setImageQualityToAuto, &QPushButton::clicked,
+            [=]{imageQualitySpinbox->setValue(-1);});
 
         renderedFramesLabel = new QLabel(globalParamScrollContents);
         renderedFramesLabel->setObjectName(QString::fromUtf8("renderedFramesLabel"));
         sizePolicy7.setHeightForWidth(renderedFramesLabel->sizePolicy().hasHeightForWidth());
         renderedFramesLabel->setSizePolicy(sizePolicy7);
 
-        gridLayout_2->addWidget(renderedFramesLabel, 21, 0, 1, 1);
+        gridLayout_2->addWidget(renderedFramesLabel, 22, 0, 1, 1);
 
         renderLine2 = new QFrame(globalParamScrollContents);
         renderLine2->setObjectName(QString::fromUtf8("renderLine2"));
@@ -455,18 +471,23 @@ public:
         sizePolicy1.setHeightForWidth(firstFrameLabel->sizePolicy().hasHeightForWidth());
         firstFrameLabel->setSizePolicy(sizePolicy1);
 
-        gridLayout_2->addWidget(firstFrameLabel, 21, 1, 1, 1);
+        gridLayout_2->addWidget(firstFrameLabel, 22, 1, 1, 1);
 
         bitrateLabel = new QLabel(globalParamScrollContents);
         bitrateLabel->setObjectName(QString::fromUtf8("bitrateLabel"));
 
         gridLayout_2->addWidget(bitrateLabel, 11, 0, 1, 1);
 
+        imageQualityLabel = new QLabel(globalParamScrollContents);
+        imageQualityLabel->setObjectName(QString::fromUtf8("imageQualityLabel"));
+
+        gridLayout_2->addWidget(imageQualityLabel, 12, 0, 1, 1);
+
         allowParamsCheckBox = new QCheckBox(globalParamScrollContents);
         allowParamsCheckBox->setObjectName(QString::fromUtf8("allowParamsCheckBox"));
         allowParamsCheckBox->setChecked(true);
 
-        gridLayout_2->addWidget(allowParamsCheckBox, 16, 0, 1, 3);
+        gridLayout_2->addWidget(allowParamsCheckBox, 17, 0, 1, 3);
 
         fpsSpinBox = new QSpinBox(globalParamScrollContents);
         fpsSpinBox->setObjectName(QString::fromUtf8("fpsSpinBox"));
@@ -488,7 +509,7 @@ public:
         sizePolicy2.setHeightForWidth(selectPalettePathButton->sizePolicy().hasHeightForWidth());
         selectPalettePathButton->setSizePolicy(sizePolicy2);
 
-        gridLayout_2->addWidget(selectPalettePathButton, 18, 1, 1, 2);
+        gridLayout_2->addWidget(selectPalettePathButton, 19, 1, 1, 2);
 
         QWidget::connect(selectPalettePathButton, &QPushButton::clicked, [=]()mutable
                          {
@@ -861,6 +882,8 @@ public:
         renderedFramesLabel->setText(QCoreApplication::translate("exportWidget", "Frames rendered: ", nullptr));
         firstFrameLabel->setText(QCoreApplication::translate("exportWidget", "<html><head/><body><p align=\"center\">- First frame -</p></body></html>", nullptr));
         bitrateLabel->setText(QCoreApplication::translate("exportWidget", "Bitrate (kB/s):", nullptr));
+        imageQualityLabel->setText(QCoreApplication::translate("exportWidget", "Image quality:", nullptr));
+        setImageQualityToAuto->setText(QCoreApplication::translate("exportWidget", "Set to auto", nullptr));
         allowParamsCheckBox->setText(QCoreApplication::translate("exportWidget", "Export with custom parameters", nullptr));
         selectPalettePathButton->setText(QCoreApplication::translate("exportWidget", "Select palette path", nullptr));
         settingsTab->setTabText(settingsTab->indexOf(globalParam), QCoreApplication::translate("exportWidget", "General Parameters", nullptr));

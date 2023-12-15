@@ -9,7 +9,7 @@ jobs:
     runs-on: macOS-latest
     steps:
     - name: checkout sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: setup Homebrew
       shell: bash
       run: |
@@ -27,7 +27,7 @@ jobs:
         find appdir/
         mkdir -p appdir/usr/lib
         macdeployqt AnimeEffects.app
-        wget https://raw.githubusercontent.com/arl/macdeployqtfix/master/macdeployqtfix.py && chmod a+x macdeployqtfix.py
+        wget https://raw.githubusercontent.com/OpenZWave/ozw-admin/master/scripts/macdeployqtfix.py && chmod a+x macdeployqtfix.py
         ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
         zip -r AnimeEffects.zip AnimeEffects.app
         

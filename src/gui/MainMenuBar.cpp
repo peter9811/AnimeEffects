@@ -60,11 +60,11 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
     MainWindow* mainWindow = &aMainWindow;
 
-    QMenu* fileMenu = new QMenu(tr("File"), this);
+    auto fileMenu = new QMenu(tr("File"), this);
     {
-        QAction* newProject = new QAction(tr("New Project..."), this);
-        QAction* openProject = new QAction(tr("Open Project..."), this);
-        QMenu* openRecent = new QMenu(tr("Open Recent..."), this);
+        auto newProject = new QAction(tr("New Project..."), this);
+        auto openProject = new QAction(tr("Open Project..."), this);
+        auto openRecent = new QMenu(tr("Open Recent..."), this);
         {
             // Get settings
             QSettings settings;
@@ -90,15 +90,15 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
                  << eigthPath;
 
             // Path actions
-            QAction* placeholderAction = new QAction(tr("No other projects..."), this);
-            QAction* firstPathAction = new QAction(firstPath);
-            QAction* secondPathAction = new QAction(secondPath);
-            QAction* thirdPathAction = new QAction(thirdPath);
-            QAction* fourthPathAction = new QAction(fourthPath);
-            QAction* fifthPathAction = new QAction(fifthPath);
-            QAction* sixthPathAction = new QAction(sixthPath);
-            QAction* seventhPathAction = new QAction(seventhPath);
-            QAction* eigthPathAction = new QAction(eigthPath);
+            auto placeholderAction = new QAction(tr("No other projects..."), this);
+            auto firstPathAction = new QAction(firstPath);
+            auto secondPathAction = new QAction(secondPath);
+            auto thirdPathAction = new QAction(thirdPath);
+            auto fourthPathAction = new QAction(fourthPath);
+            auto fifthPathAction = new QAction(fifthPath);
+            auto sixthPathAction = new QAction(sixthPath);
+            auto seventhPathAction = new QAction(seventhPath);
+            auto eigthPathAction = new QAction(eigthPath);
             // Path addition
             // Better than before, but still not very DRY code.
             for (int x = 0; x <= 7; x += 1) {
@@ -145,23 +145,23 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             connect(seventhPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(seventhPath); });
             connect(eigthPathAction, &QAction::triggered, [=]() { mainWindow->onOpenRecentTriggered(eigthPath); });
         }
-        QAction* saveProject = new QAction(tr("Save Project"), this);
-        QAction* saveProjectAs = new QAction(tr("Save Project As..."), this);
-        QAction* closeProject = new QAction(tr("Close Project"), this);
-        QAction* exportWindow = new QAction(tr("New Export..."), this);
+        auto saveProject = new QAction(tr("Save Project"), this);
+        auto saveProjectAs = new QAction(tr("Save Project As..."), this);
+        auto closeProject = new QAction(tr("Close Project"), this);
+        auto exportWindow = new QAction(tr("Export Project"), this);
         {
             // New export action goes here...
         }
-        QMenu* exportAs = new QMenu(tr("Export As"), this);
+        auto exportAs = new QMenu(tr("(Legacy) Export Project As..."), this);
         {
             ctrl::VideoFormat gifFormat;
             gifFormat.name = "gif";
             gifFormat.label = "GIF";
             gifFormat.icodec = "ppm";
 
-            QAction* jpgs = new QAction(tr("JPEG Sequence..."), this);
-            QAction* pngs = new QAction(tr("PNG Sequence..."), this);
-            QAction* gif = new QAction(tr("GIF Animation..."), this);
+            auto jpgs = new QAction(tr("JPEG Sequence..."), this);
+            auto pngs = new QAction(tr("PNG Sequence..."), this);
+            auto gif = new QAction(tr("GIF Animation..."), this);
             connect(jpgs, &QAction::triggered, [=]() { mainWindow->onExportImageSeqTriggered("jpg"); });
             connect(pngs, &QAction::triggered, [=]() { mainWindow->onExportImageSeqTriggered("png"); });
             connect(gif, &QAction::triggered, [=]() { mainWindow->onExportVideoTriggered(gifFormat); });
@@ -170,7 +170,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             exportAs->addAction(gif);
 
             for (auto format : mVideoFormats) {
-                QAction* video = new QAction(format.label + " " + tr("Video") + "...", this);
+                auto video = new QAction(format.label + " " + tr("Video") + "...", this);
                 connect(video, &QAction::triggered, [=]() { mainWindow->onExportVideoTriggered(format); });
                 exportAs->addAction(video);
             }
@@ -201,10 +201,10 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         fileMenu->addAction(closeProject);
     }
 
-    QMenu* editMenu = new QMenu(tr("Edit"), this);
+    auto editMenu = new QMenu(tr("Edit"), this);
     {
-        QAction* undo = new QAction(tr("Undo"), this);
-        QAction* redo = new QAction(tr("Redo"), this);
+        auto undo = new QAction(tr("Undo"), this);
+        auto redo = new QAction(tr("Redo"), this);
 
         mProjectActions.push_back(undo);
         mProjectActions.push_back(redo);
@@ -216,12 +216,12 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         editMenu->addAction(redo);
     }
 
-    QMenu* projMenu = new QMenu(tr("Project"), this);
+    auto projMenu = new QMenu(tr("Project"), this);
     {
-        QAction* canvSize = new QAction(tr("Set canvas size..."), this);
-        QAction* maxFrame = new QAction(tr("Set maximum frame count..."), this);
-        QAction* loopAnim = new QAction(tr("Set animation loop..."), this);
-        QAction* setFPS = new QAction(tr("Set frames per second..."), this);
+        auto canvSize = new QAction(tr("Set canvas size..."), this);
+        auto maxFrame = new QAction(tr("Set maximum frame count..."), this);
+        auto loopAnim = new QAction(tr("Set animation loop..."), this);
+        auto setFPS = new QAction(tr("Set frames per second..."), this);
 
         mProjectActions.push_back(canvSize);
         mProjectActions.push_back(maxFrame);
@@ -239,9 +239,9 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         projMenu->addAction(setFPS);
     }
 
-    QMenu* windowMenu = new QMenu(tr("Window"), this);
+    auto windowMenu = new QMenu(tr("Window"), this);
     {
-        QAction* resource = new QAction(tr("Resource Window"), this);
+        auto resource = new QAction(tr("Resource Window"), this);
         resource->setCheckable(true);
         mShowResourceWindow = resource;
 
@@ -254,14 +254,14 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         windowMenu->addAction(resource);
     }
 
-    QMenu* optionMenu = new QMenu(tr("Option"), this);
+    auto optionMenu = new QMenu(tr("Option"), this);
     {
-        QAction* general = new QAction(tr("General Settings..."), this);
-        QAction* mouse = new QAction(tr("Mouse Settings..."), this);
-        QAction* keyBind = new QAction(tr("Key Bindings..."), this);
+        auto general = new QAction(tr("General Settings..."), this);
+        auto mouse = new QAction(tr("Mouse Settings..."), this);
+        auto keyBind = new QAction(tr("Key Bindings..."), this);
 
         connect(general, &QAction::triggered, [&](bool) {
-            GeneralSettingDialog* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+            auto generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
             QScopedPointer<GeneralSettingDialog> dialog(generalSettingsDialog);
             if (dialog->exec() == QDialog::DialogCode::Accepted) {
                 if (generalSettingsDialog->timeFormatHasChanged())
@@ -287,9 +287,9 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         optionMenu->addAction(keyBind);
     }
 
-    QMenu* helpMenu = new QMenu(tr("Help"), this);
+    auto helpMenu = new QMenu(tr("Help"), this);
     {
-        QAction* aboutMe = new QAction(tr("About AnimeEffects..."), this);
+        auto aboutMe = new QAction(tr("About AnimeEffects..."), this);
         connect(aboutMe, &QAction::triggered, [=]() {
             QMessageBox msgBox;
             msgBox.setWindowIcon(QIcon("../src/AnimeEffects.ico"));
@@ -318,27 +318,36 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             detail += tr("Qt Version: ") + qtVersion + "\n";
             detail += tr("Format Version: ") + formatVersionString + "\n";
             // Unicode Check
-            QRegExp nonAscii = QRegExp("[^\\x00-\\x7F]+");
-            QString hasUnicode = QApplication::applicationFilePath().contains(nonAscii)? "True" : "False";
-            detail += tr("Location Has Unicode: ") + hasUnicode  + "\n";
+            auto nonAscii = QRegExp("[^\\x00-\\x7F]+");
+            QString hasUnicode = QApplication::applicationFilePath().contains(nonAscii) ? "True" : "False";
+            detail += tr("Location Has Unicode: ") + hasUnicode + "\n";
             // Write Check
             QFile file(QApplication::applicationDirPath() + R"(\data\shader\TestBlurVert.glsl)");
             bool isWritable = true;
-            if (!file.open(QIODevice::WriteOnly)) { isWritable = false; }
-            else{ file.close(); }
-            QString isFolderWritable = isWritable? "True" : "False";
+            if (!file.open(QIODevice::WriteOnly)) {
+                isWritable = false;
+            } else {
+                file.close();
+            }
+            QString isFolderWritable = isWritable ? "True" : "False";
             detail += tr("Location Is Writable: ") + isFolderWritable + "\n";
             // FFmpeg Check
             util::NetworkUtil networking;
             QFileInfo ffmpeg_file;
             QString ffmpeg;
-            if (networking.os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
-            else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
-            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
-            else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
+            if (networking.os() == "win") {
+                ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
+            } else {
+                ffmpeg_file = QFileInfo("./tools/ffmpeg");
+            }
+            if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) {
+                ffmpeg = "ffmpeg";
+            } else {
+                ffmpeg = ffmpeg_file.absoluteFilePath();
+            }
             bool fExists = networking.libExists(ffmpeg, "-version");
-            QString ffmpegType = ffmpeg == "ffmpeg"? "Process" : "File";
-            QString ffmpegReach = fExists? "True" : "False";
+            QString ffmpegType = ffmpeg == "ffmpeg" ? "Process" : "File";
+            QString ffmpegReach = fExists ? "True" : "False";
             detail += tr("FFmpeg Reach Type: ") + ffmpegType + "\n";
             detail += tr(QString("FFmpeg Reachable: " + ffmpegReach).toStdString().c_str());
             msgBox.setDetailedText(detail);
@@ -347,7 +356,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             msgBox.exec();
         });
 
-        QAction* checkForUpdates = new QAction(tr("Check for Updates..."), this);
+        auto checkForUpdates = new QAction(tr("Check for Updates..."), this);
         connect(checkForUpdates, &QAction::triggered, [=]() {
             util::NetworkUtil networking;
             QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");

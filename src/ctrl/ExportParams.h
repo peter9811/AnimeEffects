@@ -295,7 +295,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         ? getFormatAsString(exportTarget::video, static_cast<int>(exParam->videoParams.format))
         : getFormatAsString(exportTarget::image, static_cast<int>(exParam->imageParams.format));
     int intermediateFormatToImage;
-    switch (exParam->videoParams.intermediateFormat) {
+    switch (static_cast<int>(exParam->videoParams.intermediateFormat)) {
     case 0:
         intermediateFormatToImage = 3;
         break;
@@ -307,6 +307,8 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     case 3:
         intermediateFormatToImage = 1;
     case 4:
+        intermediateFormatToImage = -1;
+    default:
         intermediateFormatToImage = -1;
     }
     // Special case for PPM

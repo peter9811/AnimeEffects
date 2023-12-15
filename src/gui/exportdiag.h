@@ -289,7 +289,11 @@ public:
         intermediateTypeCombo->addItem(QString());
         intermediateTypeCombo->addItem(QString());
         intermediateTypeCombo->addItem(QString());
+        intermediateTypeCombo->addItem(QString());
+        intermediateTypeCombo->addItem(QString());
         intermediateTypeCombo->setObjectName(QString::fromUtf8("intermediateTypeCombo"));
+
+        intermediateTypeCombo->setCurrentIndex(4);
 
         gridLayout_2->addWidget(intermediateTypeCombo, 13, 1, 1, 2);
 
@@ -863,6 +867,7 @@ public:
         intermediateTypeCombo->setItemText(1, QCoreApplication::translate("exportWidget", "BMP", nullptr));
         intermediateTypeCombo->setItemText(2, QCoreApplication::translate("exportWidget", "JPG", nullptr));
         intermediateTypeCombo->setItemText(3, QCoreApplication::translate("exportWidget", "JPEG", nullptr));
+        intermediateTypeCombo->setItemText(4, QCoreApplication::translate("exportWidget", "PPM", nullptr));
         widthLabel->setText(QCoreApplication::translate("exportWidget", "Width: ", nullptr));
         oneToOneRatio->setText(QCoreApplication::translate("exportWidget", "One-to-one", nullptr));
         setWidthNative->setText(QCoreApplication::translate("exportWidget", "Set to native", nullptr));

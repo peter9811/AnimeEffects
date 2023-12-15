@@ -42,7 +42,7 @@ enum class availableImageFormats{
     bmp, jpeg, jpg, png, ppm, xbm, xpm, tiff, webp
 };
 enum class availableIntermediateFormats {
-    png, bmp, jpg
+    png, bmp, jpg, jpeg, ppm
 };
 enum class pixelFormats{
     Auto, yuv420p, yuva420p, rgb24, rgba, bgr24, bgra, gray
@@ -69,7 +69,7 @@ QStringList const imageFormats {
     "bmp", "jpeg", "jpg", "png", "ppm", "xbm", "xpm", "tiff", "webp"
 };
 QStringList const intermediateImageFormats {
-    "PNG", "BMP", "JPG"
+    "PNG", "BMP", "JPG", "JPEG", "PPM"
 };
 QStringList const pxFormats {
     "Auto", "yuv420p", "yuva420p", "rgb24", "rgba", "bgr24", "bgra", "gray"
@@ -191,8 +191,10 @@ inline int getFormatAsInt(exportTarget target, const QString& format) {
 }
 
 inline bool formatAllowsTransparency(const QString& format) {
-    QStringList formatsWithTransparency{"apng", "gif", "png", "webp", "webm", "tiff"};
-    return formatsWithTransparency.contains(format) || formatsWithTransparency.contains(format.toUpper());
+    QStringList formatsWithTransparency{
+        "apng", "gif", "png", "webp", "webm", "tiff"
+    };
+    return formatsWithTransparency.contains(format.toLower());
 }
 inline bool pixelFormatAllowsTransparency(const QString& format) {
     QStringList pxWithTransparency{"Auto", "yuva420p", "rgba", "bgra"};
@@ -208,42 +210,44 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     QStringList errors;
     QStringList errorDetail;
     // For convenience
-    GeneralParams params(exParam->generalParams);
-
-    if (params.exportHeight == 0) {
+    auto* params = &exParam->generalParams;
+    if (params->exportHeight == 0) {
         errors.append(tr("Export height is zero"));
         errorDetail.append(tr("Export height was set to zero, please increase the resolution."));
     }
-    if (params.exportWidth == 0) {
+    if (params->exportWidth == 0) {
         errors.append(tr("Export width is zero"));
         errorDetail.append(tr("Export width was set to zero, please increase the resolution."));
     }
-    if (params.exportHeight % 2 != 0) {
-        warnings.append(tr("Export height contains an odd number."));
-        warningDetail.append(
-            tr("Height is ") + QString::number(params.exportHeight) + tr(", please consider changing it to ") +
-            QString::number(params.exportHeight + 1) + tr(" or to ") + QString::number(params.exportHeight - 1) +
-            tr(" to avoid potential issues.")
+    // Generic indivisable by two resolution error for all video targets,
+    // as I don't wanna go through each format to check :P
+    if (params->exportHeight % 2 != 0 && exParam->exportType == exportTarget::video) {
+        errors.append(tr("Export height contains an odd number."));
+        errorDetail.append(
+            tr("Height is ") + QString::number(params->exportHeight) + tr(", please change it to ") +
+            QString::number(params->exportHeight + 1) + tr(" or to ") + QString::number(params->exportHeight - 1) +
+            tr(" to continue with the export, as animation exports do not support resultions that cannot be "
+               "divided by two.")
         );
     }
-    if (params.exportWidth % 2 != 0) {
-        warnings.append(tr("Export width contains an odd number."));
-        warningDetail.append(
-            tr("Width is ") + QString::number(params.exportWidth) + tr(", please consider changing it to ") +
-            QString::number(params.exportWidth + 1) + tr(" or to ") + QString::number(params.exportWidth - 1) +
-            tr(" to avoid potential issues.")
+    if (params->exportWidth % 2 != 0 && exParam->exportType == exportTarget::video) {
+        errors.append(tr("Export width contains an odd number."));
+        errorDetail.append(
+            tr("Width is ") + QString::number(params->exportWidth) + tr(", please change it to ") +
+            QString::number(params->exportWidth + 1) + tr(" or to ") + QString::number(params->exportWidth - 1) +
+            tr(" to continue with the export, as animation exports do not support resultions that cannot be "
+               "divided by two.")
         );
     }
-    if (params.fps == 0) {
+    if (params->fps == 0) {
         errors.append(tr("Export FPS is equal to zero."));
         errorDetail.append(tr("Target FPS was set to zero, cannot proceed with a framerate lower than 1."));
     }
-
-    double a = static_cast<double>(params.nativeHeight) / static_cast<double>(params.nativeWidth);
-    double b = static_cast<double>(params.exportHeight) / static_cast<double>(params.exportWidth);
+    double a = static_cast<double>(params->nativeHeight) / static_cast<double>(params->nativeWidth);
+    double b = static_cast<double>(params->exportHeight) / static_cast<double>(params->exportWidth);
     double epsilon = std::numeric_limits<double>::epsilon();
     bool aspectRatioKindaEqual = fabs(a - b) <= (fabs(a) > fabs(b) ? fabs(b) : fabs(a)) * epsilon;
-    if (params.aspectRatio == keep && !aspectRatioKindaEqual) {
+    if (params->aspectRatio == keep && !aspectRatioKindaEqual) {
         warnings.append(tr("Target aspect ratio is not met"));
         warningDetail.append(
             tr("The aspect ratio was set to keep but the aspect ratio of the export is very "
@@ -251,122 +255,130 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
                " the resolution while having \"Keep aspect ratio\" selected.")
         );
     }
-    if (!params.exportDirectory.exists()) {
+    if (!params->exportDirectory.exists()) {
         errors.append(tr("Target directory could not be found"));
-        errorDetail.append(tr("The directory \"") + params.osExportTarget + tr("\" could not be found."));
+        errorDetail.append(tr("The directory \"") + params->osExportTarget + tr("\" could not be found."));
     }
-    QFileInfo exDir(params.exportDirectory.absolutePath());
+    QFileInfo exDir(params->exportDirectory.absolutePath());
     if (!exDir.isWritable()) {
         errors.append(tr("Target directory is protected"));
         errorDetail.append(
-            tr("The directory \"") + params.osExportTarget +
+            tr("The directory \"") + params->osExportTarget +
             tr("\" could not be written into as it's protected or otherwise inaccessible, "
                "if you wish to save onto it please launch AnimeEffects as admin.")
         );
     }
-    if (params.fps > 10 && params.nativeFPS < 10 && params.fps != 0) {
+    if (params->fps > 10 && params->nativeFPS < 10 && params->fps != 0) {
         warnings.append(tr("Target framerate is low"));
         warningDetail.append(tr(
             "The target framerate for exporting is generally considered very low for "
             "exporting animations and does not to seem intended as the project's fps is higher, consider raising it."
         ));
     }
-    if (params.bitrate > 5 * 1000) { // Recommended for standard 720p encoding at 24 fps (5 Mbps)
+    if (params->bitrate > 5 * 1000) { // Recommended for standard 720p encoding at 24 fps (5 Mbps)
         warnings.append(tr("Target bitrate is low"));
         warningDetail.append(
             tr("The target bitrate for encoding will generate a low quality export, we "
                "recommend letting FFmpeg decide for you unless you know what you're doing.")
         );
     }
-    if(params.bitrate == -1) {
+    if(params->bitrate == -1) {
         warnings.append(tr("Target bitrate invalid"));
         warningDetail.append(
             tr("The target bitrate for encoding was invalid in some way, we have changed it to automatic so the"
-               " export process may continue without issues.")
+               " export process may continue without issues should you decide to continue with the export.")
         );
-        params.bitrate = 0;
+        params->bitrate = 0;
     }
 
     QString format = exParam->exportType == exportTarget::video
         ? getFormatAsString(exportTarget::video, static_cast<int>(exParam->videoParams.format))
         : getFormatAsString(exportTarget::image, static_cast<int>(exParam->imageParams.format));
-    QString intermediateFormat =
-        getFormatAsString(exportTarget::image, static_cast<int>(exParam->videoParams.intermediateFormat));
+    int intermediateFormatToImage;
+    switch (exParam->videoParams.intermediateFormat) {
+    case 0:
+        intermediateFormatToImage = 3;
+        break;
+    case 1:
+        intermediateFormatToImage = 0;
+        break;
+    case 2:
+        intermediateFormatToImage = 2;
+    case 3:
+        intermediateFormatToImage = 1;
+    case 4:
+        intermediateFormatToImage = -1;
+    }
+    // Special case for PPM
+    QString intermediateFormat = intermediateFormatToImage == -1?
+        "ppm":
+        getFormatAsString(exportTarget::image, intermediateFormatToImage);
     QString pixelFormat = getFormatAsString(exportTarget::pxFmt, static_cast<int>(exParam->videoParams.pixelFormat));
 
-    if (params.allowTransparency && !formatAllowsTransparency(format)) {
+    if (params->allowTransparency && !formatAllowsTransparency(format)) {
         warnings.append(tr("Export target does not support transparency"));
         warningDetail.append(
             tr("Export with transparency was marked but the selected format does not "
                "support an alpha layer, this means that if the export proceeds it will not have transparency.")
         );
     }
-    if (params.allowTransparency && !pixelFormatAllowsTransparency(pixelFormat)) {
+    if (params->allowTransparency && !pixelFormatAllowsTransparency(pixelFormat)) {
         warnings.append(tr("Pixel format does not support transparency"));
         warningDetail.append(
             tr("Export with transparency was marked but the selected pixel format does not "
                "support alpha channels, this means that if the export proceeds it will not have transparency.")
         );
     }
-    if (!params.allowTransparency && pixelFormatAllowsTransparency(pixelFormat) && formatAllowsTransparency(format) &&
+    if (pixelFormat != "auto" && pixelFormat != "Auto" && !params->allowTransparency &&
+        pixelFormatAllowsTransparency(pixelFormat) && formatAllowsTransparency(format) &&
         (exParam->exportType != exportTarget::video || formatAllowsTransparency(intermediateFormat))) {
         warnings.append(tr("Forced pixel format with transparency"));
         warningDetail.append(
-            tr("A specific pixel format with an alpha channel, with all relevant formats having support "
-               "for transparency but the option for a transparent export was not selected, please "
-               "select it or change your format to one without the 'a' in it to avoid unintentional "
-               "transparency.")
+            tr("A pixel and target format that allow for alpha layers were selected but the option for allowing "
+               "transparents export was not, please select it or change your format to one without the 'a' in it to "
+               "avoid unintentional transparency.")
         );
     }
-    if (exParam->exportType == exportTarget::video) {
-        if (params.allowTransparency && params.forcePipe && format == "gif") {
-            warnings.append(tr("Export pipe does not support transparency"));
-            warningDetail.append(
-                tr("Forcing a piped export will make FFmpeg immediately begin the encoding "
-                   "process with no intermediate types, this makes it so we cannot gather the necessary components to "
-                   "allow for transparency for the gif format.")
-            );
-        }
-        if (params.allowTransparency && !formatAllowsTransparency(intermediateFormat)) {
-            warnings.append(tr("Intermediate export target does not support transparency"));
-            warningDetail.append(tr(
-                "Export with transparency was marked but the selected intermediate format "
-                "does not support an alpha layer, this means that if the export proceeds it will not have transparency."
-            ));
-        }
+    if (exParam->exportType == exportTarget::video &&
+        params->allowTransparency && !formatAllowsTransparency(intermediateFormat)) {
+        warnings.append(tr("Intermediate export target does not support transparency"));
+        warningDetail.append(tr(
+        "Export with transparency was marked but the selected intermediate format "
+        "does not support an alpha layer, this means that if the export proceeds it will not have transparency."
+        ));
     }
-    if (params.useCustomPalette && params.palettePath.exists()) {
-        if (!params.palettePath.isReadable()) {
+    if (params->useCustomPalette && params->palettePath.exists()) {
+        if (!params->palettePath.isReadable()) {
             errors.append(tr("Selected palette is unreadable"));
             errorDetail.append(
-                tr("The palette located at \"" + params.palettePath.absolutePath() +
+                tr("The palette located at \"" + params->palettePath.absolutePath() +
                    tr("\" could not be read, please ensure it's a valid file."))
             );
         }
-        QFileInfo customPalette(params.palettePath.absolutePath());
+        QFileInfo customPalette(params->palettePath.absolutePath());
         if (!customPalette.suffix().contains(QRegExp("(png|\\.png)"))) {
             errors.append(tr("Selected palette format unsupported"));
             errorDetail.append(
-                tr("The palette located at \"" + params.palettePath.absolutePath() +
+                tr("The palette located at \"" + params->palettePath.absolutePath() +
                    tr("\" seems to not be a PNG file, please convert it into one."))
             );
         }
-    } else if (!params.palettePath.exists()) {
+    } else if (!params->palettePath.exists()) {
         errors.append(tr("Selected palette does not exist"));
         errorDetail.append(
-            tr("The palette referenced at \"" + params.palettePath.absolutePath() +
+            tr("The palette referenced at \"" + params->palettePath.absolutePath() +
                tr("\" does not exist or is otherwise inaccessible."))
         );
     }
-    if (params.useCustomParam) {
-        if (params.customPostCommand.isEmpty() && params.customInterCommand.isEmpty()) {
+    if (params->useCustomParam) {
+        if (params->customPostCommand.isEmpty() && params->customInterCommand.isEmpty()) {
             warnings.append(tr("Param field is empty"));
             warningDetail.append(
                 tr("Export with custom params was selected but both command fields are empty, "
                    "the export process can continue without them should you choose to do so.")
             );
-        } else if (params.customPostCommand.isEmpty() && params.usePost || params.customInterCommand.isEmpty() && params.usePost) {
-            if (params.customPostCommand.isEmpty()) {
+        } else if (params->customPostCommand.isEmpty() && params->usePost || params->customInterCommand.isEmpty() && params->usePost) {
+            if (params->customPostCommand.isEmpty()) {
                 warnings.append(
                     tr("Export with custom post parameter was selected but no command was "
                        "given.")
@@ -380,7 +392,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
                 warningDetail.append(tr("Custom intermediate parameter not found, proceeding without it."));
             }
         }
-        if (!params.useIntermediate && !params.usePost) {
+        if (!params->useIntermediate && !params->usePost) {
             warnings.append(tr("Custom parameters disabled"));
             warningDetail.append(
                 tr("Export with custom params was selected but both command types are disabled, "
@@ -389,10 +401,10 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         }
     }
 
-    if (params.exportRange.isEmpty() ||
-        params.exportRange.size() == 1 && params.exportRange.first().firstFrame == 0 &&
-            params.exportRange.first().lastFrame == 0 ||
-        params.exportRange.first().firstFrame - params.exportRange.first().lastFrame >= 0) {
+    if (params->exportRange.isEmpty() ||
+        params->exportRange.size() == 1 && params->exportRange.first().firstFrame == 0 &&
+            params->exportRange.first().lastFrame == 0 ||
+        params->exportRange.first().firstFrame - params->exportRange.first().lastFrame >= 0) {
         errors.append(tr("Export range is empty"));
         errorDetail.append(
             tr("The export range is either empty, set to zero or lasts less than one frame,"
@@ -400,48 +412,49 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         );
     }
 
-    if (params.exportRange.size() > 1) {
+    if (params->exportRange.size() > 1) {
         int x = 0;
-        for (auto exportRange : params.exportRange) {
+        for (auto exportRange : params->exportRange) {
             if (exportRange.firstFrame > exportRange.lastFrame) {
                 warnings.append(tr("Export range at index ") + QString::number(x) + tr(" is invalid, swapping."));
                 int firstFrame = exportRange.lastFrame;
                 int lastFrame = exportRange.firstFrame;
-                params.exportRange[x].firstFrame = firstFrame;
-                params.exportRange[x].lastFrame = lastFrame;
+                params->exportRange[x].firstFrame = firstFrame;
+                params->exportRange[x].lastFrame = lastFrame;
                 warningDetail.append(tr("Swapped frames from range at index ") + QString::number(x) + tr("."));
             }
             if (exportRange.firstFrame == exportRange.lastFrame) {
                 warnings.append(tr("Export range at index " + QString::number(x) + tr(" is the same, removing.")));
-                params.exportRange.removeAt(x);
+                params->exportRange.removeAt(x);
                 x--; // To compensate for the deletion range
                 warningDetail.append(tr("Removing zero frame range at ") + QString::number(x) + tr("."));
             }
             x++;
         }
     }
-    for (auto range : params.exportRange) {
+    // Get all frames that were selected for export
+    for (auto range : params->exportRange) {
         int rangeLow = range.firstFrame;
         while (rangeLow < range.lastFrame + 1) {
-            params.framesToBeExported.push_back(rangeLow);
+            params->framesToBeExported.push_back(rangeLow);
             rangeLow++;
         }
     }
     // Hopefully remove duplicates
-    std::sort(params.framesToBeExported.begin(), params.framesToBeExported.end());
-    params.framesToBeExported.erase(
-        std::unique(params.framesToBeExported.begin(), params.framesToBeExported.end()), params.framesToBeExported.end()
+    std::sort(params->framesToBeExported.begin(), params->framesToBeExported.end());
+    params->framesToBeExported.erase(
+        std::unique(params->framesToBeExported.begin(), params->framesToBeExported.end()), params->framesToBeExported.end()
     );
     // Check if the user is exporting all frames
-    int summedNative = params.nativeFrameRange.firstFrame + params.nativeFrameRange.lastFrame;
-    int summedExport = params.framesToBeExported.first() + params.framesToBeExported.last();
+    int summedNative = params->nativeFrameRange.firstFrame + params->nativeFrameRange.lastFrame;
+    int summedExport = params->framesToBeExported.first() + params->framesToBeExported.last();
     if (summedNative == summedExport) {
-        params.exportAllFrames = true;
+        params->exportAllFrames = true;
     }
     // If only one range check if it's a continuous export
-    if (params.exportRange.size() == 1 && params.exportRange.first().firstFrame == 0 &&
-        params.exportRange.first().lastFrame != params.nativeFrameRange.lastFrame) {
-        params.exportToLast = true;
+    if (params->exportRange.size() == 1 && params->exportRange.first().firstFrame == 0 &&
+        params->exportRange.first().lastFrame != params->nativeFrameRange.lastFrame) {
+        params->exportToLast = true;
     }
     QSettings settings;
     QVariant customEncoderWarning = settings.value("export_custom_encoder_warning_shown");
@@ -462,8 +475,8 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
                "learn about the features, advantages and disadvantages of your selected encoder before using it.")
         );
     }
-    // Sync changes made by the error handler
-    exParam->generalParams = params;
+    // Should be synced, but just in case I'll leave this here to easily revert it.
+    //exParam->generalParams = *params;
     bool proceedToExport = true;
     bool shouldDisplayErrors = !errors.isEmpty() || !warnings.isEmpty();
     if (shouldDisplayErrors) {
@@ -479,16 +492,16 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
                                : tr("You may ignore the errors and proceed should you choose to, click \"Ok\" "
                                     "to export anyway or \"Cancel\" if you wish to cancel the export.");
         QString textMsg =
-            tr("Some issues have been found while exporting, you can review them down bellow:\nCritical errors: ") +
-            QString::number(errors.size()) + tr(" | Warnings: ") + QString::number(warnings.size()) + "\n-----\n" +
-            conMsg;
+            tr("Some issues have been found while exporting, you can review them down bellow:\n") +
+               "-----\n" + tr("Critical errors: ") + QString::number(errors.size()) + tr(" | Warnings: ") +
+                   QString::number(warnings.size()) + "\n-----\n" + conMsg;
         msg.setText(textMsg);
         QString detMsg = "-----\n" + tr("Critical errors (" + QString::number(errors.size()) + "): \n");
         if (!errors.isEmpty()) {
             int x = 0;
             for (const auto& err : errors) {
                 detMsg.append("-----\n" + tr("Error: ") + err + "\n");
-                detMsg.append(tr("Error detail: ") + errorDetail[x] + "\n");
+                detMsg.append("-\n"+ tr("Error detail: ") + errorDetail[x] + "\n");
                 x++;
             }
         } else {
@@ -499,8 +512,8 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         if (!warnings.isEmpty()) {
             int x = 0;
             for (const auto& warn : warnings) {
-                detMsg.append(tr("Warning: ") + warn + "\n");
-                detMsg.append(tr("Warning detail: ") + warningDetail[x] + "\n");
+                detMsg.append("-----\n" + tr("Warning: ") + warn + "\n");
+                detMsg.append("-\n" + tr("Warning detail: ") + warningDetail[x] + "\n");
                 x++;
             }
         } else {
@@ -647,6 +660,8 @@ inline bool export_errored(const exportResult& result) {
     case ExportFailedToStart: case ExportCrashed: case ExportTimedout: case ExportReadError: case ExportWriteError:
     case ExportUnknownError: case ExportArgError:
         return true;
+    case ExportOngoing: case ExportSuccess:
+        return false;
     default:
         return false;
     }
@@ -657,7 +672,7 @@ inline bool export_errored(const exportResult& result) {
         QString argument;
         int tick = 0;
         exportResult result = ExportOngoing;
-        QStringList log; // Shown in a messagebox after export
+        QStringList log; // TODO: Shown in a messagebox after export
         QStringList errorLog; // Same as above
     };
     inline bool isAuto(const QString& str){
@@ -788,6 +803,7 @@ public:
     bool mOverwriteConfirmation;
     QImage currentFrame;
     QString dirAddress;
+    std::string formatChar;
     QString imageSuffix;
 
     enum ResultType { Success, Cancelled, Errored, Queued, Ongoing };
@@ -810,8 +826,15 @@ public:
                 }
             }
             auto exitStatus = mProcess->exitStatus();
+            qDebug("------------");
             qDebug() << "Exit status: " << exitStatus;
             qDebug() << "Exit code: " << mProcess->exitCode();
+            qDebug() << "Exit log: " << export_obj.log;
+            qDebug() << "Exit error log: " << export_obj.errorLog;
+            qDebug() << "Export object result: " << export_obj.result;
+            qDebug() << "Argument: " << export_obj.argument;
+            qDebug("------------");
+
             mProcess.reset();
             return exitStatus == QProcess::NormalExit;
         }
@@ -867,10 +890,12 @@ public:
         mDigitCount = 0;
         mOriginTimeInfo = mProject.currentTimeInfo();
         exportSize = QSize(mParam.generalParams.exportWidth, mParam.generalParams.exportHeight);
+        formatChar = mParam.exportType == exportTarget::image?
+            imageFormats[static_cast<int>(mParam.imageParams.format)].toUpper().toStdString():
+            intermediateImageFormats[static_cast<int>(mParam.videoParams.intermediateFormat)].toStdString();
         // Value initialization
         mFrameCount = mParam.generalParams.framesToBeExported.count();
         mSaveAsImage = mParam.exportType == exportTarget::image;
-        //TODO: Move this to MainWindow.cpp
         mParam.generalParams.fileName = QFileInfo(mParam.generalParams.exportFileName.absolutePath()).baseName();
         int ffc = mFrameCount;
         mDigitCount = static_cast<int>(trunc(log10(ffc))) + 1;
@@ -928,8 +953,8 @@ public:
         }
         else {
             rString = sCenterL + tr("Frame rendered: ") + QString::number(mIndex) + "/" +
-                QString::number(mFrameCount) + " | " + tr("Frame encoded: ") + QString::number(*encodedFrame) + "/" +
-                QString::number(mFrameCount) + sCenterR;
+                QString::number(mFrameCount) + " | " + tr("Frame encoded: ") + QString::number(*encodedFrame) +
+                    "/" + QString::number(mFrameCount) + sCenterR;
         }
         return rString;
     }
@@ -954,53 +979,45 @@ public:
         aPath = filePath;
         return true;
     }
-    bool write(const QByteArray& bytes) const {
+    void write(const QByteArray& bytes) const {
         XC_ASSERT(mProcess);
-        if(mProcess->write(bytes) == -1) {
-            return false;
-        }
-        return true;
+        mProcess->write(bytes);
     }
 
-    bool exportImage(const QImage& aFboImage, int aIndex) {
+    void exportImage(const QImage& aFboImage, int aIndex) {
         if (mSaveAsImage) {
             QFileInfo savePath;
             if (!decideImagePath(aIndex, savePath)) {
                 export_obj.errorLog.append("Unable to get image path");
-                return false;
+                export_obj.errorLog.append("Params : " + QString::number(aIndex) + " | " + savePath.absolutePath());
+                export_obj.result = ffmpeg::ExportWriteError;
+                return;
             }
             bool saveImage = aFboImage.save(
-                savePath.filePath(),
-                imageFormats[static_cast<int>(mParam.imageParams.format)].toUpper().toStdString().c_str(),
-                mParam.generalParams.imageExportQuality
+                savePath.filePath(), formatChar.c_str(), mParam.generalParams.imageExportQuality
             );
             if (!saveImage){
                 export_obj.errorLog.append("Unable to save image");
-                return false;
+                export_obj.errorLog.append("Params :" + savePath.filePath() + " | " + QString::fromStdString(formatChar) + "| " +
+                    QString::number(mParam.generalParams.imageExportQuality));
+                export_obj.result = ffmpeg::ExportWriteError;
             }
         }
         else {
             QByteArray byteArray;
             QBuffer buffer(&byteArray);
             buffer.open(QIODevice::ReadWrite);
-            if(!aFboImage.save(&buffer,
-                intermediateImageFormats[static_cast<int>(mParam.videoParams.intermediateFormat)].toStdString().c_str(),
-                mParam.generalParams.imageExportQuality)) {
+            if(!aFboImage.save(&buffer, formatChar.c_str(), mParam.generalParams.imageExportQuality)) {
                 buffer.close();
-                return false;
+                export_obj.errorLog.append("Unable to save image to buffer");
+                export_obj.errorLog.append("Params: " + QString::fromStdString(formatChar) + " | " +
+                    QString::number(mParam.generalParams.imageExportQuality));
+                export_obj.result = ffmpeg::ExportWriteError;
+                return;
             }
             buffer.close();
-            if(!write(byteArray)) {
-                export_obj.errorLog.append("Failed to write to FFmpeg proccess.\n");
-                export_obj.result = ffmpeg::ExportWriteError;
-                return false;
-            }
-            if (export_errored(export_obj.result)) {
-                export_obj.errorLog.append("FFmpeg error occurred.\n");
-                return false;
-            }
+            write(byteArray);
         }
-        return true;
     }
 
     bool updateTime(core::TimeInfo& aDst) {
@@ -1031,7 +1048,9 @@ public:
         if (!updateTime(timeInfo)) {
             return false;
         }
-        if (mParam.generalParams.framesToBeExported.contains(timeInfo.frame.get())){
+        // Should hopefully be faster to just check the first condition, thus saving some time.
+        if (mParam.generalParams.exportAllFrames ||
+            mParam.generalParams.framesToBeExported.contains(timeInfo.frame.get())){
             // begin rendering
             gl::Global::makeCurrent();
             gl::Global::Functions& ggl = gl::Global::functions();
@@ -1089,9 +1108,7 @@ public:
                 // flush
                 ggl.glFlush();
                 // export
-                if (!exportImage(outImage, currentIndex)) {
-                    return false;
-                }
+                exportImage(outImage, currentIndex);
             }
         }
         return true;
@@ -1123,13 +1140,30 @@ public:
 
         while (true) {
             if (mCancelled) {
+                qDebug("Export cancelled");
                 exportResult.returnStr = "Export cancelled";
                 exportResult.resultType = Cancelled;
                 finish([=]()->bool { return true; });
                 widget->deleteLater();
                 // Clean-up
                 if(!mSaveAsImage) {
-                    QFile(mParam.generalParams.osExportTarget).deleteLater();
+                    QFile(mParam.generalParams.osExportTarget).remove();
+                }
+                else {
+                    QDir(
+                        mParam.generalParams.exportDirectory.absolutePath() + "/" + mParam.generalParams.fileName
+                        ).removeRecursively();
+                }
+                return exportResult;
+            }
+            if (export_errored(export_obj.result)) {
+                qDebug("Export errored");
+                export_obj.errorLog.append("FFmpeg error detected, stopping render.");
+                finish([=]()->bool { return true; });
+                widget->deleteLater();
+                // Clean-up
+                if(!mSaveAsImage) {
+                    QFile(mParam.generalParams.osExportTarget).remove();
                 }
                 else {
                     QDir(
@@ -1182,12 +1216,19 @@ public:
         mProcess.reset(new QProcess(nullptr));
         mProcess->setProcessChannelMode(QProcess::MergedChannels);
         auto process = mProcess.data();
+
         mProcess->connect(process, &QProcess::readyRead, [=] {
             if (this->mProcess) {
                 export_obj.log.push_back(QString(this->mProcess->readAll().data()));
                 QString lastLog = export_obj.log.last();
-                QRegularExpression rx("frame=(\\d+)");
-                *encodedFrame = rx.match(lastLog).captured(1).toInt();
+                if(lastLog.contains("Conversion failed!") || lastLog.contains("Error")) {
+                    export_obj.result = ffmpeg::ExportArgError;
+                    mCancelled = true;
+                }
+                else if(lastLog.contains("frame")) {
+                    QRegularExpression rx(R"(frame\s*=\s*(\d+))");
+                    *encodedFrame = rx.match(lastLog).captured(1).toInt();
+                }
             }
         });
 
@@ -1201,9 +1242,14 @@ public:
             return false;
         });
         mProcess->connect(
-            process,
-            util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished),
-            [=](int, QProcess::ExitStatus) {export_obj.result = ffmpeg::ExportSuccess; }
+            process, util::SelectArgs<int, QProcess::ExitStatus>::from(&QProcess::finished),
+            [=](int exitStatus, QProcess::ExitStatus) {
+                if(exitStatus == 0)
+                    export_obj.result = ffmpeg::ExportSuccess;
+                else {
+                    export_obj.result = ffmpeg::ExportCrashed;
+                }
+            }
         );
 
         QStringList arguments = aArguments.split(' ');
@@ -1229,10 +1275,11 @@ inline Exporter::Exporter(
     mSaveAsImage(false),
     mOverwriteConfirmation(false) {}
 inline Exporter::~Exporter() {
-        finish([=]{return true;});
-        // kill buffer
-        gl::Global::makeCurrent();
-        destroyFramebuffers();
+    // Finalize
+    finish([=]{return true;});
+    // Kill buffer
+    gl::Global::makeCurrent();
+    destroyFramebuffers();
 }
 }
 #endif // ANIMEEFFECTS_EXPORTPARAMS_H

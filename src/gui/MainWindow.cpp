@@ -948,11 +948,12 @@ void updateSettings(QVariant *var, QSettings *settings, const QStringList& value
 }
 
 void exportProject(exportParam& exParam, core::Project* mCurrent, QDialog* widget){
-    qDebug("Exporting");
+    qDebug("Creating FFmpeg object");
     auto* ffmpeg = new ffmpeg::ffmpegObject();
     projectExporter::Exporter exporter(*mCurrent, widget, exParam, *ffmpeg);
     // If piped build piped argument, TODO is to account for this
     ffmpeg->argument = ffmpeg::buildPipedArgument(exParam, mCurrent->attribute().loop());
+    qDebug("FFmpeg object created, rendering...");
     exporter.renderAndExport();
     //TODO: Implement with ExportParams.h
 }
@@ -999,7 +1000,6 @@ void MainWindow::onExportTriggered() {
         }
         ffCheck.setValue(false);
     }
-
     // Initialize export diag
     exporting = true;
     // Avoid weird bugs
@@ -1011,7 +1011,6 @@ void MainWindow::onExportTriggered() {
     // Initialize gpDiag
     gpDiag->setAttribute(Qt::WA_DeleteOnClose,true);
     gpDiag->setParent(exportWidget, Qt::Window);
-
     // Initialize export and general parameters
     auto* exParam = new exportParam();
     GeneralParams genParam;
@@ -1022,7 +1021,6 @@ void MainWindow::onExportTriggered() {
     frameExportRange fer;
     fer.lastFrame = mCurrent->attribute().maxFrame();
     genParam.nativeFrameRange = fer;
-
     // Get generics
     QVariant aspectRatioV = settings.value("export_aspect_ratio");
     if(!aspectRatioV.isValid()) { aspectRatioV.setValue(1); } // Aspect ratio = keep
@@ -1034,20 +1032,29 @@ void MainWindow::onExportTriggered() {
     QVariant allowPostParamV = settings.value("export_allow_param_post");
     QVariant useCustomPaletteV = settings.value("export_custom_palette");
     QVariant forcePipeV = settings.value("export_force_piped");
-
-    int *aspectRatio = new int; int *intermediateType = new int;
-    bool *allowTransparency = new bool; bool *allowCustomParam = new bool; bool *allowInterParam = new bool;
-    bool *allowPostParam = new bool; bool *useCustomPalette = new bool; bool *forcePipe = new bool;
-
-    QVector<QVariant *> intValues { &aspectRatioV, &intermediateTypeV };
-    QVector<int *> intVariables{ aspectRatio, intermediateType };
+    // Initialize pointers to generics
+    auto* aspectRatio = new int;
+    auto intermediateType = new int;
+    auto allowTransparency = new bool;
+    auto allowCustomParam = new bool;
+    auto allowInterParam = new bool;
+    auto allowPostParam = new bool;
+    auto useCustomPalette = new bool;
+    auto forcePipe = new bool;
+    // Gather initialized pointers into a vector
+    QVector<QVariant *> intValues {
+        &aspectRatioV, &intermediateTypeV
+    };
+    QVector<int *> intVariables {
+        aspectRatio, intermediateType
+    };
     QVector<QVariant *> boolValues {
         &allowTransparencyV, &allowCustomParamV, &allowInterParamV, &allowPostParamV, &useCustomPaletteV, &forcePipeV
     };
     QVector<bool *> boolVariables {
         allowTransparency, allowCustomParam, allowInterParam, allowPostParam, useCustomPalette, forcePipe
     };
-
+    // Loop through the vectors and initialize their values
     int x = 0;
     for(auto variant : intValues){
         if(!variant->isValid()){
@@ -1066,9 +1073,7 @@ void MainWindow::onExportTriggered() {
         *boolVariables[x] = variant->toBool();
         x++;
     }
-
     // Get formats
-
     QVariant pixelFormatV = settings.value("export_pixel_format");
     QVariant aviEncV = settings.value("export_avi_encoder");
     QVariant mkvEncV = settings.value("export_mkv_encoder");
@@ -1081,7 +1086,7 @@ void MainWindow::onExportTriggered() {
     movEncoders movEncoder;
     mp4Encoders mp4Encoder;
     webmEncoders webmEncoder;
-
+    // Loop through the vectors and initialize their values
     QVector<QVariant *> formats {
         &pixelFormatV, &aviEncV, &mkvEncV, &movEncV, &mp4EncV, &webmEncV
     };
@@ -1091,13 +1096,13 @@ void MainWindow::onExportTriggered() {
             settings.sync();
         }
     }
+    // Cast the values gathered into an enum for the corresponding value
     pixelFormat = static_cast<pixelFormats>(getFormatAsInt(exportTarget::pxFmt, pixelFormatV.toString()));
     aviEncoder = static_cast<aviEncoders>(getFormatAsInt(exportTarget::aviEnc, aviEncV.toString()));
     mkvEncoder = static_cast<mkvEncoders>(getFormatAsInt(exportTarget::mkvEnc, mkvEncV.toString()));
     movEncoder = static_cast<movEncoders>(getFormatAsInt(exportTarget::movEnc, movEncV.toString()));
     mp4Encoder = static_cast<mp4Encoders>(getFormatAsInt(exportTarget::mp4Enc, mp4EncV.toString()));
     webmEncoder = static_cast<webmEncoders>(getFormatAsInt(exportTarget::webmEnc, webmEncV.toString()));
-
     // Get custom parameters
     QVariant customParamsV = settings.value("export_custom_params");
     QVariant customParamsStringsV = settings.value("export_custom_params_str");
@@ -1105,10 +1110,8 @@ void MainWindow::onExportTriggered() {
         customParamsV.isValid()? new QStringList(customParamsV.toStringList()) : new QStringList();
     QStringList *customParamsStrings =
         customParamsStringsV.isValid()? new QStringList(customParamsStringsV.toStringList()) : new QStringList();
-
     // Sync
     settings.sync();
-
     // Value initialization
     switch(*aspectRatio){
         case 0: exportUI->oneToOneRatio->setChecked(true); break;
@@ -1143,8 +1146,7 @@ void MainWindow::onExportTriggered() {
     wSB.unblock(); hSB.unblock();
     exportUI->fpsSpinBox->setValue(genParam.nativeFPS);
     exportUI->lastFrameSpinBox->setValue(mCurrent->currentTimeInfo().frameMax);
-    // Connections
-    // This is to force a refresh and to avoid any weird bugs or memory leaks
+    // Connections, these ones below are to force a refresh and to avoid any weird bugs or memory leaks
     connect(exportWidget, &QDialog::destroyed, [=](){
         regenerateWidget();
     });
@@ -1257,10 +1259,9 @@ void MainWindow::onExportTriggered() {
                        "export_custom_params_str");
         settings.sync();
     }
-
     // Get file name and folder for export
     if (exportUI->operationCancelled) { return; }
-
+    // Initialize the file dialog with the appropriate descriptors
     QFileDialog fileDiag;
     fileDiag.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     fileDiag.setFileMode(QFileDialog::AnyFile);
@@ -1344,15 +1345,16 @@ void MainWindow::onExportTriggered() {
     genParam.exportRange = *exportRanges;
     genParam.customInterCommand = exportUI->intermediateParamTextEdit->toPlainText();
     genParam.customPostCommand = exportUI->postParamTextEdit->toPlainText();
-
     exParam->exportType = exportUI->exportTypeCombo->currentIndex() == 0 ? exportTarget::video :
                                                                          exportTarget::image;
     if(exParam->exportType == exportTarget::video){
-
-        exParam->videoParams.intermediateFormat = static_cast<availableIntermediateFormats>(exportUI->intermediateTypeCombo->currentIndex());
+        exParam->videoParams.intermediateFormat = static_cast<availableIntermediateFormats>(
+            exportUI->intermediateTypeCombo->currentIndex()
+            );
         exParam->videoParams.pixelFormat =
-            static_cast<pixelFormats>(getFormatAsInt(exportTarget::pxFmt,
-                                                      exportUI->pixelFormatCombo->currentText()));
+            static_cast<pixelFormats>(
+                getFormatAsInt(exportTarget::pxFmt, exportUI->pixelFormatCombo->currentText())
+                );
         defaultEncoders encoders;
         encoders.avi = static_cast<aviEncoders>(getFormatAsInt(exportTarget::aviEnc, exportUI->aviCombo->currentText()));
         encoders.mkv = static_cast<mkvEncoders>(getFormatAsInt(exportTarget::mkvEnc, exportUI->mkvCombo->currentText()));
@@ -1386,7 +1388,6 @@ void MainWindow::onExportTriggered() {
     if(isExportParamValid(exParam, exportWidget)){
         exportProject(*exParam, mCurrent, exportWidget);
     }
-    else{ qDebug("User has canceled export."); }
 }
 
 void MainWindow::onExportImageSeqTriggered(const QString& aSuffix) {
@@ -1438,11 +1439,9 @@ void MainWindow::onExportImageSeqTriggered(const QString& aSuffix) {
     // execute
     if (!exporter.execute(cparam, iparam)) {
         progress.cancel();
-
         if (!exporter.isCanceled()) {
             QMessageBox::warning(nullptr, tr("Export Error"), exporter.log());
         }
-        return;
     }
 }
 void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {

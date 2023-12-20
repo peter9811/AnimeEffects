@@ -952,7 +952,7 @@ void exportProject(exportParam& exParam, core::Project* mCurrent, QDialog* widge
     auto* ffmpeg = new ffmpeg::ffmpegObject();
     projectExporter::Exporter exporter(*mCurrent, widget, exParam, *ffmpeg);
     // If piped build piped argument, TODO is to account for this
-    ffmpeg->argument = ffmpeg::buildPipedArgument(exParam, mCurrent->attribute().loop());
+    ffmpeg->argument = ffmpeg::buildArgument(exParam, mCurrent->attribute().loop());
     qDebug("FFmpeg object created, rendering...");
     exporter.renderAndExport();
     //TODO: Implement with ExportParams.h

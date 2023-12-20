@@ -28,8 +28,8 @@
 #include "core/DestinationTexturizer.h"
 #include "gl/Util.h"
 
-
 #include <QBuffer>
+#include <QDesktopServices>
 // I was not meant to do OOP...
 
 // Formats other than video and image are for internal use only, ***DO NOT*** use them on export
@@ -306,9 +306,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         intermediateFormatToImage = 2;
     case 3:
         intermediateFormatToImage = 1;
-    case 4:
-        intermediateFormatToImage = -1;
-    default:
+    case 4: default:
         intermediateFormatToImage = -1;
     }
     // Special case for PPM
@@ -684,7 +682,7 @@ inline bool export_errored(const exportResult& result) {
         return false;
     }
     // Only animations get to build arguments so don't worry about image output
-    inline QString buildPipedArgument(const exportParam& exParam, bool loopGif){
+    inline QString buildArgument(const exportParam& exParam, bool loopGif){
         // Default
         QString argument = "-y -hwaccel auto -f image2pipe";
         // Framerate
@@ -815,6 +813,39 @@ public:
         QString returnStr;
     };
 
+    static void generateMessageBox(const ffmpeg::ffmpegObject* fObj, const ExportResult* eRes, const exportParam* exParam) {
+        QMessageBox msgBox;
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        QString title;
+        QString description;
+        QString detailed = "FFmpeg Object\n-----\nArgument: "
+        + fObj->argument + ".\nExecutable: " + fObj->executable + ".\nResult: " + QString::number(fObj->result)
+        + ".\nLog: " + fObj->log.join("\n") + ".\nError log: " + fObj->errorLog.join("\n")
+        + ".\n------\nExport Results\n-----\nResult: " + QString::number(eRes->resultType) + ".\nExport String: "
+        + eRes->returnStr + ".";
+
+        switch (eRes->resultType) {
+        case Success:
+            QString path = QDir::toNativeSeparators(exParam->generalParams.osExportTarget);
+            title = tr("Export success");
+            description = tr("Animation successfully exported to ") + path;
+            auto *gotoDirectory = new QPushButton(tr("Open export folder"));
+            QMessageBox::connect(gotoDirectory, &QPushButton::clicked, [=]() {
+                QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+            });
+            msgBox.addButton(gotoDirectory, QMessageBox::HelpRole);
+            break;
+        case Cancelled:
+            break;
+        case Errored:
+            break;
+        case Queued: case Ongoing: default:
+            qDebug("Something went wrong when halting the export process as the export result is invalid");
+            return;
+        }
+        msgBox.exec();
+    }
+
     bool finish(const std::function<bool()>& aWaiter) {
         static constexpr int kMSec = 100;
         if(mProcess) {
@@ -836,7 +867,6 @@ public:
             qDebug() << "Export object result: " << export_obj.result;
             qDebug() << "Argument: " << export_obj.argument;
             qDebug("------------");
-
             mProcess.reset();
             return exitStatus == QProcess::NormalExit;
         }
@@ -960,7 +990,7 @@ public:
         }
         return rString;
     }
-
+    // exporter stuff
     bool checkOverwriting(const QFileInfo& aPath) {
         if (!mOverwriteConfirmation && aPath.exists()) {
             if (aPath.isDir() || !exportUI::overwrite(aPath.filePath())) {
@@ -970,7 +1000,6 @@ public:
         }
         return true;
     }
-
     bool decideImagePath(int aIndex, QFileInfo& aPath) {
         QString number = QString("%1").arg(aIndex, mDigitCount, 10, QChar('0'));
         QFileInfo filePath(dirAddress + "/" + mParam.generalParams.fileName + number + "." + imageSuffix);
@@ -985,7 +1014,7 @@ public:
         XC_ASSERT(mProcess);
         mProcess->write(bytes);
     }
-
+    // framebuffer management
     void exportImage(const QImage& aFboImage, int aIndex) {
         if (mSaveAsImage) {
             QFileInfo savePath;
@@ -1021,7 +1050,6 @@ public:
             write(byteArray);
         }
     }
-
     bool updateTime(core::TimeInfo& aDst) {
         aDst = mOriginTimeInfo;
         const double current = mIndex * mOriginTimeInfo.fps / static_cast<double>(mParam.generalParams.fps);
@@ -1039,7 +1067,7 @@ public:
         mIndex++;
         return true;
     }
-
+    // renderer
     bool update() {
         if (!mExporting) {
             return false;
@@ -1181,6 +1209,8 @@ public:
             if (progressTicks == 4) {
                 progressTicks = 0;
             }
+            // This does slow down progress somewhat but I prefer better user feedback in this instance, if you have
+            // a better idea to achieve the same please let me know!
             form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame).scaled(500, 300, Qt::KeepAspectRatio));
             form->loadingMessage->setText(getProgressMessage(progressTicks));
             form->frameCounter->setText(getFrameMessage());
@@ -1201,7 +1231,6 @@ public:
         return exportResult;
     }
 
-    //TODO: Improve speed, as it is slower than the older export process for some reason.
     bool startExport(const QString& aArguments) {
         #if defined(Q_OS_WIN)
         const QFileInfo localEncoderInfo("./tools/ffmpeg.exe");

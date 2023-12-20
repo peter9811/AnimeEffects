@@ -149,9 +149,6 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         auto saveProjectAs = new QAction(tr("Save Project As..."), this);
         auto closeProject = new QAction(tr("Close Project"), this);
         auto exportWindow = new QAction(tr("Export Project"), this);
-        {
-            // New export action goes here...
-        }
         auto exportAs = new QMenu(tr("(Legacy) Export Project As..."), this);
         {
             ctrl::VideoFormat gifFormat;

@@ -5,7 +5,6 @@
 #include "gui/MouseSetting.h"
 #include "gui/obj/obj_Item.h"
 #include "qapplication.h"
-#include "prop/prop_KeyAccessor.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>

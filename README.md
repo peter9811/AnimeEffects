@@ -49,7 +49,7 @@ Note: For the present there may be incompatible changes made, these will be made
 ```
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install git gcc libglib2.0-0 qt5-default make
+sudo apt-get install git libglib2.0-0 build-essential mesa-common-dev qtbase5-dev qt5-qmake libfontconfig1
 ```
 
 #### Arch / Manjaro

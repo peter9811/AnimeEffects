@@ -47,9 +47,9 @@ Note: For the present there may be incompatible changes made, these will be made
 * First update and install dependencies:
 
 ```
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get install git gcc libglib2.0-0 qt5-default make
+sudo apt update
+sudo apt install -y software-properties-common g++ make wget rsync
+sudo apt install -y build-essential libglib2.0-0 qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgl1-mesa-dev file
 ```
 
 #### Arch / Manjaro

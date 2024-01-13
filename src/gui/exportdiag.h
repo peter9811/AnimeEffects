@@ -854,6 +854,12 @@ public:
 
     void retranslateUi(QWidget *exportWidget) const
     {
+        // Disable all Custom Argument stuff for the time being as I'm too tired to deal with it now
+        allowParamsCheckBox->setDisabled(true);
+        postParamCheckBox->setDisabled(true);
+        intermediateParamCheckBox->setDisabled(true);
+        customParam->setDisabled(true);
+        // ------------------------------------------------------------------------------------------
         exportWidget->setWindowTitle(QCoreApplication::translate("exportWidget", "Export parameters", nullptr));
         intermediateParamCheckBox->setText(QCoreApplication::translate("exportWidget", "Intermediate ", nullptr));
         keepAspectRatio->setText(QCoreApplication::translate("exportWidget", "Keep aspect ratio", nullptr));

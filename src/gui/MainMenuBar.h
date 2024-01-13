@@ -1,8 +1,6 @@
 #ifndef GUI_MAINMENUBAR_H
 #define GUI_MAINMENUBAR_H
 
-#include <QMenuBar>
-#include <QAction>
 #include <QCheckBox>
 #include <QSpinBox>
 #include "core/Project.h"
@@ -25,7 +23,7 @@ class MainMenuBar: public QMenuBar {
 public:
     MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources& aGUIResources, QWidget* aParent);
     void setProject(core::Project* aProject);
-    void setShowResourceWindow(bool aShow);
+    void setShowResourceWindow(bool aShow) const;
     QStringList recentfiles;
 
 public:
@@ -41,7 +39,6 @@ private:
     void onMaxFrameTriggered();
     void onLoopTriggered();
     void onFPSTriggered();
-    bool confirmMaxFrameUpdating(int aNewMaxFrame) const;
 
     ViaPoint& mViaPoint;
     core::Project* mProject;
@@ -56,7 +53,7 @@ class ProjectCanvasSizeSettingDialog: public EasyDialog {
     Q_OBJECT
 public:
     ProjectCanvasSizeSettingDialog(ViaPoint& aViaPoint, core::Project& aProject, QWidget* aParent);
-    QSize canvasSize() const { return QSize(mWidthBox->value(), mHeightBox->value()); }
+    QSize canvasSize() const { return {mWidthBox->value(), mHeightBox->value()}; }
 
 private:
     ViaPoint& mViaPoint;
@@ -86,7 +83,7 @@ public:
     int fps() const { return mFPSBox->value(); }
 
 private:
-    bool confirmFPSUpdating(int aNewMaxFrame) const;
+    static bool confirmFPSUpdating(int aNewFPS) ;
     core::Project& mProject;
     QSpinBox* mFPSBox;
 };

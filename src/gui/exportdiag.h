@@ -152,7 +152,7 @@ public:
         return QCoreApplication::translate("ExportDiag", input.toStdString().c_str());
     }
 
-    void setupUi(QWidget *exportWidget, const QString& themePath)
+    void setupUi(QWidget *exportWidget, const QString& themePath, int projectLastFrame)
     {
         if (exportWidget->objectName().isEmpty())
             exportWidget->setObjectName(QString::fromUtf8("exportWidget"));
@@ -233,7 +233,7 @@ public:
 
         gridLayout_2->addWidget(insertFrameRangeButton, 23, 0, 1, 1);
 
-        QWidget::connect(insertFrameRangeButton, &QPushButton::clicked, [=](){ addRange();});
+        QWidget::connect(insertFrameRangeButton, &QPushButton::clicked, [=]{addRange(projectLastFrame);});
 
         removeFrameRangeButton = new QPushButton(globalParamScrollContents);
         removeFrameRangeButton->setObjectName(QString::fromUtf8("removeFrameRangeButton"));
@@ -244,7 +244,7 @@ public:
 
         gridLayout_2->addWidget(removeFrameRangeButton, 24, 0, 1, 1);
 
-        QWidget::connect(removeFrameRangeButton, &QPushButton::clicked, [=](){removeRange();});
+        QWidget::connect(removeFrameRangeButton, &QPushButton::clicked, [=]{removeRange(projectLastFrame);});
 
         exportLine1 = new QFrame(globalParamScrollContents);
         exportLine1->setObjectName(QString::fromUtf8("exportLine1"));
@@ -814,7 +814,7 @@ public:
     } // setupUi
     struct Pos { int row = -1, col = -1; };
 
-    void addRange() const{
+    void addRange(int lastFrame) const{
         qDebug("Adding range");
         auto* newFirstRange = new QSpinBox;
         auto* newLastRange = new QSpinBox;
@@ -831,17 +831,19 @@ public:
         gridLayout_2->getItemPosition(LRIndex, &lrPos.row, &lrPos.col, &unused, &unused);
         frPos.row++;
         lrPos.row++;
+        newFirstRange->setValue(lastFrames->last()->value());
+        newLastRange->setValue(lastFrame);
         gridLayout_2->addWidget(newFirstRange, frPos.row, frPos.col);
         initialFrames->append(newFirstRange);
         gridLayout_2->addWidget(newLastRange, lrPos.row, lrPos.col);
         lastFrames->append(newLastRange);
     }
 
-    void removeRange() const{
+    void removeRange(int lastFrame) const{
         qDebug("Removing range");
         // No crashing the app please
-        if(initialFrames->empty()){ addRange(); return; }
-        else if(initialFrames->size() == 1){ return; }
+        if(initialFrames->empty()){ addRange(lastFrame); return; }
+        if(initialFrames->size() == 1){ return; }
         gridLayout_2->removeWidget(initialFrames->last());
         gridLayout_2->removeWidget(lastFrames->last());
         initialFrames->last()->deleteLater();
@@ -852,6 +854,12 @@ public:
 
     void retranslateUi(QWidget *exportWidget) const
     {
+        // Disable all Custom Argument stuff for the time being as I'm too tired to deal with it now
+        allowParamsCheckBox->setDisabled(true);
+        postParamCheckBox->setDisabled(true);
+        intermediateParamCheckBox->setDisabled(true);
+        customParam->setDisabled(true);
+        // ------------------------------------------------------------------------------------------
         exportWidget->setWindowTitle(QCoreApplication::translate("exportWidget", "Export parameters", nullptr));
         intermediateParamCheckBox->setText(QCoreApplication::translate("exportWidget", "Intermediate ", nullptr));
         keepAspectRatio->setText(QCoreApplication::translate("exportWidget", "Keep aspect ratio", nullptr));

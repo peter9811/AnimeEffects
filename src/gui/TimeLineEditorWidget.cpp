@@ -95,6 +95,53 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
         mCopyToClipboard->connect(
             mCopyToClipboard, &QAction::triggered, this, &TimeLineEditorWidget::onCopyCBTriggered
         );
+
+        // This is as annoying as you think it is, but I'm too lazy to think of a better way to do this and since no
+        // other easing functions will be supported this will do.
+        mSelectEasing = new QMenu(tr("Change key(s) easing to..."), this);
+        {
+            auto* none = new QAction(tr("None"), this);
+            auto* linear = new QAction(tr("Linear"), this);
+            auto* sine = new QAction(tr("Sine"), this);
+            auto* quad = new QAction(tr("Quad"), this);
+            auto* cubic = new QAction(tr("Cubic"), this);
+            auto* quart = new QAction(tr("Quart"), this);
+            auto* quint = new QAction(tr("Quint"), this);
+            auto* expo = new QAction(tr("Expo"), this);
+            auto* circ = new QAction(tr("Circ"), this);
+            auto* back = new QAction(tr("Back"), this);
+            auto* elastic = new QAction(tr("Elastic"), this);
+            auto* bounce = new QAction(tr("Bounce"), this);
+
+            QVector<QAction*> easings{
+            none, linear, sine, quad, cubic, quart, quint, expo, circ, back, elastic, bounce,
+            };
+            int x = 0;
+            for(auto easing: easings) {
+                mSelectEasing->addAction(easing);
+                mSelectEasing->connect(easing, &QAction::triggered, [=, this] {
+                    onSelectEasingTriggered(x);
+                });
+                x++;
+            }
+        }
+        mSelectRange = new QMenu(tr("Change key(s) range to..."), this);
+        {
+            auto* in = new QAction(tr("In"), this);
+            auto* out = new QAction(tr("Out"), this);
+            auto* all = new QAction(tr("All"), this);
+
+            QVector<QAction*> ranges{all, in, out};
+            int x = 0;
+            for (auto range: ranges) {
+                mSelectRange->addAction(range);
+                mSelectEasing->connect(range, &QAction::triggered, [=, this] {
+                    onSelectRangeTriggered(x);
+                });
+                x++;
+            }
+        }
+
     }
     this->update();
     {
@@ -292,6 +339,9 @@ void TimeLineEditorWidget::onContextMenuRequested(const QPoint& aPos) {
     if (mEditor->checkContactWithKeyFocus(mTargets, aPos)) {
         menu.addAction(mCopyKey);
         menu.addAction(mCopyToClipboard);
+        menu.addSeparator();
+        menu.addMenu(mSelectEasing);
+        menu.addMenu(mSelectRange);
         menu.addSeparator();
         menu.addAction(mDeleteKey);
     } else {
@@ -492,10 +542,10 @@ void TimeLineEditorWidget::onCopyCBTriggered(bool) {
     QJsonObject targets;
     QJsonArray keys;
     targets["TargetsSize"] = mCopyTargets.targets().size();
-    for (auto targets : mCopyTargets.targets()) {
-        core::TimeKeyType keyType = targets.pos.key()->type();
-        core::TimeKey* timeKey = targets.node->timeLine()->timeKey(keyType, targets.pos.key()->frame());
-        keys.append(getKeyTypeSerialized(keyType, timeKey, targets.node));
+    for (auto cTarget : mCopyTargets.targets()) {
+        core::TimeKeyType keyType = cTarget.pos.key()->type();
+        core::TimeKey* timeKey = cTarget.node->timeLine()->timeKey(keyType, cTarget.pos.key()->frame());
+        keys.append(getKeyTypeSerialized(keyType, timeKey, cTarget.node));
     }
     targets["Keys"] = keys;
     // There be IO dragons here
@@ -510,6 +560,93 @@ void TimeLineEditorWidget::onPasteKeyTriggered(bool) {
         QMessageBox::warning(nullptr, tr("Operation Error"), tr("Failed to paste keys."));
     }
     mOnPasting = false;
+}
+
+// It's called easingType but it can also be Range depending on the function that calls it
+void assignEasing(const util::LinkPointer<core::Project>& mProject, int easingType,
+    const core::TimeLineEvent::Target* target, const core::TimeKey* key, int frame, bool assignEasing){
+    XC_PTR_ASSERT(key);
+    switch(key->type()) {
+    case core::TimeKeyType_Move: {
+        auto newData =  dynamic_cast<const core::MoveKey*>(key)->data();
+        if(assignEasing) { newData.easing().type = static_cast<util::Easing::Type>(easingType); }
+        else { newData.easing().range = static_cast<util::Easing::Range>(easingType); }
+        ctrl::TimeLineUtil::assignMoveKeyData(*mProject, *target->node, frame, newData);
+    }
+        break;
+    case core::TimeKeyType_Rotate: {
+        auto newData =  dynamic_cast<const core::RotateKey*>(key)->data();
+        if(assignEasing) { newData.easing().type = static_cast<util::Easing::Type>(easingType); }
+        else { newData.easing().range = static_cast<util::Easing::Range>(easingType); }
+        ctrl::TimeLineUtil::assignRotateKeyData(*mProject, *target->node, frame, newData);
+    }
+        break;
+    case core::TimeKeyType_Scale:{
+        auto newData =  dynamic_cast<const core::ScaleKey*>(key)->data();
+        if(assignEasing) { newData.easing().type = static_cast<util::Easing::Type>(easingType); }
+        else { newData.easing().range = static_cast<util::Easing::Range>(easingType); }
+        ctrl::TimeLineUtil::assignScaleKeyData(*mProject, *target->node, frame, newData);
+    }
+        break;
+    case core::TimeKeyType_Depth:{
+        auto newData =  dynamic_cast<const core::DepthKey*>(key)->data();
+        if(assignEasing) { newData.easing().type = static_cast<util::Easing::Type>(easingType); }
+        else { newData.easing().range = static_cast<util::Easing::Range>(easingType); }
+        ctrl::TimeLineUtil::assignDepthKeyData(*mProject, *target->node, frame, newData);
+    }
+        break;
+    case core::TimeKeyType_Opa:{
+        auto newData =  dynamic_cast<const core::OpaKey*>(key)->data();
+        if(assignEasing) { newData.easing().type = static_cast<util::Easing::Type>(easingType); }
+        else { newData.easing().range = static_cast<util::Easing::Range>(easingType); }
+        ctrl::TimeLineUtil::assignOpaKeyData(*mProject, *target->node, frame, newData);
+    }
+        break;
+    case core::TimeKeyType_Pose:{
+        auto newData =  dynamic_cast<const core::PoseKey*>(key)->data();
+        if(assignEasing) { newData.easing().type = static_cast<util::Easing::Type>(easingType); }
+        else { newData.easing().range = static_cast<util::Easing::Range>(easingType); }
+        ctrl::TimeLineUtil::assignPoseKeyEasing(*mProject, *target->node, frame, newData.easing());
+    }
+        break;
+    case core::TimeKeyType_FFD: {
+        auto newData =  dynamic_cast<const core::FFDKey*>(key)->data();
+        if(assignEasing) { newData.easing().type = static_cast<util::Easing::Type>(easingType); }
+        else { newData.easing().range = static_cast<util::Easing::Range>(easingType); }
+        ctrl::TimeLineUtil::assignFFDKeyEasing(*mProject, *target->node, frame, newData.easing());
+    }
+        break;
+    case core::TimeKeyType_HSV:{
+        auto newData =  dynamic_cast<const core::HSVKey*>(key)->data();
+        if(assignEasing) { newData.easing().type = static_cast<util::Easing::Type>(easingType); }
+        else { newData.easing().range = static_cast<util::Easing::Range>(easingType); }
+        ctrl::TimeLineUtil::assignHSVKeyData(*mProject, *target->node, frame, newData);
+    }
+        break;
+    default:
+        qDebug("You somehow tried to modify an unsupported key, you absolute fool!");
+    }
+}
+
+void TimeLineEditorWidget::onSelectEasingTriggered(int easingType) {
+    for(auto target: mTargets.targets()) {
+        auto type = target.pos.key()->type();
+        if(type != core::TimeKeyType_Bone && type != core::TimeKeyType_Mesh && type != core::TimeKeyType_Image){
+            int frame = target.pos.key()->frame();
+            auto key = target.pos.line()->timeKey(target.pos.key()->type(), frame);
+            assignEasing(mProject, easingType, &target, key, frame, true);
+        }
+    }
+}
+void TimeLineEditorWidget::onSelectRangeTriggered(int rangeType) {
+    for(auto target: mTargets.targets()) {
+        auto type = target.pos.key()->type();
+        if(type != core::TimeKeyType_Bone && type != core::TimeKeyType_Mesh && type != core::TimeKeyType_Image){
+            int frame = target.pos.key()->frame();
+            auto key = target.pos.line()->timeKey(target.pos.key()->type(), frame);
+            assignEasing(mProject, rangeType, &target, key, frame, false);
+        }
+    }
 }
 
 void TimeLineEditorWidget::onDeleteKeyTriggered(bool) { mEditor->deleteCheckedKeys(mTargets); }

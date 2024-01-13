@@ -99,6 +99,8 @@ private:
     void onCopyCBTriggered(bool);
     void onPasteKeyTriggered(bool);
     void onDeleteKeyTriggered(bool);
+    void onSelectEasingTriggered(int easingType);
+    void onSelectRangeTriggered(int rangeType);
 
     ViaPoint& mViaPoint;
     util::LinkPointer<core::Project> mProject;
@@ -117,6 +119,8 @@ private:
     QAction* mPasteKey;
     QAction* mPasteFromClipboard;
     QAction* mDeleteKey;
+    QMenu* mSelectEasing;
+    QMenu* mSelectRange;
     core::TimeLineEvent mTargets;
     core::TimeLineEvent mCopyTargets;
     QPoint mPastePos;

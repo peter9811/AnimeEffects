@@ -4,8 +4,8 @@ runtime-version: '5.15-22.08'
 sdk: org.kde.Sdk
 finish-args:
   - "--share=ipc"
-  - "--socket=wayland"
-  - "--socket=fallback-x11"
+  - "--socket=x11"
+  - "--socket=fallback-wayland"
 command: AnimeEffects
 modules:
   - name: ae

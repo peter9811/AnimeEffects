@@ -1,11 +1,7 @@
 #include <QFile>
-#include <QMenu>
-#include <QAction>
 #include <QMessageBox>
 #include <QDomDocument>
-#include <QJsonDocument>
 #include <qstandardpaths.h>
-#include <QDesktopServices>
 #include "qprocess.h"
 #include "util/TextUtil.h"
 #include "cmnd/BasicCommands.h"
@@ -28,7 +24,7 @@ QDomDocument getVideoExportDocument() {
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << file.errorString();
-        return QDomDocument();
+        return {};
     }
 
     QDomDocument prop;
@@ -38,7 +34,7 @@ QDomDocument getVideoExportDocument() {
     if (!prop.setContent(&file, false, &errorMessage, &errorLine, &errorColumn)) {
         qDebug() << "invalid xml file. " << file.fileName() << errorMessage << ", line = " << errorLine
                  << ", column = " << errorColumn;
-        return QDomDocument();
+        return {};
     }
     file.close();
 
@@ -130,6 +126,8 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
                     case 7:
                         openRecent->addAction(eigthPathAction);
                         break;
+                    default:
+                        openRecent->addAction(placeholderAction);
                     }
                 }
             }
@@ -166,7 +164,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             exportAs->addAction(pngs);
             exportAs->addAction(gif);
 
-            for (auto format : mVideoFormats) {
+            for (const auto& format : mVideoFormats) {
                 auto video = new QAction(format.label + " " + tr("Video") + "...", this);
                 connect(video, &QAction::triggered, [=]() { mainWindow->onExportVideoTriggered(format); });
                 exportAs->addAction(video);
@@ -329,10 +327,9 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             QString isFolderWritable = isWritable ? "True" : "False";
             detail += tr("Location Is Writable: ") + isFolderWritable + "\n";
             // FFmpeg Check
-            util::NetworkUtil networking;
             QFileInfo ffmpeg_file;
             QString ffmpeg;
-            if (networking.os() == "win") {
+            if (util::NetworkUtil::os() == "win") {
                 ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
             } else {
                 ffmpeg_file = QFileInfo("./tools/ffmpeg");
@@ -342,7 +339,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             } else {
                 ffmpeg = ffmpeg_file.absoluteFilePath();
             }
-            bool fExists = networking.libExists(ffmpeg, "-version");
+            bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
             QString ffmpegType = ffmpeg == "ffmpeg" ? "Process" : "File";
             QString ffmpegReach = fExists ? "True" : "False";
             detail += tr("FFmpeg Reach Type: ") + ffmpegType + "\n";
@@ -357,7 +354,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         connect(checkForUpdates, &QAction::triggered, [=]() {
             util::NetworkUtil networking;
             QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
-            networking.checkForUpdate(url, networking, this);
+            util::NetworkUtil::checkForUpdate(url, networking, this);
         });
 
         helpMenu->addAction(aboutMe);
@@ -389,7 +386,7 @@ void MainMenuBar::setProject(core::Project* aProject) {
     }
 }
 
-void MainMenuBar::setShowResourceWindow(bool aShow) { mShowResourceWindow->setChecked(aShow); }
+void MainMenuBar::setShowResourceWindow(bool aShow) const { mShowResourceWindow->setChecked(aShow); }
 
 void MainMenuBar::loadVideoFormats() {
     using util::TextUtil;
@@ -436,7 +433,7 @@ void MainMenuBar::loadVideoFormats() {
                 codec.command = format.command;
             {
                 auto hints = TextUtil::splitAndTrim(domCodec.attribute("hint"), ',');
-                for (auto hint : hints) {
+                for (const auto& hint : hints) {
                     if (hint == "lossless")
                         codec.lossless = true;
                     else if (hint == "transparent")
@@ -740,14 +737,14 @@ ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidge
 
     this->setOkCancel([=](int aIndex) -> bool {
         if (aIndex == 0) {
-            return this->confirmFPSUpdating(this->mFPSBox->value());
+            return gui::ProjectFPSSettingDialog::confirmFPSUpdating(this->mFPSBox->value());
         }
         return true;
     });
     this->fixSize();
 }
 
-bool ProjectFPSSettingDialog::confirmFPSUpdating(int aNewFPS) const {
+bool ProjectFPSSettingDialog::confirmFPSUpdating(int aNewFPS) {
     XC_ASSERT(aNewFPS > 0);
     if (aNewFPS != 0)
         return true;

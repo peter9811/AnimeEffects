@@ -36,19 +36,13 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocalePa
     mSystem(aSystem),
     mGUIResources(aResources),
     mViaPoint(this),
-    mKeyCommandMap(),
-    mKeyCommandInvoker(),
-    mMouseSetting(),
     mMainMenuBar(),
-    mMainViewSetting(),
-    mMainDisplayStyle(),
     mMainDisplay(),
     mProjectTabBar(),
     mTarget(),
     mProperty(),
     mTool(),
     mResourceDialog(),
-    mDriverHolder(),
     mCurrent(),
     mLocaleParam(std::move(aLocaleParam)) {
     // setup default opengl format
@@ -952,7 +946,9 @@ void exportProject(exportParam& exParam, core::Project* mCurrent, QDialog* widge
     auto* ffmpeg = new ffmpeg::ffmpegObject();
     projectExporter::Exporter exporter(*mCurrent, widget, exParam, *ffmpeg);
     // If piped build piped argument, TODO is to account for this
-    ffmpeg->argument = ffmpeg::buildArgument(exParam, mCurrent->attribute().loop());
+    if(exParam.generalParams.forcePipe || !exParam.generalParams.useCustomParam) {
+        ffmpeg->argument = ffmpeg::buildArgument(exParam, mCurrent->attribute().loop());
+    }
     qDebug("FFmpeg object created, rendering...");
     auto exportResult = exporter.renderAndExport();
     projectExporter::Exporter::generateMessageBox(&exporter.export_obj, &exportResult, &exParam);

@@ -12,7 +12,7 @@
 namespace img {
 
 PSDReader::PSDReader(std::istream& aIo):
-    StreamReader(aIo), mFormat(), mResultCode(ResultCode_TERM), mSection(), mValue() {
+    StreamReader(aIo), mResultCode(ResultCode_TERM){
     if (isFailed()) {
         mSection = "input stream";
         mResultCode = ResultCode_InvalidFileHandle;
@@ -348,12 +348,12 @@ bool PSDReader::loadLayerAndMaskInfo() {
 
     // each layer
     for (int i = 0; i < form.layerCount; ++i) {
-        PSDFormat::Layer* layer = new PSDFormat::Layer();
+        auto* layer = new PSDFormat::Layer();
         mFormat->layerAndMaskInfo().layers.push_back(PSDFormat::LayerPtr(layer));
 
         // rect
-        for (int i = 0; i < 4; ++i) {
-            layer->rect.edge[i] = readUInt32();
+        for (int & x : layer->rect.edge) {
+            x = readUInt32();
         }
         if (checkFailure())
             return false;
@@ -365,7 +365,7 @@ bool PSDReader::loadLayerAndMaskInfo() {
 
         // each channel
         for (int k = 0; k < layer->channelCount; ++k) {
-            PSDFormat::Channel* channel = new PSDFormat::Channel();
+            auto* channel = new PSDFormat::Channel();
             layer->channels.push_back(PSDFormat::ChannelPtr(channel));
 
             channel->id = readSInt16();
@@ -406,13 +406,13 @@ bool PSDReader::loadLayerAndMaskInfo() {
         // layer mask section
         unsigned long maskLength = readUInt32();
         if (maskLength >= 20) {
-            PSDFormat::LayerMask* mask = new PSDFormat::LayerMask();
+            auto* mask = new PSDFormat::LayerMask();
             layer->mask.reset(mask);
 
             const std::ios::pos_type maskEnd = tellg() + std::ios::off_type(maskLength);
 
-            for (int i = 0; i < 4; ++i) {
-                mask->rect.edge[i] = readUInt32();
+            for (int & x : mask->rect.edge) {
+                x = readUInt32();
             }
             mask->defaultColor = readByte();
             mask->flags = readByte();
@@ -424,8 +424,8 @@ bool PSDReader::loadLayerAndMaskInfo() {
                 mask->hasReal = true;
                 mask->realFlags = readByte();
                 mask->realUserMaskBG = readByte();
-                for (int i = 0; i < 4; ++i) {
-                    mask->realUserRect.edge[i] = readUInt32();
+                for (int & x : mask->realUserRect.edge) {
+                    x = readUInt32();
                 }
             } else {
                 skip(2); // padding
@@ -444,12 +444,12 @@ bool PSDReader::loadLayerAndMaskInfo() {
         if (checkFailure())
             return false;
         if (blendRangeLength >= 8) {
-            PSDFormat::BlendingRange* compoRange = new PSDFormat::BlendingRange();
+            auto* compoRange = new PSDFormat::BlendingRange();
             compoRange->isValid = true;
-            for (int i = 0; i < 4; ++i)
-                compoRange->src[i] = readByte();
-            for (int i = 0; i < 4; ++i)
-                compoRange->dst[i] = readByte();
+            for (unsigned char & x : compoRange->src)
+                x = readByte();
+            for (unsigned char & x : compoRange->dst)
+                x = readByte();
             if (checkFailure())
                 return false;
             layer->compositeBlendingRange.reset(compoRange);
@@ -459,10 +459,10 @@ bool PSDReader::loadLayerAndMaskInfo() {
                 if (blendRangeLength < 8) {
                     break;
                 }
-                for (int i = 0; i < 4; ++i)
-                    channel->blendingRange.src[i] = readByte();
-                for (int i = 0; i < 4; ++i)
-                    channel->blendingRange.dst[i] = readByte();
+                for (unsigned char & x : channel->blendingRange.src)
+                    x = readByte();
+                for (unsigned char & x : channel->blendingRange.dst)
+                    x = readByte();
                 if (checkFailure())
                     return false;
                 blendRangeLength -= 8;
@@ -526,7 +526,7 @@ bool PSDReader::loadLayerAndMaskInfo() {
         // global layer mask info
         uint32 length = readUInt32();
         if (length) {
-            static const int kUseSize = 13;
+            static constexpr int kUseSize = 13;
             form.globalLayerMaskInfo.reset(new PSDFormat::GlobalLayerMaskInfo);
 
             form.globalLayerMaskInfo->overlayColorSpace = readUInt16();
@@ -552,7 +552,7 @@ bool PSDReader::loadLayerAndMaskInfo() {
     }
 
     // additional layer info
-    if (!loadAdditionalLayerInfo(form.additionalLayerInfos, NULL, endPos)) {
+    if (!loadAdditionalLayerInfo(form.additionalLayerInfos, nullptr, endPos)) {
         return false;
     }
 
@@ -565,12 +565,12 @@ bool PSDReader::loadLayerAndMaskInfo() {
 // additional layer info
 //------------------------------------------------------------//
 bool PSDReader::loadAdditionalLayerInfo(
-    std::list<PSDFormat::AdditionalLayerInfoPtr>& aList, PSDFormat::Layer* aLayer, std::ios::pos_type aEndPos
+    std::list<PSDFormat::AdditionalLayerInfoPtr>& aList, PSDFormat::Layer* aLayer, const std::ios::pos_type& aEndPos
 ) {
     int length = aEndPos - tellg();
     std::string dumpKeys; // for dump
     while (length >= 12) {
-        PSDFormat::AdditionalLayerInfo* info = new PSDFormat::AdditionalLayerInfo();
+        auto* info = new PSDFormat::AdditionalLayerInfo();
         aList.push_back(PSDFormat::AdditionalLayerInfoPtr(info));
 
         // signature
@@ -615,14 +615,14 @@ bool PSDReader::loadAdditionalLayerInfo(
 
             if (info->dataLength >= 12) {
                 // signature
-                std::string signature = readString(4);
+                std::string signature_str = readString(4);
                 if (checkFailure())
                     return false;
 
                 // check value validity
-                if (signature != "8BIM") {
+                if (signature_str != "8BIM") {
                     mSection += "/additional layer info/signature/section divider setting/signature";
-                    mValue = signature;
+                    mValue = signature_str;
                     mResultCode = ResultCode_InvalidSignature;
                     return false;
                 }
@@ -720,7 +720,7 @@ bool PSDReader::loadImageData() {
 
     // each channel
     for (int i = 0; i < header.channels; ++i) {
-        PSDFormat::Channel* channel = new PSDFormat::Channel();
+        auto* channel = new PSDFormat::Channel();
         channel->id = i;
         if (modeChannelCount > 0 && i >= modeChannelCount) {
             channel->id = modeChannelCount - (i + 1); // transparency

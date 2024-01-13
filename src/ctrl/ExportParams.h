@@ -879,7 +879,7 @@ public:
         default:
             title = tr("Something went wrong when halting the export process as the export result is invalid");
             description = tr("The export process stopped abnormaly, please send the info bellow to the devs.");
-            return;
+            break;
         }
         msgBox.setWindowTitle(title);
         msgBox.setText(description);
@@ -957,7 +957,7 @@ public:
             setTextureParam(*fbo);
         }
     }
-    ResultType initialize() {
+    ResultType initialize(ExportResult* exportResult) {
         // Reset values
         mIndex = 0;
         mProgress = 0.0f;
@@ -1002,6 +1002,7 @@ public:
             mDestinationTexturizer->resize(mProject.attribute().imageSize());
         }
         mExporting = true;
+        exportResult->resultType = Ongoing;
         return Success;
     }
     // html centering because there is no "center text" function :(
@@ -1197,7 +1198,7 @@ public:
         widget->show();
         form->loadingMessage->setText(tr("<html><head/><body><p align=\"center\">Initializing</p></body></html>"));
         QPushButton::connect(form->cancelButton, &QPushButton::clicked, [=] { mCancelled = true; });
-        auto initResult = initialize();
+        auto initResult = initialize(&exportResult);
         if (initResult == Errored) {
             exportResult.returnStr = "Failed to initialize";
             exportResult.resultType = Errored;
@@ -1265,7 +1266,8 @@ public:
         if (!mSaveAsImage) {
             finish([=]() -> bool { return true; });
         }
-        if(exportResult.resultType == Ongoing) {
+        if(exportResult.resultType == Ongoing && !export_errored(export_obj.result)) {
+            export_obj.result = ffmpeg::ExportSuccess;
             exportResult.resultType = Success;
             exportResult.returnStr = "Export success";
         }

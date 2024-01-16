@@ -1025,10 +1025,19 @@ public:
         if (mSaveAsImage) {
             rString = sCenterL + tr("Current frame: ") + QString::number(tick) + "/" + QString::number(mFrameCount) +
                 sCenterR;
-        } else {
-            rString = sCenterL + tr("Frame rendered: ") + QString::number(mIndex) + "/" + QString::number(mFrameCount) +
-                " | " + tr("Frame encoded: ") + QString::number(*encodedFrame) + "/" + QString::number(mFrameCount) +
-                sCenterR;
+        }
+        else {
+            if(mParam.exportType == exportTarget::video && (mParam.videoParams.format == availableVideoFormats::gif
+                || mParam.generalParams.useCustomPalette)){
+                rString = sCenterL + tr("Frame rendered: ") + QString::number(mIndex) + "/" + QString::number(mFrameCount) +
+                    " | " + tr("Frame encoded: ") + tr(" Unable to get encoder data when generating / using palettes") +
+                    sCenterR;
+            }
+            else {
+                rString = sCenterL + tr("Frame rendered: ") + QString::number(mIndex) + "/" + QString::number(mFrameCount) +
+                    " | " + tr("Frame encoded: ") + QString::number(*encodedFrame) + "/" + QString::number(mFrameCount) +
+                    sCenterR;
+            }
         }
         return rString;
     }
@@ -1054,8 +1063,9 @@ public:
     }
     void write(const QByteArray& bytes) const {
         XC_ASSERT(mProcess);
-        mProcess->write(bytes);
-        mProcess->waitForBytesWritten();
+        if(!bytes.isEmpty()) {
+            mProcess->write(bytes);
+        }
     }
     // framebuffer management
     void exportImage(const QImage& aFboImage, int aIndex) {
@@ -1323,7 +1333,12 @@ public:
                     export_obj.errorLog.append("The argument given to FFmpeg is invalid, conversion failed.");
                     mCancelled = true;
                 }
-                if(lastLog == export_obj.latestLog && lastWriteLog == export_obj.latestWriteLog) {
+
+                if ((mParam.exportType == exportTarget::video &&
+                    mParam.videoParams.format == availableVideoFormats::gif) || mParam.generalParams.useCustomPalette) {
+                    export_obj.procWaitTick = 0;
+                }
+                else if(lastLog == export_obj.latestLog && lastWriteLog == export_obj.latestWriteLog) {
                     export_obj.procWaitTick += 1;
                 }
                 else {

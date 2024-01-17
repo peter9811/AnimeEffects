@@ -73,7 +73,7 @@ double TimeLineWidget::getOneFrameTime() const { return 1000.0 / getFps(); }
 
 QPoint TimeLineWidget::viewportTransform() const {
     // Do *not* use the value from the scrollbar itself, it does not work as intended.
-    QPoint point = {-mHorizontalScrollValue, -mVerticalScrollValue};
+    QPoint point = {-this->horizontalScrollBar()->value(), -mVerticalScrollValue};
     return point;
 }
 
@@ -198,12 +198,9 @@ void TimeLineWidget::wheelEvent(QWheelEvent* aEvent) {
     aEvent->ignore();
     QPoint viewTrans = viewportTransform();
     const QPoint cursor = aEvent->position().toPoint();
-
     mInner->updateWheel(aEvent);
-
     const QRect rectNext = mInner->rect();
     viewTrans.setX(cursor.x() * rectNext.width() / mInner->parentWidget()->size().width() * -1);
-    // viewTrans.setX(static_cast<int>(cursor.x() + scale * (viewTrans.x() - cursor.x())));
     setScrollBarValue(viewTrans);
     updateCamera();
 }

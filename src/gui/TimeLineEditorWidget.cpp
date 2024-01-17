@@ -308,6 +308,9 @@ void TimeLineEditorWidget::updateTheme(theme::Theme& aTheme) {
     Q_UNUSED(aTheme) // TODO
     mTimelineTheme.reset();
 }
+QSize TimeLineEditorWidget::getEditorSize() const {
+    return mEditor->modelSpaceSize();
+}
 
 void TimeLineEditorWidget::paintEvent(QPaintEvent* aEvent) {
     QPainter painter;

@@ -25,7 +25,7 @@ TimeLineWidget::TimeLineWidget(
 
     this->setWidget(mInner);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->setMouseTracking(true);
     this->connect(&mTimer, &QTimer::timeout, this, &TimeLineWidget::onPlayBackUpdated);
 
@@ -71,22 +71,15 @@ int TimeLineWidget::getFps() const { return mProject ? mProject->attribute().fps
 double TimeLineWidget::getOneFrameTime() const { return 1000.0 / getFps(); }
 
 QPoint TimeLineWidget::viewportTransform() const {
-    // @note bug? Sometimes, the value of vertical scroll bar is different from the set value.-
-    QPoint point = {-this->horizontalScrollBar()->value(), -this->verticalScrollBar()->value()};
-    // @note by yukusai: Fixed by the heresy you see below you, Qt is atrocious I swear...
-    if (mVerticalScrollValue != this->verticalScrollBar()->value()) {
-        point.setY(
-            mVerticalScrollValue > this->verticalScrollBar()->value() ? -mVerticalScrollValue
-                                                                      : -this->verticalScrollBar()->value()
-        );
-    }
+    // Do *not* use the value from the scrollbar itself, it does not work as intended.
+    QPoint point = {-this->horizontalScrollBar()->value(), -mVerticalScrollValue};
     return point;
 }
 
 void TimeLineWidget::setScrollBarValue(const QPoint& aViewportTransform) {
-    this->horizontalScrollBar()->setValue(aViewportTransform.x());
-    this->verticalScrollBar()->setValue(aViewportTransform.y());
-    mVerticalScrollValue = aViewportTransform.y();
+    this->horizontalScrollBar()->setValue(-aViewportTransform.x());
+    this->verticalScrollBar()->setValue(-aViewportTransform.y());
+    mVerticalScrollValue = -aViewportTransform.y();
 }
 
 void TimeLineWidget::updateCamera() {

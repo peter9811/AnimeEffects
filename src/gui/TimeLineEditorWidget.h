@@ -61,6 +61,8 @@ public:
     void updateProjectAttribute();
     void updateTheme(theme::Theme&);
 
+    QSize getEditorSize() const;
+
     core::Frame currentFrame() const;
     int maxFrame() const;
 

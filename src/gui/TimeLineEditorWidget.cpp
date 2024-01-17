@@ -131,7 +131,7 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
             auto* out = new QAction(tr("Out"), this);
             auto* all = new QAction(tr("All"), this);
 
-            QVector<QAction*> ranges{all, in, out};
+            QVector<QAction*> ranges{in, out, all};
             int x = 0;
             for (auto range: ranges) {
                 mSelectRange->addAction(range);

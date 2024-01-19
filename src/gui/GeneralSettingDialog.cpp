@@ -260,7 +260,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         bAutoCbCopy = !isAutoCbCopy.isValid() || isAutoCbCopy.toBool();
 
         auto isAutoFFmpegCheck = settings.value("ffmpeg_check");
-        mAutoFFmpegCheck = !isAutoFFmpegCheck.isValid() || isAutoFFmpegCheck.toBool();
+        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid()? true : isAutoFFmpegCheck.toBool();
 
         auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
         mKeyDelay = isKeyDelay.isValid() ? isKeyDelay.toInt() : 125;

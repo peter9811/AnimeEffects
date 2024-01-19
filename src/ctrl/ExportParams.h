@@ -887,14 +887,24 @@ public:
         msgBox.exec();
     }
 
-    bool finish(const std::function<bool()>& aWaiter) {
-        static constexpr int kMSec = 100;
+    bool finish(const std::function<bool()>& aWaiter, const exportUI::form* formPointer, int frameTickMax) {
+        QApplication::setOverrideCursor(Qt::BusyCursor);
         if (mProcess) {
             mProcess->closeWriteChannel();
+            int progressTicks = 0;
             while (!mProcess->waitForFinished()) {
-                qDebug() << "Waiting for encode finish: " << this->mProcess->readAll().data();
-                mProcess->waitForFinished(kMSec);
                 QApplication::processEvents();
+                progressTicks++;
+                if (progressTicks == 4) {
+                    progressTicks = 0;
+                }
+                if(formPointer != nullptr) {
+                    formPointer->loadingMessage->setText(getProgressMessage(progressTicks));
+                    formPointer->frameCounter->setText(getFrameMessage(frameTickMax, progressTicks));
+                    formPointer->progressBar->setValue(static_cast<int>(100 * mProgress));
+                }
+                qDebug() << "Waiting for encode finish...";
+                mProcess->waitForFinished(5);
                 if (!aWaiter() || isExportFinished(export_obj.result) || export_errored(export_obj.result)) {
                     break;
                 }
@@ -909,8 +919,10 @@ public:
             qDebug() << "Argument: " << export_obj.argument;
             qDebug("------------");
             mProcess.reset();
+            QApplication::restoreOverrideCursor();
             return exitStatus == QProcess::NormalExit;
         }
+        QApplication::restoreOverrideCursor();
         return QProcess::NotRunning;
     }
     void destroyFramebuffers() {
@@ -1011,7 +1023,7 @@ public:
     // message generation
     QString getProgressMessage(int dotTick) const {
         QString pDots;
-        const QString currentStatus = mIndex == mFrameCount ? tr("Encoding") : tr("Exporting");
+        const QString currentStatus = mIndex == mFrameCount ? tr("Encoding, please wait") : tr("Exporting");
         if (dotTick == 0) {
             return sCenterL + currentStatus + sCenterR;
         }
@@ -1020,17 +1032,22 @@ public:
         }
         return sCenterL + currentStatus + pDots + sCenterR;
     }
-    QString getFrameMessage(int tick) const {
+    QString getFrameMessage(int tick, int dotTick) const {
         QString rString;
+        QString pDots;
+        for (int x = 0; x < dotTick; x++) {
+            pDots.append(".");
+        }
         if (mSaveAsImage) {
             rString = sCenterL + tr("Current frame: ") + QString::number(tick) + "/" + QString::number(mFrameCount) +
                 sCenterR;
         }
+        // As it turns out doing pDots makes the encoder go wobbly and it's kind of disorientating, will keep here anyway
+        // in case i figure out later how to make it not so hard on the eyes.
         else {
-            if(mParam.exportType == exportTarget::video && (mParam.videoParams.format == availableVideoFormats::gif
-                || mParam.generalParams.useCustomPalette)){
+            if(*encodedFrame == 0){
                 rString = sCenterL + tr("Frame rendered: ") + QString::number(mIndex) + "/" + QString::number(mFrameCount) +
-                    " | " + tr("Frame encoded: ") + tr(" Unable to get encoder data when generating / using palettes") +
+                    " | " + tr("Frame encoded: ") + tr(" Processing...") +
                     sCenterR;
             }
             else {
@@ -1233,7 +1250,7 @@ public:
                 if(!export_errored(export_obj.result)){
                     export_obj.result = ffmpeg::ExportCanceled;
                 }
-                finish([=]() -> bool { return true; });
+                finish([=]() -> bool{ return true; }, form, frameTicks );
                 widget->deleteLater();
                 // Clean-up
                 if (!mSaveAsImage) {
@@ -1247,7 +1264,7 @@ public:
             if (export_errored(export_obj.result)) {
                 qDebug("Export errored");
                 export_obj.errorLog.append("FFmpeg error detected, stopping render.");
-                finish([=]() -> bool { return true; });
+                finish([=]() -> bool { return true; }, form, frameTicks );
                 widget->deleteLater();
                 // Clean-up
                 if (!mSaveAsImage) {
@@ -1269,12 +1286,12 @@ public:
             // a better idea to achieve the same please let me know!
             form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame).scaled(500, 300, Qt::KeepAspectRatio));
             form->loadingMessage->setText(getProgressMessage(progressTicks));
-            form->frameCounter->setText(getFrameMessage(frameTicks));
+            form->frameCounter->setText(getFrameMessage(frameTicks, progressTicks));
             form->progressBar->setValue(static_cast<int>(100 * mProgress));
             QApplication::processEvents();
         }
         if (!mSaveAsImage) {
-            finish([=]() -> bool { return true; });
+            finish([=]() -> bool { return true; }, form, frameTicks );
         }
         if(exportResult.resultType == Ongoing && !export_errored(export_obj.result)) {
             export_obj.result = ffmpeg::ExportSuccess;
@@ -1310,6 +1327,23 @@ public:
         mProcess->connect(process, &QProcess::readyRead, [=] {
             if (this->mProcess) {
                 export_obj.log.push_back(QString(this->mProcess->readAll().data()));
+                QString logs = export_obj.log.last();
+                bool containsErrors = (logs.contains("error", Qt::CaseInsensitive)
+                || logs.contains("conversion failed", Qt::CaseInsensitive)
+                || logs.contains("invalid", Qt::CaseInsensitive)
+                || logs.contains("null", Qt::CaseInsensitive))
+                // Safely ignored errors
+                && !logs.contains("invalid maxval", Qt::CaseInsensitive);
+
+                // Some errors during encoding are acceptable as FFmpeg will take care of them, as such we'll
+                // ignore them if the encoder has done at least one frame as this means it's doing something and not
+                // just failing to encode anything at all.
+                if (containsErrors && *encodedFrame == 0) {
+                    export_obj.result = ffmpeg::ExportArgError;
+                    export_obj.errorLog.append("The argument given to FFmpeg is invalid, conversion failed.");
+                    export_obj.errorLog.append(logs);
+                    mCancelled = true;
+                }
                 if (export_obj.log.last().contains("frame")) {
                     QRegularExpression rx(R"(frame\s*=\s*(\d+))");
                     *encodedFrame = rx.match(export_obj.log.last()).captured(1).toInt();
@@ -1321,24 +1355,19 @@ public:
         mProcess->connect(process, &QProcess::bytesWritten, [=] {
             if (this->mProcess) {
                 if (export_obj.procWaitTick >= 25) {
-                    export_obj.result = ffmpeg::ExportTimedout;
-                    export_obj.errorLog.append("Unable to read process data for 25+ ticks, FFmpeg timed out.");
-                    mCancelled = true;
+                    if(this->mProcess.isNull() || !this->mProcess->isReadable() || !this->mProcess->isWritable()) {
+                        export_obj.result = ffmpeg::ExportTimedout;
+                        export_obj.errorLog.append("Unable to read process data for 25+ ticks, FFmpeg timed out.");
+                        mCancelled = true;
+                    }
+                    else {
+                        export_obj.procWaitTick = 0;
+                    }
                 }
                 export_obj.writeLog.push_back(QString(this->mProcess->readAll().data()));
                 QString lastLog = export_obj.log.last();
                 QString lastWriteLog = export_obj.log.last();
-                if(lastLog.contains("Conversion failed!") || lastWriteLog.contains("Conversion failed!")) {
-                    export_obj.result = ffmpeg::ExportArgError;
-                    export_obj.errorLog.append("The argument given to FFmpeg is invalid, conversion failed.");
-                    mCancelled = true;
-                }
-
-                if ((mParam.exportType == exportTarget::video &&
-                    mParam.videoParams.format == availableVideoFormats::gif) || mParam.generalParams.useCustomPalette) {
-                    export_obj.procWaitTick = 0;
-                }
-                else if(lastLog == export_obj.latestLog && lastWriteLog == export_obj.latestWriteLog) {
+                if(lastLog == export_obj.latestLog && lastWriteLog == export_obj.latestWriteLog) {
                     export_obj.procWaitTick += 1;
                 }
                 else {
@@ -1409,7 +1438,7 @@ inline Exporter::Exporter(core::Project& aProject, QDialog* widget, exportParam&
     mOverwriteConfirmation(false) {}
 inline Exporter::~Exporter() {
     // Finalize
-    finish([=] { return true; });
+    finish([=] { return true; }, nullptr, 0);
     // Kill buffer
     gl::Global::makeCurrent();
     destroyFramebuffers();

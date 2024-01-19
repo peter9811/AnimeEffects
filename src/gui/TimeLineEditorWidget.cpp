@@ -131,7 +131,7 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
             auto* out = new QAction(tr("Out"), this);
             auto* all = new QAction(tr("All"), this);
 
-            QVector<QAction*> ranges{all, in, out};
+            QVector<QAction*> ranges{in, out, all};
             int x = 0;
             for (auto range: ranges) {
                 mSelectRange->addAction(range);
@@ -307,6 +307,9 @@ void TimeLineEditorWidget::updateProjectAttribute() {
 void TimeLineEditorWidget::updateTheme(theme::Theme& aTheme) {
     Q_UNUSED(aTheme) // TODO
     mTimelineTheme.reset();
+}
+QSize TimeLineEditorWidget::getEditorSize() const {
+    return mEditor->modelSpaceSize();
 }
 
 void TimeLineEditorWidget::paintEvent(QPaintEvent* aEvent) {

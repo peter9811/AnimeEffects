@@ -73,6 +73,7 @@ private:
     core::CameraInfo mCameraInfo;
     core::AbstractCursor mAbstractCursor;
     int mVerticalScrollValue;
+    int mHorizontalScrollValue;
 
     // for animation
     QTimer mTimer;

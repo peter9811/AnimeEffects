@@ -1326,8 +1326,11 @@ public:
 
         mProcess->connect(process, &QProcess::readyRead, [=] {
             if (this->mProcess) {
+                if(export_obj.log.isEmpty()) { export_obj.log.append("-Ready read-"); }
+                if(export_obj.errorLog.isEmpty()) { export_obj.errorLog.append("-Ready read-"); }
+                if(export_obj.writeLog.isEmpty()) { export_obj.writeLog.append("-Ready read-"); }
                 export_obj.log.push_back(QString(this->mProcess->readAll().data()));
-                QString logs = export_obj.log.last();
+                QStringList logs = {export_obj.log.last(), export_obj.writeLog.last(), export_obj.errorLog.last()};
                 bool containsErrors = (logs.contains("error", Qt::CaseInsensitive)
                 || logs.contains("conversion failed", Qt::CaseInsensitive)
                 || logs.contains("invalid", Qt::CaseInsensitive)
@@ -1364,9 +1367,11 @@ public:
                         export_obj.procWaitTick = 0;
                     }
                 }
+                if(export_obj.log.isEmpty()) { export_obj.log.append("-Ready Write-"); }
+                if(export_obj.writeLog.isEmpty()) { export_obj.writeLog.append("-Ready Write-"); }
                 export_obj.writeLog.push_back(QString(this->mProcess->readAll().data()));
                 QString lastLog = export_obj.log.last();
-                QString lastWriteLog = export_obj.log.last();
+                QString lastWriteLog = export_obj.writeLog.last();
                 if(lastLog == export_obj.latestLog && lastWriteLog == export_obj.latestWriteLog) {
                     export_obj.procWaitTick += 1;
                 }

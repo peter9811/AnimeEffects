@@ -2,7 +2,7 @@
 ;Structure should be: AnimeEffects/Compiled/AnimeEffectsWin
 
 #define MyAppName "AnimeEffects"
-#define MyAppVersion "1.5.1"
+#define MyAppVersion "1.5.2"
 #define MyAppPublisher "AnimeEffectsDevs"
 #define MyAppURL "https://animeeffectsdevs.github.io/"
 #define MyAppExeName "AnimeEffects.exe"

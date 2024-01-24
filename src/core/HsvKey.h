@@ -16,7 +16,7 @@ public:
         int mValue;
         int mAbsolute;
         QList<int> mHSV;
-        void clamp(QString type);
+        void clamp(const QString& type);
 
     public:
         Data();
@@ -27,25 +27,29 @@ public:
         void setHue(int aHue) {
             mHue = aHue;
             clamp("hue");
+            updateHSV();
         }
         void setSaturation(int aSaturation) {
             mSaturation = aSaturation;
             clamp("sat");
+            updateHSV();
         }
         void setValue(int aValue) {
             mValue = aValue;
             clamp("val");
+            updateHSV();
         }
         void setAbsolute(int aAbsolute) {
             mAbsolute = aAbsolute;
-            clamp("keep");
+            updateHSV();
         }
         void setHSV(QList<int> aHSV) {
             mHue = aHSV[0];
             mSaturation = aHSV[1];
             mValue = aHSV[2];
             mAbsolute = aHSV[3];
-            clamp("hsv");
+            clamp("");
+            updateHSV();
         }
         void updateHSV() {
             mHSV.clear();

@@ -44,6 +44,33 @@ vec3 HSVtoRGB(vec3 c)
 }
 
 
+vec3 lowerBrightness(vec3 color, float brightness)
+{
+    brightness = 1.0 / brightness;
+    color.x = pow(color.x, brightness);
+    color.y = pow(color.y, brightness);
+    color.z = pow(color.z, brightness);
+    return color;
+}
+
+
+vec3 adjustBrightness(vec3 color, float brightness)
+{
+    float alpha = sign(brightness - 1.0) * 0.5 + 0.5;
+    return mix(
+        lowerBrightness(color, brightness),
+        1.0 - lowerBrightness(1.0 - color, 2.0 - brightness),
+        alpha
+    );
+}
+
+
+float saturate(float x)
+{
+    return clamp(x, 0.0, 1.0);
+}
+
+
 vec3 offsetHSV(vec3 color)
 {
     vec3 newColor = color;
@@ -54,8 +81,8 @@ vec3 offsetHSV(vec3 color)
         newColor.x += hue;
     }
 	newColor.x = fract(newColor.x);
-    newColor.y *= saturation;
-    newColor.z *= value;
+    newColor.y = min(1.0, newColor.y * saturation);
+    newColor.z = min(1.0, newColor.z * value);
     newColor = HSVtoRGB(newColor);
     return newColor;
 }

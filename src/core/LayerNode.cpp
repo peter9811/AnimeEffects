@@ -463,9 +463,9 @@ void LayerNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAcc
 
         shader.setUniformValue("setColor", bool(HSVData[3]));
 
-        float hue = (float)HSVData[0] / 360.0;
-        float saturation = (float)(HSVData[1] + 100.0) / 200.0;
-        float value = (float)(HSVData[2] + 100.0) / 200.0;
+        float hue = (float)HSVData[0] / 360.0f;
+        float saturation = (float)(HSVData[1]) / 100.0f + 1.0f;
+        float value = (float)(HSVData[2]) / 100.0f + 1.0f;
 
         shader.setUniformValue("hue", hue);
         shader.setUniformValue("saturation", saturation);

@@ -128,6 +128,7 @@ install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-add_custom_target(copy_data ALL
+add_custom_target(copy_data
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/../data ${CMAKE_CURRENT_BINARY_DIR}/data
 )
+add_dependencies(${PROJECT_NAME} copy_data)

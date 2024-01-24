@@ -333,13 +333,13 @@ namespace prop {
 
             // saturation
             mSaturation = new IntegerItem(this);
-            mSaturation->setRange(-100, 100);
+            mSaturation->setRange(0, 200);
             mSaturation->box().setSingleStep(1);
             mSaturation->onValueUpdated = [=](int, int aNext) { this->mAccessor.assignHSV(aNext, "sat"); };
 
             // value
             mValue = new IntegerItem(this);
-            mValue->setRange(-100, 100);
+            mValue->setRange(0, 200);
             mValue->box().setSingleStep(1);
             mValue->onValueUpdated = [=](int, int aNext) { this->mAccessor.assignHSV(aNext, "val"); };
 

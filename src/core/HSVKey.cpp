@@ -2,19 +2,9 @@
 
 namespace core {
 
-HSVKey::Data::Data(): mEasing(), mHue(0), mSaturation(0), mValue(0), mAbsolute(0), mHSV{0, 0, 0, 0} {}
+HSVKey::Data::Data(): mEasing(), mHue(0), mSaturation(100), mValue(100), mAbsolute(0), mHSV{0, 100, 100, 0} {}
 
 bool HSVKey::Data::isZero() const { return mHSV == QList<int>{0, 0, 0, 0}; }
-
-void HSVKey::Data::clamp(const QString& type) {
-    if (type == "hue" || type.isEmpty()) {
-        mHue = util::MathUtil::getClamp(mHue, 0, 360);
-    } else if (type == "sat" || type.isEmpty()) {
-        mSaturation = util::MathUtil::getClamp(mSaturation, -100, 100);
-    } else if (type == "val" || type.isEmpty()) {
-        mValue = util::MathUtil::getClamp(mValue, -100, 100);
-    }
-}
 
 HSVKey::HSVKey(): mData() {}
 

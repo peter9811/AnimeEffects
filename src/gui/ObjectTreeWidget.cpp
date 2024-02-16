@@ -477,7 +477,7 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
         } else {
             box.setText(
                 tr("Successfully pasted ") + QString::number(successNum) + tr(" keys.\n") +
-                QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available bellow.")
+                QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available below.")
             );
         }
     }

@@ -20,7 +20,7 @@ Note: For the present there may be incompatible changes made, these will be made
 
 ## Requirements
 * Windows/Linux/Mac
-  * See compatible versions bellow.
+  * See compatible versions below.
 * Processor: Intel Celeron/AMD Athlon or similar
 * RAM: 4GB
 * Hard disk: 500MB free (AnimeEffects itself only needs around 100mb, this is to have space for instalation, projects and to ensure stability)

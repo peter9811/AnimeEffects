@@ -1429,7 +1429,7 @@ Check FFmpeg palette generation ... 🗸</source>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="559"/>
-        <source>An error has occurred, please send the bellow info to the developers.</source>
+        <source>An error has occurred, please send the below info to the developers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1457,7 +1457,7 @@ Check FFmpeg palette generation ... 🗸</source>
         <translation>错误</translation>
     </message>
     <message>
-        <source>An error has ocurred, please send the bellow info to the developers.</source>
+        <source>An error has ocurred, please send the below info to the developers.</source>
         <translation type="vanished">出现错误，请将下面的信息发送给开发人员。</translation>
     </message>
     <message>
@@ -2340,7 +2340,7 @@ In the following screen you can instruct AnimeEffects to download and install it
     <message>
         <location filename="../../src/gui/ObjectTreeWidget.cpp" line="476"/>
         <source> error(s) have been detected.
-The log is available bellow.</source>
+The log is available below.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3577,7 +3577,7 @@ The log is available bellow.</source>
     </message>
     <message>
         <location filename="../../src/ctrl/ExportParams.h" line="881"/>
-        <source>The export process stopped abnormaly, please send the info bellow to the devs.</source>
+        <source>The export process stopped abnormaly, please send the info below to the devs.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

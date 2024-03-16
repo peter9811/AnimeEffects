@@ -1734,7 +1734,7 @@ FFmpegのパレット生成の確認 ... 🗸</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="559"/>
-        <source>An error has occurred, please send the bellow info to the developers.</source>
+        <source>An error has occurred, please send the below info to the developers.</source>
         <translation>エラーが発生しました。以下の情報を開発者に送信してください。</translation>
     </message>
     <message>
@@ -1762,7 +1762,7 @@ FFmpegのパレット生成の確認 ... 🗸</translation>
         <translation>エラー</translation>
     </message>
     <message>
-        <source>An error has ocurred, please send the bellow info to the developers.</source>
+        <source>An error has ocurred, please send the below info to the developers.</source>
         <translation type="vanished">エラーが発生しましたので、以下の情報を開発者に送信してください。</translation>
     </message>
     <message>
@@ -2815,7 +2815,7 @@ In the following screen you can instruct AnimeEffects to download and install it
     <message>
         <location filename="../../src/gui/ObjectTreeWidget.cpp" line="476"/>
         <source> error(s) have been detected.
-The log is available bellow.</source>
+The log is available below.</source>
         <translation> エラーが検出されました。\nログは以下よりご覧いただけます。</translation>
     </message>
     <message>
@@ -4550,7 +4550,7 @@ The log is available bellow.</source>
     </message>
     <message>
         <location filename="../../src/ctrl/ExportParams.h" line="881"/>
-        <source>The export process stopped abnormaly, please send the info bellow to the devs.</source>
+        <source>The export process stopped abnormaly, please send the info below to the devs.</source>
         <translation>エクスポートプロセスが異常停止しました、 以下の情報を開発者に送ってください。</translation>
     </message>
     <message>

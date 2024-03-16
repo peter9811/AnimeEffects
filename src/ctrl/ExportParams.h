@@ -479,7 +479,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
                                     "resolved.")
                                : tr("You may ignore the errors and proceed should you choose to, click \"Ok\" "
                                     "to export anyway or \"Cancel\" if you wish to cancel the export.");
-        QString textMsg = tr("Some issues have been found while exporting, you can review them down bellow:\n") +
+        QString textMsg = tr("Some issues have been found while exporting, you can review them down below:\n") +
             "-----\n" + tr("Critical errors: ") + QString::number(errors.size()) + tr(" | Warnings: ") +
             QString::number(warnings.size()) + "\n-----\n" + conMsg;
         msg.setText(textMsg);
@@ -883,7 +883,7 @@ public:
         case Ongoing:
         default:
             title = tr("Something went wrong when halting the export process as the export result is invalid");
-            description = tr("The export process stopped abnormaly, please send the info bellow to the devs.");
+            description = tr("The export process stopped abnormaly, please send the info below to the devs.");
             break;
         }
         msgBox.setWindowTitle(title);

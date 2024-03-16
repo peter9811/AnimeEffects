@@ -10,9 +10,12 @@ GUIResources::GUIResources(const QString& aResourceDir):
 
     QSettings settings;
     auto theme = settings.value("generalsettings/ui/theme");
-    if (theme.isValid()) {
-        setTheme(theme.toString());
+    if (!theme.isValid()) {
+        settings.setValue("generalsettings/ui/theme", "classic");
+        theme = "classic";
     }
+    settings.sync();
+    setTheme(theme.toString());
 
     loadIcons();
 }

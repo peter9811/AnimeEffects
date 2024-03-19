@@ -1,4 +1,4 @@
-#include <QRegExp>
+#include <QRegularExpression>
 #include <fstream>
 #include <QDebug>
 #include "XC.h"

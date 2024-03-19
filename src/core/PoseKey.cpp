@@ -57,7 +57,7 @@ bool PoseKey::serialize(Serializer& aOut) const {
     aOut.write(mData.easing());
 
     // top bone count
-    aOut.write(mData.topBones().count());
+    aOut.write(static_cast<int>(mData.topBones().count()));
 
     // serialize all bones
     for (auto topBone : mData.topBones()) {

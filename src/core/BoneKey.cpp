@@ -102,7 +102,7 @@ void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets) {
 
             // influence map matrix
             auto mapMtx = cache->innerMatrix();
-            mapMtx.translate(originOffset);
+            mapMtx.translate(static_cast<QVector3D>(originOffset));
 
             BoneInfluenceMap& map = cache->influence();
             // allocate if necessary
@@ -300,7 +300,7 @@ TimeKey* BoneKey::createClone() {
 
 bool BoneKey::serialize(Serializer& aOut) const {
     // top bone count
-    aOut.write(mData.topBones().count());
+    aOut.write(static_cast<int>(mData.topBones().count()));
 
     // serialize all bones
     for (auto topBone : mData.topBones()) {
@@ -314,7 +314,7 @@ bool BoneKey::serialize(Serializer& aOut) const {
     aOut.writeID(mCacheOwner.get());
 
     // cache count
-    aOut.write(mCaches.count());
+    aOut.write(static_cast<int>(mCaches.count()));
 
     // each caches
     for (auto cache : mCaches) {
@@ -329,7 +329,7 @@ bool BoneKey::serialize(Serializer& aOut) const {
     }
 
     // binding cache count
-    aOut.write(mBindingCaches.count());
+    aOut.write(static_cast<int>(mBindingCaches.count()));
 
     // each binding caches
     for (auto& cache : mBindingCaches) {

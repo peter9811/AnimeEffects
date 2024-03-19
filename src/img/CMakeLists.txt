@@ -38,10 +38,12 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-    Qt::Core
-    Qt::Widgets
-    Qt::Gui
-    Qt::OpenGL
-    Qt::Xml
+        Qt6::Core
+        Qt6::Core5Compat
+        Qt6::Widgets
+        Qt6::Gui
+        Qt6::OpenGL
+        Qt6::OpenGLWidgets
+        Qt6::Xml
     util
 )

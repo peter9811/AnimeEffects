@@ -3,6 +3,8 @@
 #include <QTextStream>
 #include "XC.h"
 
+#include <QRegularExpression>
+
 namespace gl {
 
 ExtendShader::ExtendShader():
@@ -66,17 +68,17 @@ bool ExtendShader::resolveVariation() {
                 break;
         }
 
-        QRegExp lineReg("^#variation\\s+(.*)$");
-        if (lineReg.exactMatch(line)) {
-            QString nameValue = lineReg.cap(1);
+        QRegularExpression lineReg("^#variation\\s+(.*)$");
+        if (lineReg.match(line).hasMatch()) {
+            QString nameValue = lineReg.match(line).captured(1);
             // XC_REPORT() << "nameValue" << nameValue;
-            QRegExp nameReg("^(\\S+)");
-            if (nameReg.indexIn(nameValue) != -1) {
-                QString name = nameReg.cap(1);
+            QRegularExpression nameReg("^(\\S+)");
+            if (nameReg.match(nameValue).lastCapturedIndex() != -1) {
+                QString name = nameReg.match(nameValue).captured(1);
                 // XC_REPORT() << "name" << name;
 
                 bool find = false;
-                for (std::vector<VariationUnit>::iterator itr = mVariation.begin(); itr != mVariation.end(); ++itr) {
+                for (auto itr = mVariation.begin(); itr != mVariation.end(); ++itr) {
                     if (name == itr->name) {
                         line = "#define " + itr->name + " " + itr->value;
                         find = true;

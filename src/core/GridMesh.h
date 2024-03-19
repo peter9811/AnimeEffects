@@ -1,7 +1,7 @@
 #ifndef CORE_GRIDMESH_H
 #define CORE_GRIDMESH_H
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include <QSize>
 #include <QScopedArrayPointer>
 #include "XC.h"

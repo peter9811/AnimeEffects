@@ -6,7 +6,7 @@ AbstractCursor::Button getEventButtonFrom(Qt::MouseButton aButton) {
     switch (aButton) {
     case Qt::LeftButton:
         return AbstractCursor::Button_Left;
-    case Qt::MidButton:
+    case Qt::MiddleButton:
         return AbstractCursor::Button_Middle;
     case Qt::RightButton:
         return AbstractCursor::Button_Right;

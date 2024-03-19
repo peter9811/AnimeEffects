@@ -342,7 +342,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
             );
         }
         QFileInfo customPalette(params->palettePath.absolutePath());
-        if (!customPalette.suffix().contains(QRegExp("(png|\\.png)"))) {
+        if (!customPalette.suffix().contains(QRegularExpression("(png|\\.png)"))) {
             errors.append(tr("Selected palette format unsupported"));
             errorDetail.append(
                 tr("The palette located at \"" + params->palettePath.absolutePath() +

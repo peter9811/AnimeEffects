@@ -1,7 +1,7 @@
 #ifndef GL_VECTOR4
 #define GL_VECTOR4
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include <QVector4D>
 
 namespace gl {

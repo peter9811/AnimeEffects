@@ -1319,10 +1319,10 @@ void MainWindow::onExportTriggered() {
         exportUI->bitrateLineEdit->text().trimmed().isEmpty()
         ? 0 :
         // Does it contain only the word auto?
-        exportUI->bitrateLineEdit->text().trimmed().contains(QRegExp("^(?i)(auto(matic)?)$"))
+        exportUI->bitrateLineEdit->text().trimmed().contains(QRegularExpression("^(?i)(auto(matic)?)$"))
         ? 0 :
         // Does it contain only a positive number? If not then set to -1 for error handling.
-        exportUI->bitrateLineEdit->text().trimmed().contains(QRegExp("^(?!0\\d+)\\d+$"))
+        exportUI->bitrateLineEdit->text().trimmed().contains(QRegularExpression("^(?!0\\d+)\\d+$"))
             ? exportUI->bitrateLineEdit->text().toInt() : -1;
     genParam.imageExportQuality = exportUI->imageQualitySpinbox->value();
     genParam.allowTransparency = exportUI->transparencyCheckBox->isChecked();

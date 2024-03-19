@@ -4,7 +4,7 @@
 #include <QScopedArrayPointer>
 #include <QSize>
 #include <QRect>
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include "XC.h"
 #include "img/Buffer.h"
 

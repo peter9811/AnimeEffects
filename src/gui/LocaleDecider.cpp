@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QLocale>
 #include <QTextStream>
 #include <QSettings>
 #include "gui/LocaleDecider.h"

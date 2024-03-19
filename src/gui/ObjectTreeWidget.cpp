@@ -446,9 +446,8 @@ void ObjectTreeWidget::onRenameActionTriggered(bool) {
 }
 
 int extractIntFromStr(QString str) {
-    QRegExp regex = QRegExp("-?\\b\\d+(?:\\.\\d+)?\\b");
-    regex.indexIn(str);
-    return regex.capturedTexts()[0].toInt();
+    auto regex = QRegularExpression("-?\\b\\d+(?:\\.\\d+)?\\b");
+    return regex.match(str).captured(0).toInt();
 }
 
 void ObjectTreeWidget::onPasteActionTriggered(bool) {
@@ -466,7 +465,7 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
     int successNum = extractIntFromStr(returnVal.first());
     bool aKeyErrored = returnVal.size() > 1;
     QStringList errors = returnVal.filter("Error");
-    QStringList nullLogs = returnVal.filter(QRegExp("^(?!.*[\\d:])[^\\n]*$"));
+    QStringList nullLogs = returnVal.filter(QRegularExpression("^(?!.*[\\d:])[^\\n]*$"));
     auto keyTypeErrors = returnVal.filter("Key types errored");
     auto keys = mEditor->getTypesFromCb(mProject->pointee());
 
@@ -492,11 +491,11 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
     if (aKeyErrored && errors.size() != 0 && nullLogs.size() != 0 && keyTypeErrors.size() != 0) {
         QString errorLog;
         errorLog.append("--- Error log ---\n");
-        errorLog.append(errors.begin().i->t());
+        errorLog.append(errors.join(".\n"));
         errorLog.append("\n-----\n");
-        errorLog.append(nullLogs.begin().i->t());
+        errorLog.append(nullLogs.join(".\n"));
         errorLog.append("\n-----\n");
-        errorLog.append(keyTypeErrors.begin().i->t());
+        errorLog.append(keyTypeErrors.join(".\n"));
         errorLog.append("\n-----\n");
         box.setDetailedText(errorLog);
     }

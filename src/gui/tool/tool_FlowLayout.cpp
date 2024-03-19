@@ -58,7 +58,8 @@ namespace tool {
         for (auto item : mItemList) {
             size = size.expandedTo(item->minimumSize());
         }
-        size += QSize(2 * margin(), 2 * margin());
+        // Probably messes up some stuff, check later
+        size += QSize(contentsMargins().left() + contentsMargins().right(), contentsMargins().bottom() + contentsMargins().top());
         return size;
     }
 

@@ -1,7 +1,7 @@
 #ifndef GL_VECTOR3
 #define GL_VECTOR3
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include <QVector2D>
 #include <QVector3D>
 #include <QPoint>

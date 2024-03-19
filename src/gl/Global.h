@@ -3,8 +3,7 @@
 
 #include <QOpenGLFunctions_4_0_Core>
 #include <QOpenGLContext>
-#include <QOpenGLWidget>
-#include <QGLFormat>
+#include <QtOpenGLWidgets/QtOpenGLWidgets>
 
 namespace gl {
 

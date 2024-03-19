@@ -422,6 +422,7 @@ TimeKey* getKeyFromObj(QJsonObject obj, util::LifeLink::Pointee<Project> project
         return nullptr;
     }
     }
+    return nullptr;
 }
 
 QList<TimeKey*> TimeLineEditor::getTypesFromCb(util::LifeLink::Pointee<Project> project) {

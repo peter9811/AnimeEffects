@@ -1,5 +1,7 @@
 #include "gui/KeyCommandMap.h"
 
+#include "MainDisplayWidget.h"
+
 namespace gui {
 
 //-------------------------------------------------------------------------------------------------
@@ -12,7 +14,7 @@ KeyCommandMap::KeyCommand::KeyCommand(
 
 //-------------------------------------------------------------------------------------------------
 KeyCommandMap::KeyCommandMap(QWidget& aParent):
-    QObject(&aParent), mCommands(), mSubKeyCommands(), mSearchMap(), mParent(aParent) {
+     QObject(&aParent), mCommands(), mSubKeyCommands(), mSearchMap(), mParent(aParent) {
     auto general = tr("General");
     auto timeline = tr("Timeline");
     auto view = tr("View");

@@ -1,7 +1,7 @@
 #ifndef GL_VERTEXARRAYOBJECT_H
 #define GL_VERTEXARRAYOBJECT_H
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include "util/NonCopyable.h"
 
 namespace gl {

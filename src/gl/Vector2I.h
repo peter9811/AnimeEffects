@@ -1,7 +1,7 @@
 #ifndef GL_VECTOR2I
 #define GL_VECTOR2I
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include <QPoint>
 
 namespace gl {

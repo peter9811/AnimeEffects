@@ -361,7 +361,8 @@ void TimeKeyBlender::getMoveExpans(SRTExpans& aExpans, const ObjectNode& aNode, 
         } else {
             // linear blending
             auto vels = MoveKey::getCatmullRomVels(kn, k0, k1, k2);
-            aExpans.spline().set(k0->pos(), k1->pos(), vels[0], vels[1]);
+            aExpans.spline().set(static_cast<QVector3D>(k0->pos()), static_cast<QVector3D>(k1->pos()),
+                static_cast<QVector3D>(vels[0]), static_cast<QVector3D>(vels[1]));
             aExpans.setSplineCache(util::Range(p0.frame, p1.frame));
 
             aExpans.setPos(aExpans.spline().getByLinear(time).toVector2D());

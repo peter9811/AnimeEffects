@@ -106,10 +106,10 @@ QMatrix4x4 CameraInfo::viewMatrix() const {
     static const float kFarPlane = 1000.0f;
 
     QMatrix4x4 scr;
-    scr.translate(mCenter);
+    scr.translate(static_cast<QVector3D>(mCenter));
     scr.rotate(util::MathUtil::getDegreeFromRadian(mRotate), QVector3D(0.0f, 0.0f, 1.0f));
     scr.scale(mScale, mScale);
-    scr.translate(-centerOffset());
+    scr.translate(static_cast<QVector3D>(-centerOffset()));
 
     QMatrix4x4 view;
     view.ortho(0.0f, mScreenSize.width(), mScreenSize.height(), 0.0f, kNearPlane, kFarPlane);

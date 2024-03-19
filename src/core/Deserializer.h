@@ -11,7 +11,7 @@
 #include <QRectF>
 #include <QMatrix4x4>
 #include <QPolygonF>
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include <QVersionNumber>
 #include "XC.h"
 #include "util/Segment2D.h"

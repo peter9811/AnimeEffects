@@ -119,7 +119,7 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
             int x = 0;
             for(auto easing: easings) {
                 mSelectEasing->addAction(easing);
-                mSelectEasing->connect(easing, &QAction::triggered, [=, this] {
+                mSelectEasing->connect(easing, &QAction::triggered, [=] {
                     onSelectEasingTriggered(x);
                 });
                 x++;
@@ -135,7 +135,7 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
             int x = 0;
             for (auto range: ranges) {
                 mSelectRange->addAction(range);
-                mSelectEasing->connect(range, &QAction::triggered, [=, this] {
+                mSelectEasing->connect(range, &QAction::triggered, [=] {
                     onSelectRangeTriggered(x);
                 });
                 x++;

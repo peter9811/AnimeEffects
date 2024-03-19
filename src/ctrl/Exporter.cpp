@@ -320,19 +320,19 @@ Exporter::Result Exporter::execute(const CommonParam& aCommon, const VideoParam&
             videoCodec.command = "-y -f image2pipe -framerate $ifps -i - -b:v $obps -r $ofps $opath";
         }
 
-        videoCodec.command.replace(QRegExp("\\$ifps(\\s|$)"), QString::number(mCommonParam.fps) + "\\1");
-        videoCodec.command.replace(QRegExp("\\$icodec(\\s|$)"), videoCodec.icodec + "\\1");
-        videoCodec.command.replace(QRegExp("\\$obps(\\s|$)"), QString::number(aVideo.bps * 1000) + "\\1");
-        videoCodec.command.replace(QRegExp("\\$ofps(\\s|$)"), QString::number(mCommonParam.fps) + "\\1");
-        videoCodec.command.replace(QRegExp("\\$ocodec(\\s|$)"), videoCodec.name + "\\1");
-        videoCodec.command.replace(QRegExp("\\$opath(\\s|$)"), outPath.replace(" ", "%20"));
-        videoCodec.command.replace(QRegExp("\\$pixfmt(\\s|$)"), aVideo.pixfmt + "\\1");
+        videoCodec.command.replace(QRegularExpression("\\$ifps(\\s|$)"), QString::number(mCommonParam.fps) + "\\1");
+        videoCodec.command.replace(QRegularExpression("\\$icodec(\\s|$)"), videoCodec.icodec + "\\1");
+        videoCodec.command.replace(QRegularExpression("\\$obps(\\s|$)"), QString::number(aVideo.bps * 1000) + "\\1");
+        videoCodec.command.replace(QRegularExpression("\\$ofps(\\s|$)"), QString::number(mCommonParam.fps) + "\\1");
+        videoCodec.command.replace(QRegularExpression("\\$ocodec(\\s|$)"), videoCodec.name + "\\1");
+        videoCodec.command.replace(QRegularExpression("\\$opath(\\s|$)"), outPath.replace(" ", "%20"));
+        videoCodec.command.replace(QRegularExpression("\\$pixfmt(\\s|$)"), aVideo.pixfmt + "\\1");
         videoCodec.command.replace(
-            QRegExp("\\$arg_colorfilter(\\s|$)"),
+            QRegularExpression("\\$arg_colorfilter(\\s|$)"),
             (colorIndex == 0 ? QString("-vf colormatrix=bt601:bt709") : QString("")) + "\\1"
         );
         videoCodec.command.replace(
-            QRegExp("\\$arg_colorspace(\\s|$)"),
+            QRegularExpression("\\$arg_colorspace(\\s|$)"),
             QString("-colorspace ") + (colorIndex == 0 ? QString("bt709") : QString("smpte170m")) + "\\1"
         );
         // videoCodec.command.replace("\\", "");

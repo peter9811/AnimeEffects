@@ -195,7 +195,7 @@ void MainDisplayWidget::initializeGL() {
         }
     }
     // initialize opengl functions
-    auto functions = this->context()->versionFunctions<gl::Global::Functions>();
+    auto functions =QOpenGLVersionFunctionsFactory::get<gl::Global::Functions>(this->context());
     if (!functions) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to get opengl functions.", "");
     }
@@ -382,7 +382,7 @@ void MainDisplayWidget::mousePressEvent(QMouseEvent* aEvent) {
             updateCursor();
             // if (!mUsingTablet) qDebug() << "press";
 
-            if (mViaPoint.mouseSetting().middleMouseMoveCanvas && aEvent->button() == Qt::MouseButton::MidButton) {
+            if (mViaPoint.mouseSetting().middleMouseMoveCanvas && aEvent->button() == Qt::MouseButton::MiddleButton) {
                 mMovingCanvasByMiddleMouseButton = true;
                 mCanvasMover.setDragAndMove(
                     mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton
@@ -398,7 +398,7 @@ void MainDisplayWidget::mouseReleaseEvent(QMouseEvent* aEvent) {
             updateCursor();
             // if (!mUsingTablet) qDebug() << "release";
 
-            if (aEvent->button() == Qt::MouseButton::MidButton) {
+            if (aEvent->button() == Qt::MouseButton::MiddleButton) {
                 mMovingCanvasByMiddleMouseButton = false;
                 mCanvasMover.setDragAndMove(
                     mMovingCanvasByKey || mMovingCanvasByTool || mMovingCanvasByMiddleMouseButton

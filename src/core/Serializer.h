@@ -9,7 +9,7 @@
 #include <QRectF>
 #include <QMatrix4x4>
 #include <QPolygonF>
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include "XC.h"
 #include "util/Segment2D.h"
 #include "util/Easing.h"

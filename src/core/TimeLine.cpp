@@ -230,7 +230,7 @@ bool TimeLine::serialize(Serializer& aOut) const {
         }
 
         // key count
-        aOut.write(map.count());
+        aOut.write(static_cast<int>(map.count()));
 
         for (auto itr = map.begin(); itr != map.end(); ++itr) {
             // timekey index

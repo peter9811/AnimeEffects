@@ -148,11 +148,10 @@ QFileInfo NetworkUtil::downloadGithubFile(const QString& aURL, const QString& aF
         QString data = processData->readAll().data();
         if (program == "curl") {
             qDebug() << "Download percentage : " << data.mid(1, 3);
-            progressptr->setProgress(data.midRef(1, 3).toInt());
+            progressptr->setProgress(data.mid(1, 3).toInt());
         } else if (program == "wget") {
             // Finds a number with a percentage sign.
-            QRegularExpression re("(\\d{1,3})%");
-            QString percentage = re.match(data).captured(0);
+            QString percentage = QRegularExpression("(\\d{1,3})%").match(data).captured(0);
             percentage.remove("%");
             if (percentage.toInt() < 101 && percentage.toInt() != 0) {
                 qDebug() << "Download percentage : " << percentage.toInt();

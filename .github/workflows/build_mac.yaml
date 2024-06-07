@@ -19,6 +19,7 @@ jobs:
       shell: bash
       run: |
         echo 'export PATH="/opt/homebrew/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
+        echo 'export PATH="$(brew --prefix qt@5.5)/bin:$PATH"' >> ~/.bashrc
         export LDFLAGS="-L/opt/homebrew/opt/qt@5/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/qt@5/include"
         export PKG_CONFIG_PATH="/opt/homebrew/opt/qt@5/lib/pkgconfig"

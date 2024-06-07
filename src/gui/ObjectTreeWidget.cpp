@@ -97,6 +97,9 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
         mObjectAction = new QAction(tr("Create layer"), this);
         mObjectAction->connect(mObjectAction, &QAction::triggered, this, &ObjectTreeWidget::onObjectActionTriggered);
 
+        mObjectMirror = new QAction(tr("Duplicate layer"), this);
+        mObjectMirror->connect(mObjectMirror, &QAction::triggered, this, &ObjectTreeWidget::onObjectMirrorTriggered);
+
         mFolderAction = new QAction(tr("Create folder"), this);
         mFolderAction->connect(mFolderAction, &QAction::triggered, this, &ObjectTreeWidget::onFolderActionTriggered);
 
@@ -404,6 +407,7 @@ void ObjectTreeWidget::onContextMenuRequested(const QPoint& aPos) {
         menu.addAction(mRenameAction);
         menu.addSeparator();
         menu.addAction(mObjectAction);
+        menu.addAction(mObjectMirror);
         menu.addAction(mFolderAction);
 
         {
@@ -473,10 +477,11 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
         } else {
             box.setText(
                 tr("Successfully pasted ") + QString::number(successNum) + tr(" keys.\n") +
-                QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available bellow.")
+                QString::number(errors.size()) + tr(" error(s) have been detected.\nThe log is available below.")
             );
         }
-    } else {
+    }
+    else {
         box.setText(tr("Failed to paste key(s)"));
         if (!aKeyErrored) {
             box.setDetailedText(
@@ -495,8 +500,6 @@ void ObjectTreeWidget::onPasteActionTriggered(bool) {
         errorLog.append("\n-----\n");
         box.setDetailedText(errorLog);
     }
-
-
     if (successNum != 0) {
         // It doesn't work without this for some godforsaken reason.
         for (int x = 0; x < keys.size(); x++) {
@@ -611,6 +614,96 @@ void ObjectTreeWidget::onObjectActionTriggered(bool) {
     }
 }
 
+template <typename tlKey>
+void addKeyToTimeLine(core::TimeLine* tl, cmnd::Stack& stack, tlKey keys) {
+    for(auto key: keys) {
+        XC_PTR_ASSERT(tl);
+        auto copiedKey = key;
+        XC_PTR_ASSERT(copiedKey);
+        auto parentKey = copiedKey->parent();
+        core::TimeKey* newKey = copiedKey->createClone();
+        auto newFrame = key->frame();
+        newKey->setFrame(newFrame);
+        stack.push(new cmnd::GrabNewObject<core::TimeKey>(newKey));
+        stack.push(tl->createPusher(key->type(), newFrame, newKey));
+    }
+}
+
+void ObjectTreeWidget::onObjectMirrorTriggered() {
+    if(mActionItem) {
+        obj::Item* objItem = obj::Item::cast(mActionItem);
+        if(objItem->node().type() != core::ObjectType_Layer) { return; }
+        core::ObjectNode* parent;
+        int index ;
+        QTreeWidgetItem* parentItem;
+        int itemIndex;
+
+        // top node
+        if (!objItem || objItem->isTopNode()) {
+            parent = mProject->objectTree().topNode();
+            XC_PTR_ASSERT(parent);
+            index = static_cast<int>(parent->children().size());
+            parentItem = mActionItem;
+            itemIndex = parentItem->childCount();
+        }
+        else {
+            auto prevNode = &objItem->node();
+            parent = prevNode->parent();
+            if (!parent) { return; }
+            index = parent->children().indexOf(prevNode);
+            if (index < 0) { return; }
+            parentItem = mActionItem->parent();
+            if (!parentItem) { return; }
+            itemIndex = parentItem->indexOfChild(objItem);
+            if (itemIndex < 0) { return; }
+        }
+
+        auto& itemNode = objItem->node();
+        auto* itemTL = itemNode.timeLine();
+        QString nodeName = itemNode.name() + " (Copy)";
+        // create node
+        auto* ptr = new core::LayerNode(nodeName, mProject->objectTree().shaderHolder());
+        ptr->setVisibility(itemNode.isVisible());
+        img::ResourceHandle resHandle = itemTL->current().areaImageKey()->data().resource();
+        auto posKey = (core::MoveKey*)itemTL->defaultKey(core::TimeKeyType_Move);
+        if (!posKey) {
+            posKey = new core::MoveKey();
+            itemTL->grabDefaultKey(core::TimeKeyType_Move, posKey);
+        }
+        ptr->setDefaultImage(resHandle);
+        ptr->setDefaultPosture(posKey->data().pos());
+        ptr->setDefaultDepth(itemNode.initialDepth());
+        ptr->setDefaultOpacity(itemTL->current().opa().opacity());
+        // We get all keys now
+        core::TimeLine* ptrTl = ptr->timeLine();
+        ptrTl->current() = itemTL->current();
+        for(int tIndex = 0; tIndex!= core::TimeKeyType_TERM; tIndex++) {
+            addKeyToTimeLine(ptrTl, mProject->commandStack(), itemTL->map(static_cast<core::TimeKeyType>(tIndex)));
+        }
+        {
+            cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Duplicate layer"));
+            // notifier
+            {
+                auto coreNotifier = new core::ObjectTreeNotifier(*mProject);
+                coreNotifier->event().setType(core::ObjectTreeEvent::Type_Add);
+                coreNotifier->event().pushTarget(parent, *ptr);
+                macro.grabListener(coreNotifier);
+            }
+            macro.grabListener(new obj::RestructureNotifier(*this));
+
+            // create commands
+            mProject->commandStack().push(new cmnd::GrabNewObject<core::LayerNode>(ptr));
+            mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&parent->children(), index, ptr)
+            );
+
+            // create gui commands
+            obj::Item* itemPtr = createFileItem(*ptr);
+            mProject->commandStack().push(new cmnd::GrabNewObject<obj::Item>(itemPtr));
+            mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
+        }
+    }
+}
+
 void ObjectTreeWidget::onFolderActionTriggered(bool) {
     if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
@@ -665,7 +758,6 @@ void ObjectTreeWidget::onFolderActionTriggered(bool) {
             ptr->setDefaultPosture(QVector2D());
             ptr->setDefaultDepth(depth);
             ptr->setDefaultOpacity(1.0f); // @todo support default opacity
-
             // notifier
             {
                 auto coreNotifier = new core::ObjectTreeNotifier(*mProject);

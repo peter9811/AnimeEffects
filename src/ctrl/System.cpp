@@ -128,6 +128,16 @@ System::openProject(const QString& aFileName, Project::Hook* aHookGrabbed, util:
     return LoadResult(nullptr, "Empty file.");
 }
 
+bool isAllAscii(const std::string& str)
+{
+    return std::all_of(
+                str.begin(),
+                str.end(),
+                [](const unsigned char& ch){
+                    return ch <= 127;
+                });
+}
+
 System::SaveResult System::saveProject(core::Project& aProject) {
     const int index = mProjects.indexOf(&aProject);
 
@@ -141,10 +151,12 @@ System::SaveResult System::saveProject(core::Project& aProject) {
         const QString outputPath = project->fileName();
         const QString cachePath = mCacheDir + "/lastproject.cache";
         // ensure the string "%20" is not used
-        // qDebug() << outputPath;
         if (outputPath.contains("%20")) {
-            // qDebug() << outputPath;
             return SaveResult(false, "Please do not use '%20' for naming anie files.");
+        }
+        // ensure only ascii is used
+        if (!isAllAscii(outputPath.toStdString())) {
+            return SaveResult(false, "Please only utilize ASCII characters for naming .anie files.");
         }
 
         // create cache directory

@@ -69,35 +69,36 @@ Easing::Type Easing::easingToEnum(QString easing) {
     if (easing.isNull()) {
         QSettings settings;
         aEasing = settings.value("generalsettings/easing").toString();
-    } else {
+    }
+    else {
         aEasing = easing;
     }
     if (aEasing == "None")
-        return Easing::Type_None;
-    else if (aEasing == "Linear")
-        return Easing::Type_Linear;
-    else if (aEasing == "Sine")
-        return Easing::Type_Sine;
-    else if (aEasing == "Quad")
-        return Easing::Type_Quad;
-    else if (aEasing == "Cubic")
-        return Easing::Type_Cubic;
-    else if (aEasing == "Quart")
-        return Easing::Type_Quart;
-    else if (aEasing == "Quint")
-        return Easing::Type_Quint;
-    else if (aEasing == "Expo")
-        return Easing::Type_Expo;
-    else if (aEasing == "Circ")
-        return Easing::Type_Circ;
-    else if (aEasing == "Back")
-        return Easing::Type_Back;
-    else if (aEasing == "Elastic")
-        return Easing::Type_Elastic;
-    else if (aEasing == "Bounce")
-        return Easing::Type_Bounce;
-    else
-        return Easing::Type_Linear; // Default easing is Linear
+        return Type_None;
+    if (aEasing == "Linear")
+        return Type_Linear;
+    if (aEasing == "Sine")
+        return Type_Sine;
+    if (aEasing == "Quad")
+        return Type_Quad;
+    if (aEasing == "Cubic")
+        return Type_Cubic;
+    if (aEasing == "Quart")
+        return Type_Quart;
+    if (aEasing == "Quint")
+        return Type_Quint;
+    if (aEasing == "Expo")
+        return Type_Expo;
+    if (aEasing == "Circ")
+        return Type_Circ;
+    if (aEasing == "Back")
+        return Type_Back;
+    if (aEasing == "Elastic")
+        return Type_Elastic;
+    if (aEasing == "Bounce")
+        return Type_Bounce;
+    return Type_Linear;
+    // Default easing is Linear
 }
 
 Easing::Range Easing::rangeToEnum(QString range) {
@@ -109,13 +110,13 @@ Easing::Range Easing::rangeToEnum(QString range) {
         aRange = range;
     }
     if (aRange == "In")
-        return Easing::Range_In;
+        return Range_In;
     else if (aRange == "Out")
-        return Easing::Range_Out;
+        return Range_Out;
     else if (aRange == "All")
-        return Easing::Range_InOut;
+        return Range_InOut;
     else
-        return Easing::Range_InOut; // Default range is InOut, defined as "All" by Hidefuku
+        return Range_InOut; // Default range is InOut, defined as "All" by Hidefuku
 }
 
 

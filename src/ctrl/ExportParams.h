@@ -192,6 +192,11 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     QStringList errorDetail;
     // For convenience
     auto* params = &exParam->generalParams;
+    if (params->osExportTarget.contains("&#32")) {
+        errors.append(tr("Export name or location contains an invalid character (\"&#32\")"));
+        errorDetail.append(tr("Export name or location has the invalid character, please rename it to proceed."));
+    }
+
     if (params->exportHeight == 0) {
         errors.append(tr("Export height is zero"));
         errorDetail.append(tr("Export height was set to zero, please increase the resolution."));
@@ -474,7 +479,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
                                     "resolved.")
                                : tr("You may ignore the errors and proceed should you choose to, click \"Ok\" "
                                     "to export anyway or \"Cancel\" if you wish to cancel the export.");
-        QString textMsg = tr("Some issues have been found while exporting, you can review them down bellow:\n") +
+        QString textMsg = tr("Some issues have been found while exporting, you can review them down below:\n") +
             "-----\n" + tr("Critical errors: ") + QString::number(errors.size()) + tr(" | Warnings: ") +
             QString::number(warnings.size()) + "\n-----\n" + conMsg;
         msg.setText(textMsg);
@@ -789,7 +794,7 @@ inline QString buildArgument(const exportParam& exParam, bool loopGif) {
         }
     }
     // Output
-    argument.append(" " + exParam.generalParams.exportFileName.absolutePath());
+    argument.append(" " + exParam.generalParams.exportFileName.absolutePath().replace(" ", "&#32"));
     return argument;
 }
 } // namespace ffmpeg
@@ -878,7 +883,7 @@ public:
         case Ongoing:
         default:
             title = tr("Something went wrong when halting the export process as the export result is invalid");
-            description = tr("The export process stopped abnormaly, please send the info bellow to the devs.");
+            description = tr("The export process stopped abnormaly, please send the info below to the devs.");
             break;
         }
         msgBox.setWindowTitle(title);
@@ -1422,6 +1427,8 @@ public:
         );
 
         QStringList arguments = aArguments.split(' ');
+        // Add spaces back to the path
+        arguments.last().replace("&#32", " ");
         mProcess->start(program, arguments, QIODevice::ReadWrite);
         return true;
     }

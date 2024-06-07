@@ -84,6 +84,7 @@ private:
     void onRenameActionTriggered(bool aIsTriggered);
     void onPasteActionTriggered(bool aIsTriggered);
     void onObjectActionTriggered(bool aIsTriggered);
+    void onObjectMirrorTriggered();
     void onFolderActionTriggered(bool aIsTriggered);
     void onDeleteActionTriggered(bool aIsTriggered);
     void onThemeUpdated(theme::Theme&);
@@ -107,6 +108,7 @@ private:
     QAction* mRenameAction;
     QAction* mPasteAction;
     QAction* mObjectAction;
+    QAction* mObjectMirror;
     QAction* mFolderAction;
     QAction* mDeleteAction;
 };

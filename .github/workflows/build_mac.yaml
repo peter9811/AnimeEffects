@@ -18,10 +18,9 @@ jobs:
     - name: build AnimeEffects
       shell: bash
       run: |
-        echo 'export PATH="/opt/homebrew/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
+        export PATH="/opt/homebrew/opt/qt@5/bin:$PATH"
         export LDFLAGS="-L/opt/homebrew/opt/qt@5/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/qt@5/include"
-        export PKG_CONFIG_PATH="/opt/homebrew/opt/qt@5/lib/pkgconfig"
         qmake src/AnimeEffects.pro CONFIG+=release PREFIX=/usr
         make -j$(nproc)
         make INSTALL_ROOT=appdir install

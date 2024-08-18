@@ -54,3 +54,4 @@ jobs:
       with:
         name: AnimeEffects-MacOS
         path: ${{ env.artifactPath }}
+        compression-level: 0

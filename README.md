@@ -38,7 +38,7 @@ Note: For the present there may be incompatible changes made, these will be made
 * Qt 6.6.X
 * Vulkan Headers
 * CMake 3.16 or later.
-* MSVC/GCC (64-bit)
+* MSVC/GCC/CLang (64-bit)
 
 ## Linux (Debian)
 ### Compilation and AppImage creation
@@ -85,7 +85,7 @@ Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows-x64\"
 
 ## MacOS
 ### Compilation and .app creation
-* These steps assume brew, wget, python 3 and pip are installed on your system
+* These steps assume xcode, brew, wget, python 3 and pip are installed on your system
 ```bash
 brew install cmake ninja vulkan-headers
 pip install -U pip

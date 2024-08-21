@@ -70,7 +70,7 @@ chmod a+x AnimeEffects-x86_64.AppImage
 
 ## Windows
 ### Compilation and folder creation
-* The installation steps assume you have installed all the requirements through their installers and have them in your path
+* The installation steps assume you have installed all the requirements through their installers and you have them in your path
 ```powershell
 git clone https://github.com/AnimeEffectsDevs/AnimeEffects
 cd AnimeEffects
@@ -85,7 +85,7 @@ Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows-x64\"
 
 ## MacOS
 ### Compilation and .app creation
-* These steps assume brew, wget, python 3 and pip is installed on your system
+* These steps assume brew, wget, python 3 and pip are installed on your system
 ```bash
 brew install cmake ninja vulkan-headers
 pip install -U pip

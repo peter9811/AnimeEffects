@@ -77,11 +77,9 @@ int entryPoint(int argc, char* argv[]);
 
 int main(int argc, char* argv[]) {
     gXCAssertHandler = &sAEAssertHandler;
-
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
     _CrtSetAllocHook(myAllocHook);
 #endif // USE_MSVC_MEMORYLEAK_DEBUG
-
     int result = 0;
     // Hidefuku *tried* to make an error handler, either due to architectural changes or some other issue it just
     // doesn't work, at all, even doing a try/catch block doesn't cut it, please help...

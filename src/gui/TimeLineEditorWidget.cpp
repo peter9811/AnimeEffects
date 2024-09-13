@@ -486,10 +486,12 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
                 }
                 index++;
             }
-            ffd["cellSize"] = ((const core::ImageKey*)node->timeLine()->timeKey(core::TimeKeyType_Image, closest))
-                                  ->data()
-                                  .gridMesh()
-                                  .cellSize();
+            ffd["cellSize"] =
+                ((const core::ImageKey*)node->timeLine()->timeKey(core::TimeKeyType_Image, closest))?
+                ((const core::ImageKey*)node->timeLine()->timeKey(core::TimeKeyType_Image, closest))
+                      ->data()
+                      .gridMesh()
+                      .cellSize() : 0;
         } else {
             ffd["cellSize"] = node->timeLine()->current().areaImageKey()->data().gridMesh().cellSize();
         }
@@ -532,7 +534,7 @@ void TimeLineEditorWidget::onCopyKeyTriggered(bool) {
     mCopyTargets = mTargets;
     QSettings settings;
     auto cbCopy = settings.value("generalsettings/keys/autocb");
-    bool copyToCb = cbCopy.isValid() ? cbCopy.toBool() : true;
+    bool copyToCb = !cbCopy.isValid() || cbCopy.toBool();
     if (copyToCb) {
         onCopyCBTriggered(true);
     }
@@ -545,8 +547,11 @@ void TimeLineEditorWidget::onCopyCBTriggered(bool) {
     QJsonObject targets;
     QJsonArray keys;
     targets["TargetsSize"] = mCopyTargets.targets().size();
+    qDebug() << mCopyTargets.targets().size();
     for (auto cTarget : mCopyTargets.targets()) {
+        qDebug() << cTarget.pos.key();
         core::TimeKeyType keyType = cTarget.pos.key()->type();
+        qDebug() << keyType;
         core::TimeKey* timeKey = cTarget.node->timeLine()->timeKey(keyType, cTarget.pos.key()->frame());
         keys.append(getKeyTypeSerialized(keyType, timeKey, cTarget.node));
     }

@@ -201,7 +201,7 @@ public:
     }
     static void aPlayer(std::vector<audioConfig>* pConf, bool play, mediaState* state, int fps, int curFrame, int frameCount);
     static bool serialize(std::vector<audioConfig>* pConf, const QString& outPath);
-    bool deserialize(const QJsonObject& pConf, std::vector<audioConfig>* playbackConfig) const;
+    static bool deserialize(const QJsonObject& pConf, std::vector<audioConfig>* playbackConfig) ;
     static float getVol(int volume){ return static_cast<float>(volume / 100.0); }
 };
 

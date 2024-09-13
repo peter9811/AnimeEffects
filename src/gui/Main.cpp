@@ -83,8 +83,16 @@ int main(int argc, char* argv[]) {
 #endif // USE_MSVC_MEMORYLEAK_DEBUG
 
     int result = 0;
+    // Hidefuku *tried* to make an error handler, either due to architectural changes or some other issue it just
+    // doesn't work, at all, even doing a try/catch block doesn't cut it, please help...
     TRY_ACTION_WITH_EXCEPT(result = entryPoint(argc, argv));
-
+    /*
+    try { (result = entryPoint(argc, argv)); }
+    catch(...){
+        QMessageBox::warning(nullptr, "Whoops", "The app has crashed unexpectedly, sorry for that");
+        result = -1;
+    }
+    */
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
     gMemoryRegister.dumpAll();
     gMemoryRegister.final();
@@ -172,7 +180,6 @@ int entryPoint(int argc, char* argv[]) {
 
         // save settings(window status, etc.)
         mainWindow->saveCurrentSettings(result);
-
 
         // bind gl context for destructors
         gl::Global::makeCurrent();

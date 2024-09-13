@@ -23,7 +23,7 @@ bool AudioPlaybackWidget::serialize(std::vector<audioConfig>* pConf, const QStri
     file.close();
     return false;
 }
-bool AudioPlaybackWidget::deserialize(const QJsonObject& pConf, std::vector<audioConfig>* playbackConfig) const {
+bool AudioPlaybackWidget::deserialize(const QJsonObject& pConf, std::vector<audioConfig>* playbackConfig) {
     if(pConf.isEmpty()) { return false; }
     try {
         auto deserialized = std::vector<audioConfig>();

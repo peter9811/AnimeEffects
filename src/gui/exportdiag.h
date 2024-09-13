@@ -783,7 +783,8 @@ public:
                 heightSpinBox->setValue(heightSpinBox->value() + (aValue - latestWidth));
             }
             else if(keepAspectRatio->isChecked()) {
-                heightSpinBox->setValue((nativeH * aValue) / nativeW);
+                int res = (nativeH * aValue) / nativeW;
+                heightSpinBox->setValue(res % 2? res + 1 : res);
             }
             latestWidth = aValue;
             latestHeight = heightSpinBox->value();
@@ -800,7 +801,8 @@ public:
                 widthSpinBox->setValue(widthSpinBox->value() + (aValue - latestHeight));
             }
             else if(keepAspectRatio->isChecked()) {
-                widthSpinBox->setValue((nativeW * aValue) / nativeH);
+                int res = (nativeW * aValue) / nativeH;
+                widthSpinBox->setValue(res % 2? res + 1: res);
             }
             latestHeight = aValue;
             latestWidth = widthSpinBox->value();

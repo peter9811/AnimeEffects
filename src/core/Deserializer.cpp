@@ -36,10 +36,25 @@ void Deserializer::read(bool& aValue) { aValue = (bool)mIn.readUInt32(); }
 
 void Deserializer::read(int& aValue) { aValue = mIn.readSInt32(); }
 
-void Deserializer::read(QList<int>& aValue) {
+void Deserializer::read(QList<int>& aValue, bool errorCorrection) {
     int size = aValue.size();
+    bool valueInvalid = false;
     for (int x = 0; x < size; x += 1) {
         aValue[x] = mIn.readSInt32();
+        if(aValue[x] >= 1e5){
+            valueInvalid = true;
+        }
+    }
+    if(errorCorrection){
+        qDebug("Correcting bytes.");
+        mIn.skip(-4);
+    }
+
+    if(errorCorrection && valueInvalid){
+        qDebug("Error correction triggered.");
+        for (int x = 0; x < size; x += 1) {
+            aValue[x] = 0;
+        }
     }
 }
 
@@ -107,10 +122,17 @@ void Deserializer::read(Frame& aValue) {
     aValue.setSerialValue(s);
 }
 
-bool Deserializer::read(util::Easing::Param& aValue) {
+bool Deserializer::read(util::Easing::Param& aValue, bool errorCorrection) {
+
     aValue.type = (util::Easing::Type)mIn.readSInt32();
     aValue.range = (util::Easing::Range)mIn.readSInt32();
     aValue.weight = mIn.readFloat32();
+    if(!aValue.isValidParam() && errorCorrection){
+        aValue = util::Easing::Param();
+        qDebug("Correcting bytes.");
+        mIn.skip(-4);
+        return true;
+    }
     return aValue.isValidParam();
 }
 

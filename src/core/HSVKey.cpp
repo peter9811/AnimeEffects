@@ -22,15 +22,18 @@ bool HSVKey::serialize(Serializer& aOut) const {
 
 bool HSVKey::deserialize(Deserializer& aIn) {
     aIn.pushLogScope("HSVKey");
+    bool errorCorrection = false;
+    if(aIn.version().minorVersion() <= 6){
+        errorCorrection = true;
+    }
 
-    if (!aIn.read(mData.easing())) {
+    if (!aIn.read(mData.easing(), errorCorrection)) {
         return aIn.errored("invalid easing param");
     }
 
     QList<int> hsv = data().hsv();
-    aIn.read(hsv);
+    aIn.read(hsv, errorCorrection);
     mData.setHSV(hsv);
-
     aIn.popLogScope();
     return aIn.checkStream();
 }

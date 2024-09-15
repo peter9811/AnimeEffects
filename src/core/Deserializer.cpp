@@ -48,12 +48,9 @@ void Deserializer::read(QList<int>& aValue, bool errorCorrection) {
     if(errorCorrection){
         qDebug("Correcting bytes.");
         mIn.skip(-4);
-    }
-
-    if(errorCorrection && valueInvalid){
-        qDebug("Error correction triggered.");
-        for (int x = 0; x < size; x += 1) {
-            aValue[x] = 0;
+        if(valueInvalid){
+            qDebug("Error correction triggered.");
+            aValue = {0, 100, 100, 0};
         }
     }
 }

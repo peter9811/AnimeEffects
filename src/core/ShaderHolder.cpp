@@ -177,11 +177,11 @@ gl::EasyShaderProgram& ShaderHolder::reserveClipperShader(bool aIsClippee) {
         gl::ExtendShader source;
         if (!source.openFromFileVert("./data/shader/ClipperWritingVert.glsl")) {
             XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
-                               "Failed to open vertex shader file.", source.log());
+                               "\nFailed to open vertex shader file.", source.log());
         }
         if (!source.openFromFileFrag("./data/shader/ClipperWritingFrag.glsl")) {
             XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
-                               "Failed to open fragment shader file.", source.log());
+                               "\nFailed to open fragment shader file.", source.log());
         }
 
         source.setVariationValue("IS_CLIPPEE", aIsClippee ? "1" : "0");

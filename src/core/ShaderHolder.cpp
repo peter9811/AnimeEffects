@@ -38,10 +38,12 @@ gl::EasyShaderProgram& ShaderHolder::reserveShader(img::BlendMode aBlendMode, bo
 
         gl::ExtendShader source;
         if (!source.openFromFileVert("./data/shader/LayerDrawingVert.glsl")) {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.", source.log());
+            XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
+                               "Failed to open vertex shader file.", source.log());
         }
         if (!source.openFromFileFrag("./data/shader/LayerDrawingFrag.glsl")) {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.", source.log());
+            XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
+                               "Failed to open fragment shader file.", source.log());
         }
 
         auto blendFunc = QString("Blend") + img::getBlendFuncNameFromBlendMode(aBlendMode);
@@ -89,10 +91,12 @@ gl::EasyShaderProgram& ShaderHolder::reserveHSVShader() {
 
         gl::ExtendShader source;
         if (!source.openFromFileVert("./data/shader/HSVAdjustVert.glsl")) {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.", source.log());
+            XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
+                               "Failed to open vertex shader file.", source.log());
         }
         if (!source.openFromFileFrag("./data/shader/HSVAdjustFrag.glsl")) {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.", source.log());
+            XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
+                               "Failed to open fragment shader file.", source.log());
         }
 
         if (!source.resolveVariation()) {
@@ -131,10 +135,12 @@ gl::EasyShaderProgram& ShaderHolder::reserveGridShader() {
 
         gl::ExtendShader source;
         if (!source.openFromFileVert("./data/shader/GridDrawingVert.glsl")) {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.", source.log());
+            XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
+                               "Failed to open vertex shader file.", source.log());
         }
         if (!source.openFromFileFrag("./data/shader/GridDrawingFrag.glsl")) {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.", source.log());
+            XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
+                                "Failed to open fragment shader file.", source.log());
         }
 
         if (!source.resolveVariation()) {
@@ -170,10 +176,12 @@ gl::EasyShaderProgram& ShaderHolder::reserveClipperShader(bool aIsClippee) {
 
         gl::ExtendShader source;
         if (!source.openFromFileVert("./data/shader/ClipperWritingVert.glsl")) {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open vertex shader file.", source.log());
+            XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
+                               "Failed to open vertex shader file.", source.log());
         }
         if (!source.openFromFileFrag("./data/shader/ClipperWritingFrag.glsl")) {
-            XC_FATAL_ERROR("FileIO Error", "Failed to open fragment shader file.", source.log());
+            XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
+                               "Failed to open fragment shader file.", source.log());
         }
 
         source.setVariationValue("IS_CLIPPEE", aIsClippee ? "1" : "0");

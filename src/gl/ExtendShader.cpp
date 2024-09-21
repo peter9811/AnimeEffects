@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include "XC.h"
 #include "util/NetworkUtil.h"
+#include <QDir>
 
 #include <QRegularExpression>
 
@@ -13,7 +14,7 @@ ExtendShader::ExtendShader():
 
 bool ExtendShader::openFromFile(const QString& aFilePath, QString& originalCode) {
     mVariation.clear();
-    QFile file = util::NetworkUtil::os() == "mac"? QFile("/AnimeEffects.app/" + aFilePath): QFile(aFilePath);
+    QFile file = util::NetworkUtil::os() == "mac"? QFile(QDir::currentPath() + "/AnimeEffects.app/" + aFilePath): QFile(aFilePath);
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream in(&file);
         originalCode = in.readAll();

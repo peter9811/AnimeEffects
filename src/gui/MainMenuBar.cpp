@@ -313,7 +313,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             detail += tr("Qt Version: ") + qtVersion + "\n";
             detail += tr("Format Version: ") + formatVersionString + "\n";
             // Unicode Check
-            auto nonAscii = QRegExp("[^\\x00-\\x7F]+");
+            auto nonAscii = QRegularExpression("[^\\x00-\\x7F]+");
             QString hasUnicode = QApplication::applicationFilePath().contains(nonAscii) ? "True" : "False";
             detail += tr("Location Has Unicode: ") + hasUnicode + "\n";
             // Write Check

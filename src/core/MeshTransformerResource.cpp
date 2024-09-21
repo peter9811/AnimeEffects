@@ -70,7 +70,9 @@ void MeshTransformerResource::buildShader(
     if (!aProgram.link()) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.", aProgram.log());
     }
-
+    if(ggl.glGetError() != GL_NO_ERROR){
+        qDebug() << ggl.glGetError();
+    }
     XC_ASSERT(ggl.glGetError() == GL_NO_ERROR);
 }
 

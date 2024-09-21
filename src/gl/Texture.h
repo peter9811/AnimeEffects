@@ -1,7 +1,7 @@
 #ifndef GL_TEXTURE_H
 #define GL_TEXTURE_H
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include "XC.h"
 #include "util/NonCopyable.h"
 

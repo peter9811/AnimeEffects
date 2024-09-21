@@ -1,6 +1,6 @@
 project(AnimeEffects)
 
-set(MACOSX_BUNDLE_ICON_FILE AnimeEffects.icns)
+set(MACOSX_BUNDLE_ICON_FILE AnimeEffects.icns)	
 
 if(WIN32)
     set(app_icon "icon.rc")
@@ -10,8 +10,12 @@ elseif(APPLE)
         MACOSX_PACKAGE_LOCATION "Resources"
     )
 elseif(UNIX)
-    file(COPY ${CMAKE_SOURCE_DIR}/../dist/AnimeEffects.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps/)
-    file(COPY ${CMAKE_SOURCE_DIR}/../dist/AnimeEffects.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications/)
+    file(COPY ${CMAKE_SOURCE_DIR}/dist/AnimeEffects.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps/)
+    file(COPY ${CMAKE_SOURCE_DIR}/dist/AnimeEffects.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/)
+    file(COPY ${CMAKE_SOURCE_DIR}/dist/AnimeEffects.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable)
+    file(COPY ${CMAKE_SOURCE_DIR}/dist/AnimeEffects.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications/)
+    file(COPY ${CMAKE_SOURCE_DIR}/dist/AnimeEffects.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications/org.anie.AnimeEffects)
+    
 endif()
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
@@ -92,6 +96,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     tool/tool_SRTPanel.cpp tool/tool_SRTPanel.h
     tool/tool_ViewPanel.cpp tool/tool_ViewPanel.h
     ${app_icon}
+        AudioPlaybackWidget.cpp
+        AudioPlaybackWidget.h
 )
 target_include_directories(${PROJECT_NAME} PRIVATE
     ..
@@ -99,8 +105,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     AE_MAJOR_VERSION=1
-    AE_MICRO_VERSION=2
-    AE_MINOR_VERSION=5
+    AE_MICRO_VERSION=0
+    AE_MINOR_VERSION=6
     AE_PROJECT_FORMAT_MAJOR_VERSION=0
     AE_PROJECT_FORMAT_MINOR_VERSION=7
     AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION=0
@@ -109,18 +115,10 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    Qt::Core
-    Qt::Widgets
-    Qt::Gui
-    Qt::OpenGL
-    Qt::Xml
-    cmnd
-    core
-    ctrl
-    gl
-    img
-    thr
-    util
+        Qt6::Core Qt6::Core5Compat Qt6::Widgets
+        Qt6::Gui Qt6::OpenGL Qt6::OpenGLWidgets
+        Qt6::Xml Qt6::Concurrent Qt6::Multimedia
+        cmnd core ctrl gl img thr util
 )
 
 install(TARGETS ${PROJECT_NAME}
@@ -129,6 +127,6 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 add_custom_target(copy_data
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/../data ${CMAKE_CURRENT_BINARY_DIR}/data
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR}/data
 )
 add_dependencies(${PROJECT_NAME} copy_data)

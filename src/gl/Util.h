@@ -1,7 +1,7 @@
 #ifndef GL_UTIL_H
 #define GL_UTIL_H
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include <QSize>
 namespace gl {
 class BufferObject;

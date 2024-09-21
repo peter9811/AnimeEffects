@@ -2,7 +2,7 @@
 #define GL_DEVICEINFO_H
 
 #include <string>
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 
 namespace gl {
 

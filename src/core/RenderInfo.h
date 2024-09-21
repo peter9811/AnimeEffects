@@ -1,7 +1,7 @@
 #ifndef CORE_RENDERINFO_H
 #define CORE_RENDERINFO_H
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include "XC.h"
 #include "core/CameraInfo.h"
 #include "core/TimeInfo.h"

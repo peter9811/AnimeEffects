@@ -196,7 +196,11 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         errors.append(tr("Export name or location contains an invalid character (\"&#32\")"));
         errorDetail.append(tr("Export name or location has the invalid character, please rename it to proceed."));
     }
-
+    if (params->allowTransparency && exParam->videoParams.intermediateFormat != availableIntermediateFormats::png){
+        errors.append(tr("Transparent export does not have PNG intermediate"));
+        errorDetail.append(tr("Export was set to allow transparency but the intermediate format does not support it, "
+            "please change it to PNG."));
+    }
     if (params->exportHeight == 0) {
         errors.append(tr("Export height is zero"));
         errorDetail.append(tr("Export height was set to zero, please increase the resolution."));
@@ -205,14 +209,14 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         errors.append(tr("Export width is zero"));
         errorDetail.append(tr("Export width was set to zero, please increase the resolution."));
     }
-    // Generic indivisable by two resolution error for all video targets,
+    // Generic indivisible by two resolution error for all video targets,
     // as I don't wanna go through each format to check :P
     if (params->exportHeight % 2 != 0 && exParam->exportType == exportTarget::video) {
         errors.append(tr("Export height contains an odd number."));
         errorDetail.append(
             tr("Height is ") + QString::number(params->exportHeight) + tr(", please change it to ") +
             QString::number(params->exportHeight + 1) + tr(" or to ") + QString::number(params->exportHeight - 1) +
-            tr(" to continue with the export, as animation exports do not support resultions that cannot be "
+            tr(" to continue with the export, as animation exports do not support resolutions that cannot be "
                "divided by two.")
         );
     }
@@ -221,7 +225,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         errorDetail.append(
             tr("Width is ") + QString::number(params->exportWidth) + tr(", please change it to ") +
             QString::number(params->exportWidth + 1) + tr(" or to ") + QString::number(params->exportWidth - 1) +
-            tr(" to continue with the export, as animation exports do not support resultions that cannot be "
+            tr(" to continue with the export, as animation exports do not support resolutions that cannot be "
                "divided by two.")
         );
     }
@@ -321,7 +325,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         warnings.append(tr("Forced pixel format with transparency"));
         warningDetail.append(
             tr("A pixel and target format that allow for alpha layers were selected but the option for allowing "
-               "transparents export was not, please select it or change your format to one without the 'a' in it to "
+               "transparent export was not, please select it or change your format to one without the 'a' in it to "
                "avoid unintentional transparency.")
         );
     }
@@ -342,7 +346,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
             );
         }
         QFileInfo customPalette(params->palettePath.absolutePath());
-        if (!customPalette.suffix().contains(QRegExp("(png|\\.png)"))) {
+        if (!customPalette.suffix().contains(QRegularExpression("(png|\\.png)"))) {
             errors.append(tr("Selected palette format unsupported"));
             errorDetail.append(
                 tr("The palette located at \"" + params->palettePath.absolutePath() +
@@ -608,7 +612,7 @@ public:
         pixmapLabel->setText(QCoreApplication::translate(
             "Form", "<html><head/><body><p align=\"center\">Initializing...</p></body></html>", nullptr
         ));
-    } // retranslateUi
+    } // translateUi
 };
 inline bool overwrite(const QString& path) {
     QMessageBox msgBox;
@@ -765,8 +769,13 @@ inline QString buildArgument(const exportParam& exParam, bool loopGif) {
         }
     }
     // Format
-    argument.append(" -f " + videoFormats[static_cast<int>(exParam.videoParams.format)]);
-
+    if(exParam.videoParams.format == availableVideoFormats::mkv){
+        // For some reason ffmpeg uses matroska and not .mkv to refer to the format
+        argument.append(" -f matroska");
+    }
+    else {
+        argument.append(" -f " + videoFormats[static_cast<int>(exParam.videoParams.format)]);
+    }
     // Threads
     argument.append(" -threads 0");
 

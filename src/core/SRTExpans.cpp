@@ -18,7 +18,7 @@ bool SRTExpans::hasSplineCache(Frame aFrame) const {
 
 QMatrix4x4 SRTExpans::localCSRTMatrix() const {
     QMatrix4x4 mtx = localSRTMatrix();
-    mtx.translate(mCentroid);
+    mtx.translate(static_cast<QVector3D>(mCentroid));
     return mtx;
 }
 

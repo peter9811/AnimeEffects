@@ -1,6 +1,6 @@
 # AnimeEffects
 
-🇯🇵 [日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-jp.md)
+🇯🇵 (Outdated) [日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-jp.md)
 
 A 2D animation tool which doesn't require a carefully thought-out plan, it simplifies animation by providing various functions based on the deformation of polygon meshes.<br>
 Originally developed by hidefuku, it is now being developed and maintained by its community.
@@ -11,6 +11,7 @@ Originally developed by hidefuku, it is now being developed and maintained by it
 * Official socials:<br>
   * Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects Community Server</a> (courtesy of @Jose-Moreno)<br>
   * Twitter: <a href='https://twitter.com/anime_effects'>AnimeEffects</a> (maintained by @p_yukusai)<br>
+  * [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3)
 
 Note: For the present there may be incompatible changes made, these will be made known in the release affected should they occur.<br>
 ***If you have any issues or wish to suggest new features, feel reach out to us on our socials!***
@@ -21,67 +22,87 @@ Note: For the present there may be incompatible changes made, these will be made
 ## Requirements
 * Windows/Linux/Mac
   * See compatible versions below.
-* Processor: Intel Celeron/AMD Athlon or similar
+* Processor: A 64 bit CPU
 * RAM: 4GB
-* Hard disk: 500MB free (AnimeEffects itself only needs around 100mb, this is to have space for instalation, projects and to ensure stability)
-* Graphics card: Intel UHD Graphics/AMD Vega Graphics or any card that supports OpenGL 4.0
+* Graphics card: Intel UHD Graphics/AMD Vega Graphics or any card that supports OpenGL 4.0 or higher
 * Display: 1360x720 (The GUI has been made for displays with this resolution or higher)
 * [FFmpeg](https://ffmpeg.org/download.html) (Necessary for video exporting, you can place it on your path or copy it to the "/tools" folder.)
 
 ## OS Targets
 #### This is what we are compiling and testing the software on, it may work on older versions but this is discouraged.
 * Windows 10 or newer.
-* Ubuntu LTS or newer.
-  * The provided AppImage will *not* work on older versions due to glibc.
+* Ubuntu LTS or comparable distro.
 * MacOS Big Sur or newer.
-  * None of our contributors actually has a Mac to test AnimeEffects on, but we do keep track of compilation errors and artifacts.
 
 ## Development requirements
-* Qt 5.14 or later.
-* MSVC2019/MinGW/Make (32-bit or 64-bit)
+* Qt 6.6.X
+* Vulkan Headers
+* CMake 3.16 or later.
+* MSVC/GCC/CLang (64-bit)
 
-## Linux
-### Installing Dependencies
-#### Debian / Ubuntu
-
-* First update and install dependencies:
-
+## Linux (Debian)
+### Compilation and AppImage creation
+* Most of these dependencies are unnecessary as they come with your distro so check against your own packages:
 ```
-sudo apt update
-sudo apt install -y software-properties-common g++ make wget rsync
-sudo apt install -y build-essential libglib2.0-0 qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgl1-mesa-dev file
-```
-
-#### Arch / Manjaro
-* First update and install dependencies:  
-
-```
-sudo pacman -Syu
-sudo pacman -S git gcc glib2 qt5 make
-```
-
-### Clone / Building
-* Clone AnimeEffects git repo and go to the "src" folder:  
-
-```
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y software-properties-common g++ make cmake ninja-build wget rsync build-essential libglib2.0-0 
+sudo apt install -y libgl1-mesa-dev file libvulkan-dev openssl python3 python3-pip libxcb-cursor0 libxrandr2 wget
+pip install -U pip
+pip install aqtinstall
+aqt install-qt linux desktop 6.6.2 gcc_64 -m qtimageformats qtmultimedia qt5compat
 git clone https://github.com/AnimeEffectsDevs/AnimeEffects
-cd AnimeEffects/src
-qmake AnimeEffects.pro
-make
-```
-* When building is done, run AnimeEffects:
-```
-./AnimeEffects  
+cd AnimeEffects
+cmake -S . -B build -G "Ninja Multi-Config"
+cmake --build build --config Release
+cd build/src/gui/Release 
+mkdir -p appdir
+cp AnimeEffects appdir
+cp -R ../data appdir/data
+cp -R ../../../../dist appdir/dist
+cp ../../../../dist/AnimeEffects.png appdir
+find appdir/
+export APPIMAGE_EXTRACT_AND_RUN=1
+wget -c -nv "https://github.com/p-yukusai/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+./linuxdeployqt-continuous-x86_64.AppImage appdir/dist/AnimeEffects.desktop -extra-plugins=imageformats,multimedia,core5compat -appimage -verbose=2       
+chmod a+x AnimeEffects-x86_64.AppImage
 ```
 
 ## Windows
-* If you're not using QtCreator, it is adviced that you add the bin folder of your compiler of choice and of its tooling to your path, and then check out the powershell scripts available for building and deploying (MSVC 2019 is recommended) 
-```markdown
-- Clone the project and open "AnimeEffects.pro" using QtCreator
-- Compile the project on the release profile 
-- Open your console of preference
-- Run "windeployqt.exe --dir "AnimeEffectsWin" "path_to_the_executable"
-- Copy the "Data" folder and the AnimeEffects executable to AnimeEffectsWin
+### Compilation and folder creation
+* The installation steps assume you have installed all the requirements through their installers and you have them in your path
+```powershell
+git clone https://github.com/AnimeEffectsDevs/AnimeEffects
+cd AnimeEffects
+cmake -S . -B build -G "Ninja Multi-Config"
+cmake --build build --config Release
+cd build/src/gui/Release
+mkdir .\AnimeEffects-Windows-x64
+windeployqt --dir .\AnimeEffects-Windows-x64 .\AnimeEffects.exe
+Copy-Item -Path "..\data" -Destination ".\AnimeEffects-Windows-x64\" -recurse -Force
+Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows-x64\"
 ```
 
-* When deployment is done, you may just run AnimeEffects.exe
+## MacOS
+### Compilation and .app creation
+* These steps assume xcode, brew, wget, python 3 and pip are installed on your system
+```bash
+brew install cmake ninja vulkan-headers
+pip install -U pip
+pip install aqtinstall
+aqt install-qt mac desktop 6.6.2 clang_64 -m qtimageformats qtmultimedia qt5compat
+git clone https://github.com/AnimeEffectsDevs/AnimeEffects
+cd AnimeEffects
+cmake -S . -B build -G "Ninja Multi-Config"
+cmake --build build --config Release
+cd build/src/gui/Release 
+mkdir -p appdir/usr/lib
+cp -R AnimeEffects.app appdir/AnimeEffects.app
+cp -R ../data appdir/data
+cp -R ../../../../dist appdir/dist
+find appdir/
+cd appdir
+macdeployqt AnimeEffects.app
+wget https://raw.githubusercontent.com/OpenZWave/ozw-admin/master/scripts/macdeployqtfix.py && chmod a+x macdeployqtfix.py
+./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
+```

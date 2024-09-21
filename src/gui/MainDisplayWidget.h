@@ -1,7 +1,7 @@
 #ifndef GUI_MAINDISPLAYWIDGET_H
 #define GUI_MAINDISPLAYWIDGET_H
 
-#include <QOpenGLWidget>
+#include <QtOpenGLWidgets/QOpenGLWidget>
 #include <QOpenGLFramebufferObject>
 #include <QScopedPointer>
 #include <QTabBar>

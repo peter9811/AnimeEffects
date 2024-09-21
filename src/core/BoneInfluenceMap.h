@@ -1,7 +1,7 @@
 #ifndef CORE_BONEINFLUENCEMAP_H
 #define CORE_BONEINFLUENCEMAP_H
 
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include <QVector>
 #include <QVector2D>
 #include <QRectF>

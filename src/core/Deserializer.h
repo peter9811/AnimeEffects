@@ -11,7 +11,7 @@
 #include <QRectF>
 #include <QMatrix4x4>
 #include <QPolygonF>
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include <QVersionNumber>
 #include "XC.h"
 #include "util/Segment2D.h"
@@ -47,7 +47,7 @@ public:
     void read(bool& aValue);
     void read(int& aValue);
     void read(float& aValue);
-    void read(QList<int>& aValue);
+    void read(QList<int>& aValue, bool errorCorrection = false);
     void read(QPoint& aValue);
     void read(QVector2D& aValue);
     void read(QVector3D& aValue);
@@ -58,7 +58,7 @@ public:
     void read(QRectF& aValue);
     void read(QMatrix4x4& aValue);
     void read(Frame& aValue);
-    bool read(util::Easing::Param& aValue);
+    bool read(util::Easing::Param& aValue, bool errorCorrection=false);
     void read(QPolygonF& aValue);
     void read(QString& aValue, int aMax = 0);
     bool read(const XCMemBlock& aValue);

@@ -14,6 +14,7 @@
 #include "gui/LocaleDecider.h"
 #include "util/NetworkUtil.h"
 #include <QLoggingCategory>
+#include <QtConcurrent>
 
 
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
@@ -64,7 +65,7 @@ static AEAssertHandler sAEAssertHandler;
         __try { \
             action; \
         } __except (EXCEPTION_EXECUTE_HANDLER) { \
-            qDebug("exception occurred.(%x)", GetExceptionCode()); \
+            qDebug("Exception occurred.(%x)", GetExceptionCode()); \
             gBackTracer.dumpCurrent(); \
             std::abort(); \
         }
@@ -76,14 +77,20 @@ int entryPoint(int argc, char* argv[]);
 
 int main(int argc, char* argv[]) {
     gXCAssertHandler = &sAEAssertHandler;
-
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
     _CrtSetAllocHook(myAllocHook);
 #endif // USE_MSVC_MEMORYLEAK_DEBUG
-
     int result = 0;
+    // Hidefuku *tried* to make an error handler, either due to architectural changes or some other issue it just
+    // doesn't work, at all, even doing a try/catch block doesn't cut it, please help...
     TRY_ACTION_WITH_EXCEPT(result = entryPoint(argc, argv));
-
+    /*
+    try { (result = entryPoint(argc, argv)); }
+    catch(...){
+        QMessageBox::warning(nullptr, "Whoops", "The app has crashed unexpectedly, sorry for that");
+        result = -1;
+    }
+    */
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
     gMemoryRegister.dumpAll();
     gMemoryRegister.final();
@@ -95,11 +102,8 @@ int main(int argc, char* argv[]) {
 int entryPoint(int argc, char* argv[]) {
     int result = 0;
     // create qt application
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
     QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, true);
-    app.setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Round);
-    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     // app.setAttribute(Qt::AA_DontUseNativeDialogs);
     XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
 
@@ -150,7 +154,7 @@ int entryPoint(int argc, char* argv[]) {
         // checkForUpdates
         util::NetworkUtil networking;
         QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
-        networking.checkForUpdate(url, networking, mainWindow->window(), false);
+        util::NetworkUtil::checkForUpdate(url, networking, mainWindow->window(), false);
 
 
 #if !defined(QT_NO_DEBUG)
@@ -174,7 +178,6 @@ int entryPoint(int argc, char* argv[]) {
 
         // save settings(window status, etc.)
         mainWindow->saveCurrentSettings(result);
-
 
         // bind gl context for destructors
         gl::Global::makeCurrent();

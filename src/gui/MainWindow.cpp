@@ -1319,10 +1319,10 @@ void MainWindow::onExportTriggered() {
         exportUI->bitrateLineEdit->text().trimmed().isEmpty()
         ? 0 :
         // Does it contain only the word auto?
-        exportUI->bitrateLineEdit->text().trimmed().contains(QRegExp("^(?i)(auto(matic)?)$"))
+        exportUI->bitrateLineEdit->text().trimmed().contains(QRegularExpression("^(?i)(auto(matic)?)$"))
         ? 0 :
         // Does it contain only a positive number? If not then set to -1 for error handling.
-        exportUI->bitrateLineEdit->text().trimmed().contains(QRegExp("^(?!0\\d+)\\d+$"))
+        exportUI->bitrateLineEdit->text().trimmed().contains(QRegularExpression("^(?!0\\d+)\\d+$"))
             ? exportUI->bitrateLineEdit->text().toInt() : -1;
     genParam.imageExportQuality = exportUI->imageQualitySpinbox->value();
     genParam.allowTransparency = exportUI->transparencyCheckBox->isChecked();
@@ -1363,15 +1363,22 @@ void MainWindow::onExportTriggered() {
     // Get file via OS diag
     fileDiag.setViewMode(QFileDialog::Detail);
     QString selectedFile;
-    if(fileDiag.exec()){ selectedFile = fileDiag.selectedFiles()[0]; }
+    if(fileDiag.exec()){ selectedFile = fileDiag.selectedFiles().at(0); }
     else{ return; }
+    if(QFileInfo(selectedFile).suffix() == ""){
+        auto regex = QRegularExpression("(\\*.)\\w+", QRegularExpression::CaseInsensitiveOption);
+        QString suffix = regex.match(fileDiag.selectedNameFilter()).captured(0).removeAt(0);
+        qDebug() << suffix;
+        selectedFile.append(suffix);
+    }
+    qDebug() << selectedFile;
     // Generate export parameters
     genParam.exportName = QFileInfo(selectedFile).fileName();
     genParam.exportDirectory = QFileInfo(selectedFile).absoluteDir();
     genParam.exportFileName = QDir(selectedFile);
     genParam.osExportTarget = selectedFile;
-    qDebug() << "Exporting: " << genParam.osExportTarget;
     exParam->generalParams = genParam;
+
     if(exParam->exportType == exportTarget::video) {
         exParam->videoParams.format = static_cast<availableVideoFormats>(getFormatAsInt(
             exportTarget::video, QFileInfo(genParam.osExportTarget).suffix())

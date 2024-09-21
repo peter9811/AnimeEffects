@@ -34,8 +34,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC
     AE_MAJOR_VERSION=1
-    AE_MICRO_VERSION=2
-    AE_MINOR_VERSION=5
+    AE_MICRO_VERSION=0
+    AE_MINOR_VERSION=6
     AE_PROJECT_FORMAT_MAJOR_VERSION=0
     AE_PROJECT_FORMAT_MINOR_VERSION=7
     AE_PROJECT_FORMAT_OLDEST_MAJOR_VERSION=0
@@ -44,10 +44,12 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-    Qt::Core
-    Qt::Widgets
-    Qt::Gui
-    Qt::OpenGL
-    Qt::Xml
+        Qt6::Core
+        Qt6::Core5Compat
+        Qt6::Widgets
+        Qt6::Gui
+        Qt6::OpenGL
+        Qt6::OpenGLWidgets
+        Qt6::Xml
     util
 )

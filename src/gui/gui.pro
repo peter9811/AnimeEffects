@@ -7,6 +7,9 @@ DESTDIR     = ..
 CONFIG      += static
 INCLUDES    += $$PWD
 
+QT += opengl
+QT += multimedia
+
 OBJECTS_DIR = .obj
 MOC_DIR     = .moc
 RCC_DIR     = .rcc

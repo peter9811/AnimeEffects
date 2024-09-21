@@ -2,7 +2,7 @@
 #define GL_FRAMEBUFFER_H
 
 #include <array>
-#include <QGL>
+#include <QtOpenGL/QtOpenGL>
 #include "util/NonCopyable.h"
 
 namespace gl {

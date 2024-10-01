@@ -1,11 +1,11 @@
-name: MacOS 13 - ARM
+name: MacOS Latest - ARM
 on: 
     workflow_dispatch:
     schedule:
         - cron: '0 0 * * *'
 jobs:
   buildMacOS:
-    runs-on: macos-13-xlarge
+    runs-on: macos-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v4

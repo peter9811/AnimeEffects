@@ -128,5 +128,6 @@ void PlayBackWidget::onThemeUpdated(theme::Theme& aTheme) {
         }
     }
 }
+bool PlayBackWidget::isPlaying() {  return this->mButtons.at(2)->isChecked(); }
 
 } // namespace gui

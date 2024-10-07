@@ -31,12 +31,13 @@ public:
     bool isLoopChecked();
     void checkLoop(bool checkStatus);
     void PlayPause();
+    bool isPlaying();
     static int constantWidth() ;
     void pushPauseButton();
     QWidget* audioUI = new QWidget(this, Qt::Window);
 
     // TODO: REMOVE AFTER TESTING //
-    QString testFile = "";
+    QString testFile = "i_forgor_before_so_it's_on_the_git_history_now_lol";
     std::vector<audioConfig>* pConf = new std::vector<audioConfig>{ audioConfig{"testFile", QFileInfo(testFile), true, 100, 20, 50}};
     mediaState mediaPlayer;
     //

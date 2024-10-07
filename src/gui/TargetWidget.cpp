@@ -47,6 +47,7 @@ void TargetWidget::setProject(core::Project* aProject) {
     mObjTree->setProject(aProject);
     mTimeLine->setProject(aProject);
     mInfoLabel->setProject(aProject);
+    mInfoLabel->setPlayback(mPlayBack);
 }
 
 core::Frame TargetWidget::currentFrame() const { return mTimeLine->currentFrame(); }

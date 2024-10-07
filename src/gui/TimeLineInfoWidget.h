@@ -11,6 +11,7 @@
 #include "core/Animator.h"
 #include "util/Range.h"
 // Audio
+#include "PlayBackWidget.h"
 #include "AudioPlaybackWidget.h"
 
 namespace gui {
@@ -19,12 +20,14 @@ class TimeLineInfoWidget: public QLabel {
 public:
     TimeLineInfoWidget(GUIResources& aResources, QWidget* aParent);
     void setProject(core::Project* aProject);
+    void setPlayback(PlayBackWidget* aPlayback);
     void onUpdate();
 
 private:
     GUIResources& mResources;
 
     core::Project* mProject;
+    PlayBackWidget* mPlayBack;
 
     // IO OPS EVERY FRAME BAD //
     QSettings mSettings;

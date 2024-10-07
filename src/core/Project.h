@@ -18,6 +18,7 @@
 #include "core/ResourceEvent.h"
 #include "core/ObjectTreeEvent.h"
 #include "core/ProjectEvent.h"
+#include "gui/AudioPlaybackWidget.h"
 
 namespace core {
 
@@ -86,6 +87,9 @@ public:
     util::Signaler<void(ResourceEvent&, bool)> onResourceModified;
     util::Signaler<void(ObjectTreeEvent&, bool)> onTreeRestructured;
     util::Signaler<void(ProjectEvent&, bool)> onProjectAttributeModified;
+    // Audio
+    std::vector<audioConfig>* pConf = nullptr;
+    mediaState* mediaPlayer = nullptr;
 
 private:
     util::LifeLink mLifeLink;

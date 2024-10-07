@@ -44,6 +44,8 @@ void TimeLineWidget::setProject(core::Project* aProject) {
 }
 
 void TimeLineWidget::setPlayBackActivity(bool aIsActive, std::vector<audioConfig>* pConf, mediaState* mediaPlayer) {
+    mProject->pConf = pConf;
+    mProject->mediaPlayer = mediaPlayer;
     if (aIsActive) {
         mTimer.setInterval(static_cast<int>(getOneFrameTime()));
         mTimer.start();
@@ -54,6 +56,7 @@ void TimeLineWidget::setPlayBackActivity(bool aIsActive, std::vector<audioConfig
         if(pConf->empty()){ qDebug("pConf is empty"); }
         AudioPlaybackWidget::aPlayer(pConf, true, mediaPlayer, getFps(), currentFrame().get(),
                                      mProject->attribute().maxFrame());
+        mediaPlayer->playing = true;
     }
     else {
         mTimer.stop();

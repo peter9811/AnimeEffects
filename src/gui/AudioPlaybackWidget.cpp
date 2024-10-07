@@ -45,7 +45,7 @@ bool AudioPlaybackWidget::deserialize(const QJsonObject& pConf, std::vector<audi
 }
 void AudioPlaybackWidget::aPlayer(std::vector<audioConfig>* pConf, bool play, mediaState* state, int fps, int curFrame,
                                   int frameCount){
-    qDebug("aPlayer initializing");
+    qDebug("aPlayer requested");
     for(int x = 0; x < pConf->size(); x++){
         if(pConf->size() > x + 1){ return; }
         if(state->players.size() < x + 1 && state->outputs.size() < x + 1){
@@ -64,11 +64,23 @@ void AudioPlaybackWidget::aPlayer(std::vector<audioConfig>* pConf, bool play, me
             player->setSource(config.audioPath.absoluteFilePath());
         }
         if(output->volume() != getVol(config.volume)){ output->setVolume(getVol(config.volume)); }
-        if(!play && player->isPlaying()){ player->stop(); }
-        if(play && config.playbackEnable && !player->isPlaying()){ player->play(); state->playing = true;}
 
-        //TODO: Get this to make the audio stop on its own later
-        //if(config.startFrame > curFrame){ return; }
-        //if(config.endFrame < curFrame && player->isPlaying()){ player->stop(); return; }
+        // FIXME
+        int framesInMs = (frameCount / fps) / 1000;
+        int startFrameInMs = ((frameCount - (config.startFrame + 1)) / fps) / 1000;
+        int curFrameInMs = (((curFrame + 1) - frameCount)/ fps) / 1000;
+
+        uint initialFrameInMs = framesInMs - startFrameInMs;
+        uint posInMs = framesInMs - curFrameInMs;
+
+        if(player->hasAudio() && posInMs >= initialFrameInMs) {
+            player->setPosition(posInMs);
+        }
+
+        if(!play && player->isPlaying()){ player->stop(); }
+        if(play && config.startFrame >= curFrame && config.playbackEnable && !player->isPlaying()){
+            player->play();
+            state->playing = true;
+        }
     }
 }

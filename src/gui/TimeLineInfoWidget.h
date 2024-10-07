@@ -10,6 +10,8 @@
 #include "core/TimeFormat.h"
 #include "core/Animator.h"
 #include "util/Range.h"
+// Audio
+#include "AudioPlaybackWidget.h"
 
 namespace gui {
 
@@ -17,7 +19,6 @@ class TimeLineInfoWidget: public QLabel {
 public:
     TimeLineInfoWidget(GUIResources& aResources, QWidget* aParent);
     void setProject(core::Project* aProject);
-
     void onUpdate();
 
 private:
@@ -25,7 +26,12 @@ private:
 
     core::Project* mProject;
 
+    // IO OPS EVERY FRAME BAD //
     QSettings mSettings;
+    core::TimeFormatType formatType = mSettings.value("generalsettings/ui/timeformat").isValid()
+        ? static_cast<core::TimeFormatType>(mSettings.value("generalsettings/ui/timeformat").toInt())
+        : core::TimeFormatType::TimeFormatType_Frames_From0;
+    // --------------------- //
     bool mIsFirstTime;
     int mSuspendCount;
 };

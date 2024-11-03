@@ -35,12 +35,8 @@ public:
     static int constantWidth() ;
     void pushPauseButton();
     QWidget* audioUI = new QWidget(this, Qt::Window);
-
-    // TODO: REMOVE AFTER TESTING //
-    QString testFile = "i_forgor_before_so_it's_on_the_git_history_now_lol";
-    std::vector<audioConfig>* pConf = new std::vector<audioConfig>{ audioConfig{"testFile", QFileInfo(testFile), true, 100, 20, 50}};
+    std::vector<audioConfig>* aConf = new std::vector<audioConfig>{audioConfig()};
     mediaState mediaPlayer;
-    //
     AudioPlaybackWidget* audioWidget = new AudioPlaybackWidget;
 
 

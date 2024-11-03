@@ -68,9 +68,9 @@ void TargetWidget::onPlayBackButtonPushed(PlayBackWidget::PushType aType) {
         return;
 
     if (aType == PlayBackWidget::PushType_Play) {
-        mTimeLine->setPlayBackActivity(true, mPlayBack->pConf, &mPlayBack->mediaPlayer);
+        mTimeLine->setPlayBackActivity(true, mPlayBack->aConf, &mPlayBack->mediaPlayer);
     } else if (aType == PlayBackWidget::PushType_Pause) {
-        mTimeLine->setPlayBackActivity(false, mPlayBack->pConf, &mPlayBack->mediaPlayer);
+        mTimeLine->setPlayBackActivity(false, mPlayBack->aConf, &mPlayBack->mediaPlayer);
     } else if (aType == PlayBackWidget::PushType_Step) {
         mTimeLine->setFrame(currentFrame().added(1));
     } else if (aType == PlayBackWidget::PushType_StepBack) {

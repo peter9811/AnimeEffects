@@ -84,3 +84,13 @@ void AudioPlaybackWidget::aPlayer(std::vector<audioConfig>* pConf, bool play, me
         }
     }
 }
+void AudioPlaybackWidget::connectUI(QWidget *audioWidget, mediaState *state, std::vector<audioConfig>* config){
+    Q_UNIMPLEMENTED();
+}
+
+void AudioPlaybackWidget::connectUIState(QVector<UIState> state) {
+    for(auto qt: state){
+        QWidget::connect(qt.selectMusButton, &QToolButton::clicked, [=](){qt.selectMusButton->setText("Test");});
+    }
+    Q_UNIMPLEMENTED();
+}

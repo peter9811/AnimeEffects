@@ -91,6 +91,12 @@ void AudioPlaybackWidget::connectUI(QWidget *audioWidget, mediaState *state, std
 void AudioPlaybackWidget::connectUIState(QVector<UIState> state) {
     for(auto qt: state){
         QWidget::connect(qt.selectMusButton, &QToolButton::clicked, [=](){qt.selectMusButton->setText("Test");});
+        QWidget::connect(qt.addNewTrack, &QToolButton::clicked, [=]() {
+            // Add track deletion later
+            qt.addNewTrack->setDisabled(true);
+            this->addUIState(audioConfig());
+            this->connectUIState(vecUIState);
+        });
     }
     Q_UNIMPLEMENTED();
 }

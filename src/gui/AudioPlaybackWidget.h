@@ -142,16 +142,32 @@ public:
                     new QLabel(musPlayer), new QLabel(musPlayer), new QSlider(musPlayer), new QFrame(musPlayer)
             };
         int idx = (int)vecUIState.size();
+        int rowZeroIDX = 0;
+        int rowOneIDX = 1;
+        int rowTwoIDX = 2;
+        int rowThreeIDX = 3;
+
+        if(idx != 0){
+            rowZeroIDX += 4 * idx;
+            rowOneIDX += 4 * idx;
+            rowTwoIDX += 4 * idx;
+            rowThreeIDX += 4 * idx;
+        }
+        qDebug() << idx;
+        qDebug() << rowZeroIDX;
+        qDebug() << rowOneIDX;
+        qDebug() << rowTwoIDX;
+        qDebug() << rowThreeIDX;
 
         newState.playAudio->setObjectName(QString::fromUtf8("playAudio"));
         newState.playAudio->setChecked(config.playbackEnable);
-        gridLayout_2->addWidget(newState.playAudio, 1 + idx, 0, 1, 1);
+        gridLayout_2->addWidget(newState.playAudio, rowOneIDX, 0, 1, 1);
 
         newState.endSpinBox->setObjectName(QString::fromUtf8("endSpinBox"));
-        gridLayout_2->addWidget(newState.endSpinBox, 1 + idx, 2, 1, 1);
+        gridLayout_2->addWidget(newState.endSpinBox, rowOneIDX, 2, 1, 1);
 
         newState.startSpinBox->setObjectName(QString::fromUtf8("startSpinBox"));
-        gridLayout_2->addWidget(newState.startSpinBox, 1 + idx, 1 , 1, 1);
+        gridLayout_2->addWidget(newState.startSpinBox, rowOneIDX, 1 , 1, 1);
 
         newState.addNewTrack->setObjectName(QString::fromUtf8("startLabel"));
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
@@ -159,44 +175,44 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(newState.addNewTrack->sizePolicy().hasHeightForWidth());
         newState.addNewTrack->setSizePolicy(sizePolicy);
-        gridLayout_2->addWidget(newState.addNewTrack, 0 + idx, 0, 1, 1);
+        gridLayout_2->addWidget(newState.addNewTrack, rowZeroIDX, 0, 1, 1);
 
         newState.startLabel->setObjectName(QString::fromUtf8("startLabel"));
         sizePolicy.setHeightForWidth(newState.startLabel->sizePolicy().hasHeightForWidth());
         newState.startLabel->setSizePolicy(sizePolicy);
-        gridLayout_2->addWidget(newState.startLabel, 0 + idx, 1, 1, 1);
+        gridLayout_2->addWidget(newState.startLabel, rowZeroIDX, 1, 1, 1);
 
         newState.endLabel->setObjectName(QString::fromUtf8("endLabel"));
         sizePolicy.setHeightForWidth(newState.endLabel->sizePolicy().hasHeightForWidth());
         newState.endLabel->setSizePolicy(sizePolicy);
-        gridLayout_2->addWidget(newState.endLabel, 0 + idx, 2, 1, 1);
+        gridLayout_2->addWidget(newState.endLabel, rowZeroIDX, 2, 1, 1);
 
         newState.volumeLabel->setObjectName(QString::fromUtf8("volumeLabel"));
         newState.volumeLabel->setSizePolicy(sizePolicy);
-        gridLayout_2->addWidget(newState.volumeLabel, 2 + idx, 0, 1, 1);
+        gridLayout_2->addWidget(newState.volumeLabel, rowTwoIDX, 0, 1, 1);
 
         newState.volumeSlider->setObjectName(QString::fromUtf8("volumeSlider"));
         newState.volumeSlider->setMaximum(100);
         newState.volumeSlider->setMinimum(0);
         newState.volumeSlider->setOrientation(Qt::Horizontal);
         newState.volumeSlider->setSizePolicy(sizePolicy);
-        gridLayout_2->addWidget(newState.volumeSlider, 2 + idx, 1, 1, 3);
+        gridLayout_2->addWidget(newState.volumeSlider, rowTwoIDX, 1, 1, 3);
 
         newState.line->setObjectName(QString::fromUtf8("line"));
         newState.line->setFrameShape(QFrame::HLine);
         newState.line->setFrameShadow(QFrame::Sunken);
-        gridLayout_2->addWidget(newState.line, 3 + idx, 0, 1, 4);
+        gridLayout_2->addWidget(newState.line, rowThreeIDX, 0, 1, 4);
 
         newState.musDurationLabel->setObjectName(QString::fromUtf8("musDurationLabel"));
-        gridLayout_2->addWidget(newState.musDurationLabel, 0 + idx, 3, 1, 1);
+        gridLayout_2->addWidget(newState.musDurationLabel, rowZeroIDX, 3, 1, 1);
 
         newState.selectMusButton->setObjectName(QString::fromUtf8("selectMusButton"));
         newState.selectMusButton->setAutoRepeat(false);
-        gridLayout_2->addWidget(newState.selectMusButton, 1 + idx, 3, 1, 1);
+        gridLayout_2->addWidget(newState.selectMusButton, rowOneIDX, 3, 1, 1);
 
         newState.playAudio->setText(QCoreApplication::translate("audioWidget", "Enable playback", nullptr));
         newState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Add new audio track", nullptr));
-        newState. startLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Playback start frame</p></body></html>", nullptr));
+        newState.startLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Playback start frame</p></body></html>", nullptr));
         newState.endLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Playback end frame</p></body></html>", nullptr));
         newState.musDurationLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
                                            "<html><head/><body><p align=\"center\">" + QString::number(config.endFrame - config.startFrame) + "</p></body></html>");

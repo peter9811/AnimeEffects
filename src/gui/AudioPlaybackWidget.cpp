@@ -88,15 +88,35 @@ void AudioPlaybackWidget::connectUI(QWidget *audioWidget, mediaState *state, std
     Q_UNIMPLEMENTED();
 }
 
-void AudioPlaybackWidget::connectUIState(QVector<UIState> state) {
-    for(auto qt: state){
+void AudioPlaybackWidget::connectUIState(QVector<UIState> *state, std::vector<audioConfig>* config) {
+    int idx = 0;
+    for(auto qt: *state){
         QWidget::connect(qt.selectMusButton, &QToolButton::clicked, [=](){qt.selectMusButton->setText("Test");});
         QWidget::connect(qt.addNewTrack, &QToolButton::clicked, [=]() {
-            // Add track deletion later
-            qt.addNewTrack->setDisabled(true);
-            this->addUIState(audioConfig());
-            this->connectUIState(vecUIState);
+            if(qt.addTrack){
+                config->emplace_back();
+                this->addUIState(config, idx);
+                if(idx == 0){
+                    qt.addNewTrack->setDisabled(true);
+                }
+                else{
+                    qt.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
+                    qt.addTrack = false;
+                }
+            }
+            else{
+                config->erase(config->begin() + idx);
+                this->removeUIState(config);
+                if(state->size() == 1){
+                    state->at(0).addNewTrack->setDisabled(false);
+                }
+            }
+            if(idx == 0 && state->size() > 1){
+                state->at(0).addNewTrack->setDisabled(true);
+            }
+            connectUIState(&vecUIState, config);
         });
+        idx++;
     }
     Q_UNIMPLEMENTED();
 }

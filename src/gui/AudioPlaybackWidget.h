@@ -28,7 +28,7 @@ struct audioConfig{
     QString audioName = "Placeholder";
     QFileInfo audioPath = QFileInfo();
     bool playbackEnable = true;
-    int volume = 50;
+    int volume = 100;
     int startFrame = 0;
     int endFrame = 0;
 };
@@ -67,6 +67,7 @@ public:
     QGridLayout *gridLayout_3{};
     QPushButton *saveConfigButton{};
     QPushButton *loadConfigButton{};
+    QWidget *mainWidget{};
 
     void connect(QWidget *audioWidget, mediaState *state, std::vector<audioConfig>* config);
     void addUIState(std::vector<audioConfig>* config, int index, mediaState *mediaPlayer, bool bulk = false);
@@ -81,6 +82,7 @@ public:
 
     void setupUi(QWidget *audioWidget, mediaState *mediaPlayer, std::vector<audioConfig>* config){
         if (audioWidget->objectName().isEmpty()) {audioWidget->setObjectName(QString::fromUtf8("audioWidget")); }
+        mainWidget = audioWidget;
         audioWidget->resize(648, 291);
         // Grid
         gridLayout = new QGridLayout(audioWidget);

@@ -1,6 +1,7 @@
 #include "AudioPlaybackWidget.h"
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QStringRef>
 
 bool AudioPlaybackWidget::serialize(std::vector<audioConfig>* pConf, const QString& outPath) {
     QJsonObject audioJson;
@@ -123,14 +124,14 @@ void AudioPlaybackWidget::rectifyUI(std::vector<audioConfig>* config, mediaState
 }
 void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index, mediaState* mediaPlayer, bool bulk) {
     // This is a great time to tell you that we accept pull requests that fix this kind of nonsense
-    auto newState =
-        UIState{new QToolButton(musPlayer), new QToolButton(musPlayer), new QCheckBox(musPlayer),
-                new QSpinBox(musPlayer), new QSpinBox(musPlayer), new QLabel(musPlayer), new QLabel(musPlayer),
-                new QLabel(musPlayer), new QLabel(musPlayer), new QSlider(musPlayer), new QFrame(musPlayer)
-        };
+    auto newState = UIState{
+            new QToolButton(musPlayer), new QToolButton(musPlayer), new QCheckBox(musPlayer),
+            new QSpinBox(musPlayer), new QSpinBox(musPlayer), new QLabel(musPlayer), new QLabel(musPlayer),
+            new QLabel(musPlayer), new QLabel(musPlayer), new QSlider(musPlayer), new QFrame(musPlayer),
+            true };
     // Grid layout pos
-    int idx = (int)vecUIState.size();
-    int offset = idx * 4;
+    int vecIdx = (int)vecUIState.size();
+    int offset = vecIdx * 4;
     int idxRow0 = offset;
     int idxRow1 = offset + 1;
     int idxRow2 = offset + 2;
@@ -192,19 +193,29 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
     newState.endLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Playback end frame</p></body></html>", nullptr));
     newState.musDurationLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
                                        "<html><head/><body><p align=\"center\">" + QString::number(config->at(index).endFrame - config->at(index).startFrame) + "</p></body></html>");
-    newState.volumeLabel->setText(QCoreApplication::translate("audioWidget", "Media volume", nullptr) + " (%" + QString::number(config->at(index).volume) + ")");
+    newState.volumeLabel->setText(QCoreApplication::translate("audioWidget", "Media volume", nullptr) + " (" + QString::number(config->at(index).volume) + "%)");
     // Init
     newState.playAudio->setChecked(config->at(index).playbackEnable);
     newState.startSpinBox->setValue(config->at(index).startFrame);
     newState.endSpinBox->setValue(config->at(index).endFrame);
     newState.volumeSlider->setValue(config->at(index).volume);
-    newState.selectMusButton->setText(config->at(index).audioName == "Placeholder"? QCoreApplication::translate("audioWidget", "Select audio file...", nullptr) : config->at(index).audioName);
+
+    if(config->at(index).audioName != "Placeholder"){
+        QString ref = QStringRef(&config->at(index).audioName, 0, 17).toString();
+        if (config->at(index).audioName.size() > ref.size()) {
+            ref.append("...");
+        }
+        newState.selectMusButton->setText(ref);
+        newState.selectMusButton->setToolTip(config->at(index).audioName);
+    }
+    else{
+        newState.selectMusButton->setText(QCoreApplication::translate("audioWidget", "Select audio file...", nullptr));
+    }
+
     if(bulk){
-        if (index > 0 && index + 1 > idx) {
+        if (index > 0 && index + 1 != config->size() || (index == 1 && config->size() == 2)) {
             newState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
             newState.addTrack = false;
-        } else if (idx > 1) {
-            newState.addNewTrack->setDisabled(true);
         }
         else{
             newState.addTrack = true;
@@ -212,7 +223,6 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
     }
     vecUIState.append(newState);
     // Connect
-    idx = index;
     checkConnection(QToolButton::connect(newState.selectMusButton, &QToolButton::clicked, [=]() {
         auto file = QFileInfo(QFileDialog::getOpenFileName(
             this->musPlayer,
@@ -220,13 +230,20 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
             QDir::currentPath(),
             QCoreApplication::translate("SelectMus", "Audio Files (*.mp3 *.mp4 *.wav *.ogg *.flac)", nullptr)
         ));
-        newState.selectMusButton->setText(file.fileName());
-        config->at(idx).audioPath = file;
-        config->at(idx).audioName = file.fileName();
+        config->at(index).audioPath = file;
+        config->at(index).audioName = file.fileName();
+
+        {
+            QString ref = QStringRef(&config->at(index).audioName, 0, 17).toString();
+            if (config->at(index).audioName.size() > ref.size()) {
+                ref.append("...");
+            }
+            newState.selectMusButton->setText(ref);
+            newState.selectMusButton->setToolTip(file.fileName());
+        }
     }));
     checkConnection(QToolButton::connect(newState.addNewTrack, &QToolButton::clicked, [=]() {
-        //FIXME
-        if (idx != 0 && (idx + 1 != config->size() || vecUIState.first().addNewTrack->isEnabled())) {
+        if (index > 0 && index + 1 != config->size() || (index == 1 && config->size() == 2)) {
             newState.addTrack = false;
         }
         if (newState.addTrack) {
@@ -241,11 +258,14 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
                 return;
             }
             config->emplace_back();
-            this->addUIState(config, idx + 1, mediaPlayer);
-            if (idx == 0) {
+            this->addUIState(config, index + 1, mediaPlayer);
+            if (index == 0) {
                 vecUIState.at(1).addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
                 vecUIState.at(1).addTrack = false;
-                if (vecUIState.size() > 2) { vecUIState.first().addNewTrack->setDisabled(true); }
+                if (vecUIState.size() > 2) {
+                    rectifyUI(config, mediaPlayer);
+                    vecUIState.first().addNewTrack->setDisabled(true);
+                }
             }
             else {
                 newState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
@@ -253,12 +273,29 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
             }
         }
         else {
-            config->erase(config->begin() + idx);
+            config->erase(config->begin() + index);
             if (config->size() >= vecUIState.size() && !config->empty()) { config->pop_back(); }
             rectifyUI(config, mediaPlayer);
-            if (config->size() == 1) { vecUIState.first().addNewTrack->setDisabled(false); }
+            if (config->size() == 1 || config->size() == 2) { vecUIState.first().addNewTrack->setDisabled(false); }
             else { vecUIState.first().addNewTrack->setDisabled(true); }
         }
+    }));
+    checkConnection(QSpinBox::connect(newState.startSpinBox, &QSpinBox::valueChanged, [=](int val){
+        config->at(index).startFrame = val;
+        vecUIState.at(index).musDurationLabel->setText(QCoreApplication::translate("audioWidget","<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
+                                       "<html><head/><body><p align=\"center\">" + QString::number(config->at(index).endFrame - val) + "</p></body></html>");
+    }));
+    checkConnection(QSpinBox::connect(newState.endSpinBox, &QSpinBox::valueChanged, [=](int val){
+        config->at(index).endFrame = val;
+        newState.musDurationLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
+                                       "<html><head/><body><p align=\"center\">" + QString::number(val - config->at(index).startFrame) + "</p></body></html>");
+    }));
+    checkConnection(QCheckBox::connect(newState.playAudio, &QCheckBox::stateChanged, [=](bool val){
+        config->at(index).playbackEnable = val;
+    }));
+    checkConnection(QSlider::connect(newState.volumeSlider, &QSlider::valueChanged, [=](int val){
+        config->at(index).volume = val;
+        newState.volumeLabel->setText(QCoreApplication::translate("audioWidget", "Media volume", nullptr) + " (" + QString::number(val) + "%)");
     }));
 }
 

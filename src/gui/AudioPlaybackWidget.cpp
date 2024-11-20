@@ -3,6 +3,12 @@
 #include <QJsonDocument>
 #include <QStringRef>
 
+void checkConnection(bool connection){
+    if(!connection){
+        QMessageBox::warning(nullptr, "Qt connection error", "Unable to connect UI component");
+    }
+}
+
 bool AudioPlaybackWidget::serialize(std::vector<audioConfig>* pConf, const QString& outPath) {
     QJsonObject audioJson;
     audioJson["Tracks"] = (int)pConf->size();
@@ -10,7 +16,7 @@ bool AudioPlaybackWidget::serialize(std::vector<audioConfig>* pConf, const QStri
     for(const auto& audioConfig: *pConf){
         QJsonObject track;
         track["Name"] = audioConfig.audioName;
-        track["Path"] = audioConfig.audioPath.absolutePath();
+        track["Path"] = audioConfig.audioPath.absoluteFilePath();
         track["Playback"] = audioConfig.playbackEnable;
         track["Volume"] = audioConfig.volume;
         track["StartFrame"] = audioConfig.startFrame;
@@ -48,8 +54,8 @@ bool AudioPlaybackWidget::deserialize(const QJsonObject& pConf, std::vector<audi
 
 void AudioPlaybackWidget::aPlayer(std::vector<audioConfig>* pConf, bool play, mediaState* state, int fps, int curFrame, int frameCount){
     qDebug("Media player requested");
-    for(int x = 0; x < pConf->size(); x++){
-        if(pConf->size() > x + 1){ return; }
+    int x = 0;
+    for(auto conf: *pConf){
         if(state->players.size() < x + 1 && state->outputs.size() < x + 1){
             auto* mediaPlayer = new QMediaPlayer;
             auto* audioOutput = new QAudioOutput;
@@ -59,45 +65,66 @@ void AudioPlaybackWidget::aPlayer(std::vector<audioConfig>* pConf, bool play, me
         QMediaPlayer* player = state->players.at(x);
         QAudioOutput* output = state->outputs.at(x);
         const audioConfig& config = pConf->at(x);
-        if(player->audioOutput() == nullptr){
-            player->setAudioOutput(output);
-        }
+        if(player->audioOutput() == nullptr){ player->setAudioOutput(output); }
         if(player->source() != QUrl::fromLocalFile(config.audioPath.absoluteFilePath())){
             player->setSource(config.audioPath.absoluteFilePath());
         }
         if(output->volume() != getVol(config.volume)){ output->setVolume(getVol(config.volume)); }
-
-        // FIXME
-        int framesInMs = (frameCount / fps) / 1000;
-        int startFrameInMs = ((frameCount - (config.startFrame + 1)) / fps) / 1000;
-        int curFrameInMs = (((curFrame + 1) - frameCount)/ fps) / 1000;
-
-        uint initialFrameInMs = framesInMs - startFrameInMs;
-        uint posInMs = framesInMs - curFrameInMs;
-
-        if(player->hasAudio() && posInMs >= initialFrameInMs) {
-            player->setPosition(posInMs);
-        }
-
-        if(!play && player->isPlaying()){ player->stop(); state->playing = false;}
-        if(play && config.startFrame < curFrame && config.endFrame < curFrame && config.playbackEnable && !player->isPlaying()){
+        correctTrackPos(player, curFrame, frameCount, fps, const_cast<audioConfig&>(config));
+        qDebug("---");
+        qDebug() << "x = " << x << "; track = " << player->source() << "; playing = " << player->isPlaying() << "; play = " << play;
+        qDebug("---");
+        if(!play){ player->stop(); state->playing = false;}
+        if(play && config.startFrame < curFrame && config.endFrame > curFrame && config.playbackEnable){
             player->play();
             state->playing = true;
         }
+        x++;
     }
 }
 
 void AudioPlaybackWidget::connect(QWidget *audioWidget, mediaState *state, std::vector<audioConfig>* config){
-    Q_UNIMPLEMENTED();
+    checkConnection(QToolButton::connect(saveConfigButton, &QToolButton::clicked, [=](){
+        QFileDialog diag(audioWidget);
+        diag.setAcceptMode(QFileDialog::AcceptSave);
+        diag.setDirectory(QDir::currentPath());
+        diag.setNameFilter(QCoreApplication::translate("SaveMus", "Anie audio configuration file (*.aemus)", nullptr));
+        if(diag.exec()) {
+            QString fileName = diag.selectedFiles().first();
+            static QRegularExpression fileRegex("\\.aemus$");
+            if (!fileRegex.match(fileName).hasMatch()) { fileName.append(".aemus"); }
+            serialize(config, fileName);
+        }
+    }));
+    checkConnection(QToolButton::connect(loadConfigButton, &QToolButton::clicked, [=]()mutable {
+        QFileDialog diag(audioWidget);
+        diag.setAcceptMode(QFileDialog::AcceptOpen);
+        diag.setDirectory(QDir::currentPath());
+        diag.setNameFilter(QCoreApplication::translate("LoadMus", "Anie audio configuration file (*.aemus)", nullptr));
+        if(diag.exec()) {
+            QFile file = QFile(diag.selectedFiles().first());
+            if(!file.exists()) {
+                QMessageBox::warning(audioWidget, "File does not exist", "Qt was unable to load the requested file.");
+                return;
+            }
+            QJsonDocument json = QJsonDocument::fromJson(file.readAll());
+            if(!json.isObject()){
+                QMessageBox::warning(audioWidget, "Invalid file", "The requested file is not a valid aemus file.");
+                return;
+            }
+            auto configBackup = *config;
+            if(!deserialize(json.object(), config)) {
+                *config = configBackup;
+                QMessageBox::warning(audioWidget, "Invalid file", "The requested file is not a valid aemus file.");
+                return;
+            }
+            rectifyUI(config, state);
+        }
+    }));
+
 }
 
-void checkConnection(bool connection){
-    if(!connection){
-        QMessageBox::warning(nullptr, "Qt connection error", "Unable to connect UI component");
-    }
-}
-
-void AudioPlaybackWidget::rectifyUI(std::vector<audioConfig>* config, mediaState* mediaPlayer) {
+void AudioPlaybackWidget::rectifyUI(std::vector<audioConfig>* config, mediaState* mediaPlayer, bool bulk) {
     // We reconstruct the entire state so we don't mismatch the UI indices
     {
         QLayoutItem* item;
@@ -117,18 +144,15 @@ void AudioPlaybackWidget::rectifyUI(std::vector<audioConfig>* config, mediaState
         config->emplace_back();
     }
     for(auto conf: *config){
-        addUIState(config, x, mediaPlayer, true);
+        addUIState(config, x, mediaPlayer, bulk);
         x++;
     }
     gridLayout_2->update();
 }
+
 void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index, mediaState* mediaPlayer, bool bulk) {
     // This is a great time to tell you that we accept pull requests that fix this kind of nonsense
-    auto newState = UIState{
-            new QToolButton(musPlayer), new QToolButton(musPlayer), new QCheckBox(musPlayer),
-            new QSpinBox(musPlayer), new QSpinBox(musPlayer), new QLabel(musPlayer), new QLabel(musPlayer),
-            new QLabel(musPlayer), new QLabel(musPlayer), new QSlider(musPlayer), new QFrame(musPlayer),
-            true };
+    auto newState = UIState();
     // Grid layout pos
     int vecIdx = (int)vecUIState.size();
     int offset = vecIdx * 4;
@@ -141,9 +165,13 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
     gridLayout_2->addWidget(newState.playAudio, idxRow1, 0, 1, 1);
     // Frame end
     newState.endSpinBox->setObjectName(QString::fromUtf8("endSpinBox"));
+    newState.endSpinBox->setMaximum(INT32_MAX);
+    newState.endSpinBox->setMinimum(0);
     gridLayout_2->addWidget(newState.endSpinBox, idxRow1, 2, 1, 1);
     // Frame start
     newState.startSpinBox->setObjectName(QString::fromUtf8("startSpinBox"));
+    newState.startSpinBox->setMaximum(INT32_MAX);
+    newState.startSpinBox->setMinimum(0);
     gridLayout_2->addWidget(newState.startSpinBox, idxRow1, 1 , 1, 1);
     // New track
     newState.addNewTrack->setObjectName(QString::fromUtf8("startLabel"));
@@ -213,6 +241,20 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
     }
 
     if(bulk){
+        if(index == 0) {
+            int x = 0;
+            for(const auto& conf: *config){
+                if(mediaPlayer->players.size() - 1 >= x){
+                    mediaPlayer->players.at(x)->stop();
+                    mediaPlayer->players.at(x)->deleteLater();
+                    mediaPlayer->outputs.at(x)->deleteLater();
+                    mediaPlayer->players.clear();
+                    mediaPlayer->outputs.clear();
+                }
+                addTrack(mediaPlayer, conf.audioPath.absoluteFilePath());
+                modifyTrack(mediaPlayer, config, x);
+            }
+        }
         if (index > 0 && index + 1 != config->size() || (index == 1 && config->size() == 2)) {
             newState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
             newState.addTrack = false;
@@ -232,6 +274,7 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
         ));
         config->at(index).audioPath = file;
         config->at(index).audioName = file.fileName();
+        modifyTrack(mediaPlayer, config, index);
 
         {
             QString ref = QStringRef(&config->at(index).audioName, 0, 17).toString();
@@ -258,6 +301,7 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
                 return;
             }
             config->emplace_back();
+            addTrack(mediaPlayer, QUrl());
             this->addUIState(config, index + 1, mediaPlayer);
             if (index == 0) {
                 vecUIState.at(1).addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
@@ -273,6 +317,7 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
             }
         }
         else {
+            removeTrack(mediaPlayer, index);
             config->erase(config->begin() + index);
             if (config->size() >= vecUIState.size() && !config->empty()) { config->pop_back(); }
             rectifyUI(config, mediaPlayer);
@@ -295,11 +340,12 @@ void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index
     }));
     checkConnection(QSlider::connect(newState.volumeSlider, &QSlider::valueChanged, [=](int val){
         config->at(index).volume = val;
+        modifyTrack(mediaPlayer, config, index);
         newState.volumeLabel->setText(QCoreApplication::translate("audioWidget", "Media volume", nullptr) + " (" + QString::number(val) + "%)");
     }));
 }
 
-void AudioPlaybackWidget::addTrack(mediaState* state, QUrl source) {
+void AudioPlaybackWidget::addTrack(mediaState* state, const QUrl& source) {
     auto* mediaPlayer = new QMediaPlayer;
     auto* audioOutput = new QAudioOutput;
     mediaPlayer->setSource(source);
@@ -307,14 +353,35 @@ void AudioPlaybackWidget::addTrack(mediaState* state, QUrl source) {
     state->players.append(mediaPlayer);
     state->outputs.append(audioOutput);
 }
-void AudioPlaybackWidget::modifyTrack(mediaState* state, std::vector<audioConfig>* config, int index, audioConfig modifiedConfig) {
-    config->at(index) = std::move(modifiedConfig);
+
+void AudioPlaybackWidget::removeTrack(mediaState* state, int index) {
+    state->players.at(index)->stop();
+    state->players.at(index)->deleteLater();
+    state->outputs.at(index)->deleteLater();
+    state->players.removeAt(index);
+    state->outputs.removeAt(index);
+}
+
+void AudioPlaybackWidget::modifyTrack(mediaState* state, std::vector<audioConfig>* config, int index) {
+    const auto& modifiedConfig = config->at(index);
+    if(state->players.isEmpty() || state->players.size() - 1 < index){
+        addTrack(state, QUrl());
+    }
     auto* currentPlayer = state->players.at(index);
     auto* currentOutput = state->outputs.at(index);
     if(currentPlayer->isPlaying()) { currentPlayer->stop(); }
-    currentPlayer->setSource(modifiedConfig.audioPath.absoluteFilePath());
-    currentOutput->setVolume((float)modifiedConfig.volume);
+    if(currentPlayer->source().isEmpty() || currentPlayer->source().fileName() != modifiedConfig.audioPath.fileName()){
+        currentPlayer->setSource(modifiedConfig.audioPath.absoluteFilePath());
+    }
+    if(currentOutput->volume() != getVol(modifiedConfig.volume)){
+        currentOutput->setVolume(getVol(modifiedConfig.volume));
+    }
 }
-void AudioPlaybackWidget::removeTrack(mediaState* state, std::vector<audioConfig>* config, int index) {
-    Q_UNIMPLEMENTED();
+
+void AudioPlaybackWidget::correctTrackPos(QMediaPlayer* player, int curFrame,  int frameCount, int fps, audioConfig& config) {
+    // Calculate times in milliseconds
+    const float toMillis = 1000.0;
+    int frame = frameCount - ((frameCount - config.startFrame) - curFrame);
+    auto positionMs = static_cast<qint64>((static_cast<float>(frame) / static_cast<float>(fps)) * toMillis);
+    if (player->hasAudio() && positionMs >= 0) { player->setPosition(positionMs); }
 }

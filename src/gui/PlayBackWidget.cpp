@@ -57,6 +57,7 @@ void PlayBackWidget::setPushDelegate(const PushDelegate& aDelegate) {
         if(!audioUI->isHidden()){
             return;
         }
+        for(auto player: mediaPlayer.players){ player->stop(); }
         audioUI->show();
     });
 }

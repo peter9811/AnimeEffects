@@ -30,7 +30,7 @@ struct audioConfig{
     bool playbackEnable = true;
     int volume = 100;
     int startFrame = 0;
-    int endFrame = 0;
+    int endFrame = 250;
 };
 struct mediaState{
     bool playing = false;
@@ -39,17 +39,17 @@ struct mediaState{
 };
 
 struct UIState{
-    QToolButton *addNewTrack;
-    QToolButton *selectMusButton;
-    QCheckBox *playAudio;
-    QSpinBox *endSpinBox;
-    QSpinBox *startSpinBox;
-    QLabel *startLabel;
-    QLabel *endLabel;
-    QLabel *musDurationLabel;
-    QLabel *volumeLabel;
-    QSlider *volumeSlider;
-    QFrame *line;
+    QToolButton *addNewTrack{ new QToolButton };
+    QToolButton *selectMusButton{ new QToolButton };
+    QCheckBox *playAudio{ new QCheckBox };
+    QSpinBox *endSpinBox{ new QSpinBox };
+    QSpinBox *startSpinBox{ new QSpinBox };
+    QLabel *startLabel{ new QLabel };
+    QLabel *endLabel{ new QLabel };
+    QLabel *musDurationLabel{ new QLabel };
+    QLabel *volumeLabel{ new QLabel };
+    QSlider *volumeSlider{ new QSlider };
+    QFrame *line{ new QFrame };
     mutable bool addTrack = true;
 };
 
@@ -71,15 +71,15 @@ public:
 
     void connect(QWidget *audioWidget, mediaState *state, std::vector<audioConfig>* config);
     void addUIState(std::vector<audioConfig>* config, int index, mediaState *mediaPlayer, bool bulk = false);
-    void rectifyUI(std::vector<audioConfig>* config, mediaState* mediaPlayer);
-    static void addTrack(mediaState *state, QUrl source);
-    static void modifyTrack(mediaState *state, std::vector<audioConfig>* config, int index, audioConfig modifiedConfig);
-    static void removeTrack(mediaState *state, std::vector<audioConfig>* config, int index);
+    void rectifyUI(std::vector<audioConfig>* config, mediaState* mediaPlayer, bool bulk = true);
+    static void addTrack(mediaState *state, const QUrl& source);
+    static void modifyTrack(mediaState *state, std::vector<audioConfig>* config, int index);
+    static void removeTrack(mediaState *state, int index);
     static void aPlayer(std::vector<audioConfig>* pConf, bool play, mediaState* state, int fps, int curFrame, int frameCount);
     static bool serialize(std::vector<audioConfig>* pConf, const QString& outPath);
     static bool deserialize(const QJsonObject& pConf, std::vector<audioConfig>* playbackConfig) ;
     static float getVol(int volume){ return static_cast<float>(volume / 100.0); }
-
+    static void correctTrackPos(QMediaPlayer* player, int curFrame, int frameCount, int fps, audioConfig& config);
     void setupUi(QWidget *audioWidget, mediaState *mediaPlayer, std::vector<audioConfig>* config){
         if (audioWidget->objectName().isEmpty()) {audioWidget->setObjectName(QString::fromUtf8("audioWidget")); }
         mainWidget = audioWidget;
@@ -136,7 +136,6 @@ public:
         loadConfigButton->setText(QCoreApplication::translate("audioWidget", "Load audio configuration from file", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(configTab), QCoreApplication::translate("audioWidget", "Save/Load audio config", nullptr));
         // Initialize
-        connect(audioWidget, mediaPlayer, config);
         QMetaObject::connectSlotsByName(audioWidget);
         config->emplace_back();
         rectifyUI(config, mediaPlayer);

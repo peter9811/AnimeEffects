@@ -35,6 +35,7 @@ private:
         ? static_cast<core::TimeFormatType>(mSettings.value("generalsettings/ui/timeformat").toInt())
         : core::TimeFormatType::TimeFormatType_Frames_From0;
     // --------------------- //
+    int latestFrame = 0;
     bool mIsFirstTime;
     int mSuspendCount;
 };

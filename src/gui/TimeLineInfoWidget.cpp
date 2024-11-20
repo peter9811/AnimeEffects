@@ -39,6 +39,10 @@ void TimeLineInfoWidget::onUpdate() {
                 auto* player = mProject->mediaPlayer->players.at(currentPlayer);
 
                 if(player->isPlaying()){
+                    if(currentFrame +- 1 != latestFrame && currentFrame != latestFrame +- 1 && currentFrame != latestFrame){
+                        qDebug() << "Current = " << currentFrame << "; Latest = " << latestFrame;
+                        AudioPlaybackWidget::correctTrackPos(player, currentFrame, frameMax, fps, const_cast<audioConfig&>(file));
+                    }
                     qDebug() << "Player at " << currentPlayer << " is playing.";
                     if (mProject->animator().isSuspended() || file.endFrame <= currentFrame || !file.playbackEnable) {
                         qDebug("Request player stop");
@@ -49,6 +53,7 @@ void TimeLineInfoWidget::onUpdate() {
                     qDebug() << "Player at " << currentPlayer << " is suspended.";
                     if (file.startFrame <= currentFrame  && file.endFrame >= currentFrame && file.playbackEnable) {
                         qDebug("Request player start");
+                        AudioPlaybackWidget::correctTrackPos(player, currentFrame, frameMax, fps, const_cast<audioConfig&>(file));
                         player->play();
                         mProject->mediaPlayer->playing = true;
                     }
@@ -56,6 +61,7 @@ void TimeLineInfoWidget::onUpdate() {
                 currentPlayer++;
             }
         }
+        latestFrame = timeInfo.frame.get();
     }
 }
 void TimeLineInfoWidget::setPlayback(PlayBackWidget* aPlayback) {

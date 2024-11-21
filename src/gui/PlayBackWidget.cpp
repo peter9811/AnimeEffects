@@ -24,7 +24,7 @@ PlayBackWidget::PlayBackWidget(GUIResources& aResources, QWidget* aParent):
     mButtons.push_back(createButton("fast", false, 4, tr("Advance to final frame")));
     mButtons.push_back(createButton("loop", true, 5, tr("Loop")));
     mButtons.push_back(createButton("audio", false, 6, tr("Audio track")));
-    audioWidget->setupUi(audioUI, mediaPlayer);
+    audioWidget->setupUi(audioUI, &mediaPlayer, aConf);
     mGUIResources.onThemeChanged.connect(this, &PlayBackWidget::onThemeUpdated);
 }
 
@@ -52,11 +52,12 @@ void PlayBackWidget::setPushDelegate(const PushDelegate& aDelegate) {
         if(audioUI == nullptr || audioWidget == nullptr){
             audioWidget =  new AudioPlaybackWidget;
             audioUI = new QWidget(this, Qt::Window);
-            audioWidget->setupUi(audioUI, mediaPlayer);
+            audioWidget->setupUi(audioUI, &mediaPlayer, aConf);
         }
         if(!audioUI->isHidden()){
             return;
         }
+        for(auto player: mediaPlayer.players){ player->stop(); }
         audioUI->show();
     });
 }
@@ -128,5 +129,6 @@ void PlayBackWidget::onThemeUpdated(theme::Theme& aTheme) {
         }
     }
 }
+bool PlayBackWidget::isPlaying() {  return this->mButtons.at(2)->isChecked(); }
 
 } // namespace gui

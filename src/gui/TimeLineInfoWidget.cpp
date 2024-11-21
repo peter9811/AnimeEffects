@@ -16,25 +16,56 @@ void TimeLineInfoWidget::setProject(core::Project* aProject) {
 void TimeLineInfoWidget::onUpdate() {
     if (mProject != nullptr) {
         core::TimeInfo timeInfo = mProject->currentTimeInfo();
-
         const int frameMax = timeInfo.frameMax;
         const int fps = timeInfo.fps;
         const int currentFrame = timeInfo.frame.get();
-
         const core::TimeFormat timeFormat(util::Range(0, frameMax), fps);
-        auto timeFormatVar = mSettings.value("generalsettings/ui/timeformat");
-        core::TimeFormatType formatType = timeFormatVar.isValid()
-            ? static_cast<core::TimeFormatType>(timeFormatVar.toInt())
-            : core::TimeFormatType::TimeFormatType_Frames_From0;
-
         QString frameNumber = timeFormat.frameToString(currentFrame, formatType);
         QString frameMaxNumber = timeFormat.frameToString(frameMax, formatType);
-
         this->setText(
             frameNumber.rightJustified(frameMaxNumber.length() + 1, ' ') + " / " + frameMaxNumber + " @" +
             QString::number(fps) + " " + "FPS"
         );
+        // Audio
+        if(mProject->pConf != nullptr && mProject->mediaPlayer != nullptr && mPlayBack->isPlaying()){
+            qDebug("-----");
+            qDebug(QString("Current frame = ").append(QString::number(currentFrame)).toStdString().c_str());
+            int currentPlayer = 0;
+            for (const auto& file : *mProject->pConf) {
+                qDebug(QString("Start frame = ").append(QString::number(file.startFrame)).toStdString().c_str());
+                qDebug(QString("End frame = ").append(QString::number(file.endFrame)).toStdString().c_str());
+                qDebug("-----");
+
+                auto* player = mProject->mediaPlayer->players.at(currentPlayer);
+
+                if(player->isPlaying()){
+                    if(currentFrame +- 1 != latestFrame && currentFrame != latestFrame +- 1 && currentFrame != latestFrame){
+                        qDebug() << "Current = " << currentFrame << "; Latest = " << latestFrame;
+                        AudioPlaybackWidget::correctTrackPos(player, currentFrame, frameMax, fps, const_cast<audioConfig&>(file));
+                    }
+                    qDebug() << "Player at " << currentPlayer << " is playing.";
+                    if (mProject->animator().isSuspended() || file.endFrame <= currentFrame || !file.playbackEnable) {
+                        qDebug("Request player stop");
+                        player->stop();
+                    }
+                }
+                else{
+                    qDebug() << "Player at " << currentPlayer << " is suspended.";
+                    if (file.startFrame <= currentFrame  && file.endFrame >= currentFrame && file.playbackEnable) {
+                        qDebug("Request player start");
+                        AudioPlaybackWidget::correctTrackPos(player, currentFrame, frameMax, fps, const_cast<audioConfig&>(file));
+                        player->play();
+                        mProject->mediaPlayer->playing = true;
+                    }
+                }
+                currentPlayer++;
+            }
+        }
+        latestFrame = timeInfo.frame.get();
     }
+}
+void TimeLineInfoWidget::setPlayback(PlayBackWidget* aPlayback) {
+    mPlayBack = aPlayback;
 }
 
 } // namespace gui

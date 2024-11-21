@@ -31,10 +31,11 @@ public:
     bool isLoopChecked();
     void checkLoop(bool checkStatus);
     void PlayPause();
+    bool isPlaying();
     static int constantWidth() ;
     void pushPauseButton();
     QWidget* audioUI = new QWidget(this, Qt::Window);
-    std::vector<audioConfig>* pConf = new std::vector<audioConfig>;
+    std::vector<audioConfig>* aConf = new std::vector<audioConfig>;
     mediaState mediaPlayer;
     AudioPlaybackWidget* audioWidget = new AudioPlaybackWidget;
 

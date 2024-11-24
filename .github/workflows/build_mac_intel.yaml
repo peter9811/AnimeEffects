@@ -29,11 +29,10 @@ jobs:
     - name: Get dependencies
       shell: bash
       run: |
-          brew install cmake ninja vulkan-headers
+          brew install cmake ninja vulkan-headers coreutils
     - name: Build AnimeEffects
       shell: bash
       run: |
-        alias echo="/bin/echo"
         echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         cmake -S . -B build -G "Ninja Multi-Config"
         cmake --build build --config Release

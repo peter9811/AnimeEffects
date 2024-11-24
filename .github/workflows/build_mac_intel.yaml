@@ -33,6 +33,7 @@ jobs:
     - name: Build AnimeEffects
       shell: bash
       run: |
+        alias echo="/bin/echo"
         echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         cmake -S . -B build -G "Ninja Multi-Config"
         cmake --build build --config Release
@@ -48,8 +49,8 @@ jobs:
         ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
         cp -R ../../data AnimeEffects.app/data
         zip -r AnimeEffects.zip AnimeEffects.app
-        /bin/echo -n "artifactPath=$(realpath AnimeEffects.zip)`"
-        /bin/echo -n "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
+        echo -n "artifactPath=$(realpath AnimeEffects.zip)`"
+        echo -n "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
     - name: Github Artifacts
       uses: actions/upload-artifact@v4
       with:

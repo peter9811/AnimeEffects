@@ -48,8 +48,8 @@ jobs:
         ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
         cp -R ../../data AnimeEffects.app/data
         zip -r AnimeEffects.zip AnimeEffects.app
-        printf "artifactPath=$(realpath AnimeEffects.zip)`"
-        printf "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
+        /bin/echo -n "artifactPath=$(realpath AnimeEffects.zip)`"
+        /bin/echo -n "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
     - name: Github Artifacts
       uses: actions/upload-artifact@v4
       with:

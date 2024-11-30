@@ -30,13 +30,15 @@ struct audioConfig{
     bool playbackEnable = true;
     int volume = 100;
     int startFrame = 0;
-    int endFrame = 250;
+    int endFrame = 500;
 };
 struct mediaState{
     bool playing = false;
     QVector<QMediaPlayer*> players;
     QVector<QAudioOutput*> outputs;
 };
+
+
 
 struct UIState{
     QToolButton *addNewTrack{ new QToolButton };

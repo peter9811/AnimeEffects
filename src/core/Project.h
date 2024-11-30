@@ -88,8 +88,10 @@ public:
     util::Signaler<void(ObjectTreeEvent&, bool)> onTreeRestructured;
     util::Signaler<void(ProjectEvent&, bool)> onProjectAttributeModified;
     // Audio
-    std::vector<audioConfig>* pConf = nullptr;
-    mediaState* mediaPlayer = nullptr;
+    std::vector<audioConfig>* pConf = new std::vector<audioConfig>();
+    mediaState* mediaPlayer = new mediaState();
+    bool mediaRefresh = false;
+    bool uiRefresh = false;
 
 private:
     util::LifeLink mLifeLink;

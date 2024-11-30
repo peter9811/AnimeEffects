@@ -10,12 +10,13 @@ const int kButtonCount = 7;
 
 namespace gui {
 
-PlayBackWidget::PlayBackWidget(GUIResources& aResources, QWidget* aParent):
+PlayBackWidget::PlayBackWidget(GUIResources& aResources, QWidget* aParent, core::Project& mProject):
     QWidget(aParent), mGUIResources(aResources), mButtons() {
     if (mGUIResources.getTheme().contains("high_dpi")) {
         kButtonSize = 32;
     }
     this->setGeometry(0, 0, kButtonSize, kButtonSize * kButtonCount);
+    aProject = &mProject;
 
     mButtons.push_back(createButton("rewind", false, 0, tr("Return to initial frame")));
     mButtons.push_back(createButton("stepback", false, 1, tr("One frame back")));
@@ -54,10 +55,22 @@ void PlayBackWidget::setPushDelegate(const PushDelegate& aDelegate) {
             audioUI = new QWidget(this, Qt::Window);
             audioWidget->setupUi(audioUI, &mediaPlayer, aConf);
         }
+
+        if(aProject && aProject->mediaRefresh){
+            owner->aConf = aProject->pConf;
+            owner->mediaPlayer = *aProject->mediaPlayer;
+            aProject->mediaRefresh = false;
+        }
         if(!audioUI->isHidden()){
             return;
         }
         for(auto player: mediaPlayer.players){ player->stop(); }
+
+        if(aProject && aProject->uiRefresh){
+            audioWidget->rectifyUI(aProject->pConf, aProject->mediaPlayer, true);
+            aProject->uiRefresh = false;
+        }
+
         audioUI->show();
     });
 }

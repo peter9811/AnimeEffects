@@ -35,17 +35,19 @@ bool AudioPlaybackWidget::deserialize(const QJsonObject& pConf, std::vector<audi
     if(pConf.isEmpty()) { return false; }
     try {
         auto deserialized = std::vector<audioConfig>();
-        for (int x = 0; x > pConf["Tracks"].toInt(); x++){
+        for (int x = 0; x < pConf["Tracks"].toInt(); x++){
             deserialized.emplace_back();
-            deserialized.at(x).audioName = pConf[QString::number(x)]["Name"].toString();
-            deserialized.at(x).audioPath = QFileInfo(pConf[QString::number(x)]["Path"].toString());
-            deserialized.at(x).playbackEnable = pConf[QString::number(x)]["Playback"].toBool();
-            deserialized.at(x).volume = pConf[QString::number(x)]["Volume"].toInt();
-            deserialized.at(x).startFrame = pConf[QString::number(x)]["StartFrame"].toInt();
-            deserialized.at(x).endFrame = pConf[QString::number(x)]["EndFrame"].toInt();
+            deserialized.at(x).audioName = pConf[QString::number(x)].toObject()["Name"].toString();
+            deserialized.at(x).audioPath = QFileInfo(pConf[QString::number(x)].toObject()["Path"].toString());
+            deserialized.at(x).playbackEnable = pConf[QString::number(x)].toObject()["Playback"].toBool();
+            deserialized.at(x).volume = pConf[QString::number(x)].toObject()["Volume"].toInt();
+            deserialized.at(x).startFrame = pConf[QString::number(x)].toObject()["StartFrame"].toInt();
+            deserialized.at(x).endFrame = pConf[QString::number(x)].toObject()["EndFrame"].toInt();
         }
         playbackConfig->clear();
-        *playbackConfig = deserialized;
+        for (const auto& config: deserialized){
+            playbackConfig->emplace_back(config);
+        }
     }
     // TODO: Fix this later
     catch (...) { return false; }
@@ -103,13 +105,13 @@ void AudioPlaybackWidget::connect(QWidget *audioWidget, mediaState *state, std::
         diag.setNameFilter(QCoreApplication::translate("LoadMus", "Anie audio configuration file (*.aemus)", nullptr));
         if(diag.exec()) {
             QFile file = QFile(diag.selectedFiles().first());
-            if(!file.exists()) {
-                QMessageBox::warning(audioWidget, "File does not exist", "Qt was unable to load the requested file.");
+            if(!file.open(QIODevice::ReadOnly)) {
+                QMessageBox::warning(audioWidget, "File error", file.errorString());
                 return;
             }
             QJsonDocument json = QJsonDocument::fromJson(file.readAll());
-            if(!json.isObject()){
-                QMessageBox::warning(audioWidget, "Invalid file", "The requested file is not a valid aemus file.");
+            if(json.isEmpty() || json.isNull()){
+                QMessageBox::warning(audioWidget, "Invalid file \"" + QFileInfo(file).baseName() + '"', "The requested file's json contents could not be parsed.");
                 return;
             }
             auto configBackup = *config;
@@ -118,6 +120,7 @@ void AudioPlaybackWidget::connect(QWidget *audioWidget, mediaState *state, std::
                 QMessageBox::warning(audioWidget, "Invalid file", "The requested file is not a valid aemus file.");
                 return;
             }
+            else{ QMessageBox::information(audioWidget, "Success", "Successfully loaded audio"); }
             rectifyUI(config, state);
         }
     }));

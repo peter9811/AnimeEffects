@@ -70,13 +70,10 @@ bool ImageFileLoader::load(const QString& aPath, core::Project& aProject, util::
     mFileInfo = QFileInfo(aPath);
     const QString suffix = mFileInfo.suffix();
 
-    if (aPath.isEmpty() || !mFileInfo.isFile()) {
-        return createEmptyCanvas(aProject, "topnode", mCanvasSize);
-    } else if (suffix == "psd") {
-        return loadPsd(aProject, aReporter);
-    } else {
-        return loadImage(aProject, aReporter);
-    }
+    if (aPath.isEmpty() || !mFileInfo.isFile()) { return createEmptyCanvas(aProject, "topnode", mCanvasSize); }
+    else if (suffix == "psd") { return loadPsd(aProject, aReporter); }
+    else if (suffix == "ora"){ return loadOra(aProject, aReporter); }
+    else { return loadImage(aProject, aReporter); }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -151,7 +148,7 @@ bool ImageFileLoader::loadPsd(core::Project& aProject, util::IProgressReporter& 
     using img::PSDUtil;
     typedef PSDFormat::LayerList::reverse_iterator ReverseIterator;
 
-    aReporter.setSection("Loading the PSD File...");
+    aReporter.setSection("Loading PSD file...");
     aReporter.setMaximum(1);
     aReporter.setProgress(0);
 
@@ -291,6 +288,33 @@ bool ImageFileLoader::loadPsd(core::Project& aProject, util::IProgressReporter& 
 
     mLog = "success";
     return true;
+}
+
+bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aReporter) {
+    // Loader limitations:
+    // File "thumbnail.png" will be ignored, custom data fields and annotations will be ignored,
+    // the isolate field will be ignored, blend modes outside those already supported by ANIE will be ignored.
+
+    // OpenRaster specification from https://www.openraster.org/baseline/file-layout-spec.html
+    aReporter.setSection("Loading ORA file...");
+    aReporter.setMaximum(1);
+    aReporter.setProgress(0);
+    // open file
+    QScopedPointer<std::ifstream> file;
+    {
+        auto path = mFileInfo.filePath();
+        file.reset(new std::ifstream(path.toLocal8Bit(), std::ios::binary));
+        XC_DEBUG_REPORT() << "image path =" << path;
+
+        if (file->fail()) {
+            mLog = "Can not find a file.";
+            return false;
+        }
+    }
+    QMessageBox loadMerged;
+
+    Q_UNIMPLEMENTED();
+    return false;
 }
 
 QRect ImageFileLoader::calculateBoundingRectFromChildren(const ObjectNode& aNode) {

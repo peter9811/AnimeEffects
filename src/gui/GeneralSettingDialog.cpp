@@ -250,6 +250,9 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             mInitialThemeKey = theme.toString();
         }
 
+        auto donationAllowed = settings.value("generalsettings/ui/donationAllowed");
+        bDonationAllowed = !donationAllowed.isValid() || donationAllowed.toBool();
+
         auto isAutoSave = settings.value("generalsettings/projects/autosaveEnabled");
         bAutoSave = isAutoSave.isValid() && isAutoSave.toBool();
 
@@ -309,6 +312,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         }
         mThemeBox->setCurrentIndex(mThemeBox->findData(mInitialThemeKey));
         form->addRow(tr("Theme :"), mThemeBox);
+
+        mDonationAllowed = new QCheckBox();
+        mDonationAllowed->setChecked(bDonationAllowed);
+        form->addRow(tr("Allow donation menu : "), mDonationAllowed);
     }
 
     auto projectSaving = new QFormLayout();
@@ -598,7 +605,7 @@ QFormLayout* GeneralSettingDialog::createTab(const QString& aTitle, QFormLayout*
     form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
     form->setLabelAlignment(Qt::AlignRight);
     frame->setLayout(aForm);
-
+    frame->adjustSize();
     mTabs->addTab(scroll, aTitle);
 
     return form;
@@ -610,11 +617,11 @@ bool GeneralSettingDialog::easingHasChanged() { return (mInitialEasingIndex != m
 
 bool GeneralSettingDialog::rangeHasChanged() { return (mInitialRangeIndex != mRangeBox->currentIndex()); }
 
-bool GeneralSettingDialog::timeFormatHasChanged() {
-    return (mInitialTimeFormatIndex != mTimeFormatBox->currentIndex());
-}
+bool GeneralSettingDialog::timeFormatHasChanged() { return (mInitialTimeFormatIndex != mTimeFormatBox->currentIndex()); }
 
 bool GeneralSettingDialog::themeHasChanged() { return (mInitialThemeKey != mThemeBox->currentData()); }
+
+bool GeneralSettingDialog::donationHasChanged() {return bDonationAllowed != mDonationAllowed->isChecked(); }
 
 bool GeneralSettingDialog::autoSaveHasChanged() { return (bAutoSave != mAutoSave->isChecked()); }
 
@@ -644,6 +651,9 @@ void GeneralSettingDialog::saveSettings() {
     }
     if (themeHasChanged()) {
         settings.setValue("generalsettings/ui/theme", mThemeBox->currentData());
+    }
+    if (donationHasChanged()){
+        settings.setValue("generalsettings/ui/donationAllowed", mDonationAllowed->isChecked());
     }
     if (autoSaveHasChanged()) {
         settings.setValue("generalsettings/projects/autosaveEnabled", mAutoSave->isChecked());

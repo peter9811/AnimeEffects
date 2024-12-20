@@ -28,6 +28,7 @@ public:
     bool autoSaveDelayHasChanged();
     bool autoFFmpegHasChanged();
     bool themeHasChanged();
+    bool donationHasChanged();
     bool cbCopyHasChanged();
     bool keyDelayHasChanged();
     QString theme();
@@ -51,6 +52,9 @@ private:
 
     int mInitialRangeIndex;
     QComboBox* mRangeBox;
+
+    bool bDonationAllowed;
+    QCheckBox* mDonationAllowed;
 
     bool bAutoSave;
     QCheckBox* mAutoSave;

@@ -26,6 +26,8 @@ private:
 
     bool loadPsd(core::Project& aProject, util::IProgressReporter& aReporter);
 
+    bool loadOra(core::Project& aProject, util::IProgressReporter& aReporter);
+
     bool loadImage(core::Project& aProject, util::IProgressReporter& aReporter);
 
     static QRect calculateBoundingRectFromChildren(const core::ObjectNode& aNode);

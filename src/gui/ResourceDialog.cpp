@@ -6,10 +6,9 @@
 #include <QMessageBox>
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
-#include "img/Util.h"
 #include "gui/ResourceDialog.h"
 #include "gui/MainMenuBar.h"
-#include "gui/res/res_ResourceUpdater.h"
+#include "img/Util.h"
 
 namespace gui {
 
@@ -84,7 +83,7 @@ void ResourceDialog::onAddResourceTriggered(bool) {
         return;
 
     const QStringList fileName = QFileDialog::getOpenFileNames(
-        this, tr("Open Files"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
+        this, tr("Open Files"), "", "ImageFile (*.psd *.ora *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
     );
     if (fileName.isEmpty())
         return;

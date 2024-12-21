@@ -51,5 +51,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         Qt6::OpenGL
         Qt6::OpenGLWidgets
         Qt6::Xml
-    util
+        util
 )

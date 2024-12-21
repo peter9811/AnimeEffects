@@ -6,19 +6,19 @@
 #include "util/TreeUtil.h"
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
-#include "img/Util.h"
 #include "img/BlendMode.h"
 #include "cmnd/ScopedMacro.h"
 #include "cmnd/BasicCommands.h"
 #include "ctrl/CmndName.h"
 #include "gui/res/res_ImageSetter.h"
 #include "gui/res/res_ResourceUpdater.h"
+#include "img/Util.h"
+#include "util/zip_file.h"
 
 // #define RESOURCE_UPDATER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define RESOURCE_UPDATER_DUMP(...)
 
-namespace gui {
-namespace res {
+namespace gui::res {
 
     //-------------------------------------------------------------------------------------------------
     class NewTreePusher: public cmnd::Stable {
@@ -273,7 +273,11 @@ namespace res {
 
         if (fileInfo.suffix() == "psd") {
             return createPsdTree(aFilePath, aLoadImage);
-        } else {
+        }
+        else if(fileInfo.suffix() == "ora"){
+            return createOraTree(aFilePath, aLoadImage);
+        }
+        else {
             return createQImageTree(aFilePath, aLoadImage);
         }
     }
@@ -314,6 +318,43 @@ namespace res {
         // create resource tree
         return img::Util::createResourceNodes(*mPSDFormat, aLoadImage);
     }
+
+    img::ResourceNode* ResourceUpdater::createOraTree(const QString& aFilePath, bool aLoadImage) {
+        miniz_cpp::zip_file ora(aFilePath.toStdString());
+        {
+            const auto& path = aFilePath;
+            XC_DEBUG_REPORT() << "ora path =" << path;
+            try{
+                if (!ora.has_file("mimetype")){
+                    QMessageBox::warning(nullptr, tr("ORA parse error"), tr("Unable to find the mimetype of the solicited file."));
+                    return nullptr;
+                }
+                auto mimetype = ora.read("mimetype");
+                if (mimetype != "image/openraster"){
+                    QMessageBox::warning(nullptr, tr("ORA parse error"), tr("The mimetype is not valid."));
+                    return nullptr;
+                }
+                XC_DEBUG_REPORT() << "ora file has valid mimetype";
+            }
+            catch (...){
+                QMessageBox::warning(nullptr, tr("ORA parse error"), tr("The file could not be read."));
+                    return nullptr;
+            }
+        }
+        ora.reset();
+        QMessageBox loadMerged;
+        loadMerged.setWindowTitle(tr("Select ora type"));
+        loadMerged.setText(tr("How do you wish to load this ora file?"));
+        QAbstractButton* mergeButton = loadMerged.addButton(tr("Load merged"), QMessageBox::YesRole);
+        loadMerged.addButton(tr("Load layered"), QMessageBox::YesRole);
+        QAbstractButton* cancelButton = loadMerged.addButton(tr("Cancel file load"), QMessageBox::NoRole);
+        loadMerged.exec();
+        if(loadMerged.clickedButton() == cancelButton){ return nullptr; }
+        bool merged = loadMerged.clickedButton() == mergeButton;
+        // create resource tree
+        return img::Util::createResourceNodes(merged, aFilePath.toStdString(), aLoadImage);
+    }
+
 
     //-------------------------------------------------------------------------------------------------
     void ResourceUpdater::reload(Item& aItem) {
@@ -664,5 +705,5 @@ namespace res {
         }
     }
 
-} // namespace res
-} // namespace gui
+} // namespace gui::res
+

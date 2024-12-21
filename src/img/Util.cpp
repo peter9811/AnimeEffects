@@ -1,9 +1,11 @@
 #include <string>
+#include <QFileInfo>
 #include "util/TextUtil.h"
-#include "img/Util.h"
 #include "img/ColorRGBA.h"
 #include "img/PSDUtil.h"
 #include "img/BlendMode.h"
+#include "img/Util.h"
+#include "util/zip_file.h"
 
 namespace img {
 
@@ -298,6 +300,20 @@ ResourceNode* Util::createResourceNodes(PSDFormat& aFormat, bool aLoadImage) {
     return resStack.front();
 }
 
+ResourceNode* Util::createResourceNodes(bool merged, const std::string& aFilePath, bool aLoadImage) {
+    miniz_cpp::zip_file ora(aFilePath);
+    if(merged)
+    {
+        auto imageBytes = QByteArray::fromStdString(ora.read("mergedimage.png"));
+        QImage image = QImage::fromData(imageBytes);
+        return createResourceNode(image, QFileInfo(QString::fromStdString(aFilePath)).baseName(), aLoadImage);
+    }
+    else{
+        Q_UNIMPLEMENTED();
+    }
+    return nullptr;
+}
+
 ResourceNode* Util::createResourceNode(const QImage& aImage, const QString& aName, bool aLoadImage) {
     // create resource
     auto resNode = new ResourceNode(aName);
@@ -321,5 +337,4 @@ ResourceNode* Util::createResourceNode(const QImage& aImage, const QString& aNam
     }
     return resNode;
 }
-
 } // namespace img

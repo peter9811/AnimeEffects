@@ -42,7 +42,7 @@ QWidget* NewProjectDialog::createOption() {
         auto button = new QPushButton(this);
         this->connect(button, &QPushButton::clicked, [=]() {
             this->mFileName = QFileDialog::getOpenFileName(
-                this, tr("Open File"), "", "ImageFile (*.psd *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
+                this, tr("Open File"), "", "ImageFile (*.psd *.ora *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
             );
 
             line->setText(mFileName);

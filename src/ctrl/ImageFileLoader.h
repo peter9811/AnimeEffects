@@ -8,6 +8,8 @@
 #include "gl/DeviceInfo.h"
 #include "core/Project.h"
 #include "core/ObjectTree.h"
+#include "img/Util.h"
+
 
 namespace ctrl {
 

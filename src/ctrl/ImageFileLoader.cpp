@@ -1,19 +1,15 @@
-#include <QRegularExpression>
 #include <fstream>
-#include <QDebug>
 #include "XC.h"
 #include "qapplication.h"
 #include "util/TextUtil.h"
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
 #include "img/ResourceNode.h"
-#include "img/Util.h"
-#include "img/BlendMode.h"
 #include "core/LayerNode.h"
 #include "core/FolderNode.h"
-#include "core/HeightMap.h"
 #include "core/ObjectNodeUtil.h"
 #include "ctrl/ImageFileLoader.h"
+#include "util/zip_file.h"
 
 using namespace core;
 
@@ -289,6 +285,9 @@ bool ImageFileLoader::loadPsd(core::Project& aProject, util::IProgressReporter& 
     mLog = "success";
     return true;
 }
+QString tr(const QString& str){
+    return QCoreApplication::translate("image_file_loader", str.toStdString().c_str());
+}
 
 bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aReporter) {
     // Loader limitations:
@@ -296,24 +295,84 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
     // the isolate field will be ignored, blend modes outside those already supported by ANIE will be ignored.
 
     // OpenRaster specification from https://www.openraster.org/baseline/file-layout-spec.html
-    aReporter.setSection("Loading ORA file...");
-    aReporter.setMaximum(1);
-    aReporter.setProgress(0);
-    // open file
-    QScopedPointer<std::ifstream> file;
+    // Miniz zip library by Thomas Fussell with fixes by Kay Stenschke
+
+    miniz_cpp::zip_file ora(mFileInfo.filePath().toStdString());
     {
         auto path = mFileInfo.filePath();
-        file.reset(new std::ifstream(path.toLocal8Bit(), std::ios::binary));
-        XC_DEBUG_REPORT() << "image path =" << path;
-
-        if (file->fail()) {
-            mLog = "Can not find a file.";
+        XC_DEBUG_REPORT() << "ora path =" << path;
+        try{
+            if (!ora.has_file("mimetype")){
+                mLog = "Unable to find mimetype";
+                return false;
+            }
+            auto mimetype = ora.read("mimetype");
+            if (mimetype != "image/openraster"){
+                mLog = "Unable to read mimetype";
+                return false;
+            }
+            XC_DEBUG_REPORT() << "ora file has valid mimetype";
+        }
+        catch (...){
+            mLog = std::string("Unable to unzip " + path.toStdString()).c_str();
             return false;
         }
     }
     QMessageBox loadMerged;
+    loadMerged.setWindowTitle(tr("Select ora type"));
+    loadMerged.setText(tr("How do you wish to load this ora file?"));
+    QAbstractButton* mergeButton = loadMerged.addButton(tr("Load merged"), QMessageBox::YesRole);
+    QAbstractButton* layerButton = loadMerged.addButton(tr("Load layered"), QMessageBox::YesRole);
+    QAbstractButton* cancelButton = loadMerged.addButton(tr("Cancel file load"), QMessageBox::NoRole);
+    loadMerged.exec();
+    if (loadMerged.clickedButton() == mergeButton || loadMerged.clickedButton() == layerButton){
+        aReporter.setSection("Loading ORA file...");
+        aReporter.setMaximum(1);
+        aReporter.setProgress(0);
+        bool merged = loadMerged.clickedButton() == mergeButton;
+        if(merged){
+            auto imageBytes = QByteArray::fromStdString(ora.read("mergedimage.png"));
+            QImage image = QImage::fromData(imageBytes);
+            if (image.isNull()) {
+                mLog = "Failed to load image file";
+                return false;
+            }
+            auto size = mForceCanvasSize ? mCanvasSize : image.size();
+            auto name = mFileInfo.baseName();
+            if (!createEmptyCanvas(aProject, name, size)) { return false; }
 
-    Q_UNIMPLEMENTED();
+            {
+                auto topNode = aProject.objectTree().topNode();
+                XC_PTR_ASSERT(topNode);
+
+                // resource tree stack
+                img::ResourceNode* resTree = createFolderResource("topnode", QPoint(0, 0));
+                aProject.resourceHolder().pushImageTree(*resTree, mFileInfo.absoluteFilePath());
+
+                // create layer resource (Note that the rect be modified.)
+                auto resNode = img::Util::createResourceNode(image, name, true);
+                resTree->children().pushBack(resNode);
+
+                // create layer node
+                auto* layerNode = new LayerNode(name, aProject.objectTree().shaderHolder());
+                layerNode->setInitialRect(resNode->data().rect());
+                layerNode->setDefaultImage(resNode->handle());
+                layerNode->setDefaultOpacity(1.0f);
+                layerNode->setDefaultPosture(resNode->data().center());
+                topNode->children().pushBack(layerNode);
+            }
+
+            aReporter.setProgress(1);
+            mLog = "Success";
+            return true;
+        }
+        else{
+            Q_UNIMPLEMENTED();
+        }
+    }
+    if(loadMerged.clickedButton() == cancelButton){
+        mLog = "User cancelled image load";
+    }
     return false;
 }
 

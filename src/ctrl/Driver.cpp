@@ -5,7 +5,7 @@ namespace {
 
 struct ScopeCounter {
     int& count;
-    ScopeCounter(int& aCount): count(aCount) { ++count; }
+    explicit ScopeCounter(int& aCount): count(aCount) { ++count; }
     ~ScopeCounter() { --count; }
 };
 
@@ -254,40 +254,30 @@ void Driver::drawBanMark(const core::RenderInfo& aRenderInfo, QPainter& aPainter
 
 void Driver::updateParam(const SRTParam& aParam) {
     XC_ASSERT(mToolType == ToolType_SRT);
-    if (mToolType != ToolType_SRT)
-        return;
 
     ((SRTEditor*)mEditor.data())->updateParam(aParam);
 }
 
 void Driver::updateParam(const FFDParam& aParam) {
     XC_ASSERT(mToolType == ToolType_FFD);
-    if (mToolType != ToolType_FFD)
-        return;
 
     ((FFDEditor*)mEditor.data())->updateParam(aParam);
 }
 
 void Driver::updateParam(const BoneParam& aParam) {
     XC_ASSERT(mToolType == ToolType_Bone);
-    if (mToolType != ToolType_Bone)
-        return;
 
     ((BoneEditor*)mEditor.data())->updateParam(aParam);
 }
 
 void Driver::updateParam(const PoseParam& aParam) {
     XC_ASSERT(mToolType == ToolType_Pose);
-    if (mToolType != ToolType_Pose)
-        return;
 
     ((PoseEditor*)mEditor.data())->updateParam(aParam);
 }
 
 void Driver::updateParam(const MeshParam& aParam) {
     XC_ASSERT(mToolType == ToolType_Mesh);
-    if (mToolType != ToolType_Mesh)
-        return;
 
     ((MeshEditor*)mEditor.data())->updateParam(aParam);
 }

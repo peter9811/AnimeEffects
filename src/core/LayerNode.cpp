@@ -283,7 +283,7 @@ void LayerNode::transformShape(const RenderInfo& aInfo, const TimeCacheAccessor&
 
     // positions
     util::ArrayBlock<const gl::Vector3> positions;
-    bool useInfluence = true;
+    bool useInfluence;
 
     if (aInfo.originMesh) // ignore mesh deforming
     {

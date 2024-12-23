@@ -43,8 +43,8 @@ public:
     void updateParam(const MeshParam& aParam);
 
 private:
-    void drawOutline(const core::RenderInfo& aRenderInfo, QPainter& aPainter);
-    void drawBanMark(const core::RenderInfo& aRenderInfo, QPainter& aPainter);
+    static void drawOutline(const core::RenderInfo& aRenderInfo, QPainter& aPainter);
+    static void drawBanMark(const core::RenderInfo& aRenderInfo, QPainter& aPainter);
 
     core::Project& mProject;
     DriverResources& mResources;

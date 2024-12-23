@@ -21,6 +21,7 @@ add_library(${PROJECT_NAME}
     ResourceHandle.cpp ResourceHandle.h
     ResourceNode.cpp ResourceNode.h
     Util.cpp Util.h
+        ORAReader.h
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     ..

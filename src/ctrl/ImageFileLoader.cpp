@@ -4,6 +4,7 @@
 #include "util/TextUtil.h"
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
+#include "img/ORAReader.h"
 #include "img/ResourceNode.h"
 #include "core/LayerNode.h"
 #include "core/FolderNode.h"
@@ -292,26 +293,26 @@ QString tr(const QString& str){
 bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aReporter) {
     // Loader limitations:
     // File "thumbnail.png" will be ignored, custom data fields and annotations will be ignored,
-    // the isolate field will be ignored, blend modes outside those already supported by ANIE will be ignored.
+    // blend modes outside those already supported by ANIE will be ignored.
 
     // OpenRaster specification from https://www.openraster.org/baseline/file-layout-spec.html
     // Miniz zip library by Thomas Fussell with fixes by Kay Stenschke
 
-    miniz_cpp::zip_file ora(mFileInfo.filePath().toStdString());
+    auto* oraFile = new miniz_cpp::zip_file(mFileInfo.filePath().toStdString());
     {
         auto path = mFileInfo.filePath();
-        XC_DEBUG_REPORT() << "ora path =" << path;
+        XC_DEBUG_REPORT() << "oraFile path =" << path;
         try{
-            if (!ora.has_file("mimetype")){
+            if (!oraFile->has_file("mimetype")){
                 mLog = "Unable to find mimetype";
                 return false;
             }
-            auto mimetype = ora.read("mimetype");
+            auto mimetype = oraFile->read("mimetype");
             if (mimetype != "image/openraster"){
                 mLog = "Unable to read mimetype";
                 return false;
             }
-            XC_DEBUG_REPORT() << "ora file has valid mimetype";
+            XC_DEBUG_REPORT() << "oraFile file has valid mimetype";
         }
         catch (...){
             mLog = std::string("Unable to unzip " + path.toStdString()).c_str();
@@ -319,10 +320,10 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
         }
     }
     QMessageBox loadMerged;
-    loadMerged.setWindowTitle(tr("Select ora type"));
-    loadMerged.setText(tr("How do you wish to load this ora file?"));
-    QAbstractButton* mergeButton = loadMerged.addButton(tr("Load merged"), QMessageBox::YesRole);
+    loadMerged.setWindowTitle(tr("Select oraFile type"));
+    loadMerged.setText(tr("How do you wish to load this oraFile file?"));
     QAbstractButton* layerButton = loadMerged.addButton(tr("Load layered"), QMessageBox::YesRole);
+    QAbstractButton* mergeButton = loadMerged.addButton(tr("Load merged"), QMessageBox::YesRole);
     QAbstractButton* cancelButton = loadMerged.addButton(tr("Cancel file load"), QMessageBox::NoRole);
     loadMerged.exec();
     if (loadMerged.clickedButton() == mergeButton || loadMerged.clickedButton() == layerButton){
@@ -331,7 +332,7 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
         aReporter.setProgress(0);
         bool merged = loadMerged.clickedButton() == mergeButton;
         if(merged){
-            auto imageBytes = QByteArray::fromStdString(ora.read("mergedimage.png"));
+            auto imageBytes = QByteArray::fromStdString(oraFile->read("mergedimage.png"));
             QImage image = QImage::fromData(imageBytes);
             if (image.isNull()) {
                 mLog = "Failed to load image file";
@@ -367,7 +368,13 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
             return true;
         }
         else{
+            ORAReader reader = ORAReader(oraFile);
+            if(!reader.initialize()){ return false; }
             Q_UNIMPLEMENTED();
+
+            mLog = "Success";
+            aReporter.setProgress(1);
+            return false;
         }
     }
     if(loadMerged.clickedButton() == cancelButton){

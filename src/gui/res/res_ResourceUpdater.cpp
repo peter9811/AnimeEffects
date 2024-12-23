@@ -345,8 +345,8 @@ namespace gui::res {
         QMessageBox loadMerged;
         loadMerged.setWindowTitle(tr("Select ora type"));
         loadMerged.setText(tr("How do you wish to load this ora file?"));
-        QAbstractButton* mergeButton = loadMerged.addButton(tr("Load merged"), QMessageBox::YesRole);
         loadMerged.addButton(tr("Load layered"), QMessageBox::YesRole);
+        QAbstractButton* mergeButton = loadMerged.addButton(tr("Load merged"), QMessageBox::YesRole);
         QAbstractButton* cancelButton = loadMerged.addButton(tr("Cancel file load"), QMessageBox::NoRole);
         loadMerged.exec();
         if(loadMerged.clickedButton() == cancelButton){ return nullptr; }

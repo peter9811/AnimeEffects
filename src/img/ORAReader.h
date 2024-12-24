@@ -11,6 +11,10 @@
 #include <QDebug>
 #include <QFile>
 #include <QXmlStreamReader>
+#include <QPainter>
+
+const int DefaultSize = 1028;
+const std::string DefaultString = "Default";
 
 enum PorterDuff {
     SRC_OVER,
@@ -58,13 +62,14 @@ struct stack{
     std::string name;
     float opacity{};
     bool isVisible{};
+    bool isRoot = false;
     QVector<layer> layers;
     QVector<stack> folders;
 };
 struct oraImage{
     int w{};
     int h{};
-    float version{};
+    std::string version{};
     QVector<stack> stack;
 };
 
@@ -80,9 +85,35 @@ public:
     explicit ORAReader(miniz_cpp::zip_file* file){
         oraFile = file;
     }
-    // TODO: Handle cases where the attribute is missing
-    // TODO: Differentiate initial stack
     // TODO: Implement this into ImageFileLoader.cpp
+
+    template<typename T>
+    static bool isAttrValid(const T& type, const QXmlStreamAttribute& attribute){
+        if(attribute.value().isEmpty() || attribute.value().isNull()){ return false; }
+        if constexpr (std::is_same_v<T, std::string>) { return (!attribute.value().toString().isEmpty());}
+        else if constexpr (std::is_same_v<T, int>) { return isfinite(attribute.value().toInt());}
+        else if constexpr (std::is_same_v<T, float>) { return isfinite(attribute.value().toFloat());}
+        else { return false; }
+    }
+    template <typename T>
+    [[nodiscard]] T getAttrIfValid(const T& failsafe, const QXmlStreamAttribute& attribute) const {
+        if (!isAttrValid(failsafe, attribute)) { qDebug() << "Invalid value of attribute: " << attribute.name(); return failsafe; }
+        if constexpr (std::is_same_v<T, std::string>) { return attribute.value().toString().toStdString();}
+        else if constexpr (std::is_same_v<T, int>) { return attribute.value().toInt();}
+        else if constexpr (std::is_same_v<T, float>) { return attribute.value().toFloat();}
+        else { return failsafe; }
+    }
+    static QPixmap createPattern(const QSize & size, const QColor & background=Qt::white, const QColor & foreground=Qt::black){
+        QPixmap pixmap(size);
+        pixmap.fill(background);
+        {
+            QPainter painter(&pixmap);
+            painter.setPen(foreground);
+            painter.drawLine(0, size.height()/2, size.width(), size.height()/2);
+            painter.drawLine(size.width()/2, 0, size.width()/2, size.height());
+        }
+        return pixmap;
+    }
     void parseStack(stack* curStack){ // NOLINT(*-no-recursion)
         auto token = reader->tokenType();
         while(!reader->atEnd() && reader->name().toString() != "image"){
@@ -90,17 +121,16 @@ public:
             while (!reader->atEnd() && reader->name().toString() == "stack") {
                 for (const auto& attribute : reader->attributes()) {
                     if (attribute.name().toString() == "name") {
-                        curStack->name = attribute.value().toString().toStdString();
+                        curStack->name = getAttrIfValid(DefaultString, attribute);
                     } else if (attribute.name().toString() == "opacity") {
-                        curStack->opacity = attribute.value().toFloat();
+                        curStack->opacity = getAttrIfValid(1.0f, attribute);
                     } else if (attribute.name().toString() == "visibility") {
-                        curStack->isVisible = attribute.value().toString() == "visible";
+                        curStack->isVisible = getAttrIfValid(std::string("visible"), attribute) == "visible";
                     } else if (attribute.name().toString() == "composite-op") {
                         // Ignored in ANIE
                         continue;
                     } else {
-                        qDebug() << "-stack- Unknown attribute: " << attribute.name()
-                                 << ", with value: " << attribute.value();
+                        qDebug() << "-stack- Unknown attribute: " << attribute.name() << ", with value: " << attribute.value();
                     }
                 }
                 token = reader->readNext();
@@ -131,31 +161,36 @@ public:
     }
     void parseLayer(layer* curLayer) const{
         for (const auto& attribute : reader->attributes()) {
-            if (attribute.name().toString() == "name") {
-                curLayer->name = attribute.value().toString().toStdString();
-            }
+            if (attribute.name().toString() == "name") { curLayer->name = getAttrIfValid(DefaultString, attribute); }
             else if (attribute.name().toString() == "src") {
-                std::string source = attribute.value().toString().toStdString();
-                std::string srcImg = oraFile->read(source);
+                std::string srcImg;
+                // If the value is false it will throw, so using a failsafe is irrelevant in this case
+                try { srcImg = oraFile->read(attribute.value().toString().toStdString()); }
+                catch (...){ srcImg = "src"; }
                 curLayer->image = QImage::fromData(QByteArray::fromStdString(srcImg));
+                // If the image is missing we create a missing texture placeholder
+                if(curLayer->image.isNull()){
+                    QPixmap sourceCheckerboard(DefaultSize, DefaultSize);
+                    {
+                        QPainter painter(&sourceCheckerboard);
+                        QBrush brush;
+                        brush.setTexture(createPattern(QSize(25, 25), Qt::darkMagenta, Qt::black));
+                        painter.fillRect(sourceCheckerboard.rect(), brush);
+                    }
+                    curLayer->image = sourceCheckerboard.toImage();
+                }
             }
-            else if (attribute.name().toString() == "opacity") {
-                curLayer->opacity = attribute.value().toFloat();
-            }
+            else if (attribute.name().toString() == "opacity") { curLayer->opacity = getAttrIfValid(1.0f, attribute); }
             else if (attribute.name().toString() == "visibility") {
-                curLayer->isVisible = attribute.value().toString() == "visible";
+                curLayer->isVisible = getAttrIfValid(std::string("visible"), attribute) == "visible";
             }
-            else if (attribute.name().toString() == "x") {
-                curLayer->x = attribute.value().toInt();
-            }
-            else if (attribute.name().toString() == "y") {
-                curLayer->y = attribute.value().toInt();
-            }
+            else if (attribute.name().toString() == "x") { curLayer->x = getAttrIfValid(DefaultSize, attribute); }
+            else if (attribute.name().toString() == "y") { curLayer->y = getAttrIfValid(DefaultSize, attribute); }
             else if (attribute.name().toString() == "name") {
-                curLayer->name = attribute.value().toString().toStdString();
+                curLayer->name = getAttrIfValid(DefaultString, attribute);
             }
             else if (attribute.name().toString() == "composite-op") {
-                curLayer->composite_op = stringToComposite(attribute.value().toString().toStdString());
+                curLayer->composite_op = stringToComposite(getAttrIfValid(std::string(""), attribute));
             }
             else {
                 qDebug() << "Unknown layer attribute: " << attribute.name() << ", with value: " << attribute.value();
@@ -171,13 +206,13 @@ public:
             if(reader->name().toString() == "image"){
                 for(const auto& attribute: reader->attributes()){
                     if(attribute.name().toString() == "version"){
-                        image.version = attribute.value().toFloat();
+                        image.version = getAttrIfValid(std::string("Unknown"), attribute);
                     }
                     else if(attribute.name().toString() == "w"){
-                        image.w = attribute.value().toInt();
+                        image.w = getAttrIfValid(DefaultSize, attribute);
                     }
                     else if(attribute.name().toString() == "h"){
-                        image.h = attribute.value().toInt();
+                        image.h = getAttrIfValid(DefaultSize, attribute);
                     }
                     else{
                         qDebug() << "Unknown image attribute: " << attribute.name() << ", with value: " << attribute.value();
@@ -185,7 +220,11 @@ public:
                 }
             }
             // Read main stack
-            else if (reader->name().toString() == "stack"){ parseStack(&image.stack.emplace_back()); }
+            else if (reader->name().toString() == "stack"){
+                auto* mainStack = &image.stack.emplace_back();
+                mainStack->isRoot = true;
+                parseStack(mainStack);
+            }
             // Ignore common invalid objects
             else if (reader->name().isEmpty() || ignoreList.contains(reader->name().toString())){
                 continue;
@@ -198,8 +237,7 @@ public:
         delete reader;
         return status;
     }
-    static void printComposite(const composite& comp, const std::string depth){
-
+    static void printComposite(const composite& comp, const std::string& depth){
         switch (comp.blend) {
         case NORMAL:        qDebug() << depth.c_str() << "layer blend: " << "NORMAL"; break;
         case MULTIPLY:      qDebug() << depth.c_str() << "layer blend: " << "MULTIPLY"; break;
@@ -242,18 +280,26 @@ public:
         QString chara = "-";
         auto depth = chara.repeated(stackDepth * 4).append('|').toStdString();
         qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "<stack>";
-        qDebug() << depth.c_str() << "stack name: " << stk.name;
-        qDebug() << depth.c_str() << "stack opacity: " << stk.opacity;
-        qDebug() << depth.c_str() << "stack is visible: " << stk.isVisible;
-        for(const auto& sStk: stk.layers){ printLayer(sStk, depth); }
-        for(const auto& sStk: stk.folders){ stackDepth+= 1; printStack(sStk, stackDepth); }
+        if(!stk.isRoot){
+            qDebug() << depth.c_str() << "stack name: " << stk.name;
+            qDebug() << depth.c_str() << "stack opacity: " << stk.opacity;
+            qDebug() << depth.c_str() << "stack is visible: " << stk.isVisible;
+        }
+        else{ qDebug() << depth.c_str() << "image root stack"; }
+        for (const auto& sStk : stk.layers) {
+            printLayer(sStk, depth);
+        }
+        for (const auto& sStk : stk.folders) {
+            stackDepth += 1;
+            printStack(sStk, stackDepth);
+        }
         qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "</stack>";
     }
     void printSelf(){
         qDebug("<|IMAGE|>");
         qDebug() << "image height: " << image.h;
         qDebug() << "image width: " << image.w;
-        qDebug() << "openRaster version: " << image.version;
+        qDebug() << "openRaster spec version: " << (image.version.empty()? "Unknown": image.version);
         int stackDepth = 1;
         for(const auto& stk: image.stack){
             printStack(stk, stackDepth);

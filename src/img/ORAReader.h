@@ -81,6 +81,8 @@ public:
         oraFile = file;
     }
     // TODO: Handle cases where the attribute is missing
+    // TODO: Differentiate initial stack
+    // TODO: Implement this into ImageFileLoader.cpp
     void parseStack(stack* curStack){ // NOLINT(*-no-recursion)
         auto token = reader->tokenType();
         while(!reader->atEnd() && reader->name().toString() != "image"){
@@ -196,63 +198,68 @@ public:
         delete reader;
         return status;
     }
-    static void printComposite(const composite& comp){
-        qDebug("layer blend: ");
+    static void printComposite(const composite& comp, const std::string depth){
+
         switch (comp.blend) {
-        case NORMAL:        qDebug("NORMAL"); break;
-        case MULTIPLY:      qDebug("MULTIPLY"); break;
-        case SCREEN:        qDebug("SCREEN"); break;
-        case OVERLAY:       qDebug("OVERLAY"); break;
-        case DARKEN:        qDebug("DARKEN"); break;
-        case LIGHTEN:       qDebug("LIGHTEN"); break;
-        case COLOR_DODGE:   qDebug("COLOR_DODGE"); break;
-        case COLOR_BURN:    qDebug("COLOR_BURN"); break;
-        case HARD_LIGHT:    qDebug("HARD_LIGHT"); break;
-        case SOFT_LIGHT:    qDebug("SOFT_LIGHT"); break;
-        case DIFF:          qDebug("DIFFERENCE"); break;
-        case COLOR:         qDebug("COLOR"); break;
-        case LUMINOSITY:    qDebug("LUMINOSITY"); break;
-        case HUE:           qDebug("HUE"); break;
-        case SATURATION:    qDebug("SATURATION"); break;
-        case PLUS:          qDebug("PLUS"); break;
+        case NORMAL:        qDebug() << depth.c_str() << "layer blend: " << "NORMAL"; break;
+        case MULTIPLY:      qDebug() << depth.c_str() << "layer blend: " << "MULTIPLY"; break;
+        case SCREEN:        qDebug() << depth.c_str() << "layer blend: " << "SCREEN"; break;
+        case OVERLAY:       qDebug() << depth.c_str() << "layer blend: " << "OVERLAY"; break;
+        case DARKEN:        qDebug() << depth.c_str() << "layer blend: " << "DARKEN"; break;
+        case LIGHTEN:       qDebug() << depth.c_str() << "layer blend: " << "LIGHTEN"; break;
+        case COLOR_DODGE:   qDebug() << depth.c_str() << "layer blend: " << "COLOR_DODGE"; break;
+        case COLOR_BURN:    qDebug() << depth.c_str() << "layer blend: " << "COLOR_BURN"; break;
+        case HARD_LIGHT:    qDebug() << depth.c_str() << "layer blend: " << "HARD_LIGHT"; break;
+        case SOFT_LIGHT:    qDebug() << depth.c_str() << "layer blend: " << "SOFT_LIGHT"; break;
+        case DIFF:          qDebug() << depth.c_str() << "layer blend: " << "DIFFERENCE"; break;
+        case COLOR:         qDebug() << depth.c_str() << "layer blend: " << "COLOR"; break;
+        case LUMINOSITY:    qDebug() << depth.c_str() << "layer blend: " << "LUMINOSITY"; break;
+        case HUE:           qDebug() << depth.c_str() << "layer blend: " << "HUE"; break;
+        case SATURATION:    qDebug() << depth.c_str() << "layer blend: " << "SATURATION"; break;
+        case PLUS:          qDebug() << depth.c_str() << "layer blend: " << "PLUS"; break;
         }
-        qDebug("layer composite: ");
         switch (comp.pdComposite) {
-        case SRC_OVER:      qDebug("SRC_OVER"); break;
-        case LIGHTER:       qDebug("LIGHTER"); break;
-        case DST_IN:        qDebug("DST_IN"); break;
-        case DST_OUT:       qDebug("DST_OUT"); break;
-        case SRC_ATOP:      qDebug("SRC_ATOP"); break;
-        case DST_ATOP:      qDebug("DST_ATOP"); break;
+        case SRC_OVER:      qDebug() << depth.c_str() << "layer composite: " << "SRC_OVER"; break;
+        case LIGHTER:       qDebug() << depth.c_str() << "layer composite: " << "LIGHTER"; break;
+        case DST_IN:        qDebug() << depth.c_str() << "layer composite: " << "DST_IN"; break;
+        case DST_OUT:       qDebug() << depth.c_str() << "layer composite: " << "DST_OUT"; break;
+        case SRC_ATOP:      qDebug() << depth.c_str() << "layer composite: " << "SRC_ATOP"; break;
+        case DST_ATOP:      qDebug() << depth.c_str() << "layer composite: " << "DST_ATOP"; break;
         }
     }
-    static void printLayer(const layer& lyr){
-        qDebug("<layer>");
-        qDebug() << "layer name: " << lyr.name;
-        qDebug() << "layer x: " << lyr.x;
-        qDebug() << "layer y: " << lyr.y;
-        qDebug() << "layer opacity: " << lyr.opacity;
-        qDebug() << "layer visible: " << lyr.isVisible;
-        printComposite(lyr.composite_op);
-        qDebug() << "layer image: " << lyr.image;
-        qDebug("</layer>");
+    static void printLayer(const layer& lyr, const std::string& depth){
+        qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "<layer>";
+        qDebug() << depth.c_str() << "layer name: " << lyr.name;
+        qDebug() << depth.c_str() << "layer x: " << lyr.x;
+        qDebug() << depth.c_str() << "layer y: " << lyr.y;
+        qDebug() << depth.c_str() << "layer opacity: " << lyr.opacity;
+        qDebug() << depth.c_str() << "layer visible: " << lyr.isVisible;
+        printComposite(lyr.composite_op, depth);
+        qDebug() << depth.c_str() << "layer image: " << lyr.image;
+        qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "</layer>";
     }
-    static void printStack(const stack& stk){ // NOLINT(*-no-recursion)
-        qDebug("<stack>");
-        qDebug() << "stack name: " << stk.name;
-        qDebug() << "stack opacity: " << stk.opacity;
-        qDebug() << "stack is visible: " << stk.isVisible;
-        for(const auto& sStk: stk.layers){ printLayer(sStk); }
-        for(const auto& sStk: stk.folders){ printStack(sStk); }
-        qDebug("</stack>");
+    static void printStack(const stack& stk, int stackDepth){ // NOLINT(*-no-recursion)
+        QString chara = "-";
+        auto depth = chara.repeated(stackDepth * 4).append('|').toStdString();
+        qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "<stack>";
+        qDebug() << depth.c_str() << "stack name: " << stk.name;
+        qDebug() << depth.c_str() << "stack opacity: " << stk.opacity;
+        qDebug() << depth.c_str() << "stack is visible: " << stk.isVisible;
+        for(const auto& sStk: stk.layers){ printLayer(sStk, depth); }
+        for(const auto& sStk: stk.folders){ stackDepth+= 1; printStack(sStk, stackDepth); }
+        qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "</stack>";
     }
     void printSelf(){
-        qDebug("---- IMAGE ----");
+        qDebug("<|IMAGE|>");
         qDebug() << "image height: " << image.h;
         qDebug() << "image width: " << image.w;
         qDebug() << "openRaster version: " << image.version;
-        for(const auto& stk: image.stack){ printStack(stk); }
-        qDebug("---- IMAGE ----");
+        int stackDepth = 1;
+        for(const auto& stk: image.stack){
+            printStack(stk, stackDepth);
+            stackDepth++;
+        }
+        qDebug("<|IMAGE|>");
     }
     static img::BlendMode oraBlendToPSDBlend(Blend blend){
         switch (blend) {

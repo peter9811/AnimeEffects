@@ -28,7 +28,7 @@ bool AudioPlaybackWidget::serialize(std::vector<audioConfig>* pConf, const QStri
     file.open(QIODevice::ReadWrite);
     file.write(QJsonDocument(audioJson).toJson(QJsonDocument::Indented));
     file.close();
-    return false;
+    return true;
 }
 
 bool AudioPlaybackWidget::deserialize(const QJsonObject& pConf, std::vector<audioConfig>* playbackConfig) {

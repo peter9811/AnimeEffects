@@ -370,6 +370,7 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
         else{
             ORAReader reader = ORAReader(oraFile);
             if(!reader.initialize()){ return false; }
+            reader.printSelf();
             Q_UNIMPLEMENTED();
 
             mLog = "Success";

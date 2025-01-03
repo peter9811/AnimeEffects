@@ -151,26 +151,30 @@ QString getFormatAsString(exportTarget target, formatEnum formatIndex) {
     return nullptr;
 }
 inline int getFormatAsInt(exportTarget target, const QString& format) {
+    qsizetype index = -1;
     switch (target) {
     case exportTarget::video:
-        return videoFormats.indexOf(format);
+        index = videoFormats.indexOf(format);
     case exportTarget::image:
-        return imageFormats.indexOf(format);
+        index = imageFormats.indexOf(format);
     case exportTarget::pxFmt:
-        return pxFormats.indexOf(format);
+        index = pxFormats.indexOf(format);
     case exportTarget::aviEnc:
-        return aviEnc.indexOf(format);
+        index = aviEnc.indexOf(format);
     case exportTarget::mkvEnc:
-        return mkvEnc.indexOf(format);
+        index = mkvEnc.indexOf(format);
     case exportTarget::movEnc:
-        return movEnc.indexOf(format);
+        index = movEnc.indexOf(format);
     case exportTarget::mp4Enc:
-        return mp4Enc.indexOf(format);
+        index = mp4Enc.indexOf(format);
     case exportTarget::webmEnc:
-        return webmEnc.indexOf(format);
+        index = webmEnc.indexOf(format);
     default:
-        return 0;
+        index =  0;
     }
+    // Error handling for out of bound encoders and formats
+    if(index == -1){ return 0; }
+    return static_cast<int>(index);
 }
 
 inline bool formatAllowsTransparency(const QString& format) {
@@ -303,6 +307,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     // Special case for PPM
     QString intermediateFormat =
         intermediateFormatToImage == -1 ? "ppm" : getFormatAsString(exportTarget::image, intermediateFormatToImage);
+
     QString pixelFormat = getFormatAsString(exportTarget::pxFmt, static_cast<int>(exParam->videoParams.pixelFormat));
 
     if (params->allowTransparency && !formatAllowsTransparency(format)) {

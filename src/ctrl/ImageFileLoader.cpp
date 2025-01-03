@@ -328,10 +328,11 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
     loadMerged.exec();
     if (loadMerged.clickedButton() == mergeButton || loadMerged.clickedButton() == layerButton){
         aReporter.setSection("Loading ORA file...");
-        aReporter.setMaximum(1);
+        aReporter.setMaximum(100);
         aReporter.setProgress(0);
         bool merged = loadMerged.clickedButton() == mergeButton;
         if(merged){
+            aReporter.setProgress(20);
             auto imageBytes = QByteArray::fromStdString(oraFile->read("mergedimage.png"));
             QImage image = QImage::fromData(imageBytes);
             if (image.isNull()) {
@@ -340,12 +341,14 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
             }
             auto size = mForceCanvasSize ? mCanvasSize : image.size();
             auto name = mFileInfo.baseName();
-            if (!createEmptyCanvas(aProject, name, size)) { return false; }
+            if (!createEmptyCanvas(aProject, name, size)) {
+                aReporter.setProgress(0);
+                return false; }
 
             {
                 auto topNode = aProject.objectTree().topNode();
                 XC_PTR_ASSERT(topNode);
-
+                aReporter.setProgress(40);
                 // resource tree stack
                 img::ResourceNode* resTree = createFolderResource("topnode", QPoint(0, 0));
                 aProject.resourceHolder().pushImageTree(*resTree, mFileInfo.absoluteFilePath());
@@ -353,7 +356,7 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
                 // create layer resource (Note that the rect be modified.)
                 auto resNode = img::Util::createResourceNode(image, name, true);
                 resTree->children().pushBack(resNode);
-
+                aReporter.setProgress(60);
                 // create layer node
                 auto* layerNode = new LayerNode(name, aProject.objectTree().shaderHolder());
                 layerNode->setInitialRect(resNode->data().rect());
@@ -361,9 +364,10 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
                 layerNode->setDefaultOpacity(1.0f);
                 layerNode->setDefaultPosture(resNode->data().center());
                 topNode->children().pushBack(layerNode);
+                aReporter.setProgress(80);
             }
 
-            aReporter.setProgress(1);
+            aReporter.setProgress(100                                                                                                                                                                                                                                                                           );
             mLog = "Success";
             return true;
         }

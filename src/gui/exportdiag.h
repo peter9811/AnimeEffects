@@ -904,51 +904,51 @@ public:
         settingsTab->setTabText(settingsTab->indexOf(globalParam), QCoreApplication::translate("exportWidget", "General Parameters", nullptr));
         pixelFormatLabel->setText(QCoreApplication::translate("exportWidget", "<html><head/><body><p>Pixel format:</p></body></html>", nullptr));
         movLabel->setText(QCoreApplication::translate("exportWidget", "MOV", nullptr));
-        aviCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        aviCombo->setItemText(1, QCoreApplication::translate("exportWidget", "mpeg2", nullptr));
-        aviCombo->setItemText(2, QCoreApplication::translate("exportWidget", "mpeg4", nullptr));
+        aviCombo->setItemText(0, "Auto");
+        aviCombo->setItemText(1, "mpeg2");
+        aviCombo->setItemText(2, "mpeg4");
 
         mkvLabel->setText(QCoreApplication::translate("exportWidget", "MKV", nullptr));
         // "yuv420p", "yuva420p", "rgb24", "rgba", "bgr24", "bgra", "gray"
-        pixelFormatCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        pixelFormatCombo->setItemText(1, QCoreApplication::translate("exportWidget", "yuv420p", nullptr));
-        pixelFormatCombo->setItemText(2, QCoreApplication::translate("exportWidget", "yuva420p", nullptr));
-        pixelFormatCombo->setItemText(3, QCoreApplication::translate("exportWidget", "rgb24", nullptr));
-        pixelFormatCombo->setItemText(4, QCoreApplication::translate("exportWidget", "rgba", nullptr));
-        pixelFormatCombo->setItemText(5, QCoreApplication::translate("exportWidget", "bgr24", nullptr));
-        pixelFormatCombo->setItemText(6, QCoreApplication::translate("exportWidget", "bgra", nullptr));
-        pixelFormatCombo->setItemText(7, QCoreApplication::translate("exportWidget", "gray", nullptr));
+        pixelFormatCombo->setItemText(0, "Auto");
+        pixelFormatCombo->setItemText(1, "yuv420p");
+        pixelFormatCombo->setItemText(2, "yuva420p");
+        pixelFormatCombo->setItemText(3, "rgb24");
+        pixelFormatCombo->setItemText(4, "rgba");
+        pixelFormatCombo->setItemText(5, "bgr24");
+        pixelFormatCombo->setItemText(6, "bgra");
+        pixelFormatCombo->setItemText(7, "gray");
 
     #if QT_CONFIG(tooltip)
         pixelFormatCombo->setToolTip(QCoreApplication::translate("exportWidget", "Pixel Format availability depends on the selected format, we recommend you stick to yuv420p", nullptr));
     #endif // QT_CONFIG(tooltip)
-        movCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        movCombo->setItemText(1, QCoreApplication::translate("exportWidget", "libx264", nullptr));
-        movCombo->setItemText(2, QCoreApplication::translate("exportWidget", "h264", nullptr));
-        movCombo->setItemText(3, QCoreApplication::translate("exportWidget", "prores_ks", nullptr));
-        movCombo->setItemText(4, QCoreApplication::translate("exportWidget", "utvideo", nullptr));
+        movCombo->setItemText(0, "Auto");
+        movCombo->setItemText(1, "libx264");
+        movCombo->setItemText(2, "h264");
+        movCombo->setItemText(3, "prores_ks");
+        movCombo->setItemText(4, "utvideo");
 
         mp4Label->setText(QCoreApplication::translate("exportWidget", "MP4", nullptr));
         aviLabel->setText(QCoreApplication::translate("exportWidget", "AVI", nullptr));
-        webmCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        webmCombo->setItemText(1, QCoreApplication::translate("exportWidget", "vp8", nullptr));
-        webmCombo->setItemText(2, QCoreApplication::translate("exportWidget", "vp9", nullptr));
+        webmCombo->setItemText(0, "Auto");
+        webmCombo->setItemText(1, "vp8");
+        webmCombo->setItemText(2, "vp9");
 
-        mp4Combo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        mp4Combo->setItemText(1, QCoreApplication::translate("exportWidget", "mpeg4", nullptr));
-        mp4Combo->setItemText(2, QCoreApplication::translate("exportWidget", "h264", nullptr));
+        mp4Combo->setItemText(0, "Auto");
+        mp4Combo->setItemText(1, "mpeg4");
+        mp4Combo->setItemText(2, "h264");
 
         webmLabel->setText(QCoreApplication::translate("exportWidget", "WEBM", nullptr));
-        mkvCombo->setItemText(0, QCoreApplication::translate("exportWidget", "Auto", nullptr));
-        mkvCombo->setItemText(1, QCoreApplication::translate("exportWidget", "x264", nullptr));
-        mkvCombo->setItemText(2, QCoreApplication::translate("exportWidget", "x265", nullptr));
-        mkvCombo->setItemText(3, QCoreApplication::translate("exportWidget", "vp8", nullptr));
-        mkvCombo->setItemText(4, QCoreApplication::translate("exportWidget", "vp9", nullptr));
-        mkvCombo->setItemText(5, QCoreApplication::translate("exportWidget", "av1", nullptr));
-        mkvCombo->setItemText(6, QCoreApplication::translate("exportWidget", "ffv1", nullptr));
-        mkvCombo->setItemText(7, QCoreApplication::translate("exportWidget", "magicyuv", nullptr));
-        mkvCombo->setItemText(8, QCoreApplication::translate("exportWidget", "huffyuv", nullptr));
-        mkvCombo->setItemText(9, QCoreApplication::translate("exportWidget", "theora", nullptr));
+        mkvCombo->setItemText(0, "Auto");
+        mkvCombo->setItemText(1, "x264");
+        mkvCombo->setItemText(2, "x265");
+        mkvCombo->setItemText(3, "vp8");
+        mkvCombo->setItemText(4, "vp9");
+        mkvCombo->setItemText(5, "av1");
+        mkvCombo->setItemText(6, "ffv1");
+        mkvCombo->setItemText(7, "magicyuv");
+        mkvCombo->setItemText(8, "huffyuv");
+        mkvCombo->setItemText(9, "theora");
 
         settingsTab->setTabText(settingsTab->indexOf(formatParam), QCoreApplication::translate("exportWidget", "Format Parameters", nullptr));
         intermediateLabel->setText(QCoreApplication::translate("exportWidget", "<html><head/><body><p align=\"center\">Intermediate:</p></body></html>", nullptr));

@@ -91,8 +91,8 @@ public:
     static bool isAttrValid(const T& type, const QXmlStreamAttribute& attribute){
         if(attribute.value().isEmpty() || attribute.value().isNull()){ return false; }
         if constexpr (std::is_same_v<T, std::string>) { return (!attribute.value().toString().isEmpty());}
-        else if constexpr (std::is_same_v<T, int>) { return isfinite(attribute.value().toInt());}
-        else if constexpr (std::is_same_v<T, float>) { return isfinite(attribute.value().toFloat());}
+        else if constexpr (std::is_same_v<T, int>) { return !std::isinf(attribute.value().toInt());}
+        else if constexpr (std::is_same_v<T, float>) { return !std::isinf(attribute.value().toFloat());}
         else { return false; }
     }
     template <typename T>

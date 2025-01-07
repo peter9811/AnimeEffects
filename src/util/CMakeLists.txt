@@ -47,7 +47,7 @@ add_library(${PROJECT_NAME}
         Triangle2D.cpp Triangle2D.h
         Triangle2DPos.cpp Triangle2DPos.h
         TriangleRasterizer.cpp TriangleRasterizer.h
-        zip_file.h
+        ../deps/zip_file.h
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
         ..

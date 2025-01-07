@@ -5,7 +5,7 @@
 #include "img/PSDUtil.h"
 #include "img/BlendMode.h"
 #include "img/Util.h"
-#include "util/zip_file.h"
+#include "deps/zip_file.h"
 
 namespace img {
 

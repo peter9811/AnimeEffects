@@ -13,7 +13,7 @@
 #include "gui/res/res_ImageSetter.h"
 #include "gui/res/res_ResourceUpdater.h"
 #include "img/Util.h"
-#include "util/zip_file.h"
+#include "deps/zip_file.h"
 
 // #define RESOURCE_UPDATER_DUMP(...) XC_DEBUG_REPORT(__VA_ARGS__)
 #define RESOURCE_UPDATER_DUMP(...)

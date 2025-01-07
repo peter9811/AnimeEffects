@@ -200,10 +200,19 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         errors.append(tr("Export name or location contains an invalid character (\"&#32\")"));
         errorDetail.append(tr("Export name or location has the invalid character, please rename it to proceed."));
     }
-    if (params->allowTransparency && exParam->videoParams.intermediateFormat != availableIntermediateFormats::png){
-        errors.append(tr("Transparent export does not have PNG intermediate"));
-        errorDetail.append(tr("Export was set to allow transparency but the intermediate format does not support it, "
+    if (params->allowTransparency && exParam->exportType == exportTarget::video && exParam->videoParams.intermediateFormat != availableIntermediateFormats::png){
+        warnings.append(tr("Transparent export does not have PNG intermediate"));
+        warningDetail.append(tr("Export was set to allow transparency but the intermediate format does not support it, "
             "please change it to PNG."));
+    }
+
+    if (exParam->exportType == exportTarget::image && params->allowTransparency &&
+        !formatAllowsTransparency(getFormatAsString(exportTarget::image, (int)exParam->imageParams.format))) {
+        warnings.append(tr("IExport target does not support transparency"));
+        warningDetail.append(
+            tr("Export with transparency was marked but the selected image format "
+               "does not support alpha layers, this means that if the export proceeds it will not have transparency.")
+        );
     }
     if (params->exportHeight == 0) {
         errors.append(tr("Export height is zero"));
@@ -332,14 +341,6 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
             tr("A pixel and target format that allow for alpha layers were selected but the option for allowing "
                "transparent export was not, please select it or change your format to one without the 'a' in it to "
                "avoid unintentional transparency.")
-        );
-    }
-    if (exParam->exportType == exportTarget::video && params->allowTransparency &&
-        !formatAllowsTransparency(intermediateFormat)) {
-        warnings.append(tr("Intermediate export target does not support transparency"));
-        warningDetail.append(
-            tr("Export with transparency was marked but the selected intermediate format "
-               "does not support an alpha layer, this means that if the export proceeds it will not have transparency.")
         );
     }
     if (params->useCustomPalette && params->palettePath.exists()) {

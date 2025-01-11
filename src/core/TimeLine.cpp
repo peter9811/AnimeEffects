@@ -383,7 +383,6 @@ bool TimeLine::deserializeTimeKey(Deserializer& aIn, TimeKeyType aType, int aInd
         delete key;
         return false;
     }
-
     if (aIndex == -1) {
         mDefaultKeys[aType].reset(key);
     } else {

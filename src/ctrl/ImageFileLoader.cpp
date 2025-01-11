@@ -298,7 +298,7 @@ bool ImageFileLoader::loadPsd(core::Project& aProject, util::IProgressReporter& 
 QString tr(const QString& str){
     return QCoreApplication::translate("image_file_loader", str.toStdString().c_str());
 }
-void ImageFileLoader::parseOraLayer(const layer& lyr, FolderNode* current, img::ResourceNode* resCurrent,  const float* globalDepth, const float* parentDepth, core::Project* aProject, int* ID){
+void ImageFileLoader::parseOraLayer(layer &lyr, FolderNode* current, img::ResourceNode* resCurrent,  const float* globalDepth, const float* parentDepth, core::Project* aProject){
     auto resNode = createLayerResource(lyr);
     resCurrent->children().pushBack(resNode);
     // create layer node
@@ -312,11 +312,10 @@ void ImageFileLoader::parseOraLayer(const layer& lyr, FolderNode* current, img::
     // push back
     current->children().pushBack(layerNode);
 }
-// TODO: Add sorting, as it currently folder and layer structure will not be preserved.
+// FUTURE: Add sorting, as it currently folder and layer structure will not be preserved.
 void ImageFileLoader::parseOraStack( // NOLINT(*-no-recursion)
-    const stack& stk, std::vector<FolderNode*>& treeStack, std::vector<img::ResourceNode*>& resStack,
-    float* globalDepth, QRect rect, core::Project* aProject, int* progress, util::IProgressReporter& aReporter, int* ID
-    ){
+    stack &stk, std::vector<FolderNode*>& treeStack, std::vector<img::ResourceNode*>& resStack,
+    float* globalDepth, QRect rect, core::Project* aProject, int* progress, util::IProgressReporter& aReporter){
     FolderNode* current = treeStack.back();
     XC_PTR_ASSERT(current);
     img::ResourceNode* resCurrent = resStack.back();
@@ -336,7 +335,7 @@ void ImageFileLoader::parseOraStack( // NOLINT(*-no-recursion)
         folderNode->setDefaultOpacity(stk.opacity);
         // push tree
         current->children().pushBack(folderNode);
-        treeStack.push_back(folderNode);
+        treeStack.back() = folderNode;
         // update depth and ID
         *globalDepth -= 1.0f;
         // update vars
@@ -345,15 +344,15 @@ void ImageFileLoader::parseOraStack( // NOLINT(*-no-recursion)
 
     }
     // parse layers
-    for (const auto& lyr : stk.layers) {
-        parseOraLayer(lyr, current, resCurrent, globalDepth, parentDepth, aProject, ID);
+    for (auto &lyr : stk.layers) {
+        parseOraLayer(lyr, current, resCurrent, globalDepth, parentDepth, aProject);
         *progress+= 1;
         aReporter.setProgress(*progress);
-        // update depth
+        // update depth and ID
         *globalDepth -= 1.0f;
     }
     // parse child folders
-    for(const auto& child: stk.folders){
+    for(auto &child: stk.folders){
         FolderNode* childCurrent = current;
         parseOraStack(child, treeStack, resStack, globalDepth, rect, aProject, progress, aReporter);
         childCurrent->setInitialRect(calculateBoundingRectFromChildren(*current));
@@ -381,7 +380,7 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
             XC_DEBUG_REPORT() << "oraFile file has valid mimetype";
         }
         catch (...){
-            mLog = std::string("Unable to unzip " + path.toStdString()).c_str();
+            mLog = std::string("Unable to unzip " + path.toStdString() + " into memory, aborting.").c_str();
             return false;
         }
     }
@@ -466,16 +465,21 @@ bool ImageFileLoader::loadOra(Project& aProject, util::IProgressReporter& aRepor
             aProject.objectTree().grabTopNode(topNode);
             // tree stack
             std::vector<FolderNode*> treeStack;
+            treeStack.resize(reader.image.mainStack.folders.size() + 1);
             treeStack.push_back(topNode);
             auto* globalDepth = new float{0.0f};
             auto* ID = new int{0};
             // resource tree stack
             std::vector<img::ResourceNode*> resStack;
+            resStack.resize(reader.image.globalID + 1);
             resStack.push_back(createFolderResource("topnode", QPoint(0, 0)));
             aProject.resourceHolder().pushImageTree(*resStack.back(), mFileInfo.absoluteFilePath());
             // Parse mainStack
             aReporter.setProgress(*progress);
-            parseOraStack(reader.image.mainStack, treeStack, resStack, globalDepth, reader.image.rect, &aProject, progress, aReporter, ID);
+            reader.image.mainStack.isRoot = true;
+            reader.image.mainStack.name = reader.oraFile->get_filename();
+            reader.image.mainStack.sortID = *ID;
+            parseOraStack(reader.image.mainStack, treeStack, resStack, globalDepth, reader.image.rect, &aProject, progress, aReporter);
             setDefaultPosturesFromInitialRects(*topNode);
             // setup default positions
             mLog = "Success";

@@ -43,8 +43,8 @@ private:
     gl::DeviceInfo mGLDeviceInfo;
     QSize mCanvasSize;
     bool mForceCanvasSize;
-    static void parseOraLayer(const layer& lyr, core::FolderNode* current, img::ResourceNode* resCurrent, const float* globalDepth, const float* parentDepth, core::Project* aProject, int* ID);
-    static void parseOraStack(const stack& stk, std::vector<core::FolderNode*>& treeStack, std::vector<img::ResourceNode*>& resStack, float* globalDepth, QRect rect, core::Project* aProject, int* progress, util::IProgressReporter& aReporter, int* ID);
+    static void parseOraLayer(layer &lyr, core::FolderNode* current, img::ResourceNode* resCurrent, const float* globalDepth, const float* parentDepth, core::Project* aProject);
+    static void parseOraStack(stack &stk, std::vector<core::FolderNode*>& treeStack, std::vector<img::ResourceNode*>& resStack, float* globalDepth, QRect rect, core::Project* aProject, int* progress, util::IProgressReporter& aReporter);
 };
 
 } // namespace ctrl

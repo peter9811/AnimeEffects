@@ -101,6 +101,7 @@ private:
     void onCopyCBTriggered(bool);
     void onPasteKeyTriggered(bool);
     void onDeleteKeyTriggered(bool);
+    void onSelectSpacingTriggered();
     void onSelectEasingTriggered(int easingType);
     void onSelectRangeTriggered(int rangeType);
 
@@ -118,9 +119,11 @@ private:
     KeyCommandMap& mKeyCommandMap;
     QAction* mCopyKey;
     QAction* mCopyToClipboard;
+    QAction* mSetSpacing;
     QAction* mPasteKey;
     QAction* mPasteFromClipboard;
     QAction* mDeleteKey;
+    QAction* mSelectSpacing;
     QMenu* mSelectEasing;
     QMenu* mSelectRange;
     core::TimeLineEvent mTargets;

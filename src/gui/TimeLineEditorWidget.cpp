@@ -142,6 +142,8 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
             }
         }
 
+        mSelectSpacing = new QAction(tr("Select spacing between keys"), this);
+        mSelectSpacing->connect(mSelectSpacing, &QAction::triggered, [=] {onSelectSpacingTriggered();});
     }
     this->update();
     {
@@ -343,6 +345,7 @@ void TimeLineEditorWidget::onContextMenuRequested(const QPoint& aPos) {
         menu.addAction(mCopyKey);
         menu.addAction(mCopyToClipboard);
         menu.addSeparator();
+        menu.addAction(mSelectSpacing);
         menu.addMenu(mSelectEasing);
         menu.addMenu(mSelectRange);
         menu.addSeparator();
@@ -513,7 +516,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         img["Image"] = ((const core::ImageKey*)timeKey)->serializeToJson();
         // qDebug() << QJsonDocument(img).toJson(QJsonDocument::Indented).toStdString().c_str();
         return img;
-    } break;
+    }
     case core::TimeKeyType_HSV: {
         auto data = ((const core::HSVKey*)timeKey)->data();
         // Data types: HSV (List<int>) //
@@ -570,7 +573,7 @@ void TimeLineEditorWidget::onPasteKeyTriggered(bool) {
     mOnPasting = false;
 }
 
-// It's called easingType but it can also be Range depending on the function that calls it
+// It's called easingType, but it can also be Range depending on the function that calls it
 void assignEasing(const util::LinkPointer<core::Project>& mProject, int easingType,
     const core::TimeLineEvent::Target* target, const core::TimeKey* key, int frame, bool assignEasing){
     XC_PTR_ASSERT(key);
@@ -654,6 +657,58 @@ void TimeLineEditorWidget::onSelectRangeTriggered(int rangeType) {
             auto key = target.pos.line()->timeKey(target.pos.key()->type(), frame);
             assignEasing(mProject, rangeType, &target, key, frame, false);
         }
+    }
+}
+
+void TimeLineEditorWidget::onSelectSpacingTriggered() {
+    bool applySpacing = false;
+    int spacing = 0;
+    {
+        QDialog Dialog;
+
+        Dialog.setObjectName("Dialog");
+        Dialog.resize(400, 100);
+        QSizePolicy sizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding);
+        Dialog.setSizePolicy(sizePolicy);
+        auto verticalLayout = new QVBoxLayout(&Dialog);
+        verticalLayout->setObjectName("verticalLayout");
+        auto label = new QLabel(&Dialog);
+        label->setObjectName("label");
+        QSizePolicy sizePolicy1(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Maximum);
+        label->setSizePolicy(sizePolicy1);
+        verticalLayout->addWidget(label);
+
+        auto frameSpacing = new QSpinBox(&Dialog);
+        frameSpacing->setMaximum(INT32_MAX);
+        frameSpacing->setObjectName("frameSpacing");
+        verticalLayout->addWidget(frameSpacing);
+
+        auto buttonBox = new QDialogButtonBox(&Dialog);
+        buttonBox->setObjectName("buttonBox");
+        buttonBox->setOrientation(Qt::Horizontal);
+        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Apply);
+        buttonBox->setCenterButtons(true);
+        verticalLayout->addWidget(buttonBox);
+
+        Dialog.setWindowTitle(tr("Key spacing"));
+        label->setText(
+            R"(<html><head/><body><p align="center">)" + tr("Number of frames the selected keys should be spaced by:") +
+            "</p></body></html>"
+        );
+
+        Dialog.connect(buttonBox, &QDialogButtonBox::accepted, [=]() mutable {
+            applySpacing = true;
+            spacing = frameSpacing->value();});
+        Dialog.connect(buttonBox, &QDialogButtonBox::rejected, [=]() mutable { applySpacing = false; });
+
+        QMetaObject::connectSlotsByName(&Dialog);
+        Dialog.exec();
+    }
+    if(applySpacing){
+        qDebug() << spacing;
+    }
+    else{
+        qDebug("Nope");
     }
 }
 

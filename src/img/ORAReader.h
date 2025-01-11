@@ -79,6 +79,7 @@ struct oraImage{
     int w{};
     int h{};
     int layerNumber{};
+    int stackNumber{};
     int globalID{};
     std::string version{};
     stack mainStack;
@@ -111,6 +112,7 @@ public:
     void parseStack(stack* curStack, pugi::xml_node* stk){ // NOLINT(*-no-recursion)
         if(!curStack->isRoot){
             image.globalID += 1;
+            image.stackNumber += 1;
             curStack->sortID = image.globalID;
             bool visAttrExists = false;
             for(auto attr: stk->attributes()){

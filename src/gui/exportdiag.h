@@ -76,6 +76,8 @@ public:
     QLabel *renderingLabel;
     QComboBox *exportTypeCombo;
     QCheckBox *transparencyCheckBox;
+    QCheckBox *loopCheckBox;
+    QCheckBox *exportWithAudioCheckBox;
     QSpinBox *lastFrameSpinBox;
     QLineEdit *bitrateLineEdit;
     QPushButton *setBitrateAuto;
@@ -415,6 +417,16 @@ public:
         transparencyCheckBox->setChecked(true);
 
         gridLayout_2->addWidget(transparencyCheckBox, 14, 0, 1, 2);
+
+        loopCheckBox = new QCheckBox(globalParamScrollContents);
+        loopCheckBox->setObjectName(QString::fromUtf8("loopCheckBox"));
+        loopCheckBox->setChecked(true);
+        gridLayout_2->addWidget(loopCheckBox, 14, 1, 1, 2);
+
+        exportWithAudioCheckBox = new QCheckBox(globalParamScrollContents);
+        exportWithAudioCheckBox->setObjectName(QString::fromUtf8("exportWithAudioCheckBox"));
+        exportWithAudioCheckBox->setChecked(true);
+        gridLayout_2->addWidget(exportWithAudioCheckBox, 15, 1, 1, 2);
 
         lastFrameSpinBox = new QSpinBox(globalParamScrollContents);
         lastFrameSpinBox->setObjectName(QString::fromUtf8("lastFrameSpinBox"));
@@ -892,6 +904,8 @@ public:
         exportTypeCombo->setItemText(1, QCoreApplication::translate("exportWidget", "Image sequence", nullptr));
         setFPSNative->setText(QCoreApplication::translate("exportWidget", "Set to native", nullptr));
         transparencyCheckBox->setText(QCoreApplication::translate("exportWidget", "Export with transparency", nullptr));
+        loopCheckBox->setText(QCoreApplication::translate("exportWidget", "Loop animation (GIF only)", nullptr));
+        exportWithAudioCheckBox->setText(QCoreApplication::translate("exportWidget", "Export with audio", nullptr));
         bitrateLineEdit->setPlaceholderText(QCoreApplication::translate("exportWidget", "Auto", nullptr));
         setBitrateAuto->setText(QCoreApplication::translate("exportWidget", "Set to auto", nullptr));
         renderedFramesLabel->setText(QCoreApplication::translate("exportWidget", "Frames rendered: ", nullptr));

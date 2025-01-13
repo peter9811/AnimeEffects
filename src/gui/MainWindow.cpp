@@ -951,18 +951,17 @@ void updateSettings(QVariant *var, QSettings *settings, const QStringList& value
     }
 }
 
-void exportProject(exportParam& exParam, core::Project* mCurrent, QDialog* widget){
+void exportProject(exportParam& exParam, core::Project* mCurrent, QDialog* widget, const std::vector<audioConfig>& validAudioStreams){
     qDebug("Creating FFmpeg object");
     auto* ffmpeg = new ffmpeg::ffmpegObject();
     projectExporter::Exporter exporter(*mCurrent, widget, exParam, *ffmpeg);
     // If piped build piped argument, TODO is to account for this
     if(exParam.generalParams.forcePipe || !exParam.generalParams.useCustomParam) {
-        ffmpeg->argument = ffmpeg::buildArgument(exParam, mCurrent->attribute().loop());
+        ffmpeg->argument = ffmpeg::buildArgument(exParam);
     }
     qDebug("FFmpeg object created, rendering...");
-    auto exportResult = exporter.renderAndExport();
+    auto exportResult = exporter.renderAndExport(exParam.generalParams.exportWithAudio, validAudioStreams);
     projectExporter::Exporter::generateMessageBox(&exporter.export_obj, &exportResult, &exParam);
-    //TODO: Implement with ExportParams.h
 }
 
 void MainWindow::onExportTriggered() {
@@ -973,18 +972,15 @@ void MainWindow::onExportTriggered() {
     QGuiApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     // FFmpeg Check
     QSettings settings;
-    auto ffCheck = settings.value("ffmpeg_check");
-    if (!ffCheck.isValid() || ffCheck.toBool()) {
-        QFileInfo ffmpeg_file;
-        QString ffmpeg;
-        if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
-        else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
-        if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
-        else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
-
-        // Exists?
-        bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
-
+    auto ffCheck = settings.value("ffmpeg_test_check");
+    QFileInfo ffmpeg_file;
+    QString ffmpeg;
+    if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
+    else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
+    if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
+    else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
+    bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
+    if (!fExists || (!ffCheck.isValid() || ffCheck.toBool())) {
         if (!fExists) {
             QMessageBox message;
             message.setIcon(QMessageBox::Warning);
@@ -1003,7 +999,54 @@ void MainWindow::onExportTriggered() {
             auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
             generalSettingsDialog->selectTab(2);
             generalSettingsDialog->exec();
+            ffCheck.setValue(true);
             return;
+        }
+        // Test FFmpeg functionality before attempting export
+        else{
+            QMessageBox ffmpegNotif;
+            ffmpegNotif.setIcon(QMessageBox::Critical);
+            // PNG to GIF conversion test
+            QString testFile = QFileInfo("./data/themes/classic/icon/filew.png").absoluteFilePath();
+            QProcess gif;
+            gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
+            gif.waitForFinished();
+            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo::exists("gif.gif");
+            qDebug() << "Gif exists: " << QFileInfo::exists("gif.gif")
+                     << "| Gif remove: " << QFile("gif.gif").remove();
+            gif.deleteLater();
+            if (!exportSuccess) {
+                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't export"));
+                ffmpegNotif.setText(tr("FFmpeg was unable to export, please troubleshoot."));
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+                generalSettingsDialog->selectTab(2);
+                generalSettingsDialog->exec();
+                ffCheck.setValue(true);
+                return;
+            }
+            // Palettegen test
+            QProcess palettegen;
+            palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"}, QProcess::ReadWrite);
+            palettegen.waitForFinished();
+            bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo::exists("palette.png");
+            if (!pGenSuccess) {
+                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
+                ffmpegNotif.setText(
+                    tr("FFmpeg was unable to generate palettes, please troubleshoot.")
+                );
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+                generalSettingsDialog->selectTab(2);
+                generalSettingsDialog->exec();
+                ffCheck.setValue(true);
+                return;
+            }
+            qDebug() << "Palette exists: " << QFileInfo::exists("palette.png")
+                     << "| Palette remove: " << QFile("palette.png").remove();
+            palettegen.deleteLater();
         }
         ffCheck.setValue(false);
     }
@@ -1039,6 +1082,8 @@ void MainWindow::onExportTriggered() {
     QVariant allowPostParamV = settings.value("export_allow_param_post");
     QVariant useCustomPaletteV = settings.value("export_custom_palette");
     QVariant forcePipeV = settings.value("export_force_piped");
+    QVariant loopAnimV = settings.value("export_loop_anim");
+    QVariant exportWithAudioV = settings.value("export_allow_audio");
     // Initialize pointers to generics
     auto* aspectRatio = new int;
     auto intermediateType = new int;
@@ -1048,6 +1093,8 @@ void MainWindow::onExportTriggered() {
     auto allowPostParam = new bool;
     auto useCustomPalette = new bool;
     auto forcePipe = new bool;
+    auto loopAnim = new bool;
+    auto exportWithAudio = new bool;
     // Gather initialized pointers into a vector
     QVector<QVariant *> intValues {
         &aspectRatioV, &intermediateTypeV
@@ -1056,10 +1103,12 @@ void MainWindow::onExportTriggered() {
         aspectRatio, intermediateType
     };
     QVector<QVariant *> boolValues {
-        &allowTransparencyV, &allowCustomParamV, &allowInterParamV, &allowPostParamV, &useCustomPaletteV, &forcePipeV
+        &allowTransparencyV, &allowCustomParamV, &allowInterParamV, &allowPostParamV, &useCustomPaletteV, &forcePipeV,
+        &loopAnimV, &exportWithAudioV
     };
     QVector<bool *> boolVariables {
-        allowTransparency, allowCustomParam, allowInterParam, allowPostParam, useCustomPalette, forcePipe
+        allowTransparency, allowCustomParam, allowInterParam, allowPostParam, useCustomPalette, forcePipe, loopAnim,
+        exportWithAudio
     };
     // Loop through the vectors and initialize their values
     int x = 0;
@@ -1129,6 +1178,8 @@ void MainWindow::onExportTriggered() {
     exportUI->intermediateTypeCombo->setCurrentIndex(*intermediateType);
     exportUI->transparencyCheckBox->setChecked(*allowTransparency);
     exportUI->forcePipeCheckBox->setChecked(*forcePipe);
+    exportUI->loopCheckBox->setChecked(*loopAnim);
+    exportUI->exportWithAudioCheckBox->setChecked(*exportWithAudio);
     exportUI->allowParamsCheckBox->setChecked(*allowCustomParam);
     exportUI->intermediateParamCheckBox->setChecked(*allowInterParam);
     exportUI->postParamCheckBox->setChecked(*allowPostParam);
@@ -1153,7 +1204,7 @@ void MainWindow::onExportTriggered() {
     wSB.unblock(); hSB.unblock();
     exportUI->fpsSpinBox->setValue(genParam.nativeFPS);
     exportUI->lastFrameSpinBox->setValue(mCurrent->currentTimeInfo().frameMax);
-    // Connections, these ones below are to force a refresh and to avoid any weird bugs or memory leaks
+    // Connections, these below are to force a refresh and to avoid any weird bugs or memory leaks
     connect(exportWidget, &QDialog::destroyed, [=](){
         regenerateWidget();
     });
@@ -1248,6 +1299,10 @@ void MainWindow::onExportTriggered() {
                        "export_custom_palette");
         updateSettings(&forcePipeV, &settings, exportUI->forcePipeCheckBox->isChecked(),
                        "export_force_piped");
+        updateSettings(&loopAnimV, &settings, exportUI->loopCheckBox->isChecked(),
+                       "export_loop_anim");
+        updateSettings(&exportWithAudioV, &settings, exportUI->exportWithAudioCheckBox->isChecked(),
+                       "export_allow_audio");
         updateSettings(&pixelFormatV, &settings, exportUI->pixelFormatCombo->currentText(),
                        "export_pixel_format");
         updateSettings(&aviEncV, &settings, exportUI->aviCombo->currentText(),
@@ -1309,7 +1364,7 @@ void MainWindow::onExportTriggered() {
     genParam.nativeHeight = mCurrent->attribute().imageSize().height();
     genParam.exportWidth = exportUI->widthSpinBox->value();
     genParam.exportHeight = exportUI->heightSpinBox->value();
-    switch(aspectRatioIndex){
+    switch(aspectRatioIndex) {
     case 0:
         genParam.aspectRatio = oneToOne;
         break;
@@ -1319,8 +1374,6 @@ void MainWindow::onExportTriggered() {
     case 2:
         genParam.aspectRatio = custom;
         break;
-    default:
-        genParam.aspectRatio = keep;
     }
     genParam.nativeFPS = mCurrent->attribute().fps();
     genParam.fps = exportUI->fpsSpinBox->value();
@@ -1337,6 +1390,8 @@ void MainWindow::onExportTriggered() {
     genParam.imageExportQuality = exportUI->imageQualitySpinbox->value();
     genParam.allowTransparency = exportUI->transparencyCheckBox->isChecked();
     genParam.forcePipe = exportUI->forcePipeCheckBox->isChecked();
+    genParam.loop = exportUI->loopCheckBox->isChecked();
+    genParam.exportWithAudio = exportUI->exportWithAudioCheckBox->isChecked();
     genParam.useCustomParam = exportUI->allowParamsCheckBox->isChecked();
     genParam.useIntermediate = exportUI->intermediateParamCheckBox->isChecked();
     genParam.usePost = exportUI->postParamCheckBox->isChecked();
@@ -1352,16 +1407,15 @@ void MainWindow::onExportTriggered() {
     genParam.exportRange = *exportRanges;
     genParam.customInterCommand = exportUI->intermediateParamTextEdit->toPlainText();
     genParam.customPostCommand = exportUI->postParamTextEdit->toPlainText();
-    exParam->exportType = exportUI->exportTypeCombo->currentIndex() == 0 ? exportTarget::video :
-                                                                         exportTarget::image;
+    if(exportUI->exportTypeCombo->currentIndex() == 0){ exParam->exportType = exportTarget::video; }
+    else{ exParam->exportType = exportTarget::image; }
     if(exParam->exportType == exportTarget::video){
         exParam->videoParams.intermediateFormat = static_cast<availableIntermediateFormats>(
             exportUI->intermediateTypeCombo->currentIndex()
             );
-        exParam->videoParams.pixelFormat =
-            static_cast<pixelFormats>(
+        exParam->videoParams.pixelFormat = static_cast<pixelFormats>(
                 getFormatAsInt(exportTarget::pxFmt, exportUI->pixelFormatCombo->currentText())
-                );
+            );
         defaultEncoders encoders;
         encoders.avi = static_cast<aviEncoders>(getFormatAsInt(exportTarget::aviEnc, exportUI->aviCombo->currentText()));
         encoders.mkv = static_cast<mkvEncoders>(getFormatAsInt(exportTarget::mkvEnc, exportUI->mkvCombo->currentText()));
@@ -1375,6 +1429,10 @@ void MainWindow::onExportTriggered() {
     QString selectedFile;
     if(fileDiag.exec()){ selectedFile = fileDiag.selectedFiles().at(0); }
     else{ return; }
+    bool isVideoExport = exParam->exportType == exportTarget::video;
+    int suffixIndex = isVideoExport? (int)vF.indexOf(fileDiag.selectedNameFilter()) : (int)iF.indexOf(fileDiag.selectedNameFilter());
+    QString sfx = getFormatAsString(exParam->exportType, suffixIndex);
+    qDebug() << "Exporting animation to format: " << sfx;
     if(QFileInfo(selectedFile).suffix() == ""){
         auto regex = QRegularExpression("(\\*.)\\w+", QRegularExpression::CaseInsensitiveOption);
         QString suffix = regex.match(fileDiag.selectedNameFilter()).captured(0).removeAt(0);
@@ -1390,17 +1448,15 @@ void MainWindow::onExportTriggered() {
     exParam->generalParams = genParam;
 
     if(exParam->exportType == exportTarget::video) {
-        exParam->videoParams.format = static_cast<availableVideoFormats>(getFormatAsInt(
-            exportTarget::video, QFileInfo(genParam.osExportTarget).suffix())
-        );
+        exParam->videoParams.format = static_cast<availableVideoFormats>(suffixIndex);
     }
     else{
-        exParam->imageParams.format = static_cast<availableImageFormats>(getFormatAsInt(
-            exportTarget::image,QFileInfo(genParam.osExportTarget).suffix()));
+        exParam->imageParams.format = static_cast<availableImageFormats>(suffixIndex);
     }
     // Main export function
-    if(isExportParamValid(exParam, exportWidget)){
-        exportProject(*exParam, mCurrent, exportWidget);
+    std::vector<audioConfig> validAudioStreams = AudioPlaybackWidget::getValidAudioStreams(*mCurrent->pConf);
+    if(isExportParamValid(exParam, exportWidget, &validAudioStreams)){
+        exportProject(*exParam, mCurrent, exportWidget, validAudioStreams);
     }
 }
 
@@ -1462,26 +1518,15 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
     if (!mCurrent)
         return;
     QSettings settings;
-    settings.sync();
-    auto ffCheck = settings.value("ffmpeg_check");
-    if (!ffCheck.isValid() || ffCheck.toBool()) {
-        QFileInfo ffmpeg_file;
-        QString ffmpeg;
-
-        if (util::NetworkUtil::os() == "win") {
-            ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
-        } else {
-            ffmpeg_file = QFileInfo("./tools/ffmpeg");
-        }
-        if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) {
-            ffmpeg = "ffmpeg";
-        } else {
-            ffmpeg = ffmpeg_file.absoluteFilePath();
-        }
-
-        // Exists?
-        bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
-
+    auto ffCheck = settings.value("ffmpeg_test_check");
+    QFileInfo ffmpeg_file;
+    QString ffmpeg;
+    if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
+    else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
+    if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
+    else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
+    bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
+    if (!fExists || (!ffCheck.isValid() || ffCheck.toBool())) {
         if (!fExists) {
             QMessageBox message;
             message.setIcon(QMessageBox::Warning);
@@ -1500,7 +1545,54 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
             auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
             generalSettingsDialog->selectTab(2);
             generalSettingsDialog->exec();
+            ffCheck.setValue(true);
             return;
+        }
+        // Test FFmpeg functionality before attempting export
+        else{
+            QMessageBox ffmpegNotif;
+            ffmpegNotif.setIcon(QMessageBox::Critical);
+            // PNG to GIF conversion test
+            QString testFile = QFileInfo("./data/themes/classic/icon/filew.png").absoluteFilePath();
+            QProcess gif;
+            gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
+            gif.waitForFinished();
+            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo::exists("gif.gif");
+            qDebug() << "Gif exists: " << QFileInfo::exists("gif.gif")
+                     << "| Gif remove: " << QFile("gif.gif").remove();
+            gif.deleteLater();
+            if (!exportSuccess) {
+                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't export"));
+                ffmpegNotif.setText(tr("FFmpeg was unable to export, please troubleshoot."));
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+                generalSettingsDialog->selectTab(2);
+                generalSettingsDialog->exec();
+                ffCheck.setValue(true);
+                return;
+            }
+            // Palettegen test
+            QProcess palettegen;
+            palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"}, QProcess::ReadWrite);
+            palettegen.waitForFinished();
+            bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo::exists("palette.png");
+            if (!pGenSuccess) {
+                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
+                ffmpegNotif.setText(
+                    tr("FFmpeg was unable to generate palettes, please troubleshoot.")
+                );
+                ffmpegNotif.addButton(QMessageBox::Ok);
+                ffmpegNotif.exec();
+                auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+                generalSettingsDialog->selectTab(2);
+                generalSettingsDialog->exec();
+                ffCheck.setValue(true);
+                return;
+            }
+            qDebug() << "Palette exists: " << QFileInfo::exists("palette.png")
+                     << "| Palette remove: " << QFile("palette.png").remove();
+            palettegen.deleteLater();
         }
         ffCheck.setValue(false);
     }

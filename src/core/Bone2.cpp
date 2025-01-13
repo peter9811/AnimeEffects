@@ -199,8 +199,8 @@ void addVecToJson(vec2d vector, QJsonObject* json, QString varName) {
     json->insert(varName + "Y", vector.y());
 }
 
-QVector2D objToVec(QJsonObject obj, QString varName) {
-    return QVector2D(obj[varName + "X"].toDouble(), obj[varName + "Y"].toDouble());
+QVector2D objToVec(QJsonObject obj, const QString& varName) {
+    return {(float)obj[varName + "X"].toDouble(), (float)obj[varName + "Y"].toDouble()};
 }
 
 void Bone2::deserializeFromJson(QJsonObject json, bool isChild) {
@@ -211,12 +211,12 @@ void Bone2::deserializeFromJson(QJsonObject json, bool isChild) {
     }
     mOrigin = nullptr;
     mLocalPos = objToVec(json, "LocalPos");
-    mLocalAngle = json["LocalAngle"].toDouble();
+    mLocalAngle = (float)json["LocalAngle"].toDouble();
     mRange[0] = objToVec(json, "Range0");
     mRange[1] = objToVec(json, "Range1");
     mShape.deserializeFromJson(json);
     mWorldPos = objToVec(json, "WorldPos");
-    mRotate = json["Rotate"].toDouble();
+    mRotate = (float)json["Rotate"].toDouble();
     // I frankly have no idea if this works or not...
     int bindCount = json["Nodes"].toInt();
     for (int i = 0; i < bindCount; ++i) {
@@ -225,12 +225,12 @@ void Bone2::deserializeFromJson(QJsonObject json, bool isChild) {
     // @todo Child pasting is broken.
     if (!isChild) {
         QJsonArray childArray = json["Children"].toArray();
-        int childCount = childArray.size();
+        int childCount = (int)childArray.size();
         int childIndex = 0;
-        while (childIndex != childCount) {
+        while (childIndex < childCount) {
             for (auto child : childArray) {
                 QJsonObject childObj = child.toObject();
-                Bone2* childBone = new Bone2;
+                auto* childBone = new Bone2;
                 childBone->deserializeFromJson(childObj, true);
                 children().insert(childIndex, childBone);
             }

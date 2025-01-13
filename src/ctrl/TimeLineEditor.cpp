@@ -651,7 +651,7 @@ bool TimeLineEditor::pasteCopiedKeys(core::TimeLineEvent& aEvent, const QPoint& 
         cmnd::ScopedMacro macro(stack, CmndName::tr("Paste keys"));
         macro.grabListener(notifier);
 
-        QMap<const TimeKey*, TimeKey*> parentMap;
+        QHash<const TimeKey*, TimeKey*> parentMap;
         struct ChildInfo {
             TimeKey* key;
             TimeKey* parent;

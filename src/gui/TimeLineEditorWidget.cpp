@@ -660,56 +660,122 @@ void TimeLineEditorWidget::onSelectRangeTriggered(int rangeType) {
     }
 }
 
+bool targetsAreSeparated(QList<core::TimeLineEvent::Target> &targets){
+    int frame = -1;
+    bool isDifferent = false;
+    for(auto target: targets){
+        if(frame == -1){ frame = target.pos.key()->frame();}
+        if(target.pos.key()->frame() != frame){ isDifferent = true; }
+    }
+    return isDifferent;
+}
+QList<QList<core::TimeLineEvent::Target>*> sortTargets(QList<core::TimeLineEvent::Target>* targets){
+    QList<QMap<int, core::TimeKey*>> targetMap;
+    QList<QList<core::TimeLineEvent::Target>*> targetLists;
+    for(auto target: *targets){
+        if(targetMap.empty()){
+            targetMap.emplaceBack(target.pos.line()->map(target.pos.key()->type()));
+            targetLists.emplace_back(new QList<core::TimeLineEvent::Target>{target});
+        }
+        else{
+            bool containsKey = false;
+            // Peak programming right here
+            for(const auto& map: targetMap){
+                for(const auto& key: map){
+                    if(key == target.pos.key()){ containsKey = true; }
+                }
+            }
+            if(containsKey) { targetLists.back()->emplace_back(target); }
+            else{
+                targetMap.emplaceBack(target.pos.line()->map(target.pos.key()->type()));
+                targetLists.emplaceBack(new QList<core::TimeLineEvent::Target>{target});
+            }
+        }
+    }
+    for(auto target: targetLists){
+        std::sort(target->begin(), target->end(), ctrl::TimeLineUtil::MoveFrameOfKey::greaterThan);
+    }
+    XC_ASSERT(targetMap.size() == targetLists.size());
+    return targetLists;
+}
 void TimeLineEditorWidget::onSelectSpacingTriggered() {
-    bool applySpacing = false;
-    int spacing = 0;
-    {
-        QDialog Dialog;
-
-        Dialog.setObjectName("Dialog");
-        Dialog.resize(400, 100);
-        QSizePolicy sizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding);
-        Dialog.setSizePolicy(sizePolicy);
-        auto verticalLayout = new QVBoxLayout(&Dialog);
-        verticalLayout->setObjectName("verticalLayout");
-        auto label = new QLabel(&Dialog);
-        label->setObjectName("label");
-        QSizePolicy sizePolicy1(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Maximum);
-        label->setSizePolicy(sizePolicy1);
-        verticalLayout->addWidget(label);
-
-        auto frameSpacing = new QSpinBox(&Dialog);
-        frameSpacing->setMaximum(INT32_MAX);
-        frameSpacing->setObjectName("frameSpacing");
-        verticalLayout->addWidget(frameSpacing);
-
-        auto buttonBox = new QDialogButtonBox(&Dialog);
-        buttonBox->setObjectName("buttonBox");
-        buttonBox->setOrientation(Qt::Horizontal);
-        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Apply);
-        buttonBox->setCenterButtons(true);
-        verticalLayout->addWidget(buttonBox);
-
-        Dialog.setWindowTitle(tr("Key spacing"));
-        label->setText(
-            R"(<html><head/><body><p align="center">)" + tr("Number of frames the selected keys should be spaced by:") +
-            "</p></body></html>"
-        );
-
-        Dialog.connect(buttonBox, &QDialogButtonBox::accepted, [=]() mutable {
-            applySpacing = true;
-            spacing = frameSpacing->value();});
-        Dialog.connect(buttonBox, &QDialogButtonBox::rejected, [=]() mutable { applySpacing = false; });
-
-        QMetaObject::connectSlotsByName(&Dialog);
-        Dialog.exec();
+    if(!targetsAreSeparated(mTargets.targets())){
+        QMessageBox msg;
+        msg.setText(tr("A minimum of two keys in different frames are needed."));
+        msg.setWindowTitle(tr("Not enough targets"));
+        msg.setIcon(QMessageBox::Information);
+        msg.setStandardButtons(QMessageBox::Ok);
+        msg.exec();
+        return;
     }
-    if(applySpacing){
-        qDebug() << spacing;
+    auto *diag = new QDialog;
+    diag->setObjectName("Dialog");
+    diag->resize(400, 100);
+    QSizePolicy sizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding);
+    diag->setSizePolicy(sizePolicy);
+    auto verticalLayout = new QVBoxLayout(diag);
+    verticalLayout->setObjectName("verticalLayout");
+    auto label = new QLabel(diag);
+    label->setObjectName("label");
+    QSizePolicy sizePolicy1(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Maximum);
+    label->setSizePolicy(sizePolicy1);
+    verticalLayout->addWidget(label);
+
+    auto frameSpacing = new QSpinBox(diag);
+    frameSpacing->setMaximum(INT32_MAX);
+    frameSpacing->setObjectName("frameSpacing");
+    verticalLayout->addWidget(frameSpacing);
+
+    auto *buttonBox = new QDialogButtonBox(diag);
+    buttonBox->setObjectName("buttonBox");
+    buttonBox->setOrientation(Qt::Horizontal);
+    buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttonBox->setCenterButtons(true);
+    verticalLayout->addWidget(buttonBox);
+
+    diag->setWindowTitle(tr("Key spacing"));
+    label->setText(
+        R"(<html><head/><body><p align="center">)" + tr("Number of frames the selected keys should be spaced by:") +
+        "</p></body></html>"
+    );
+    bool connected;
+    connected = connect(buttonBox, &QDialogButtonBox::accepted, this, [diag](){ diag->accept();});
+    connected = connected && connect(buttonBox, &QDialogButtonBox::rejected, this, [diag](){ diag->reject();});
+    if(!connected){
+        diag->deleteLater();
+        return;
     }
-    else{
-        qDebug("Nope");
+    QMetaObject::connectSlotsByName(diag);
+    frameSpacing->setFocus();
+    diag->exec();
+
+    if(diag->result() == QDialog::Accepted){
+        // We sort in reverse as to avoid most conflicts while moving keys
+        auto targets = sortTargets(&mTargets.targets());
+        int spacing = frameSpacing->value();
+        // We ignore the first keyframe for each target, which are at the back in this case
+        QList<core::TimeKey*> ignoredTargets;
+        for(auto target: targets) { ignoredTargets.emplaceBack(target->back().pos.key()); }
+        // We move the keys and check if the move was successful
+        QHash<core::TimeKeyType, int> conflicts;
+        for(auto target: targets) {
+            int tSize = (int)target->size() - 1;
+            int initialFrame = target->back().pos.key()->frame();
+            for(auto key : *target) {
+                int frameAccumulation = spacing * tSize;
+                if (!ignoredTargets.contains(key.pos.key())) {
+                    int frame = key.pos.key()->frame();
+                    int dest = initialFrame + frameAccumulation;
+                    core::TimeKeyType keyType = key.pos.type();
+                    if(mProject->currentTimeInfo().frameMax > dest){ conflicts.emplace(keyType, dest); }
+                    else if(!key.pos.line()->move(keyType, frame, dest)){ conflicts.emplace(keyType, dest); }
+                    tSize -= 1;
+                }
+            }
+        }
+        qDebug() << conflicts;
     }
+    diag->deleteLater();
 }
 
 void TimeLineEditorWidget::onDeleteKeyTriggered(bool) { mEditor->deleteCheckedKeys(mTargets); }

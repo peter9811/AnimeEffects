@@ -309,6 +309,16 @@ MainWindow::MainWindow(ctrl::System& aSystem, GUIResources& aResources, LocalePa
         if (key)
             key->invoker = [=]() { this->onMovementTriggered("Last"); };
     }
+    {
+        auto key = mKeyCommandMap->get("MoveFrameLeft");
+        if(key)
+            key->invoker = [=]() {this->onMoveFrameTriggered(false);};
+    }
+    {
+        auto key = mKeyCommandMap->get("MoveFrameRight");
+        if(key)
+            key->invoker = [=]() {this->onMoveFrameTriggered(true);};
+    }
 #endif
 
     // autosave
@@ -1574,6 +1584,12 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
             QMessageBox::warning(nullptr, tr("Export Error"), exporter.log());
         }
     }
+}
+void MainWindow::onMoveFrameTriggered(bool moveRight) {
+    int frameDest = moveRight? 1: -1;
+    core::Frame dest = mTarget->currentFrame();
+    dest.add(frameDest);
+    mTarget->timeLineWidget().setFrame(dest);
 }
 
 } // namespace gui

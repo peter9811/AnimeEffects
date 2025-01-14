@@ -1343,39 +1343,55 @@ public:
             int frameCount = mProject.currentTimeInfo().frameMax;
             int index = 1;
             reporter->show();
+            // TODO: Add error handling
             for (const auto& audio : validStreams) {
                 QProcess audioProc;
                 QString file = mParam.generalParams.osExportTarget;
                 QString ffmpeg = export_obj.executable;
                 // Calculate time offset in milliseconds
-                int frame = frameCount - (frameCount - audio.startFrame);
-                double positionMs = (static_cast<float>(frame) / static_cast<float>(mProject.currentTimeInfo().fps)) * 10e2;
-                QString posAsStr = QString::fromStdString(std::to_string(positionMs));
+                int frame = abs(audio.startFrame);
+                double offset = (static_cast<float>(frame) / static_cast<float>(mProject.currentTimeInfo().fps));
+                QString posAsStr = QString::fromStdString(std::to_string(offset));
                 // We clamp the maximum audio duration to the max project frame
-                bool largerThanMax = audio.endFrame > frameCount;
-                int lastFrame = largerThanMax? frameCount: frameCount - (frameCount - audio.endFrame);
-                double durationMs = ((static_cast<float>(lastFrame) / static_cast<float>(mProject.currentTimeInfo().fps)) - positionMs);
-                QString durAsStr = QString::fromStdString(std::to_string(durationMs));
+                bool lastFrameLargerThanMax = audio.endFrame > frameCount;
+                int durInFrames = lastFrameLargerThanMax? abs(frame - frameCount): abs(audio.endFrame - audio.startFrame);
+                double duration = ((static_cast<float>(durInFrames) / static_cast<float>(mProject.currentTimeInfo().fps)));
+                QString durAsStr = QString::fromStdString(std::to_string(duration));
                 // Get volume
                 float volume = AudioPlaybackWidget::getVol(audio.volume);
                 // Create ffmpeg argument
+                QString format = getFormatAsString(exportTarget::video, (int)mParam.videoParams.format);
+                QString musTemp = mParam.generalParams.osExportTarget;
+                musTemp.replace("." + format, ".mus.temp." + format);
                 QStringList argument = QStringList();
                 argument.append("-y");
                 argument.append("-i"); argument.append(file);
                 argument.append("-itsoffset"); argument.append(posAsStr + 's');
                 argument.append("-i"); argument.append(audio.audioPath.absoluteFilePath());
                 argument.append("-t"); argument.append(durAsStr + 's');
-                argument.append("-filter:a"); argument.append("volume=" + QString::number(volume));
-                argument.append("-map"); argument.append("0:0");
-                argument.append("-map"); argument.append("1:0");
-                argument.append("-c:v"); argument.append("copy");
-                argument.append("-preset"); argument.append("ultrafast");
+                if(index > 1) {
+                    // We mix the previous audio streams (should they exist) with the current
+                    argument.append("-filter_complex");
+                    argument.append(QString("[1:a]volume=") + QString::number(volume) +  QString(",amix"));
+                    argument.append("-c:v"); argument.append("copy");
+
+                    /*argument.append("-map"); argument.append("0:v");
+                    argument.append("-map"); argument.append("0:a");
+                    argument.append("-map"); argument.append("1:a");*/
+                }
+                else{
+                    argument.append("-filter:a"); argument.append("volume=" + QString::number(volume));
+                    argument.append("-map"); argument.append("0:0");
+                    argument.append("-map"); argument.append("1:0");
+                    argument.append("-c:v"); argument.append("copy");
+                    argument.append("-preset"); argument.append("ultrafast");
+                }
+                argument.append("-shortest");
                 argument.append("-async"); argument.append("1");
-                argument.append(mParam.generalParams.fileName + "Mus." + getFormatAsString(exportTarget::video, (int)mParam.videoParams.format));
+                argument.append(musTemp);
                 qDebug("----------||||-----------");
                 qDebug() << argument.join(" ");
                 audioProc.start(ffmpeg, argument, QProcess::ReadWrite);
-                qDebug() << audioProc.arguments();
                 audioProc.waitForFinished();
                 qDebug("----------||||-----------");
                 qDebug() << audioProc.readAllStandardOutput();
@@ -1386,6 +1402,11 @@ public:
                 qDebug("----------||||-----------");
                 reporterBar->setValue(index);
                 index++;
+                QCoreApplication::processEvents();
+                if(audioProc.exitCode() == 0){
+                    QFile(mParam.generalParams.osExportTarget).remove();
+                    QFile(musTemp).rename(mParam.generalParams.osExportTarget);
+                }
             }
             reporter->close();
             reporter->deleteLater();

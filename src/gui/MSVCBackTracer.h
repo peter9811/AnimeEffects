@@ -5,6 +5,11 @@
     #define USE_MSVC_BACKTRACE
 #endif
 
+// Just no
+#ifdef USE_MSVC_BACKTRACE
+    #undef USE_MSVC_BACKTRACE
+#endif
+
 #if defined(USE_MSVC_BACKTRACE)
 class BackTracer {
 public:

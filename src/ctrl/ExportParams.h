@@ -810,7 +810,7 @@ inline QString buildArgument(const exportParam& exParam) {
     // Looping (gif muxer specific)
     if (exParam.videoParams.format == availableVideoFormats::gif) {
         if (exParam.generalParams.loop) { argument.append(" -loop 0"); }
-        else { argument.append(" -loop 1"); }
+        else { argument.append(" -loop -1"); }
     }
     // Output
     argument.append(" " + exParam.generalParams.exportFileName.absolutePath().replace(" ", "&#32"));
@@ -1374,7 +1374,7 @@ public:
                     argument.append("-filter_complex");
                     argument.append(QString("[1:a]volume=") + QString::number(volume) +  QString(",amix"));
                     argument.append("-c:v"); argument.append("copy");
-
+                    argument.append("-longest");
                     /*argument.append("-map"); argument.append("0:v");
                     argument.append("-map"); argument.append("0:a");
                     argument.append("-map"); argument.append("1:a");*/
@@ -1385,8 +1385,8 @@ public:
                     argument.append("-map"); argument.append("1:0");
                     argument.append("-c:v"); argument.append("copy");
                     argument.append("-preset"); argument.append("ultrafast");
+                    argument.append("-shortest");
                 }
-                argument.append("-shortest");
                 argument.append("-async"); argument.append("1");
                 argument.append(musTemp);
                 qDebug("----------||||-----------");

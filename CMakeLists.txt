@@ -4,6 +4,9 @@ project(AnimeEffects VERSION 1.5.0 LANGUAGES C CXX)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+# ASan on debug builds when needed (pretty bad perf hit)
+# set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
+# set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address")
 
 include(GNUInstallDirs)
 # You need to add the Qt directory to your path if you're on Windows, otherwise you'll have a very bad time

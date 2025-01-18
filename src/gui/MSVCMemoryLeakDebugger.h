@@ -5,6 +5,11 @@
     #define USE_MSVC_MEMORYLEAK_DEBUG
 #endif
 
+// No
+#ifdef USE_MSVC_MEMORYLEAK_DEBUG
+    #undef USE_MSVC_MEMORYLEAK_DEBUG
+#endif
+
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
 
     #include <stdlib.h>

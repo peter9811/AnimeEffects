@@ -102,7 +102,7 @@ void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets) {
 
             // influence map matrix
             auto mapMtx = cache->innerMatrix();
-            mapMtx.translate(static_cast<QVector3D>(originOffset));
+            mapMtx.translate(originOffset.toVector3D());
 
             BoneInfluenceMap& map = cache->influence();
             // allocate if necessary

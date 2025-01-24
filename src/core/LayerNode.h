@@ -66,7 +66,7 @@ public:
     virtual void renderClipper(const RenderInfo&, const TimeCacheAccessor&, uint8 aClipperId);
     virtual void setClipped(bool aIsClipped);
     virtual bool isClipped() const { return mIsClipped; }
-    virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData);
+    virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, QList<int> HSVData);
     virtual bool hasBlendMode() const { return true; }
     virtual img::BlendMode blendMode() const;
     virtual void setBlendMode(img::BlendMode);

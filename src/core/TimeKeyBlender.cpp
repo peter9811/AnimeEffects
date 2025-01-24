@@ -14,7 +14,7 @@ class ObjectTreeSeeker: public util::ITreeSeeker<TimeKeyBlender::SeekData, Objec
     bool mUseCache;
 
 public:
-    ObjectTreeSeeker(bool aUseCache): mUseCache(aUseCache) {}
+    explicit ObjectTreeSeeker(bool aUseCache): mUseCache(aUseCache) {}
 
     virtual Position position(ObjectNode* aNode) const { return aNode; }
 
@@ -361,8 +361,7 @@ void TimeKeyBlender::getMoveExpans(SRTExpans& aExpans, const ObjectNode& aNode, 
         } else {
             // linear blending
             auto vels = MoveKey::getCatmullRomVels(kn, k0, k1, k2);
-            aExpans.spline().set(static_cast<QVector3D>(k0->pos()), static_cast<QVector3D>(k1->pos()),
-                static_cast<QVector3D>(vels[0]), static_cast<QVector3D>(vels[1]));
+            aExpans.spline().set(k0->pos().toVector3D(), k1->pos().toVector3D(), vels[0].toVector3D(), vels[1].toVector3D());
             aExpans.setSplineCache(util::Range(p0.frame, p1.frame));
 
             aExpans.setPos(aExpans.spline().getByLinear(time).toVector2D());
@@ -375,14 +374,17 @@ void TimeKeyBlender::getMoveExpans(SRTExpans& aExpans, const ObjectNode& aNode, 
 void TimeKeyBlender::getRotateExpans(SRTExpans& aExpans, const ObjectNode& aNode, const TimeInfo& aTime) {
     XC_ASSERT(aNode.timeLine());
     TimeKeyGatherer blend(aNode.timeLine()->map(TimeKeyType_Rotate), aTime);
-
-    if (blend.isEmpty()) { // no key is exists
+    if (blend.isEmpty()) {
+        // No key exists
         aExpans.setRotate(getDefaultKeyData<RotateKey, TimeKeyType_Rotate>(aNode).rotate());
-    } else if (blend.hasSameFrame()) { // a key is exists
+    } else if (blend.hasSameFrame()) {
+        // Inserted point from easing
         aExpans.setRotate(((const RotateKey*)blend.point(0).key)->data().rotate());
+        // Single point
     } else if (blend.isSingle()) { // perfect following
         aExpans.setRotate(((const RotateKey*)blend.singlePoint().key)->data().rotate());
     } else {
+        // Multiple points
         const RotateKey* k0 = (const RotateKey*)blend.point(0).key;
         const RotateKey* k1 = (const RotateKey*)blend.point(1).key;
         // calculate easing
@@ -548,7 +550,7 @@ void TimeKeyBlender::blendHSVKey(PositionType aPos, const TimeInfo& aTime) {
             case 2:
                 expans.hsv().setValue(k0->hsv().at(2) * (1.0f - time) + k1->hsv().at(2) * time);
                 break;
-            case 3:
+            default:
                 break;
             }
         }

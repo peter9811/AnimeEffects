@@ -27,7 +27,7 @@ public:
 
     virtual void renderClipper(const RenderInfo& aInfo, const TimeCacheAccessor&, uint8 aClipperId) = 0;
 
-    virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, const QList<int>& HSVData) = 0;
+    virtual void renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor&, QList<int> HSVData) = 0;
 
     virtual void setClipped(bool aIsClipped) = 0;
     virtual bool isClipped() const = 0;

@@ -525,24 +525,14 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             // ID checking is probably overkill, but security is important!
             int id;
             if (os == "win") {
-                if (arch == "x86") {
-                    gitFile = "ffmpeg-win32.exe";
-                    id = 97679467;
-                } else {
-                    gitFile = "ffmpeg-win64.exe";
-                    id = 97679053;
-                }
+                gitFile = "ffmpeg-win64.exe";
+                id = 222521524;
             } else if (os == "linux") {
-                if (arch == "x86") {
-                    gitFile = "ffmpeg-linux32";
-                    id = 97679324;
-                } else {
-                    gitFile = "ffmpeg-linux64";
-                    id = 97679172;
-                }
+                gitFile = "ffmpeg-linux64";
+                id = 222521700;
             } else {
                 gitFile = "ffmpeg-macos";
-                id = 97679141;
+                id = 222521413;
             }
 
             QFileInfo ffmpeg = networking.downloadGithubFile(
@@ -551,6 +541,43 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             qDebug() << "Download name : " << ffmpeg.fileName() << "\n"
                      << "Download is executable : " << ffmpeg.isExecutable();
             if (ffmpeg.isExecutable()) {
+                if(!dir.exists() || !dir.isReadable() || !QFileInfo(dir.absolutePath()).isWritable()){
+                    // We'll attempt a global installation as a fallback in cases where the folder might be write protected
+                    QDir appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+                    if(appdata.exists() && appdata.isReadable()){
+                        appdata.mkdir("AnimeEffects");
+                        appdata = QDir(appdata.absolutePath() + "/AnimeEffects");
+                        QString fileInAppDataLoc = appdata.absolutePath() + file;
+                        QFile(ffmpeg.absoluteFilePath()).rename(fileInAppDataLoc);
+                        qDebug() << "FFmpeg moved : " << QFile(appdata.absolutePath() + file).exists();
+                        if (QFile(dir.absolutePath() + file).exists()) {
+                            QProcess pathSet;
+                            QString console;
+                            QStringList instruct;
+                            if(os == "linux" || os == "mac"){
+                                console = "sh";
+                                instruct.append("export");
+                                instruct.append("PATH=$PATH:" + fileInAppDataLoc);
+                            }
+                            else{
+                                console = "cmd";
+                                instruct.append("set");
+                                instruct.append("PATH=%PATH%;" + fileInAppDataLoc);
+                            }
+                            pathSet.start(console, instruct);
+                            pathSet.waitForFinished();
+                            if(pathSet.exitCode() == 0){
+                                QMessageBox success;
+                                success.setWindowTitle(tr("Success"));
+                                success.setText(tr("FFmpeg was successfully setup. Please restart AnimeEffects"));
+                                success.exec();
+                                return;
+                            }
+                            else{ qDebug("FFmpeg path setup errored, continuing..."); }
+                        }
+                        else{ qDebug("FFmpeg move errored, continuing..."); }
+                    }
+                }
                 QFile(ffmpeg.absoluteFilePath()).rename(dir.absolutePath() + file);
                 qDebug() << "FFmpeg moved : " << QFile(dir.absolutePath() + file).exists();
                 if (QFile(dir.absolutePath() + file).exists()) {
@@ -563,11 +590,17 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             }
             QMessageBox error;
             error.setWindowTitle(tr("Error"));
-            error.setText(tr("An error has occurred, please send the below info to the developers."));
+            error.setText(tr("While setting up FFmpeg an unexpected error has occurred, please send the below information to our devs."));
+            QString platform = QSysInfo::productType(); platform[0] = platform[0].toUpper();
             error.setDetailedText(
-                "Filename : " + ffmpeg.fileName() + "\nIs Executable : " + (ffmpeg.isExecutable()? "True" : "False") +
-                "\nDownload params : " + "Hardcoded API | gitFile: " + gitFile + " | ID: " + QString::number(id) +
-                "\nDownload path : " + dir.absolutePath()
+                QString("Operating system: ") + platform + " " + QSysInfo::productVersion() +
+                "\nCPU: " + QSysInfo::currentCpuArchitecture() +
+                "\nFile requested: " + gitFile + " - Hardcoded file ID: " + QString::number(id) +
+                "\nFile received: " + ffmpeg.absoluteFilePath() +
+                "\nFile is executable: " + (ffmpeg.isExecutable()? "True" : "False") +
+                "\nFile is readable: " + (ffmpeg.isReadable()? "True": "False") +
+                "\nFile is writable: " + (ffmpeg.isWritable()? "True": "False") +
+                "\nRequested base folders : " + dir.absolutePath() + " | " + QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
             );
             error.exec();
         });

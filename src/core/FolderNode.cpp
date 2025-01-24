@@ -64,15 +64,6 @@ void FolderNode::setDefaultOpacity(float aValue) {
     key->setOpacity(aValue);
 }
 
-void FolderNode::setDefaultHSV(QList<int> aValue) {
-    auto key = (HSVKey*)mTimeLine.defaultKey(TimeKeyType_HSV);
-    if (!key) {
-        key = new HSVKey();
-        mTimeLine.grabDefaultKey(TimeKeyType_HSV, key);
-    }
-    key->setHSV(aValue);
-}
-
 void FolderNode::grabHeightMap(HeightMap* aNode) { mHeightMap.reset(aNode); }
 
 bool FolderNode::isClipper() const {
@@ -88,6 +79,28 @@ bool FolderNode::isClipper() const {
 
 void FolderNode::prerender(const RenderInfo&, const TimeCacheAccessor&) {}
 
+void pushRenderRecursive(core::ObjectNode& aNode, std::vector<core::Renderer::SortUnit>& aDest,
+    const core::TimeCacheAccessor& aAccessor, const core::RenderInfo aInfo) {
+    if (!aNode.isVisible()) {
+        return;
+    }
+    if (!aNode.renderer()) {
+        return;
+    }
+    core::Renderer::SortUnit unit;
+    unit.renderer = aNode.renderer();
+    unit.depth = aAccessor.get(aNode).worldDepth();
+    unit.timeline = aNode.timeLine();
+    aDest.push_back(unit);
+
+    for (auto child : aNode.children()) {
+        while (child) {
+            pushRenderRecursive(*child, aDest, aAccessor, aInfo);
+            child = child->prevSib();
+        }
+    }
+}
+
 void FolderNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor) {
     if (!mIsVisible)
         return;
@@ -98,14 +111,21 @@ void FolderNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAcces
     if (aInfo.isGrid)
         return;
 
+    // render clippees
+    renderClippees(aInfo, aAccessor);
+
     if (!mTimeLine.isEmpty(TimeKeyType_HSV)) {
         if (aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()) {
+            auto children = this->children();
+            for (auto p : children) {
+                while (p) { pushRenderRecursive(*p, mRenders, aAccessor, aInfo); p = p->prevSib(); }
+            }
+            if(!mRenders.empty()) { std::stable_sort(mRenders.begin(), mRenders.end(),
+                          [=](core::Renderer::SortUnit a, core::Renderer::SortUnit b) { return a.depth < b.depth; }); }
             renderHSVs(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
         }
     }
 
-    // render clippees
-    renderClippees(aInfo, aAccessor);
 }
 
 void FolderNode::renderClippees(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor) {
@@ -147,57 +167,20 @@ void FolderNode::renderClipper(const RenderInfo& aInfo, const TimeCacheAccessor&
     }
 }
 
-// TODO: Fix this nonsense
-bool fCompareRenderDepth(core::Renderer::SortUnit a, core::Renderer::SortUnit b) { return a.depth < b.depth; }
 
-void pushRenderRecursive(
-    core::ObjectNode& aNode,
-    std::vector<core::Renderer::SortUnit>& aDest,
-    const core::TimeCacheAccessor& aAccessor,
-    const core::RenderInfo aInfo
-) {
-    if (!aNode.isVisible()) {
-        return;
-    }
-    if (!aNode.renderer()) {
-        return;
-    }
-    core::Renderer::SortUnit unit;
-    unit.renderer = aNode.renderer();
-    unit.depth = aAccessor.get(aNode).worldDepth();
-    unit.timeline = aNode.timeLine();
-    aDest.push_back(unit);
-
-    for (auto child : aNode.children()) {
-        while (child) {
-            pushRenderRecursive(*child, aDest, aAccessor, aInfo);
-            child = child->nextSib();
+void FolderNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor, QList<int> HSVData) {
+    for (auto child : this->children()) {
+        if (child->renderer()) {
+            child->renderer()->renderHSV(aInfo, aAccessor, HSVData);
         }
     }
-}
-
-void FolderNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor, const QList<int>& HSVData) {
-    // this->renderer()->renderHSV(aInfo, aAccessor, HSVData);
-    for (auto child : this->children()) {
-        child->renderer()->renderHSV(aInfo, aAccessor, HSVData);
-    }
-    // renderHSVs(aInfo, aAccessor, HSVData);
 }
 
 void FolderNode::renderHSVs(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor, QList<int> aHSV) {
-    mRenders.clear();
-    auto children = this->children();
-
-    for (auto p : children) {
-        while (p) {
-            pushRenderRecursive(*p, mRenders, aAccessor, aInfo);
-            p = p->nextSib();
-        }
-    }
-    std::stable_sort(mRenders.begin(), mRenders.end(), fCompareRenderDepth);
     for (auto child : mRenders) {
         child.renderer->renderHSV(aInfo, aAccessor, aHSV);
     }
+    mRenders.clear();
 }
 
 float FolderNode::initialDepth() const {

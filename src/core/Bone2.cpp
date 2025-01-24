@@ -124,9 +124,9 @@ QMatrix4x4 Bone2::transformationMatrix(const QVector2D& aToPos, float aToAngle) 
     const float rotate = util::MathUtil::getDegreeFromRadian(aToAngle - worldAngle());
 
     QMatrix4x4 mtx;
-    mtx.translate(static_cast<QVector3D>(aToPos));
+    mtx.translate(aToPos.toVector3D());
     mtx.rotate(rotate, kRotateAxis);
-    mtx.translate(static_cast<QVector3D>(-worldPos()));
+    mtx.translate(-worldPos().toVector3D());
     return mtx;
 }
 
@@ -139,7 +139,7 @@ QMatrix4x4 Bone2::transformationMatrix(const QMatrix4x4& aToMtx) const {
     {
         static const QVector3D kRotateAxis(0.0f, 0.0f, 1.0f);
         myInvMtx.rotate(-util::MathUtil::getDegreeFromRadian(worldAngle()), kRotateAxis);
-        myInvMtx.translate(static_cast<QVector3D>(-worldPos()));
+        myInvMtx.translate(-worldPos().toVector3D());
     }
 
     return aToMtx * myInvMtx;
@@ -181,7 +181,7 @@ bool Bone2::serialize(Serializer& aOut) const {
         return false;
     }
 
-    aOut.write(static_cast<int>(mBindingNodes.count()));
+    aOut.write((int)mBindingNodes.count());
     for (auto node : mBindingNodes) {
         aOut.writeID(node);
     }

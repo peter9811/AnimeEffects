@@ -79,9 +79,9 @@ void PosePalette::build(const KeyPairs& aKeyPairs) {
         // srt matrix
         {
             QMatrix4x4 mtx;
-            mtx.translate(static_cast<QVector3D>(pose->worldPos()));
+            mtx.translate(pose->worldPos().toVector3D());
             mtx.rotate(rotate, kRotateAxis);
-            mtx.translate(static_cast<QVector3D>(-orgn->worldPos()));
+            mtx.translate(-orgn->worldPos().toVector3D());
             mData[i] = mtx;
         }
 
@@ -91,7 +91,7 @@ void PosePalette::build(const KeyPairs& aKeyPairs) {
             rotMtx.rotate(rotate, kRotateAxis);
             const QVector2D originPos = (rotMtx * QVector3D(orgn->worldPos())).toVector2D();
 
-            const QVector3D trans = static_cast<QVector3D>(pose->worldPos() - originPos);
+            const QVector3D trans = (pose->worldPos() - originPos).toVector3D();
             auto quat = QQuaternion::fromAxisAndAngle(kRotateAxis, rotate);
             mDualQuats[i] = makeDualQuaternion(quat, trans);
         }

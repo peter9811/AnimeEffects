@@ -304,123 +304,123 @@ TimeKey* getKeyFromObj(QJsonObject obj, util::LifeLink::Pointee<Project> project
     // We're losing precision for float casts from json strings because
     // the cast rounds at the third decimal for some godforsaken reason.
     switch (type) {
-    case TimeKeyType_Move: {
-        MoveKey* moveKey = new MoveKey;
-        QVector2D pos = objToVec(obj, "Pos");
-        QVector2D centre = objToVec(obj, "Centre");
-        MoveKey::SplineType spline =
-            obj["Spline"].toString() == "Catmull" ? MoveKey::SplineType_CatmullRom : MoveKey::SplineType_Linear;
-        moveKey->data().setPos(pos);
-        moveKey->data().setCentroid(centre);
-        moveKey->data().setSpline(spline);
-        moveKey->data().easing() = objToEasing(obj);
-        moveKey->setFrame(obj["Frame"].toInt());
-        return moveKey;
-    }
-    case TimeKeyType_Rotate: {
-        RotateKey* rotateKey = new RotateKey;
-        rotateKey->setRotate(obj["Rotate"].toDouble());
-        rotateKey->data().easing() = objToEasing(obj);
-        rotateKey->setFrame(obj["Frame"].toInt());
-        return rotateKey;
-    }
-    case TimeKeyType_Scale: {
-        ScaleKey* scaleKey = new ScaleKey;
-        scaleKey->setScale(objToVec(obj, "Scale"));
-        scaleKey->data().easing() = objToEasing(obj);
-        scaleKey->setFrame(obj["Frame"].toInt());
-        return scaleKey;
-    }
-    case TimeKeyType_Depth: {
-        DepthKey* depthKey = new DepthKey;
-        depthKey->setDepth(obj["Depth"].toDouble());
-        depthKey->data().easing() = objToEasing(obj);
-        depthKey->setFrame(obj["Frame"].toInt());
-        return depthKey;
-    }
-    case TimeKeyType_Opa: {
-        OpaKey* opaKey = new OpaKey;
-        opaKey->setOpacity(obj["Opacity"].toDouble());
-        opaKey->data().easing() = objToEasing(obj);
-        opaKey->setFrame(obj["Frame"].toInt());
-        return opaKey;
-    }
-    case TimeKeyType_Bone: {
-        auto* boneKey = new BoneKey;
-        QJsonArray boneArray = obj["Bones"].toArray();
-        QList<core::Bone2*> bones;
-        for (QJsonValue bone : boneArray) {
-            QJsonObject boneObj = bone.toObject();
-            auto* newBone = new core::Bone2;
-            newBone->deserializeFromJson(boneObj, false);
-            bones.append(newBone);
+        case TimeKeyType_Move: {
+            MoveKey* moveKey = new MoveKey;
+            QVector2D pos = objToVec(obj, "Pos");
+            QVector2D centre = objToVec(obj, "Centre");
+            MoveKey::SplineType spline =
+                obj["Spline"].toString() == "Catmull" ? MoveKey::SplineType_CatmullRom : MoveKey::SplineType_Linear;
+            moveKey->data().setPos(pos);
+            moveKey->data().setCentroid(centre);
+            moveKey->data().setSpline(spline);
+            moveKey->data().easing() = objToEasing(obj);
+            moveKey->setFrame(obj["Frame"].toInt());
+            return moveKey;
         }
-        boneKey->data().topBones().append(bones);
-        boneKey->setFrame(obj["Frame"].toInt());
-        return boneKey;
-    }
-    case TimeKeyType_Pose: {
-        PoseKey* poseKey = new PoseKey;
-        QJsonArray boneArray = obj["Bone"].toArray();
-        QList<core::Bone2*> bones;
-        for (QJsonValue bone : boneArray) {
-            QJsonObject boneObj = bone.toObject();
-            core::Bone2* newBone = new core::Bone2;
-            newBone->deserializeFromJson(boneObj, false);
-            bones.append(newBone);
+        case TimeKeyType_Rotate: {
+            RotateKey* rotateKey = new RotateKey;
+            rotateKey->setRotate(obj["Rotate"].toDouble());
+            rotateKey->data().easing() = objToEasing(obj);
+            rotateKey->setFrame(obj["Frame"].toInt());
+            return rotateKey;
         }
-        poseKey->data().topBones() = bones;
-        poseKey->setFrame(obj["Frame"].toInt());
-        return poseKey;
-    }
-    case TimeKeyType_Mesh: {
-        // Key type not acknowledged by folders
-        if (isFolder) {
-            return nullptr;
+        case TimeKeyType_Scale: {
+            ScaleKey* scaleKey = new ScaleKey;
+            scaleKey->setScale(objToVec(obj, "Scale"));
+            scaleKey->data().easing() = objToEasing(obj);
+            scaleKey->setFrame(obj["Frame"].toInt());
+            return scaleKey;
         }
-        MeshKey* meshKey = new MeshKey;
-        QJsonObject mesh = obj["Mesh"].toObject();
-        meshKey->data().deserializeFromJson(mesh);
-        meshKey->setFrame(obj["Frame"].toInt());
-        return meshKey;
-    }
-    case TimeKeyType_FFD: {
-        /*
-        FFDKey* ffdKey = new FFDKey;
-        ffdKey->data().easing() = objToEasing(obj);
-        ffdKey->deserializeFromJson(obj);
-        ffdKey->setFrame(obj["Frame"].toInt());
-        */
+        case TimeKeyType_Depth: {
+            DepthKey* depthKey = new DepthKey;
+            depthKey->setDepth(obj["Depth"].toDouble());
+            depthKey->data().easing() = objToEasing(obj);
+            depthKey->setFrame(obj["Frame"].toInt());
+            return depthKey;
+        }
+        case TimeKeyType_Opa: {
+            OpaKey* opaKey = new OpaKey;
+            opaKey->setOpacity(obj["Opacity"].toDouble());
+            opaKey->data().easing() = objToEasing(obj);
+            opaKey->setFrame(obj["Frame"].toInt());
+            return opaKey;
+        }
+        case TimeKeyType_Bone: {
+            auto* boneKey = new BoneKey;
+            QJsonArray boneArray = obj["Bones"].toArray();
+            QList<core::Bone2*> bones;
+            for (QJsonValue bone : boneArray) {
+                QJsonObject boneObj = bone.toObject();
+                auto* newBone = new core::Bone2;
+                newBone->deserializeFromJson(boneObj, false);
+                bones.append(newBone);
+            }
+            boneKey->data().topBones().append(bones);
+            boneKey->setFrame(obj["Frame"].toInt());
+            return boneKey;
+        }
+        case TimeKeyType_Pose: {
+            PoseKey* poseKey = new PoseKey;
+            QJsonArray boneArray = obj["Bone"].toArray();
+            QList<core::Bone2*> bones;
+            for (QJsonValue bone : boneArray) {
+                QJsonObject boneObj = bone.toObject();
+                core::Bone2* newBone = new core::Bone2;
+                newBone->deserializeFromJson(boneObj, false);
+                bones.append(newBone);
+            }
+            poseKey->data().topBones() = bones;
+            poseKey->setFrame(obj["Frame"].toInt());
+            return poseKey;
+        }
+        case TimeKeyType_Mesh: {
+            // Key type not acknowledged by folders
+            if (isFolder) {
+                return nullptr;
+            }
+            MeshKey* meshKey = new MeshKey;
+            QJsonObject mesh = obj["Mesh"].toObject();
+            meshKey->data().deserializeFromJson(mesh);
+            meshKey->setFrame(obj["Frame"].toInt());
+            return meshKey;
+        }
+        case TimeKeyType_FFD: {
+            /*
+            FFDKey* ffdKey = new FFDKey;
+            ffdKey->data().easing() = objToEasing(obj);
+            ffdKey->deserializeFromJson(obj);
+            ffdKey->setFrame(obj["Frame"].toInt());
+            */
 
-        // Why not? You may be asking yourself.
-        // To that I answer a web of virtual functions and gl shenanigans
-        return nullptr;
-    }
-    case TimeKeyType_Image: {
-        // Key type not acknowledged by folders
-        if (isFolder) {
+            // Why not? You may be asking yourself.
+            // To that I answer a web of virtual functions and gl shenanigans
             return nullptr;
         }
-        ImageKey* imageKey = new ImageKey;
-        imageKey->data().easing() = objToEasing(obj);
-        if (imageKey->deserializeFromJson(obj, project)) {
-            return imageKey;
-        } else {
+        case TimeKeyType_Image: {
+            // Key type not acknowledged by folders
+            if (isFolder) {
+                return nullptr;
+            }
+            ImageKey* imageKey = new ImageKey;
+            imageKey->data().easing() = objToEasing(obj);
+            if (imageKey->deserializeFromJson(obj, project)) {
+                return imageKey;
+            } else {
+                return nullptr;
+            }
+        }
+        case TimeKeyType_HSV: {
+            HSVKey* hsvKey = new HSVKey;
+            hsvKey->data().easing() = objToEasing(obj);
+            QList<int> hsv{obj["Hue"].toInt(), obj["Saturation"].toInt(), obj["Value"].toInt(), obj["Absolute"].toInt()};
+            hsvKey->setHSV(hsv);
+            hsvKey->setFrame(obj["Frame"].toInt());
+            return hsvKey;
+        }
+        // If you end up here you've done goofed.
+        case TimeKeyType_TERM: {
             return nullptr;
         }
-    }
-    case TimeKeyType_HSV: {
-        HSVKey* hsvKey = new HSVKey;
-        hsvKey->data().easing() = objToEasing(obj);
-        QList<int> hsv{obj["Hue"].toInt(), obj["Saturation"].toInt(), obj["Value"].toInt(), obj["Absolute"].toInt()};
-        hsvKey->setHSV(hsv);
-        hsvKey->setFrame(obj["Frame"].toInt());
-        return hsvKey;
-    }
-    // If you end up here you've done goofed.
-    case TimeKeyType_TERM: {
-        return nullptr;
-    }
     }
     return nullptr;
 }

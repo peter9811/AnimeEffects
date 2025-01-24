@@ -54,7 +54,7 @@ bool ExtendShader::resolveVariation() {
     bool isSuccess = true;
 
     int currentShader = 0; // 0 = vertex, 1 = fragment
-    while (1) {
+    while (true) {
         QString line;
         if (currentShader == 0) {
             line = vertexIn.readLine();

@@ -5,6 +5,7 @@
 #include <QSize>
 #include "XC.h"
 #include "img/Format.h"
+#include "ORAReader.h"
 
 namespace img {
 

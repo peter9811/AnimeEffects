@@ -27,9 +27,22 @@ Project::Project(QString aFileName, Animator& aAnimator, Hook* aHookGrabbed):
     if (!aFileName.isEmpty()) {
         setFileName(aFileName);
     }
-
+    QFileInfo aFile = QFileInfo(aFileName);
+    if(aFile.exists() && QDir(aFile.absoluteDir()).exists() && QFileInfo::exists(aFile.absoluteDir().absolutePath() + '/' + aFile.baseName() + ".aemus")){
+        QFile aemus = QFile(aFile.absoluteFilePath().remove(".anie").append(".aemus"));
+        if(aemus.open(QIODevice::ReadOnly)){
+            QJsonDocument doc = QJsonDocument::fromJson(aemus.readAll());
+            if(!doc.isEmpty() && AudioPlaybackWidget::deserialize(doc.object(), pConf)){
+                mediaRefresh = true;
+                uiRefresh = true;
+            }
+            else {
+                pConf->clear();
+                pConf->emplace_back();
+            }
+        }
+    }
     onTimeLineModified.connect([=](TimeLineEvent& aEvent, bool) { aEvent.setProject(*this); });
-
     onTimeLineModified.connect(&mObjectTree, &ObjectTree::onTimeLineModified);
     onTreeRestructured.connect(&mObjectTree, &ObjectTree::onTreeRestructured);
     onResourceModified.connect(&mObjectTree, &ObjectTree::onResourceModified);
@@ -44,6 +57,12 @@ Project::Project(QString aFileName, Animator& aAnimator, Hook* aHookGrabbed):
 Project::~Project() {
     // clear all command firstly
     mCommandStack.clear();
+    if(mediaPlayer && mediaPlayer->playing){
+        for(auto player : mediaPlayer->players){
+            if (player) { player->stop(); }
+        }
+        mediaPlayer->playing = false;
+    }
 }
 
 void Project::setFileName(const QString& aFileName) {

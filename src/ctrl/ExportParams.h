@@ -32,6 +32,7 @@
 #include "qregularexpression.h"
 #include "qurl.h"
 #include "util/SelectArgs.h"
+#include "gui/AudioPlaybackWidget.h"
 
 #include <QBuffer>
 #include <QDesktopServices>
@@ -59,8 +60,8 @@ struct defaultEncoders {
     webmEncoders webm = webmEncoders::Auto;
 };
 
-QStringList const videoFormats{
-    "apng", "avi", "f4v", "flv", "gif", "mkv", "mov", "mp2", "mp4", "ogv", "swf", "webm", "webp"};
+QStringList const videoFormats{ "apng", "avi", "f4v", "flv", "gif", "mkv", "mov", "mp2", "mp4", "ogv", "swf", "webm", "webp"};
+QStringList const audioTargettable{ "avi", "mkv", "mov", "mp4", "webm"};
 QStringList const imageFormats{"bmp", "jpeg", "jpg", "png", "ppm", "xbm", "xpm", "tiff", "webp"};
 QStringList const intermediateImageFormats{"PNG", "BMP", "JPG", "JPEG", "PPM"};
 QStringList const pxFormats{"Auto", "yuv420p", "yuva420p", "rgb24", "rgba", "bgr24", "bgra", "gray"};
@@ -91,6 +92,8 @@ struct GeneralParams {
     int bitrate = 0;
     bool allowTransparency = true;
     bool forcePipe = false;
+    bool loop = true;
+    bool exportWithAudio = false;
     bool useCustomParam = false;
     bool useIntermediate = true;
     bool usePost = true;
@@ -151,26 +154,30 @@ QString getFormatAsString(exportTarget target, formatEnum formatIndex) {
     return nullptr;
 }
 inline int getFormatAsInt(exportTarget target, const QString& format) {
+    qsizetype index = -1;
     switch (target) {
     case exportTarget::video:
-        return videoFormats.indexOf(format);
+        index = videoFormats.indexOf(format);
     case exportTarget::image:
-        return imageFormats.indexOf(format);
+        index = imageFormats.indexOf(format);
     case exportTarget::pxFmt:
-        return pxFormats.indexOf(format);
+        index = pxFormats.indexOf(format);
     case exportTarget::aviEnc:
-        return aviEnc.indexOf(format);
+        index = aviEnc.indexOf(format);
     case exportTarget::mkvEnc:
-        return mkvEnc.indexOf(format);
+        index = mkvEnc.indexOf(format);
     case exportTarget::movEnc:
-        return movEnc.indexOf(format);
+        index = movEnc.indexOf(format);
     case exportTarget::mp4Enc:
-        return mp4Enc.indexOf(format);
+        index = mp4Enc.indexOf(format);
     case exportTarget::webmEnc:
-        return webmEnc.indexOf(format);
+        index = webmEnc.indexOf(format);
     default:
-        return 0;
+        index =  0;
     }
+    // Error handling for out of bound encoders and formats
+    if(index == -1){ return 0; }
+    return static_cast<int>(index);
 }
 
 inline bool formatAllowsTransparency(const QString& format) {
@@ -185,7 +192,7 @@ inline bool pixelFormatAllowsTransparency(const QString& format) {
 
 inline QString tr(const QString& str) { return QCoreApplication::translate("ExportParams", str.toStdString().c_str()); }
 
-inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
+inline bool isExportParamValid(exportParam* exParam, QWidget* widget, std::vector<audioConfig>* pConf) {
     QStringList warnings;
     QStringList warningDetail;
     QStringList errors;
@@ -196,10 +203,23 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
         errors.append(tr("Export name or location contains an invalid character (\"&#32\")"));
         errorDetail.append(tr("Export name or location has the invalid character, please rename it to proceed."));
     }
-    if (params->allowTransparency && exParam->videoParams.intermediateFormat != availableIntermediateFormats::png){
-        errors.append(tr("Transparent export does not have PNG intermediate"));
-        errorDetail.append(tr("Export was set to allow transparency but the intermediate format does not support it, "
+    if (params->allowTransparency && exParam->exportType == exportTarget::video && exParam->videoParams.intermediateFormat != availableIntermediateFormats::png){
+        warnings.append(tr("Transparent export does not have PNG intermediate"));
+        warningDetail.append(tr("Export was set to allow transparency but the intermediate format does not support it, "
             "please change it to PNG."));
+    }
+    if (params->exportWithAudio && pConf->empty()){
+        warnings.append(tr("No valid audio streams."));
+        warningDetail.append(tr("Export with audio was selected but the audio player does not contain any valid audio streams, "
+            "please check if the audio files exist and the playback for them is enabled. If the export proceeds no audio will be added."));
+    }
+    if (exParam->exportType == exportTarget::image && params->allowTransparency &&
+        !formatAllowsTransparency(getFormatAsString(exportTarget::image, (int)exParam->imageParams.format))) {
+        warnings.append(tr("IExport target does not support transparency"));
+        warningDetail.append(
+            tr("Export with transparency was marked but the selected image format "
+               "does not support alpha layers, this means that if the export proceeds it will not have transparency.")
+        );
     }
     if (params->exportHeight == 0) {
         errors.append(tr("Export height is zero"));
@@ -303,6 +323,7 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     // Special case for PPM
     QString intermediateFormat =
         intermediateFormatToImage == -1 ? "ppm" : getFormatAsString(exportTarget::image, intermediateFormatToImage);
+
     QString pixelFormat = getFormatAsString(exportTarget::pxFmt, static_cast<int>(exParam->videoParams.pixelFormat));
 
     if (params->allowTransparency && !formatAllowsTransparency(format)) {
@@ -327,14 +348,6 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
             tr("A pixel and target format that allow for alpha layers were selected but the option for allowing "
                "transparent export was not, please select it or change your format to one without the 'a' in it to "
                "avoid unintentional transparency.")
-        );
-    }
-    if (exParam->exportType == exportTarget::video && params->allowTransparency &&
-        !formatAllowsTransparency(intermediateFormat)) {
-        warnings.append(tr("Intermediate export target does not support transparency"));
-        warningDetail.append(
-            tr("Export with transparency was marked but the selected intermediate format "
-               "does not support an alpha layer, this means that if the export proceeds it will not have transparency.")
         );
     }
     if (params->useCustomPalette && params->palettePath.exists()) {
@@ -470,8 +483,9 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget) {
     // Should be synced, but just in case I'll leave this here to easily revert it.
     // exParam->generalParams = *params;
     bool proceedToExport = true;
-    bool shouldDisplayErrors = !errors.isEmpty() || !warnings.isEmpty();
-    if (shouldDisplayErrors) {
+    QVariant ignoreWarnings = settings.value("export_ignore_warning");
+    if (!ignoreWarnings.isValid()) { ignoreWarnings.setValue(false); }
+    if (!errors.isEmpty() || (!ignoreWarnings.toBool() && !warnings.isEmpty())) {
         QMessageBox msg;
         bool error = !errors.isEmpty();
         msg.setIcon(error ? QMessageBox::Icon::Critical : QMessageBox::Warning);
@@ -706,7 +720,7 @@ inline bool isAuto(const QString& str) {
     return false;
 }
 // Only animations get to build arguments so don't worry about image output
-inline QString buildArgument(const exportParam& exParam, bool loopGif) {
+inline QString buildArgument(const exportParam& exParam) {
     // Default
     QString argument = "-y -hwaccel auto -f image2pipe";
     // Framerate
@@ -794,13 +808,10 @@ inline QString buildArgument(const exportParam& exParam, bool loopGif) {
             argument.append(" -lavfi split[v],palettegen,[v]paletteuse");
         }
     }
-    // Looping gif
+    // Looping (gif muxer specific)
     if (exParam.videoParams.format == availableVideoFormats::gif) {
-        if (loopGif) {
-            argument.append(" -loop 0");
-        } else {
-            argument.append(" -loop 1");
-        }
+        if (exParam.generalParams.loop) { argument.append(" -loop 0"); }
+        else { argument.append(" -loop -1"); }
     }
     // Output
     argument.append(" " + exParam.generalParams.exportFileName.absolutePath().replace(" ", "&#32"));
@@ -906,7 +917,7 @@ public:
         if (mProcess) {
             mProcess->closeWriteChannel();
             int progressTicks = 0;
-            while (!mProcess->waitForFinished()) {
+            while (mProcess->waitForFinished()) {
                 QApplication::processEvents();
                 progressTicks++;
                 if (progressTicks == 4) {
@@ -918,7 +929,6 @@ public:
                     formPointer->progressBar->setValue(static_cast<int>(100 * mProgress));
                 }
                 qDebug() << "Waiting for encode finish...";
-                mProcess->waitForFinished(5);
                 if (!aWaiter() || isExportFinished(export_obj.result) || export_errored(export_obj.result)) {
                     break;
                 }
@@ -994,7 +1004,7 @@ public:
             ? imageFormats[static_cast<int>(mParam.imageParams.format)].toUpper().toStdString()
             : intermediateImageFormats[static_cast<int>(mParam.videoParams.intermediateFormat)].toStdString();
         // Value initialization
-        mFrameCount = mParam.generalParams.framesToBeExported.count();
+        mFrameCount = (int)mParam.generalParams.framesToBeExported.count();
         mSaveAsImage = mParam.exportType == exportTarget::image;
         mParam.generalParams.fileName = QFileInfo(mParam.generalParams.exportFileName.absolutePath()).baseName();
         int ffc = mFrameCount;
@@ -1220,7 +1230,7 @@ public:
             }
             // Create image, pass to UI and save or write to ffmpeg
             {
-                auto outImage = mFramebuffers.back()->toImage();
+                const auto outImage = mFramebuffers.back()->toImage();
                 currentFrame = outImage;
                 // flush
                 ggl.glFlush();
@@ -1231,7 +1241,7 @@ public:
         return true;
     }
 
-    ExportResult renderAndExport() {
+    ExportResult renderAndExport(bool exportWithAudio, const std::vector<audioConfig>&validStreams) {
         auto exportResult = ExportResult();
         auto* widget = new QWidget();
         auto* form = new exportUI::form;
@@ -1296,7 +1306,7 @@ public:
             if (progressTicks == 4) {
                 progressTicks = 0;
             }
-            // This does slow down progress somewhat but I prefer better user feedback in this instance, if you have
+            // This does slow down progress somewhat, but I prefer better user feedback in this instance, if you have
             // a better idea to achieve the same please let me know!
             form->pixmapLabel->setPixmap(QPixmap::fromImage(currentFrame).scaled(500, 300, Qt::KeepAspectRatio));
             form->loadingMessage->setText(getProgressMessage(progressTicks));
@@ -1312,11 +1322,119 @@ public:
             exportResult.resultType = Success;
             exportResult.returnStr = "Export success";
         }
-        qDebug("---------");
+        qDebug("|---------|");
         qDebug() << export_obj.argument;
         qDebug("---------");
         qDebug() << export_obj.log;
-        qDebug("---------");
+        qDebug("|---------|");
+        finish([=]() -> bool { return true; }, form, frameTicks );
+        if(mProcess){ mProcess->waitForFinished(); }
+        bool exportIsVideo = mParam.exportType == exportTarget::video;
+        QString exportTarget = getFormatAsString(exportTarget::video, (int)mParam.videoParams.format);
+        bool formatIsAudioCapable = audioTargettable.contains(exportTarget);
+        if(exportIsVideo && formatIsAudioCapable && exportWithAudio && !validStreams.empty()) {
+            auto* reporter = new QWidget();
+            auto* reporterLayout = new QVBoxLayout(reporter);
+            auto* reporterLabel = new QLabel(tr("Mixing audio streams to output file"));
+            auto* reporterBar = new QProgressBar();
+            reporterBar->setMaximum((int)validStreams.size());
+            reporterLayout->addWidget(reporterLabel);
+            reporterLayout->addWidget(reporterBar);
+            int errors = 0;
+            QStringList log;
+            log.append("----------||||-----------");
+            log.append("Original audio stream size: " + QString::number(mProject.pConf->size()));
+            log.append(QString::number(validStreams.size()) + " valid audio stream(s) detected.");
+            int frameCount = mProject.currentTimeInfo().frameMax;
+            int index = 1;
+            reporter->show();
+            // TODO: Add error handling
+            for (const auto& audio : validStreams) {
+                log.append("----------||||-----------");
+                log.append("Mixing stream N° " + QString::number(index));
+                log.append(
+                    "Stream data:\n Name:" + audio.audioName +
+                    "\nPath: " + audio.audioPath.absoluteFilePath() +
+                    "\nStart frame: " + QString::number(audio.startFrame) +
+                    "\nEnd frame: " + QString::number(audio.endFrame) +
+                    "\nVolume: " + QString::number(audio.volume) +
+                    "\nEnabled: " + (audio.playbackEnable? "True": "False")
+                    );
+                QProcess audioProc;
+                QString file = mParam.generalParams.osExportTarget;
+                QString ffmpeg = export_obj.executable;
+                // Calculate time offset in milliseconds
+                int frame = abs(audio.startFrame);
+                double offset = (static_cast<float>(frame) / static_cast<float>(mProject.currentTimeInfo().fps));
+                QString posAsStr = QString::fromStdString(std::to_string(offset));
+                // We clamp the maximum audio duration to the max project frame
+                bool lastFrameLargerThanMax = audio.endFrame > frameCount;
+                int durInFrames = lastFrameLargerThanMax? abs(frame - frameCount): abs(audio.endFrame - audio.startFrame);
+                double duration = ((static_cast<float>(durInFrames) / static_cast<float>(mProject.currentTimeInfo().fps)));
+                QString durAsStr = QString::fromStdString(std::to_string(duration));
+                // Get volume
+                float volume = AudioPlaybackWidget::getVol(audio.volume);
+                // Create ffmpeg argument
+                QString format = getFormatAsString(exportTarget::video, (int)mParam.videoParams.format);
+                QString musTemp = mParam.generalParams.osExportTarget;
+                musTemp.replace("." + format, ".mus.temp." + format);
+                auto argument = QStringList();
+                argument.append("-y");
+                argument.append("-i"); argument.append(file);
+                argument.append("-itsoffset"); argument.append(posAsStr + 's');
+                argument.append("-i"); argument.append(audio.audioPath.absoluteFilePath());
+                argument.append("-t"); argument.append(durAsStr + 's');
+                if(index > 1) {
+                    // We mix the previous audio streams (should they exist) with the current
+                    argument.append("-filter_complex");
+                    argument.append(QString("[1:a]volume=") + QString::number(volume) +  QString(", amix=inputs=2:duration=longest"));
+                    argument.append("-c:v"); argument.append("copy");
+                }
+                else{
+                    argument.append("-filter:a"); argument.append("volume=" + QString::number(volume));
+                    argument.append("-map"); argument.append("0:0");
+                    argument.append("-map"); argument.append("1:0");
+                    argument.append("-c:v"); argument.append("copy");
+                    argument.append("-preset"); argument.append("ultrafast");
+                    argument.append("-shortest");
+                }
+                argument.append("-async"); argument.append("1");
+                argument.append(musTemp);
+
+                log.append("Mixing stream with FFmpeg command:\n" + argument.join(" "));
+                audioProc.start(ffmpeg, argument, QProcess::ReadWrite);
+                audioProc.waitForStarted();
+                audioProc.waitForFinished();
+                log.append("-- Output --");
+                log.append(audioProc.readAllStandardOutput());
+                log.append("-- Error --");
+                log.append(audioProc.readAllStandardError());
+                log.append("--");
+                log.append(audioProc.errorString());
+                log.append("-- Process exit code --");
+                log.append(QString::number(audioProc.exitCode()));
+                reporterBar->setValue(index);
+                index++;
+                QCoreApplication::processEvents();
+                if(audioProc.exitCode() == 0){
+                    QFile(mParam.generalParams.osExportTarget).remove();
+                    QFile(musTemp).rename(mParam.generalParams.osExportTarget);
+                }
+                else{ errors += 1; }
+                log.append("----------||||-----------");
+            }
+            if(errors >= 1){
+                QMessageBox error;
+                error.setWindowTitle(tr("Audio stream mix failed"));
+                error.setText(QString::number(errors) + tr(" error(s) have occurred during audio mixing.\n"
+                                                           "If this was not a user error please send the following info to the devs."));
+                error.setIcon(QMessageBox::Critical);
+                error.setDetailedText(log.join("\n"));
+                error.exec();
+            }
+            reporter->close();
+            reporter->deleteLater();
+        }
         widget->deleteLater();
         return exportResult;
     }

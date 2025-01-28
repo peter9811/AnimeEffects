@@ -58,10 +58,10 @@ void MeshTransformer::callGL(
     if ((!aNonPosed && aExpans.bone().isAffectedByBinding()) || useInfluence) {
         worldMatrix = aExpans.bone().outerMatrix();
         innerMatrix = aExpans.bone().innerMatrix();
-        innerMatrix.translate(static_cast<QVector3D>(aOriginOffset));
+        innerMatrix.translate(aOriginOffset.toVector3D());
     } else {
         worldMatrix = aExpans.srt().worldCSRTMatrix();
-        worldMatrix.translate(static_cast<QVector3D>(aOriginOffset));
+        worldMatrix.translate(aOriginOffset.toVector3D());
     }
 
     gl::Global::Functions& ggl = gl::Global::functions();

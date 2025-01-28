@@ -161,15 +161,15 @@ void LayerNode::render(const RenderInfo& aInfo, const TimeCacheAccessor& aAccess
     if (aInfo.isGrid)
         return;
 
+    // render clippees
+    renderClippees(aInfo, aAccessor);
+
     // render hsv
     if (!mTimeLine.isEmpty(TimeKeyType_HSV)) {
         if (aInfo.time.frame.get() >= mTimeLine.map(TimeKeyType_HSV).values().first()->frame()) {
             renderHSV(aInfo, aAccessor, aAccessor.get(mTimeLine).hsv().hsv());
         }
     }
-
-    // render clippees
-    renderClippees(aInfo, aAccessor);
 }
 
 void LayerNode::renderClippees(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor) {
@@ -294,7 +294,8 @@ void LayerNode::transformShape(const RenderInfo& aInfo, const TimeCacheAccessor&
                 return;
         }
         positions = util::ArrayBlock<const gl::Vector3>(mesh->positions(), mesh->vertexCount());
-    } else {
+    }
+    else {
         useInfluence = (mesh == expans.bone().targetMesh());
         positions = util::ArrayBlock<const gl::Vector3>(expans.ffd().positions(), expans.ffd().count());
         XC_MSG_ASSERT(
@@ -389,7 +390,8 @@ void LayerNode::renderShape(const RenderInfo& aInfo, const TimeCacheAccessor& aA
 
     if (aInfo.isGrid) {
         ggl.glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    } else {
+    }
+    else {
         ggl.glActiveTexture(GL_TEXTURE0);
         ggl.glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -400,10 +402,10 @@ void LayerNode::renderShape(const RenderInfo& aInfo, const TimeCacheAccessor& aA
     ggl.glFlush();
 }
 
-void LayerNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor, const QList<int>& HSVData) {
+void LayerNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAccessor, QList<int> HSVData) {
     if (!mCurrentMesh)
         return;
-
+    if(HSVData.isEmpty()){ return; }
     gl::Global::Functions& ggl = gl::Global::functions();
     const bool isClippee = (aInfo.clippingFrame && aInfo.clippingId != 0);
 
@@ -460,7 +462,6 @@ void LayerNode::renderHSV(const RenderInfo& aInfo, const TimeCacheAccessor& aAcc
         shader.setUniformValue("uImageSize", QSizeF(textureSize));
         shader.setUniformValue("uTexCoordOffset", texCoordOffset);
         shader.setUniformValue("uDestTexture", 1);
-
         shader.setUniformValue("setColor", bool(HSVData[3]));
 
         float hue = (float)HSVData[0] / 360.0f;

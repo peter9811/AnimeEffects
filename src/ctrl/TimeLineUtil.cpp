@@ -29,6 +29,9 @@ namespace TimeLineUtil {
     bool MoveFrameOfKey::lessThan(const TimeLineEvent::Target& aLhs, const TimeLineEvent::Target& aRhs) {
         return aLhs.pos.index() < aRhs.pos.index();
     }
+    bool MoveFrameOfKey::greaterThan(const TimeLineEvent::Target& aLhs, const TimeLineEvent::Target& aRhs) {
+        return aLhs.pos.index() > aRhs.pos.index();
+    }
 
     bool MoveFrameOfKey::contains(const core::TimeLine::MapType& aMap, int aIndex) {
         if (mCurrent == 0) {

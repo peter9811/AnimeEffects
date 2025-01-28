@@ -87,6 +87,10 @@ KeyCommandMap::KeyCommandMap(QWidget& aParent):
 
     addNewKey("SelectFFD", tools, tr("Select FFD editor"), ctrl::KeyBinding(Qt::Key_6));
 
+    addNewKey("MoveFrameLeft", timeline, tr("Move one frame to the left"), ctrl::KeyBinding(Qt::Key_1, Qt::AltModifier));
+
+    addNewKey("MoveFrameRight", timeline, tr("Move one frame to the right"), ctrl::KeyBinding(Qt::Key_3, Qt::AltModifier));
+
     resetSubKeyCommands();
 }
 
@@ -107,7 +111,7 @@ void KeyCommandMap::readFrom(const QSettings& aSrc) {
         for (auto command : mCommands) {
             if (aSrc.value(command->key).isValid()) {
                 aSrc.value(command->key).clear();
-            };
+            }
         }
         settings.value("keybindReset").clear();
         settings.sync();

@@ -195,7 +195,7 @@ void MainDisplayWidget::initializeGL() {
         }
     }
     // initialize opengl functions
-    auto functions =QOpenGLVersionFunctionsFactory::get<gl::Global::Functions>(this->context());
+    auto functions = QOpenGLVersionFunctionsFactory::get<gl::Global::Functions>(this->context());
     if (!functions) {
         XC_FATAL_ERROR("OpenGL Error", "Failed to get opengl functions.", "");
     }

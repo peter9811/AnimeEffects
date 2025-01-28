@@ -4,7 +4,6 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QCheckBox>
-#include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
@@ -18,8 +17,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QFileDialog>
-#include <QMessageBox>
-#include <QtMultimedia/QAudio>
 #include <QtMultimedia/QMediaPlayer>
 #include <QtMultimedia/QAudioOutput>
 #include <utility>
@@ -30,7 +27,7 @@ struct audioConfig{
     bool playbackEnable = true;
     int volume = 100;
     int startFrame = 0;
-    int endFrame = 250;
+    int endFrame = 500;
 };
 struct mediaState{
     bool playing = false;
@@ -79,6 +76,17 @@ public:
     static bool serialize(std::vector<audioConfig>* pConf, const QString& outPath);
     static bool deserialize(const QJsonObject& pConf, std::vector<audioConfig>* playbackConfig) ;
     static float getVol(int volume){ return static_cast<float>(volume / 100.0); }
+    static std::vector<audioConfig> getValidAudioStreams(const std::vector<audioConfig>& pConf){
+        std::vector<audioConfig> conf;
+        for(auto config: pConf){
+            if(config.startFrame > config.endFrame){ std::swap(config.startFrame, config.endFrame); }
+            if( config.playbackEnable && config.startFrame - config.endFrame <= 0 &&
+                config.audioPath.exists() && config.audioPath.isReadable()){
+                conf.emplace_back(config);
+            }
+        }
+        return conf;
+    }
     static void correctTrackPos(QMediaPlayer* player, int curFrame, int frameCount, int fps, audioConfig& config);
     void setupUi(QWidget *audioWidget, mediaState *mediaPlayer, std::vector<audioConfig>* config){
         if (audioWidget->objectName().isEmpty()) {audioWidget->setObjectName(QString::fromUtf8("audioWidget")); }

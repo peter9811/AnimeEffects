@@ -57,6 +57,7 @@ public:
     const TimeKeyExpans& working() const { return *mWorking; }
 
     bool move(TimeKeyType aType, int aFrom, int aTo);
+    bool overwriteMove(TimeKeyType aType, int aFrom, int aTo);
     cmnd::Base* createPusher(TimeKeyType aType, int aFrame, TimeKey* aTimeKey);
     cmnd::Base* createRemover(TimeKeyType aType, int aFrame, bool aOptional = false);
 

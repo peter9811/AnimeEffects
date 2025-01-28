@@ -29,7 +29,7 @@ jobs:
     - name: Get dependencies
       shell: bash
       run: |
-          brew install cmake ninja vulkan-headers
+          brew install cmake ninja vulkan-headers coreutils
     - name: Build AnimeEffects
       shell: bash
       run: |
@@ -48,8 +48,8 @@ jobs:
         ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
         cp -R ../../data AnimeEffects.app/data
         zip -r AnimeEffects.zip AnimeEffects.app
-        echo "artifactPath=$(realpath AnimeEffects.zip)`"
-        echo "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
+        echo -n "artifactPath=$(realpath AnimeEffects.zip)`"
+        echo -n "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
     - name: Github Artifacts
       uses: actions/upload-artifact@v4
       with:

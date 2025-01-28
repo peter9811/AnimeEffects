@@ -29,12 +29,12 @@ namespace TimeLineUtil {
     public:
         MoveFrameOfKey(const core::TimeLineEvent& aCommandEvent);
         bool modifyMove(core::TimeLineEvent& aModEvent, int aAdd, const util::Range& aFrame, int* aClampedAdd);
-
+        static bool lessThan(const core::TimeLineEvent::Target& aLhs, const core::TimeLineEvent::Target& aRhs);
+        static bool greaterThan(const core::TimeLineEvent::Target& aLhs, const core::TimeLineEvent::Target& aRhs);
         virtual void undo();
         virtual void redo();
 
     private:
-        static bool lessThan(const core::TimeLineEvent::Target& aLhs, const core::TimeLineEvent::Target& aRhs);
         bool contains(const core::TimeLine::MapType& aMap, int aIndex);
 
         QVector<core::TimeLineEvent::Target> mSortedTargets;

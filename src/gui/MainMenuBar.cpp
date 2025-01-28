@@ -361,12 +361,23 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         helpMenu->addAction(checkForUpdates);
     }
 
+    auto donateMenu = new QAction(tr("Donate"), this);
+    {
+        connect(donateMenu, &QAction::triggered, [=](){
+            QDesktopServices::openUrl(QUrl("https://ko-fi.com/yukusai"));
+        });
+    }
+
     this->addAction(fileMenu->menuAction());
     this->addAction(editMenu->menuAction());
     this->addAction(projMenu->menuAction());
     this->addAction(windowMenu->menuAction());
     this->addAction(optionMenu->menuAction());
     this->addAction(helpMenu->menuAction());
+    QSettings settings;
+    bool donationAllowed = !settings.value("generalsettings/ui/donationAllowed").isValid()
+                            || settings.value("generalsettings/ui/donationAllowed").toBool();
+    if(donationAllowed) { this->addAction(donateMenu); }
 
     // reset status
     setProject(nullptr);

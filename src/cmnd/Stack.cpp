@@ -4,7 +4,7 @@
 namespace cmnd {
 
 Stack::Stack():
-    mLimit(32),
+    mLimit(64),
     mCommands(),
     mCurrent(mCommands.end()),
     mMacro(),

@@ -16,6 +16,8 @@
 #include <QLoggingCategory>
 #include <QtConcurrent>
 
+// This MSVC debugger is not useful and only serves to pain me in the ways it unexpectedly fails,
+// I'm sure it worked wonderfully before, but it sure doesn't anymore
 
 #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
 extern MemoryRegister gMemoryRegister;
@@ -27,7 +29,7 @@ extern BackTracer gBackTracer;
 
 class AEAssertHandler: public XCAssertHandler {
 public:
-    virtual void failure() const {
+    void failure() const override {
 #if defined(USE_MSVC_BACKTRACE)
         gBackTracer.dumpCurrent();
 #endif // USE_MSVC_BACKTRACE
@@ -36,7 +38,7 @@ public:
 
 class AEErrorHandler: public XCErrorHandler {
 public:
-    virtual void critical(const QString& aText, const QString& aInfo, const QString& aDetail) const {
+    void critical(const QString& aText, const QString& aInfo, const QString& aDetail) const override {
         XC_REPORT() << aText << "\n" << aInfo << "\n" << aDetail;
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Critical);
@@ -58,7 +60,7 @@ public:
 
 XCAssertHandler* gXCAssertHandler = nullptr;
 XCErrorHandler* gXCErrorHandler = nullptr;
-static AEAssertHandler sAEAssertHandler;
+static AEAssertHandler AEAssertHandler;
 
 #if defined(USE_MSVC_BACKTRACE)
     #define TRY_ACTION_WITH_EXCEPT(action) \
@@ -76,26 +78,23 @@ static AEAssertHandler sAEAssertHandler;
 int entryPoint(int argc, char* argv[]);
 
 int main(int argc, char* argv[]) {
-    gXCAssertHandler = &sAEAssertHandler;
-#if defined(USE_MSVC_MEMORYLEAK_DEBUG)
-    _CrtSetAllocHook(myAllocHook);
-#endif // USE_MSVC_MEMORYLEAK_DEBUG
+    // Define XC Assert
+    gXCAssertHandler = &AEAssertHandler;
+    #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
+        _CrtSetAllocHook(myAllocHook);
+    #endif // USE_MSVC_MEMORYLEAK_DEBUG
+
     int result = 0;
-    // Hidefuku *tried* to make an error handler, either due to architectural changes or some other issue it just
-    // doesn't work, at all, even doing a try/catch block doesn't cut it, please help...
-    TRY_ACTION_WITH_EXCEPT(result = entryPoint(argc, argv));
-    /*
-    try { (result = entryPoint(argc, argv)); }
+    // TRY_ACTION_WITH_EXCEPT(result = entryPoint(argc, argv));
+    try { result = entryPoint(argc, argv); }
     catch(...){
-        QMessageBox::warning(nullptr, "Whoops", "The app has crashed unexpectedly, sorry for that");
+        QMessageBox::warning(nullptr, "Error code: " + QString::number(result), "An unexpected error has occurred, please restart the application.");
         result = -1;
     }
-    */
-#if defined(USE_MSVC_MEMORYLEAK_DEBUG)
-    gMemoryRegister.dumpAll();
-    gMemoryRegister.final();
-#endif // USE_MSVC_MEMORYLEAK_DEBUG
-
+    #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
+        gMemoryRegister.dumpAll();
+        gMemoryRegister.final();
+    #endif // USE_MSVC_MEMORYLEAK_DEBUG
     return result;
 }
 
@@ -103,6 +102,7 @@ int entryPoint(int argc, char* argv[]) {
     int result = 0;
     // create qt application
     QApplication app(argc, argv);
+    QLoggingCategory::defaultCategory()->setEnabled(QtInfoMsg, true);
     QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, true);
     // app.setAttribute(Qt::AA_DontUseNativeDialogs);
     XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
@@ -114,7 +114,28 @@ int entryPoint(int argc, char* argv[]) {
 #else
     const QString appDir = app.applicationDirPath();
 #endif
-    const QString resourceDir(appDir + "/data");
+    QString resourceDir(appDir + "/data");
+    QDir dataDir = QDir(resourceDir);
+    if(!dataDir.exists() || dataDir.isEmpty()){
+        QString newResDir;
+        QSettings settings;
+        QVariant customDataFolder = settings.value("customDataFolder");
+        if(customDataFolder.isValid()){
+            QDir cdf = QDir(customDataFolder.toString());
+            if(cdf.exists() && !cdf.isEmpty()){
+                newResDir = customDataFolder.toString();
+            }
+        }
+        if(newResDir.isEmpty()){
+            newResDir = QFileDialog::getExistingDirectory(app.activeWindow(), QCoreApplication::translate("data_load", "Unable to locate data folder, please select it"),
+                                                appDir,
+                                                QFileDialog::ShowDirsOnly
+                                                | QFileDialog::DontResolveSymlinks);
+            settings.setValue("customDataFolder", newResDir);
+        }
+        resourceDir = newResDir;
+    }
+
     const QString stdCacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     const QString cacheDir = !stdCacheDir.isEmpty() ? stdCacheDir : (appDir + "/cache");
 
@@ -133,9 +154,7 @@ int entryPoint(int argc, char* argv[]) {
 
     // language
     QScopedPointer<gui::LocaleDecider> locale(new gui::LocaleDecider());
-    if (locale->translator()) {
-        app.installTranslator(locale->translator());
-    }
+    if (locale->translator()) { QCoreApplication::installTranslator(locale->translator()); }
 
     {
         // load constant gui resources
@@ -153,7 +172,7 @@ int entryPoint(int argc, char* argv[]) {
 
         // checkForUpdates
         util::NetworkUtil networking;
-        QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
+        const QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
         util::NetworkUtil::checkForUpdate(url, networking, mainWindow->window(), false);
 
 
@@ -163,9 +182,9 @@ int entryPoint(int argc, char* argv[]) {
         mainWindow->testNewProject(testPath);
 #endif
         // assoc handle
-        auto arguments = app.arguments();
+        auto arguments = QCoreApplication::arguments();
         if (arguments.last().contains(".anie")) {
-            auto file = arguments.last();
+            const auto& file = arguments.last();
             if (QFile(file).exists()) {
                 mainWindow->onOpenRecentTriggered(file);
             }
@@ -174,20 +193,20 @@ int entryPoint(int argc, char* argv[]) {
         resources->triggerOnThemeChanged();
 
         // execute application
-        result = app.exec();
+        result = QCoreApplication::exec();
 
         // save settings(window status, etc.)
         mainWindow->saveCurrentSettings(result);
 
         // bind gl context for destructors
         gl::Global::makeCurrent();
-        qDebug() << "dst main window";
+        qDebug() << "clearing main window";
         mainWindow.reset();
-        qDebug() << "dst system";
+        qDebug() << "clearing system";
         system.reset();
-        qDebug() << "dst resources";
+        qDebug() << "clearing resources";
         resources.reset();
-        qDebug() << "dst major components";
+        qDebug() << "core application end";
     }
 
     return result;

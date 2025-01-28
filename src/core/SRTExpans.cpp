@@ -11,14 +11,13 @@ bool SRTExpans::hasSplineCache(Frame aFrame) const {
 
     if (mSplineCache.isNegative()) {
         return aFrame >= mSplineCache.min() || aFrame <= mSplineCache.max();
-    } else {
-        return mSplineCache.contains(aFrame.getDecimal());
     }
+    return mSplineCache.contains(aFrame.getDecimal());
 }
 
 QMatrix4x4 SRTExpans::localCSRTMatrix() const {
     QMatrix4x4 mtx = localSRTMatrix();
-    mtx.translate(static_cast<QVector3D>(mCentroid));
+    mtx.translate(mCentroid.toVector3D());
     return mtx;
 }
 

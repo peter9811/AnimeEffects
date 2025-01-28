@@ -122,7 +122,13 @@ QFileInfo NetworkUtil::downloadGithubFile(const QString& aURL, const QString& aF
                 if (aID == urlID) {
                     downloadURL = assets.toObject().value("browser_download_url").toString();
                 } else {
-                    qDebug() << "ID Mismatch. \nID Expected:" << aID << "- ID Value:" << urlID;
+                    QMessageBox msgbox;
+                    msgbox.setIcon(QMessageBox::Warning);
+                    msgbox.setWindowTitle("Invalid file ID");
+                    msgbox.setText("Invalid ID for selected file, this probably indicates that you need to update AnimeEffects to its latest version.\nExpected File ID:" +
+                                 QString::number(aID) + "- Parsed File ID:" + QString::number(urlID));
+                    msgbox.exec();
+                    return {};
                 }
             }
             // Otherwise just get the asset url

@@ -21,6 +21,7 @@ add_library(${PROJECT_NAME}
     ResourceHandle.cpp ResourceHandle.h
     ResourceNode.cpp ResourceNode.h
     Util.cpp Util.h
+        ORAReader.h
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
     ..
@@ -45,5 +46,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         Qt6::OpenGL
         Qt6::OpenGLWidgets
         Qt6::Xml
-    util
+        util
+        pugixml
 )

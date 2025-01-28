@@ -23,6 +23,8 @@ namespace gui {
 //-------------------------------------------------------------------------------------------------
 class ObjectTreeWidget: public QTreeWidget {
     Q_OBJECT
+    obj::Item* createFileItem(core::ObjectNode& aNode);
+
 public:
     enum { kItemColumn = 0 };
     enum { kColumnCount = 1 };
@@ -65,7 +67,6 @@ private:
     void createTree(core::ObjectTree* aTree);
     void addItemRecursive(QTreeWidgetItem* aItem, core::ObjectNode* aNode);
     obj::Item* createFolderItem(core::ObjectNode& aNode);
-    obj::Item* createFileItem(core::ObjectNode& aNode);
     QModelIndex cheatDragDropPos(QPoint& aPos);
     QPoint treeTopLeftPosition() const;
     int scrollHeight() const { return -treeTopLeftPosition().y(); }
@@ -111,6 +112,8 @@ private:
     QAction* mObjectMirror;
     QAction* mFolderAction;
     QAction* mDeleteAction;
+    void addLayer(QTreeWidgetItem* mActionItem, core::ObjectNode* itemNode);
+    void addFolder(QTreeWidgetItem* mActionItem, core::ObjectNode* itemNode);
 };
 
 } // namespace gui

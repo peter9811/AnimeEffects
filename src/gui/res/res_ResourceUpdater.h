@@ -8,8 +8,7 @@
 #include "gui/res/res_Item.h"
 #include "gui/res/res_Notifier.h"
 
-namespace gui {
-namespace res {
+namespace gui::res {
 
     class ResourceUpdater: public QObject {
         Q_OBJECT
@@ -25,6 +24,7 @@ namespace res {
         img::ResourceNode* createResourceTree(const QString& aFilePath, bool aLoadImage);
         img::ResourceNode* createQImageTree(const QString& aFilePath, bool aLoadImage) const;
         img::ResourceNode* createPsdTree(const QString& aFilePath, bool aLoadImage);
+        img::ResourceNode* createOraTree(const QString& aFilePath, bool aLoadImage);
 
         bool createImageReloaderRecursive(
             cmnd::Stack& aStack,
@@ -44,7 +44,7 @@ namespace res {
         std::unique_ptr<img::PSDFormat> mPSDFormat;
     };
 
-} // namespace res
-} // namespace gui
+} // namespace gui::res
+
 
 #endif // GUI_RES_RESOURCEUPDATER_H

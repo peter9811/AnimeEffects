@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include "gui/GUIResources.h"
 #include "gui/AudioPlaybackWidget.h"
+#include "core/Project.h"
 
 namespace gui {
 
@@ -25,7 +26,7 @@ public:
     };
     typedef std::function<void(PushType)> PushDelegate;
 
-    PlayBackWidget(GUIResources& aResources, QWidget* aParent);
+    PlayBackWidget(GUIResources& aResources, QWidget* aParent, core::Project& aProject);
 
     void setPushDelegate(const PushDelegate& aDelegate);
     bool isLoopChecked();
@@ -34,6 +35,7 @@ public:
     bool isPlaying();
     static int constantWidth() ;
     void pushPauseButton();
+    core::Project* aProject;
     QWidget* audioUI = new QWidget(this, Qt::Window);
     std::vector<audioConfig>* aConf = new std::vector<audioConfig>;
     mediaState mediaPlayer;

@@ -39,11 +39,11 @@ gl::EasyShaderProgram& ShaderHolder::reserveShader(img::BlendMode aBlendMode, bo
         gl::ExtendShader source;
         if (!source.openFromFileVert("./data/shader/LayerDrawingVert.glsl")) {
             XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
-                               "Failed to open vertex shader file.", source.log());
+                               "Failed to open vertex shader file.\n", source.log());
         }
         if (!source.openFromFileFrag("./data/shader/LayerDrawingFrag.glsl")) {
             XC_FATAL_ERROR("FileIO Error", "Current location: " + QDir::currentPath() +
-                               "Failed to open fragment shader file.", source.log());
+                               "Failed to open fragment shader file.\n", source.log());
         }
 
         auto blendFunc = QString("Blend") + img::getBlendFuncNameFromBlendMode(aBlendMode);
@@ -52,15 +52,15 @@ gl::EasyShaderProgram& ShaderHolder::reserveShader(img::BlendMode aBlendMode, bo
         source.setVariationValue("IS_CLIPPEE", aIsClippee ? "1" : "0");
 
         if (!source.resolveVariation()) {
-            XC_FATAL_ERROR("OpenGL Error", "Failed to resolve shader variation.", source.log());
+            XC_FATAL_ERROR("OpenGL Error", "Failed to resolve shader variation.\n", source.log());
         }
 
         if (!shader->setAllSource(source)) {
-            XC_FATAL_ERROR("OpenGL Error", "Failed to compile shader.", shader->log());
+            XC_FATAL_ERROR("OpenGL Error", "Failed to compile shader.\n", shader->log());
         }
 
         if (!shader->link()) {
-            XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.", shader->log());
+            XC_FATAL_ERROR("OpenGL Error", "Failed to link shader.\n", shader->log());
         }
     }
     return *mShaders[index];

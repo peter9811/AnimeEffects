@@ -112,6 +112,7 @@ private:
     QScopedPointer<DriverHolder> mDriverHolder;
     core::Project* mCurrent;
     LocaleParam mLocaleParam;
+    void onMoveFrameTriggered(bool moveRight);
 };
 
 } // namespace gui

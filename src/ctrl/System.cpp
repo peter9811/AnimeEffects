@@ -150,21 +150,35 @@ System::SaveResult System::saveProject(core::Project& aProject) {
     if (project && !project->isNameless()) {
         const QString outputPath = project->fileName();
         const QString cachePath = mCacheDir + "/lastproject.cache";
+
         // ensure the string "%20" is not used
         if (outputPath.contains("%20")) {
-            return SaveResult(false, "Please do not use '%20' for naming anie files.");
-        }
-        // ensure only ascii is used
-        if (!isAllAscii(outputPath.toStdString())) {
-            return SaveResult(false, "Please only utilize ASCII characters for naming .anie files.");
+            return SaveResult(false, "Please do not use the string '%20' when naming .anie files.");
         }
 
         // create cache directory
         if (!makeSureCacheDirectory(mCacheDir)) {
             return SaveResult(false, "Failed to create cache directory.");
         }
-
         ctrl::ProjectSaver saver;
+
+        // ensure only ascii is used
+        std::string filename = QFileInfo(outputPath).completeBaseName().toStdString();
+        if (!isAllAscii(filename)) {
+            QMessageBox confirmation;
+            confirmation.setText(QCoreApplication::translate(
+                "projectSave", "Non ascii characters detected, this may cause issues.\nSave anyway?", nullptr
+            ));
+            confirmation.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+            confirmation.setDefaultButton(QMessageBox::Cancel);
+            confirmation.setWindowTitle(
+                QCoreApplication::translate("projectSave", "Unicode on filename detected", nullptr)
+            );
+            if (confirmation.exec() != QMessageBox::Yes) {
+                return SaveResult(false, "Please only utilize ASCII characters for naming .anie files.");
+            }
+            saver.log().append("ASCII override.");
+        }
 
         if (!saver.save(cachePath, *project)) {
             return SaveResult(false, "Failed to save project. (" + saver.log() + ")");

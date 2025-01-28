@@ -12,7 +12,7 @@ TargetWidget::TargetWidget(ViaPoint& aViaPoint, GUIResources& aResources, QWidge
     mHorizontalSplitter = new QSplitter(this);
     mObjTree = new ObjectTreeWidget(aViaPoint, aResources, this);
     mTimeLine = new TimeLineWidget(aResources, aViaPoint, *this, this);
-    mPlayBack = new PlayBackWidget(aResources, this);
+    mPlayBack = new PlayBackWidget(aResources, this, *mProject);
 
     mInfoLabel = new TimeLineInfoWidget(aResources, this);
 
@@ -48,9 +48,18 @@ void TargetWidget::setProject(core::Project* aProject) {
     mTimeLine->setProject(aProject);
     mInfoLabel->setProject(aProject);
     mInfoLabel->setPlayback(mPlayBack);
+    mPlayBack->aProject = aProject;
 }
 
 core::Frame TargetWidget::currentFrame() const { return mTimeLine->currentFrame(); }
+
+void refreshMedia(core::Project* mProject, PlayBackWidget* mPlayBack){
+    if(mProject->mediaRefresh){
+        mPlayBack->aConf = mProject->pConf;
+        mPlayBack->mediaPlayer = *mProject->mediaPlayer;
+        mProject->mediaRefresh = false;
+    }
+}
 
 void TargetWidget::stop() { mPlayBack->pushPauseButton(); }
 
@@ -66,10 +75,11 @@ bool TargetWidget::isSuspended() const { return mSuspendCount > 0; }
 void TargetWidget::onPlayBackButtonPushed(PlayBackWidget::PushType aType) {
     if (!mProject)
         return;
-
     if (aType == PlayBackWidget::PushType_Play) {
+        refreshMedia(mProject, mPlayBack);
         mTimeLine->setPlayBackActivity(true, mPlayBack->aConf, &mPlayBack->mediaPlayer);
     } else if (aType == PlayBackWidget::PushType_Pause) {
+        refreshMedia(mProject, mPlayBack);
         mTimeLine->setPlayBackActivity(false, mPlayBack->aConf, &mPlayBack->mediaPlayer);
     } else if (aType == PlayBackWidget::PushType_Step) {
         mTimeLine->setFrame(currentFrame().added(1));

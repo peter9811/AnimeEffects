@@ -925,7 +925,7 @@ void MainWindow::onCloseProjectTriggered() {
     }
 }
 
-// Variable is set both locally and in the settings, a bit overkill ;)
+// Variable is set both locally and in the settings, a bit overkill...
 void updateSettings(QVariant *var, QSettings *settings, int value, const QString& key){
     if(var->toInt() != value){
         var->setValue(value);
@@ -1003,51 +1003,46 @@ void MainWindow::onExportTriggered() {
             return;
         }
         // Test FFmpeg functionality before attempting export
-        else{
-            QMessageBox ffmpegNotif;
-            ffmpegNotif.setIcon(QMessageBox::Critical);
-            // PNG to GIF conversion test
-            QString testFile = QFileInfo("./data/themes/classic/icon/filew.png").absoluteFilePath();
-            QProcess gif;
-            gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
-            gif.waitForFinished();
-            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo::exists("gif.gif");
-            qDebug() << "Gif exists: " << QFileInfo::exists("gif.gif")
-                     << "| Gif remove: " << QFile("gif.gif").remove();
-            gif.deleteLater();
-            if (!exportSuccess) {
-                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't export"));
-                ffmpegNotif.setText(tr("FFmpeg was unable to export, please troubleshoot."));
-                ffmpegNotif.addButton(QMessageBox::Ok);
-                ffmpegNotif.exec();
-                auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
-                generalSettingsDialog->selectTab(2);
-                generalSettingsDialog->exec();
-                ffCheck.setValue(true);
-                return;
-            }
-            // Palettegen test
-            QProcess palettegen;
-            palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"}, QProcess::ReadWrite);
-            palettegen.waitForFinished();
-            bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo::exists("palette.png");
-            if (!pGenSuccess) {
-                ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
-                ffmpegNotif.setText(
-                    tr("FFmpeg was unable to generate palettes, please troubleshoot.")
-                );
-                ffmpegNotif.addButton(QMessageBox::Ok);
-                ffmpegNotif.exec();
-                auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
-                generalSettingsDialog->selectTab(2);
-                generalSettingsDialog->exec();
-                ffCheck.setValue(true);
-                return;
-            }
-            qDebug() << "Palette exists: " << QFileInfo::exists("palette.png")
-                     << "| Palette remove: " << QFile("palette.png").remove();
-            palettegen.deleteLater();
+        QMessageBox ffmpegNotif;
+        ffmpegNotif.setIcon(QMessageBox::Critical);
+        // PNG to GIF conversion test
+        QString testFile = QFileInfo("./data/themes/classic/icon/filew.png").absoluteFilePath();
+        QProcess gif;
+        gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
+        gif.waitForFinished();
+        bool exportSuccess = gif.exitStatus() == 0 && QFileInfo::exists("gif.gif");
+        qDebug() << "Gif exists: " << QFileInfo::exists("gif.gif") << "| Gif remove: " << QFile("gif.gif").remove();
+        gif.deleteLater();
+        if (!exportSuccess) {
+            ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't export"));
+            ffmpegNotif.setText(tr("FFmpeg was unable to export, please troubleshoot."));
+            ffmpegNotif.addButton(QMessageBox::Ok);
+            ffmpegNotif.exec();
+            auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+            generalSettingsDialog->selectTab(2);
+            generalSettingsDialog->exec();
+            ffCheck.setValue(true);
+            return;
         }
+        // Palettegen test
+        QProcess palettegen;
+        palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"}, QProcess::ReadWrite);
+        palettegen.waitForFinished();
+        bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo::exists("palette.png");
+        if (!pGenSuccess) {
+            ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
+            ffmpegNotif.setText(tr("FFmpeg was unable to generate palettes, please troubleshoot."));
+            ffmpegNotif.addButton(QMessageBox::Ok);
+            ffmpegNotif.exec();
+            auto* generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
+            generalSettingsDialog->selectTab(2);
+            generalSettingsDialog->exec();
+            ffCheck.setValue(true);
+            return;
+        }
+        qDebug() << "Palette exists: " << QFileInfo::exists("palette.png")
+                 << "| Palette remove: " << QFile("palette.png").remove();
+        palettegen.deleteLater();
         ffCheck.setValue(false);
     }
     // Initialize export diag

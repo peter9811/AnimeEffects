@@ -253,6 +253,9 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         auto donationAllowed = settings.value("generalsettings/ui/donationAllowed");
         bDonationAllowed = !donationAllowed.isValid() || donationAllowed.toBool();
 
+        auto ignoreWarnings = settings.value("export_ignore_warnings");
+        bIgnoreWarnings = ignoreWarnings.isValid()? false : ignoreWarnings.toBool();
+
         auto isAutoSave = settings.value("generalsettings/projects/autosaveEnabled");
         bAutoSave = isAutoSave.isValid() && isAutoSave.toBool();
 
@@ -316,6 +319,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mDonationAllowed = new QCheckBox();
         mDonationAllowed->setChecked(bDonationAllowed);
         form->addRow(tr("Allow donation menu : "), mDonationAllowed);
+
+        mIgnoreWarnings = new QCheckBox();
+        mIgnoreWarnings->setChecked(bIgnoreWarnings);
+        form->addRow(tr("Ignore export warnings :"), mIgnoreWarnings);
     }
 
     auto projectSaving = new QFormLayout();
@@ -355,22 +362,6 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mAutoCbCopy = new QCheckBox();
         mAutoCbCopy->setChecked(bAutoCbCopy);
         keysettings->addRow(tr("Automatically copy keys to the clipboard"), mAutoCbCopy);
-
-        /*
-        mHSVBlendColor = new QCheckBox();
-        mHSVBlendColor->setChecked(bHSVBlendColor);
-        keysettings->addRow(tr("HSV | Blend color : "), mHSVBlendColor);
-
-        mHSVFolder = new QCheckBox();
-        mHSVFolder->setChecked(bHSVFolder);
-        keysettings->addRow(tr("HSV | Enable folder support (beta)"), mHSVFolder);
-
-        mHSVBehaviour = new QComboBox();
-        mHSVBehaviour->addItem(tr("Render indefinitely"));
-        mHSVBehaviour->addItem(tr("Only render between keys"));
-        mHSVBehaviour->setCurrentIndex(mInitialHSVBehaviour);
-        keysettings->addRow(tr("HSV | Key rendering (Needs reboot) : "), mHSVBehaviour);
-        */
     }
 
     auto keybindingSettings = new QFormLayout();
@@ -486,9 +477,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         connect(selectFromExe, &QPushButton::clicked, [=]() {
             util::NetworkUtil net;
             QDir dir = QDir("./tools");
-            if (!dir.exists()) {
-                dir.mkpath(dir.absolutePath());
-            }
+            if (!dir.exists()) {dir.mkpath(dir.absolutePath());}
             QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
 
             if (QFileInfo::exists(dir.absolutePath() + file)) {
@@ -509,12 +498,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
         autoSetup = new QPushButton(tr("Download and automatically setup"));
         connect(autoSetup, &QPushButton::clicked, [=]() {
-            util::NetworkUtil networking;
-
             QDir dir = QDir("./tools");
-            if (!dir.exists()) {
-                dir.mkpath(dir.absolutePath());
-            }
+            if (!dir.exists()) { dir.mkpath(dir.absolutePath()); }
             QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
             if (QFileInfo::exists(dir.absolutePath() + file)) {
                 QFile(dir.absolutePath() + file).moveToTrash();
@@ -535,7 +520,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                 id = 222521413;
             }
 
-            QFileInfo ffmpeg = networking.downloadGithubFile(
+            QFileInfo ffmpeg = util::NetworkUtil::downloadGithubFile(
                 "https://api.github.com/repos/AnimeEffectsDevs/ffmpeg-bin/releases/latest", gitFile, id, this
             );
             qDebug() << "Download name : " << ffmpeg.fileName() << "\n"
@@ -656,7 +641,9 @@ bool GeneralSettingDialog::themeHasChanged() { return (mInitialThemeKey != mThem
 
 bool GeneralSettingDialog::donationHasChanged() {return bDonationAllowed != mDonationAllowed->isChecked(); }
 
-bool GeneralSettingDialog::autoSaveHasChanged() { return (bAutoSave != mAutoSave->isChecked()); }
+bool GeneralSettingDialog::ignoreWarningsHasChanged() {return bIgnoreWarnings != mIgnoreWarnings->isChecked(); }
+
+bool GeneralSettingDialog::autoSaveHasChanged() { return bAutoSave != mAutoSave->isChecked(); }
 
 bool GeneralSettingDialog::autoSaveDelayHasChanged() { return (mAutoSaveDelay != mAutoSaveDelayBox->value()); }
 
@@ -688,6 +675,9 @@ void GeneralSettingDialog::saveSettings() {
     if (donationHasChanged()){
         settings.setValue("generalsettings/ui/donationAllowed", mDonationAllowed->isChecked());
     }
+    if (ignoreWarningsHasChanged()) {
+        settings.setValue("export_ignore_warnings", mIgnoreWarnings->isChecked());
+    }
     if (autoSaveHasChanged()) {
         settings.setValue("generalsettings/projects/autosaveEnabled", mAutoSave->isChecked());
     }
@@ -700,17 +690,6 @@ void GeneralSettingDialog::saveSettings() {
     if (cbCopyHasChanged()) {
         settings.setValue("generalsettings/keys/autocb", mAutoCbCopy->isChecked());
     }
-    /*
-    if (HSVBehaviourHasChanged()){
-        settings.setValue("generalsettings/keys/hsvBehaviour", mHSVBehaviour->currentIndex());
-    }
-    if (HSVSetColorHasChanged()){
-        settings.setValue("generalsettings/keys/hsvSetColor", mHSVBlendColor->isChecked());
-    }
-    if (HSVFolderHasChanged()){
-        settings.setValue("generalsettings/keys/hsvFolder", mHSVFolder->isChecked());
-    }
-    */
     if (keyDelayHasChanged()) {
         settings.setValue("generalsettings/keybindings/keyDelay", mKeyDelayBox->value());
     }

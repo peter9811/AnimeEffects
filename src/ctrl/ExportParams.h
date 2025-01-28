@@ -483,8 +483,9 @@ inline bool isExportParamValid(exportParam* exParam, QWidget* widget, std::vecto
     // Should be synced, but just in case I'll leave this here to easily revert it.
     // exParam->generalParams = *params;
     bool proceedToExport = true;
-    bool shouldDisplayErrors = !errors.isEmpty() || !warnings.isEmpty();
-    if (shouldDisplayErrors) {
+    QVariant ignoreWarnings = settings.value("export_ignore_warning");
+    if (!ignoreWarnings.isValid()) { ignoreWarnings.setValue(false); }
+    if (!errors.isEmpty() || (!ignoreWarnings.toBool() && !warnings.isEmpty())) {
         QMessageBox msg;
         bool error = !errors.isEmpty();
         msg.setIcon(error ? QMessageBox::Icon::Critical : QMessageBox::Warning);
@@ -1229,7 +1230,7 @@ public:
             }
             // Create image, pass to UI and save or write to ffmpeg
             {
-                auto outImage = mFramebuffers.back()->toImage();
+                const auto outImage = mFramebuffers.back()->toImage();
                 currentFrame = outImage;
                 // flush
                 ggl.glFlush();
@@ -1334,17 +1335,31 @@ public:
         if(exportIsVideo && formatIsAudioCapable && exportWithAudio && !validStreams.empty()) {
             auto* reporter = new QWidget();
             auto* reporterLayout = new QVBoxLayout(reporter);
-            auto* reporterLabel = new QLabel(tr("Inserting audio streams to output file"));
+            auto* reporterLabel = new QLabel(tr("Mixing audio streams to output file"));
             auto* reporterBar = new QProgressBar();
             reporterBar->setMaximum((int)validStreams.size());
             reporterLayout->addWidget(reporterLabel);
             reporterLayout->addWidget(reporterBar);
-            qDebug() << "Inserting " << validStreams.size() << " audio stream(s).";
+            int errors = 0;
+            QStringList log;
+            log.append("----------||||-----------");
+            log.append("Original audio stream size: " + QString::number(mProject.pConf->size()));
+            log.append(QString::number(validStreams.size()) + " valid audio stream(s) detected.");
             int frameCount = mProject.currentTimeInfo().frameMax;
             int index = 1;
             reporter->show();
             // TODO: Add error handling
             for (const auto& audio : validStreams) {
+                log.append("----------||||-----------");
+                log.append("Mixing stream N° " + QString::number(index));
+                log.append(
+                    "Stream data:\n Name:" + audio.audioName +
+                    "\nPath: " + audio.audioPath.absoluteFilePath() +
+                    "\nStart frame: " + QString::number(audio.startFrame) +
+                    "\nEnd frame: " + QString::number(audio.endFrame) +
+                    "\nVolume: " + QString::number(audio.volume) +
+                    "\nEnabled: " + (audio.playbackEnable? "True": "False")
+                    );
                 QProcess audioProc;
                 QString file = mParam.generalParams.osExportTarget;
                 QString ffmpeg = export_obj.executable;
@@ -1363,7 +1378,7 @@ public:
                 QString format = getFormatAsString(exportTarget::video, (int)mParam.videoParams.format);
                 QString musTemp = mParam.generalParams.osExportTarget;
                 musTemp.replace("." + format, ".mus.temp." + format);
-                QStringList argument = QStringList();
+                auto argument = QStringList();
                 argument.append("-y");
                 argument.append("-i"); argument.append(file);
                 argument.append("-itsoffset"); argument.append(posAsStr + 's');
@@ -1372,12 +1387,8 @@ public:
                 if(index > 1) {
                     // We mix the previous audio streams (should they exist) with the current
                     argument.append("-filter_complex");
-                    argument.append(QString("[1:a]volume=") + QString::number(volume) +  QString(",amix"));
+                    argument.append(QString("[1:a]volume=") + QString::number(volume) +  QString(", amix=inputs=2:duration=longest"));
                     argument.append("-c:v"); argument.append("copy");
-                    argument.append("-longest");
-                    /*argument.append("-map"); argument.append("0:v");
-                    argument.append("-map"); argument.append("0:a");
-                    argument.append("-map"); argument.append("1:a");*/
                 }
                 else{
                     argument.append("-filter:a"); argument.append("volume=" + QString::number(volume));
@@ -1389,17 +1400,19 @@ public:
                 }
                 argument.append("-async"); argument.append("1");
                 argument.append(musTemp);
-                qDebug("----------||||-----------");
-                qDebug() << argument.join(" ");
+
+                log.append("Mixing stream with FFmpeg command:\n" + argument.join(" "));
                 audioProc.start(ffmpeg, argument, QProcess::ReadWrite);
+                audioProc.waitForStarted();
                 audioProc.waitForFinished();
-                qDebug("----------||||-----------");
-                qDebug() << audioProc.readAllStandardOutput();
-                qDebug("----------||||-----------");
-                qDebug() << audioProc.readAllStandardError();
-                qDebug("----------||||-----------");
-                qDebug() << audioProc.error() << audioProc.errorString() << audioProc.exitCode();
-                qDebug("----------||||-----------");
+                log.append("-- Output --");
+                log.append(audioProc.readAllStandardOutput());
+                log.append("-- Error --");
+                log.append(audioProc.readAllStandardError());
+                log.append("--");
+                log.append(audioProc.errorString());
+                log.append("-- Process exit code --");
+                log.append(QString::number(audioProc.exitCode()));
                 reporterBar->setValue(index);
                 index++;
                 QCoreApplication::processEvents();
@@ -1407,6 +1420,17 @@ public:
                     QFile(mParam.generalParams.osExportTarget).remove();
                     QFile(musTemp).rename(mParam.generalParams.osExportTarget);
                 }
+                else{ errors += 1; }
+                log.append("----------||||-----------");
+            }
+            if(errors >= 1){
+                QMessageBox error;
+                error.setWindowTitle(tr("Audio stream mix failed"));
+                error.setText(QString::number(errors) + tr(" error(s) have occurred during audio mixing.\n"
+                                                           "If this was not a user error please send the following info to the devs."));
+                error.setIcon(QMessageBox::Critical);
+                error.setDetailedText(log.join("\n"));
+                error.exec();
             }
             reporter->close();
             reporter->deleteLater();

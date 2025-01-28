@@ -172,7 +172,7 @@ int entryPoint(int argc, char* argv[]) {
 
         // checkForUpdates
         util::NetworkUtil networking;
-        QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
+        const QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
         util::NetworkUtil::checkForUpdate(url, networking, mainWindow->window(), false);
 
 

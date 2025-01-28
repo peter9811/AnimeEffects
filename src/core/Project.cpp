@@ -36,6 +36,10 @@ Project::Project(QString aFileName, Animator& aAnimator, Hook* aHookGrabbed):
                 mediaRefresh = true;
                 uiRefresh = true;
             }
+            else {
+                pConf->clear();
+                pConf->emplace_back();
+            }
         }
     }
     onTimeLineModified.connect([=](TimeLineEvent& aEvent, bool) { aEvent.setProject(*this); });

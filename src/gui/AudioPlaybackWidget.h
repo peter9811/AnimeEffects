@@ -4,7 +4,6 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QCheckBox>
-#include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
@@ -18,8 +17,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QFileDialog>
-#include <QMessageBox>
-#include <QtMultimedia/QAudio>
 #include <QtMultimedia/QMediaPlayer>
 #include <QtMultimedia/QAudioOutput>
 #include <utility>

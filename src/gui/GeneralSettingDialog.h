@@ -29,6 +29,7 @@ public:
     bool autoFFmpegHasChanged();
     bool themeHasChanged();
     bool donationHasChanged();
+    bool ignoreWarningsHasChanged();
     bool cbCopyHasChanged();
     bool keyDelayHasChanged();
     QString theme();
@@ -55,6 +56,9 @@ private:
 
     bool bDonationAllowed;
     QCheckBox* mDonationAllowed;
+
+    bool bIgnoreWarnings;
+    QCheckBox* mIgnoreWarnings;
 
     bool bAutoSave;
     QCheckBox* mAutoSave;

@@ -1,7 +1,6 @@
 #include <fstream>
 #include <utility>
 #include "XC.h"
-#include "qapplication.h"
 #include "util/TextUtil.h"
 #include "img/PSDReader.h"
 #include "img/PSDUtil.h"
@@ -10,6 +9,7 @@
 #include "core/FolderNode.h"
 #include "core/ObjectNodeUtil.h"
 #include "ctrl/ImageFileLoader.h"
+#include <QMessageBox>
 
 using namespace core;
 
@@ -76,16 +76,22 @@ bool ImageFileLoader::load(const QString& aPath, core::Project& aProject, util::
     mFileInfo = QFileInfo(aPath);
     const QString suffix = mFileInfo.suffix();
 
-    if (aPath.isEmpty() || !mFileInfo.isFile()) { return createEmptyCanvas(aProject, "topnode", mCanvasSize); }
-    else if (suffix == "psd") { return loadPsd(aProject, aReporter); }
-    else if (suffix == "ora"){ return loadOra(aProject, aReporter); }
-    else { return loadImage(aProject, aReporter); }
+    if (aPath.isEmpty() || !mFileInfo.isFile()) {
+        return createEmptyCanvas(aProject, "topnode", mCanvasSize);
+    }
+    if (suffix == "psd") {
+        return loadPsd(aProject, aReporter);
+    }
+    if (suffix == "ora") {
+        return loadOra(aProject, aReporter);
+    }
+    return loadImage(aProject, aReporter);
 }
 
 //-------------------------------------------------------------------------------------------------
 bool ImageFileLoader::createEmptyCanvas(core::Project& aProject, const QString& aTopName, const QSize& aCanvasSize) {
     // check the image has valid size as a texture.
-    if (!checkTextureSizeError((uint32)aCanvasSize.width(), (uint32)aCanvasSize.height())) {
+    if (!checkTextureSizeError(static_cast<uint32>(aCanvasSize.width()), static_cast<uint32>(aCanvasSize.height()))) {
         mLog = "invalid canvas size";
         return false;
     }

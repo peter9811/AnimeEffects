@@ -675,7 +675,7 @@ QList<QList<core::TimeLineEvent::Target>*> sortTargets(QList<core::TimeLineEvent
     for(auto target: *targets){
         if(targetMap.empty()){
             targetMap.emplaceBack(target.pos.line()->map(target.pos.key()->type()));
-            targetLists.emplace_back(new QList<core::TimeLineEvent::Target>{target});
+            targetLists.emplace_back(new QList{target});
         }
         else{
             bool containsKey = false;
@@ -688,7 +688,7 @@ QList<QList<core::TimeLineEvent::Target>*> sortTargets(QList<core::TimeLineEvent
             if(containsKey) { targetLists.back()->emplace_back(target); }
             else{
                 targetMap.emplaceBack(target.pos.line()->map(target.pos.key()->type()));
-                targetLists.emplaceBack(new QList<core::TimeLineEvent::Target>{target});
+                targetLists.emplaceBack(new QList{target});
             }
         }
     }
@@ -698,6 +698,36 @@ QList<QList<core::TimeLineEvent::Target>*> sortTargets(QList<core::TimeLineEvent
     XC_ASSERT(targetMap.size() == targetLists.size());
     return targetLists;
 }
+
+QString keyToString(const core::TimeKeyType key) {
+    switch (key) {
+    case core::TimeKeyType_Bone:
+        return "Bone";
+    case core::TimeKeyType_Mesh:
+        return "Mesh";
+    case core::TimeKeyType_Image:
+        return "Image";
+    case core::TimeKeyType_HSV:
+        return "HSV";
+    case core::TimeKeyType_FFD:
+        return "FFD";
+    case core::TimeKeyType_Depth:
+        return "Depth";
+    case core::TimeKeyType_Move:
+        return "Move";
+    case core::TimeKeyType_Opa:
+        return "Opacity";
+    case core::TimeKeyType_Pose:
+        return "Pose";
+    case core::TimeKeyType_Rotate:
+        return "Rotate";
+    case core::TimeKeyType_Scale:
+        return "Scale";
+    default:
+        return "Unknown";
+    }
+}
+
 void TimeLineEditorWidget::onSelectSpacingTriggered() {
     if(!targetsAreSeparated(mTargets.targets())){
         QMessageBox msg;
@@ -757,23 +787,41 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
         QList<core::TimeKey*> ignoredTargets;
         for(auto target: targets) { ignoredTargets.emplaceBack(target->back().pos.key()); }
         // We move the keys and check if the move was successful
-        QHash<core::TimeKeyType, int> conflicts;
+        QList<QPair<core::TimeLineEvent::Target, int>> conflicts;
+        QList<QPair<core::TimeLineEvent::Target, int>> outsideRange;
         for(auto target: targets) {
-            int tSize = (int)target->size() - 1;
+            int tSize = static_cast<int>(target->size()) - 1;
             int initialFrame = target->back().pos.key()->frame();
             for(auto key : *target) {
                 int frameAccumulation = spacing * tSize;
                 if (!ignoredTargets.contains(key.pos.key())) {
                     int frame = key.pos.key()->frame();
                     int dest = initialFrame + frameAccumulation;
-                    core::TimeKeyType keyType = key.pos.type();
-                    if(mProject->currentTimeInfo().frameMax > dest){ conflicts.emplace(keyType, dest); }
-                    else if(!key.pos.line()->move(keyType, frame, dest)){ conflicts.emplace(keyType, dest); }
+                    const core::TimeKeyType keyType = key.pos.type();
+                    if(mProject->attribute().maxFrame() > dest){ outsideRange.emplace_back(key, dest); }
+                    else if(!key.pos.line()->move(keyType, frame, dest)){ conflicts.emplace_back(key, dest); }
                     tSize -= 1;
                 }
             }
         }
-        qDebug() << conflicts;
+        if (!outsideRange.empty() || !conflicts.empty()) {
+            QMessageBox msg;
+            QStringList errorLog;
+            for (const auto& [key, frame] : conflicts) {
+                errorLog.append(
+                    tr("Key conflict detected for key type ") + keyToString(key.pos.type()) +
+                    tr(" in node ") + key.node->name() + tr(" at frame ") + QString::number(frame));
+            }
+            for (const auto& [key, frame] : outsideRange) {
+                errorLog.append(
+                    tr("Destination for key type ") + keyToString(key.pos.type()) + tr(" in node ") + key.node->name() +
+                    tr(" is outside maximum frame for project, ignored attempt to move key to frame") + QString::number(frame));
+            }
+            msg.setWindowTitle(tr("Move error"));
+            msg.setText(tr("Unable to move ") + QString::number(conflicts.size() + outsideRange.size()) + tr(" key(s), due to the following reasons: "));
+            msg.setDetailedText(errorLog.join("\n"));
+            msg.exec();
+        }
     }
     diag->deleteLater();
 }

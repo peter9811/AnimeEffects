@@ -2,8 +2,9 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QStringRef>
+#include <QMessageBox>
 
-void checkConnection(bool connection){
+void checkConnection(const bool connection){
     if(!connection){
         QMessageBox::warning(nullptr, "Qt connection error", "Unable to connect UI component");
     }
@@ -11,9 +12,10 @@ void checkConnection(bool connection){
 
 bool AudioPlaybackWidget::serialize(std::vector<audioConfig>* pConf, const QString& outPath) {
     QJsonObject audioJson;
-    audioJson["Tracks"] = (int)pConf->size();
+    std::vector<audioConfig> validStreams = getValidAudioStreams(*pConf);
+    audioJson["Tracks"] = static_cast<int>(validStreams.size());
     int x = 0;
-    for(const auto& audioConfig: *pConf){
+    for(const auto& audioConfig: validStreams){
         QJsonObject track;
         track["Name"] = audioConfig.audioName;
         track["Path"] = audioConfig.audioPath.absoluteFilePath();
@@ -104,31 +106,69 @@ void AudioPlaybackWidget::connect(QWidget *audioWidget, mediaState *state, std::
         diag.setDirectory(QDir::currentPath());
         diag.setNameFilter(QCoreApplication::translate("LoadMus", "Anie audio configuration file (*.aemus)", nullptr));
         if(diag.exec()) {
-            QFile file = QFile(diag.selectedFiles().first());
+            auto file = QFile(diag.selectedFiles().first());
             if(!file.open(QIODevice::ReadOnly)) {
                 QMessageBox::warning(audioWidget, "File error", file.errorString());
                 return;
             }
             QJsonDocument json = QJsonDocument::fromJson(file.readAll());
-            if(json.isEmpty() || json.isNull()){
-                QMessageBox::warning(audioWidget, "Invalid file \"" + QFileInfo(file).baseName() + '"', "The requested file's json contents could not be parsed.");
+            if (json.isEmpty() || json.isNull()) {
+                QMessageBox::warning(
+                    audioWidget,
+                    "Invalid file \"" + QFileInfo(file).baseName() + '"',
+                    "The requested file's json contents could not be parsed."
+                );
                 return;
             }
-            auto configBackup = *config;
-            if(!deserialize(json.object(), config)) {
+            if (!(config->size() == 1 && config->front().audioName == "Placeholder")) {
+                QMessageBox overwrite;
+                overwrite.setWindowTitle("Overwrite existing audio configuration");
+                overwrite.setIcon(QMessageBox::Warning);
+                overwrite.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+                overwrite.setDefaultButton(QMessageBox::Ok);
+                overwrite.setText(QCoreApplication::translate("LoadMusOverwrite",
+                    "Loading this file will overwrite your current audio configuration, continue?",
+                    nullptr));
+                if (overwrite.exec() == QMessageBox::Cancel) {
+                    return;
+                }
+            }
+            const auto configBackup = *config;
+            for (const auto player: state->players) { player->deleteLater();}
+            for (const auto output: state->outputs) { output->deleteLater();}
+            state->players.clear();
+            state->outputs.clear();
+            config->clear();
+            if (!deserialize(json.object(), config)) {
                 *config = configBackup;
-                QMessageBox::warning(audioWidget, "Invalid file", "The requested file is not a valid aemus file.");
-                return;
+                int x = 0;
+                for (const auto& conf: configBackup) {
+                    addTrack(state, conf.audioPath.absoluteFilePath());
+                    modifyTrack(state, config, x);
+                    x++;
+                }
+                QMessageBox::warning(audioWidget, "Invalid file",
+                    "Failed to deserialize audio configuration as the requested file is not a valid aemus file, previous audio config restored."
+                    );
             }
-            else{ QMessageBox::information(audioWidget, "Success", "Successfully loaded audio"); }
+            else {
+                int x = 0;
+                for (const auto& conf: *config) {
+                    addTrack(state, conf.audioPath.absoluteFilePath());
+                    modifyTrack(state, config, x);
+                    x++;
+                }
+                QMessageBox::information(audioWidget, "Success", "Successfully deserialized the requested audio file.");
+            }
             rectifyUI(config, state);
         }
     }));
 
 }
 
-void AudioPlaybackWidget::rectifyUI(std::vector<audioConfig>* config, mediaState* mediaPlayer, bool bulk) {
-    // We reconstruct the entire state so we don't mismatch the UI indices
+void AudioPlaybackWidget::rectifyUI(std::vector<audioConfig>* config, mediaState* mediaPlayer, const bool bulk) {
+    // We reconstruct the entire state so we don't mismatch UI and media indexes
+    if(config->empty()){ config->emplace_back(); }
     {
         QLayoutItem* item;
         while ((item = gridLayout_2->takeAt(0)) != nullptr) {
@@ -143,9 +183,6 @@ void AudioPlaybackWidget::rectifyUI(std::vector<audioConfig>* config, mediaState
     vecUIState.clear();
 
     int x = 0;
-    if(config->empty()){
-        config->emplace_back();
-    }
     for(auto conf: *config){
         addUIState(config, x, mediaPlayer, bulk);
         x++;
@@ -153,198 +190,188 @@ void AudioPlaybackWidget::rectifyUI(std::vector<audioConfig>* config, mediaState
     gridLayout_2->update();
 }
 
-void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index, mediaState* mediaPlayer, bool bulk) {
+void AudioPlaybackWidget::addUIState(std::vector<audioConfig>* config, int index, mediaState* mediaPlayer, const bool bulk) {
     // This is a great time to tell you that we accept pull requests that fix this kind of nonsense
-    auto newState = UIState();
+    const auto curUIState = UIState();
     // Grid layout pos
-    int vecIdx = (int)vecUIState.size();
-    int offset = vecIdx * 4;
-    int idxRow0 = offset;
-    int idxRow1 = offset + 1;
-    int idxRow2 = offset + 2;
-    int idxRow3 = offset + 3;
+    const int vecIdx = static_cast<int>(vecUIState.size());
+    const int offset = vecIdx * 4;
+    const int idxRow0 = offset;
+    const int idxRow1 = offset + 1;
+    const int idxRow2 = offset + 2;
+    const int idxRow3 = offset + 3;
     // Playback
-    newState.playAudio->setObjectName(QString::fromUtf8("playAudio"));
-    gridLayout_2->addWidget(newState.playAudio, idxRow1, 0, 1, 1);
+    curUIState.playAudio->setObjectName(QString::fromUtf8("playAudio"));
+    gridLayout_2->addWidget(curUIState.playAudio, idxRow1, 0, 1, 1);
     // Frame end
-    newState.endSpinBox->setObjectName(QString::fromUtf8("endSpinBox"));
-    newState.endSpinBox->setMaximum(INT32_MAX);
-    newState.endSpinBox->setMinimum(0);
-    gridLayout_2->addWidget(newState.endSpinBox, idxRow1, 2, 1, 1);
+    curUIState.endSpinBox->setObjectName(QString::fromUtf8("endSpinBox"));
+    curUIState.endSpinBox->setMaximum(INT32_MAX);
+    curUIState.endSpinBox->setMinimum(0);
+    gridLayout_2->addWidget(curUIState.endSpinBox, idxRow1, 2, 1, 1);
     // Frame start
-    newState.startSpinBox->setObjectName(QString::fromUtf8("startSpinBox"));
-    newState.startSpinBox->setMaximum(INT32_MAX);
-    newState.startSpinBox->setMinimum(0);
-    gridLayout_2->addWidget(newState.startSpinBox, idxRow1, 1 , 1, 1);
+    curUIState.startSpinBox->setObjectName(QString::fromUtf8("startSpinBox"));
+    curUIState.startSpinBox->setMaximum(INT32_MAX);
+    curUIState.startSpinBox->setMinimum(0);
+    gridLayout_2->addWidget(curUIState.startSpinBox, idxRow1, 1 , 1, 1);
     // New track
-    newState.addNewTrack->setObjectName(QString::fromUtf8("startLabel"));
+    curUIState.addNewTrack->setObjectName(QString::fromUtf8("startLabel"));
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(newState.addNewTrack->sizePolicy().hasHeightForWidth());
-    newState.addNewTrack->setSizePolicy(sizePolicy);
-    gridLayout_2->addWidget(newState.addNewTrack, idxRow0, 0, 1, 1);
+    sizePolicy.setHeightForWidth(curUIState.addNewTrack->sizePolicy().hasHeightForWidth());
+    curUIState.addNewTrack->setSizePolicy(sizePolicy);
+    gridLayout_2->addWidget(curUIState.addNewTrack, idxRow0, 0, 1, 1);
     // Frame start text
-    newState.startLabel->setObjectName(QString::fromUtf8("startLabel"));
-    sizePolicy.setHeightForWidth(newState.startLabel->sizePolicy().hasHeightForWidth());
-    newState.startLabel->setSizePolicy(sizePolicy);
-    gridLayout_2->addWidget(newState.startLabel, idxRow0, 1, 1, 1);
+    curUIState.startLabel->setObjectName(QString::fromUtf8("startLabel"));
+    sizePolicy.setHeightForWidth(curUIState.startLabel->sizePolicy().hasHeightForWidth());
+    curUIState.startLabel->setSizePolicy(sizePolicy);
+    gridLayout_2->addWidget(curUIState.startLabel, idxRow0, 1, 1, 1);
     // Frame end text
-    newState.endLabel->setObjectName(QString::fromUtf8("endLabel"));
-    sizePolicy.setHeightForWidth(newState.endLabel->sizePolicy().hasHeightForWidth());
-    newState.endLabel->setSizePolicy(sizePolicy);
-    gridLayout_2->addWidget(newState.endLabel, idxRow0, 2, 1, 1);
+    curUIState.endLabel->setObjectName(QString::fromUtf8("endLabel"));
+    sizePolicy.setHeightForWidth(curUIState.endLabel->sizePolicy().hasHeightForWidth());
+    curUIState.endLabel->setSizePolicy(sizePolicy);
+    gridLayout_2->addWidget(curUIState.endLabel, idxRow0, 2, 1, 1);
     // Volume text
-    newState.volumeLabel->setObjectName(QString::fromUtf8("volumeLabel"));
-    newState.volumeLabel->setSizePolicy(sizePolicy);
-    gridLayout_2->addWidget(newState.volumeLabel, idxRow2, 0, 1, 1);
+    curUIState.volumeLabel->setObjectName(QString::fromUtf8("volumeLabel"));
+    curUIState.volumeLabel->setSizePolicy(sizePolicy);
+    gridLayout_2->addWidget(curUIState.volumeLabel, idxRow2, 0, 1, 1);
     // Volume
-    newState.volumeSlider->setObjectName(QString::fromUtf8("volumeSlider"));
-    newState.volumeSlider->setMaximum(100);
-    newState.volumeSlider->setMinimum(0);
-    newState.volumeSlider->setOrientation(Qt::Horizontal);
-    newState.volumeSlider->setSizePolicy(sizePolicy);
-    gridLayout_2->addWidget(newState.volumeSlider, idxRow2, 1, 1, 3);
+    curUIState.volumeSlider->setObjectName(QString::fromUtf8("volumeSlider"));
+    curUIState.volumeSlider->setMaximum(100);
+    curUIState.volumeSlider->setMinimum(0);
+    curUIState.volumeSlider->setOrientation(Qt::Horizontal);
+    curUIState.volumeSlider->setSizePolicy(sizePolicy);
+    gridLayout_2->addWidget(curUIState.volumeSlider, idxRow2, 1, 1, 3);
     // Separator
-    newState.line->setObjectName(QString::fromUtf8("line"));
-    newState.line->setFrameShape(QFrame::HLine);
-    newState.line->setFrameShadow(QFrame::Sunken);
-    gridLayout_2->addWidget(newState.line, idxRow3, 0, 1, 4);
+    curUIState.line->setObjectName(QString::fromUtf8("line"));
+    curUIState.line->setFrameShape(QFrame::HLine);
+    curUIState.line->setFrameShadow(QFrame::Sunken);
+    gridLayout_2->addWidget(curUIState.line, idxRow3, 0, 1, 4);
     // Frame text
-    newState.musDurationLabel->setObjectName(QString::fromUtf8("musDurationLabel"));
-    gridLayout_2->addWidget(newState.musDurationLabel, idxRow0, 3, 1, 1);
+    curUIState.musDurationLabel->setObjectName(QString::fromUtf8("musDurationLabel"));
+    gridLayout_2->addWidget(curUIState.musDurationLabel, idxRow0, 3, 1, 1);
     // Audio selector
-    newState.selectMusButton->setObjectName(QString::fromUtf8("selectMusButton"));
-    newState.selectMusButton->setAutoRepeat(false);
-    gridLayout_2->addWidget(newState.selectMusButton, idxRow1, 3, 1, 1);
+    curUIState.selectMusButton->setObjectName(QString::fromUtf8("selectMusButton"));
+    curUIState.selectMusButton->setAutoRepeat(false);
+    gridLayout_2->addWidget(curUIState.selectMusButton, idxRow1, 3, 1, 1);
     // Translate
-    newState.playAudio->setText(QCoreApplication::translate("audioWidget", "Enable playback", nullptr));
-    newState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Add new audio track", nullptr));
-    newState.startLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Playback start frame</p></body></html>", nullptr));
-    newState.endLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Playback end frame</p></body></html>", nullptr));
-    newState.musDurationLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
+    curUIState.playAudio->setText(QCoreApplication::translate("audioWidget", "Enable playback", nullptr));
+    curUIState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Add new audio track", nullptr));
+    curUIState.startLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Playback start frame</p></body></html>", nullptr));
+    curUIState.endLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Playback end frame</p></body></html>", nullptr));
+    curUIState.musDurationLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
                                        "<html><head/><body><p align=\"center\">" + QString::number(config->at(index).endFrame - config->at(index).startFrame) + "</p></body></html>");
-    newState.volumeLabel->setText(QCoreApplication::translate("audioWidget", "Media volume", nullptr) + " (" + QString::number(config->at(index).volume) + "%)");
+    curUIState.volumeLabel->setText(QCoreApplication::translate("audioWidget", "Media volume", nullptr) + " (" + QString::number(config->at(index).volume) + "%)");
     // Init
-    newState.playAudio->setChecked(config->at(index).playbackEnable);
-    newState.startSpinBox->setValue(config->at(index).startFrame);
-    newState.endSpinBox->setValue(config->at(index).endFrame);
-    newState.volumeSlider->setValue(config->at(index).volume);
+    curUIState.playAudio->setChecked(config->at(index).playbackEnable);
+    curUIState.startSpinBox->setValue(config->at(index).startFrame);
+    curUIState.endSpinBox->setValue(config->at(index).endFrame);
+    curUIState.volumeSlider->setValue(config->at(index).volume);
 
     if(config->at(index).audioName != "Placeholder"){
         QString ref = QStringRef(&config->at(index).audioName, 0, 17).toString();
         if (config->at(index).audioName.size() > ref.size()) {
             ref.append("...");
         }
-        newState.selectMusButton->setText(ref);
-        newState.selectMusButton->setToolTip(config->at(index).audioName);
+        curUIState.selectMusButton->setText(ref);
+        curUIState.selectMusButton->setToolTip(config->at(index).audioName);
     }
     else{
-        newState.selectMusButton->setText(QCoreApplication::translate("audioWidget", "Select audio file...", nullptr));
+        curUIState.selectMusButton->setText(QCoreApplication::translate("audioWidget", "Select audio file...", nullptr));
     }
 
     if(bulk){
         if(index == 0) {
+            for (const auto player: mediaPlayer->players) { player->deleteLater(); }
+            for (const auto output: mediaPlayer->outputs) { output->deleteLater(); }
+            mediaPlayer->players.clear();
+            mediaPlayer->outputs.clear();
             int x = 0;
-            for(const auto& conf: *config){
-                if(mediaPlayer->players.size() - 1 >= x){
-                    mediaPlayer->players.at(x)->stop();
-                    mediaPlayer->players.at(x)->deleteLater();
-                    mediaPlayer->outputs.at(x)->deleteLater();
-                    mediaPlayer->players.clear();
-                    mediaPlayer->outputs.clear();
-                }
+            for (const auto& conf: *config) {
                 addTrack(mediaPlayer, conf.audioPath.absoluteFilePath());
                 modifyTrack(mediaPlayer, config, x);
+                x++;
             }
         }
-        if (index > 0 && index + 1 != config->size() || (index == 1 && config->size() == 2)) {
-            newState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
-            newState.addTrack = false;
+        if (index > 0 && index + 1 != config->size() || ((index == 0 || index == 1 && index + 1 != config->size()) && config->size() == 2)) {
+            if (index < config->size() - 1){
+                curUIState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove next audio track", nullptr));
+            }
+            else {
+                // It shouldn't trigger but just in case...
+                curUIState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove current audio track", nullptr));
+            }
+            curUIState.addTrack = false;
         }
-        else{
-            newState.addTrack = true;
-        }
+        else{ curUIState.addTrack = true; }
     }
-    vecUIState.append(newState);
+    vecUIState.append(curUIState);
     // Connect
-    checkConnection(QToolButton::connect(newState.selectMusButton, &QToolButton::clicked, [=]() {
-        auto file = QFileInfo(QFileDialog::getOpenFileName(
+    checkConnection(QToolButton::connect(curUIState.selectMusButton, &QToolButton::clicked, [=] {
+        const auto file = QFileInfo(QFileDialog::getOpenFileName(
             this->musPlayer,
-            QCoreApplication::translate("SelectMus", "Open Image", nullptr),
+            QCoreApplication::translate("SelectMus", "Open audio file", nullptr),
             QDir::currentPath(),
             QCoreApplication::translate("SelectMus", "Audio Files (*.mp3 *.mp4 *.wav *.ogg *.flac)", nullptr)
         ));
+        if(!file.exists()){ return; }
         config->at(index).audioPath = file;
         config->at(index).audioName = file.fileName();
         modifyTrack(mediaPlayer, config, index);
-
         {
-            QString ref = QStringRef(&config->at(index).audioName, 0, 17).toString();
-            if (config->at(index).audioName.size() > ref.size()) {
-                ref.append("...");
-            }
-            newState.selectMusButton->setText(ref);
-            newState.selectMusButton->setToolTip(file.fileName());
+            int maxSize = 17;
+            if (config->at(index).audioName.size() < 17) { maxSize = config->at(index).audioName.size(); }
+            QString ref = QStringRef(&config->at(index).audioName, 0, maxSize).toString();
+            if (config->at(index).audioName.size() > ref.size()) { ref.append("..."); }
+            curUIState.selectMusButton->setText(ref);
+            curUIState.selectMusButton->setToolTip(file.fileName());
         }
     }));
-    checkConnection(QToolButton::connect(newState.addNewTrack, &QToolButton::clicked, [=]() {
-        if (index > 0 && index + 1 != config->size() || (index == 1 && config->size() == 2)) {
-            newState.addTrack = false;
-        }
-        if (newState.addTrack) {
-            if (config->size() != vecUIState.size()) {
-                if (config->size() > vecUIState.size()) {
-                    config->pop_back();
-                }
-                if (config->size() < vecUIState.size()) {
-                    config->emplace_back();
-                }
-                rectifyUI(config, mediaPlayer);
-                return;
-            }
+    checkConnection(QToolButton::connect(curUIState.addNewTrack, &QToolButton::clicked, [=] {
+        if (vecUIState.size() != config->size()) { rectifyUI(config, mediaPlayer, true); return; }
+
+        if (curUIState.addTrack) {
+            qDebug() << "addTrack at " << index + 1 << " | player size is " << mediaPlayer->players.size();
             config->emplace_back();
             addTrack(mediaPlayer, QUrl());
             this->addUIState(config, index + 1, mediaPlayer);
-            if (index == 0) {
-                vecUIState.at(1).addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
-                vecUIState.at(1).addTrack = false;
-                if (vecUIState.size() > 2) {
-                    rectifyUI(config, mediaPlayer);
-                    vecUIState.first().addNewTrack->setDisabled(true);
-                }
-            }
-            else {
-                newState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove audio track", nullptr));
-                newState.addTrack = false;
-            }
+            curUIState.addNewTrack->setText(QCoreApplication::translate("audioWidget", "Remove next audio track", nullptr));
+            curUIState.addTrack = false;
         }
         else {
-            removeTrack(mediaPlayer, index);
-            config->erase(config->begin() + index);
-            if (config->size() >= vecUIState.size() && !config->empty()) { config->pop_back(); }
-            rectifyUI(config, mediaPlayer);
-            if (config->size() == 1 || config->size() == 2) { vecUIState.first().addNewTrack->setDisabled(false); }
-            else { vecUIState.first().addNewTrack->setDisabled(true); }
+            if (config->size() == 1) {
+                vecUIState.first().addTrack = true;
+                rectifyUI(config, mediaPlayer);
+                return;
+            }
+            bool deleteNext = config->size() > 2;
+            int delIndex = index;
+            if (deleteNext && index + 1 <= static_cast<int>(config->size()) - 1) {
+                delIndex = index + 1;
+            }
+            qDebug() << "removeTrack at " << delIndex << " | player size is " << mediaPlayer->players.size();
+            config->erase(config->begin() + delIndex);
+            rectifyUI(config, mediaPlayer, true);
+            vecUIState.last().addTrack = true;
         }
     }));
-    checkConnection(QSpinBox::connect(newState.startSpinBox, &QSpinBox::valueChanged, [=](int val){
+    checkConnection(QSpinBox::connect(curUIState.startSpinBox, &QSpinBox::valueChanged, [=](const int val){
         config->at(index).startFrame = val;
         vecUIState.at(index).musDurationLabel->setText(QCoreApplication::translate("audioWidget","<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
                                        "<html><head/><body><p align=\"center\">" + QString::number(config->at(index).endFrame - val) + "</p></body></html>");
     }));
-    checkConnection(QSpinBox::connect(newState.endSpinBox, &QSpinBox::valueChanged, [=](int val){
+    checkConnection(QSpinBox::connect(curUIState.endSpinBox, &QSpinBox::valueChanged, [=](const int val){
         config->at(index).endFrame = val;
-        newState.musDurationLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
+        curUIState.musDurationLabel->setText(QCoreApplication::translate("audioWidget", "<html><head/><body><p align=\"center\">Duration (in frames): </p></body></html>", nullptr) +
                                        "<html><head/><body><p align=\"center\">" + QString::number(val - config->at(index).startFrame) + "</p></body></html>");
     }));
-    checkConnection(QCheckBox::connect(newState.playAudio, &QCheckBox::stateChanged, [=](bool val){
+    checkConnection(QCheckBox::connect(curUIState.playAudio, &QCheckBox::stateChanged, [=](const bool val){
         config->at(index).playbackEnable = val;
     }));
-    checkConnection(QSlider::connect(newState.volumeSlider, &QSlider::valueChanged, [=](int val){
+    checkConnection(QSlider::connect(curUIState.volumeSlider, &QSlider::valueChanged, [=](const int val){
         config->at(index).volume = val;
         modifyTrack(mediaPlayer, config, index);
-        newState.volumeLabel->setText(QCoreApplication::translate("audioWidget", "Media volume", nullptr) + " (" + QString::number(val) + "%)");
+        curUIState.volumeLabel->setText(QCoreApplication::translate("audioWidget", "Media volume", nullptr) + " (" + QString::number(val) + "%)");
     }));
 }
 
@@ -357,17 +384,20 @@ void AudioPlaybackWidget::addTrack(mediaState* state, const QUrl& source) {
     state->outputs.append(audioOutput);
 }
 
-void AudioPlaybackWidget::removeTrack(mediaState* state, int index) {
+void AudioPlaybackWidget::removeTrack(mediaState* state, const int index) {
+    const int size = static_cast<int>(state->players.size());
     state->players.at(index)->stop();
     state->players.at(index)->deleteLater();
     state->outputs.at(index)->deleteLater();
-    state->players.removeAt(index);
-    state->outputs.removeAt(index);
+    if (size > state->players.size()) {
+        state->players.removeAt(index);
+        state->outputs.removeAt(index);
+    }
 }
 
 void AudioPlaybackWidget::modifyTrack(mediaState* state, std::vector<audioConfig>* config, int index) {
     const auto& modifiedConfig = config->at(index);
-    if(state->players.isEmpty() || state->players.size() - 1 < index){
+    if(state->players.isEmpty() || (state->players.size() <= index && index != 0)){
         addTrack(state, QUrl());
     }
     auto* currentPlayer = state->players.at(index);
@@ -383,8 +413,8 @@ void AudioPlaybackWidget::modifyTrack(mediaState* state, std::vector<audioConfig
 
 void AudioPlaybackWidget::correctTrackPos(QMediaPlayer* player, int curFrame,  int frameCount, int fps, audioConfig& config) {
     // Calculate times in milliseconds
-    const float toMillis = 1000.0;
-    int frame = frameCount - ((frameCount - config.startFrame) - curFrame);
-    auto positionMs = static_cast<qint64>((static_cast<float>(frame) / static_cast<float>(fps)) * toMillis);
+    constexpr float toMillis = 1000.0;
+    const int frame = frameCount - (frameCount - config.startFrame - curFrame);
+    auto positionMs = static_cast<qint64>(static_cast<float>(frame) / static_cast<float>(fps) * toMillis);
     if (player->hasAudio() && positionMs >= 0) { player->setPosition(positionMs); }
 }

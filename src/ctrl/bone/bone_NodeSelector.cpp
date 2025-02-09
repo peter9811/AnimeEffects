@@ -210,7 +210,8 @@ namespace bone {
             }
 
             aPainter.setBrush(Qt::NoBrush);
-            aPainter.setPen(QPen(QBrush(QColor(255, 255, 255, 128)), 1.5f, Qt::DotLine));
+            aPainter.setPen(QPen(QBrush(QColorConstants::Svg::darkmagenta), 2.0f, Qt::DashLine));
+
 
             for (auto node : bone->bindingNodes()) {
                 auto tag = findVisibleTag(*node);

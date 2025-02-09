@@ -66,7 +66,7 @@ const QList<ObjectNode*>& Bone2::bindingNodes() const {
 }
 
 bool Bone2::isBinding(const ObjectNode& aNode) const {
-    for (auto node : mBindingNodes) {
+    for (const auto node : mBindingNodes) {
         if (node == &aNode)
             return true;
     }
@@ -120,7 +120,7 @@ const QVector2D& Bone2::worldPos() const { return mWorldPos; }
 float Bone2::worldAngle() const { return mWorldAngle; }
 
 QMatrix4x4 Bone2::transformationMatrix(const QVector2D& aToPos, float aToAngle) const {
-    static const QVector3D kRotateAxis(0.0f, 0.0f, 1.0f);
+    static constexpr QVector3D kRotateAxis(0.0f, 0.0f, 1.0f);
     const float rotate = util::MathUtil::getDegreeFromRadian(aToAngle - worldAngle());
 
     QMatrix4x4 mtx;
@@ -137,7 +137,7 @@ QMatrix4x4 Bone2::transformationMatrix(const Bone2& aTo) const {
 QMatrix4x4 Bone2::transformationMatrix(const QMatrix4x4& aToMtx) const {
     QMatrix4x4 myInvMtx;
     {
-        static const QVector3D kRotateAxis(0.0f, 0.0f, 1.0f);
+        static constexpr QVector3D kRotateAxis(0.0f, 0.0f, 1.0f);
         myInvMtx.rotate(-util::MathUtil::getDegreeFromRadian(worldAngle()), kRotateAxis);
         myInvMtx.translate(-worldPos().toVector3D());
     }

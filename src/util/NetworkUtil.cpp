@@ -118,7 +118,7 @@ QFileInfo NetworkUtil::downloadGithubFile(const QString& aURL, const QString& aF
         if (assets.toObject().value("name").toString() == aFile) {
             // If ID field, check it.
             if (aID != 0) {
-                int urlID = assets.toObject().value("id").toInt();
+                const int urlID = assets.toObject().value("id").toInt();
                 if (aID == urlID) {
                     downloadURL = assets.toObject().value("browser_download_url").toString();
                 } else {

@@ -102,7 +102,7 @@ namespace bone {
         macro.grabListener(new Notifier(mProject, mTarget, *mKeyOwner.key, TimeLineEvent::Type_ChangeKeyValue));
 
         for (auto pair : pairs) {
-            stack.push(new cmnd::RemoveListByObj<ObjectNode*>(&(pair.first->bindingNodes()), pair.second));
+            stack.push(new cmnd::RemoveListByObj<ObjectNode*>(&pair.first->bindingNodes(), pair.second));
         }
     }
 

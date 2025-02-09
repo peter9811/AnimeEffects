@@ -161,7 +161,6 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
             key->invoker = [=]() {
                 if (!mCopyTargets.targets().isEmpty()) {
                     mPastePos = this->mapFromGlobal(QCursor::pos());
-                    ;
                     mPasteKey->trigger();
                 }
             };
@@ -752,7 +751,8 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
     verticalLayout->addWidget(label);
 
     auto frameSpacing = new QSpinBox(diag);
-    frameSpacing->setMaximum(INT32_MAX);
+    frameSpacing->setMaximum(mProject->attribute().maxFrame());
+    frameSpacing->setMinimum(1);
     frameSpacing->setObjectName("frameSpacing");
     verticalLayout->addWidget(frameSpacing);
 
@@ -768,8 +768,7 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
         R"(<html><head/><body><p align="center">)" + tr("Number of frames the selected keys should be spaced by:") +
         "</p></body></html>"
     );
-    bool connected;
-    connected = connect(buttonBox, &QDialogButtonBox::accepted, this, [diag](){ diag->accept();});
+    bool connected= connect(buttonBox, &QDialogButtonBox::accepted, this, [diag](){ diag->accept();});
     connected = connected && connect(buttonBox, &QDialogButtonBox::rejected, this, [diag](){ diag->reject();});
     if(!connected){
         diag->deleteLater();

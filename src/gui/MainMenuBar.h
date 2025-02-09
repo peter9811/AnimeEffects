@@ -43,7 +43,6 @@ private:
     ViaPoint& mViaPoint;
     core::Project* mProject;
     QVector<QAction*> mProjectActions;
-    QAction* mShowResourceWindow;
     QList<ctrl::VideoFormat> mVideoFormats;
     GUIResources& mGUIResources;
 };

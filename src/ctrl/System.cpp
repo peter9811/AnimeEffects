@@ -4,6 +4,9 @@
 #include "gl/Global.h"
 #include "gl/DeviceInfo.h"
 #include "ctrl/System.h"
+
+#include "core/BoneKey.h"
+#include "core/TimeKeyBlender.h"
 #include "ctrl/ProjectSaver.h"
 #include "ctrl/ProjectLoader.h"
 #include "ctrl/ImageFileLoader.h"
@@ -94,6 +97,25 @@ System::openProject(const QString& aFileName, Project::Hook* aHookGrabbed, util:
         ctrl::ProjectLoader loader;
         if (loader.load(aFileName, *projectScope, gl::DeviceInfo::instance(), aReporter)) {
             mProjects.push_back(projectScope.take());
+            {
+                // Due to the transition to Qt6 every cache on load is just fucked, TODO: Fix cache loading
+                const auto aOwner = mProjects.back()->objectTree().topNode();
+                for (ObjectNode::Iterator itr(aOwner); itr.hasNext();) {
+                    ObjectNode* node = itr.next();
+                    XC_PTR_ASSERT(node);
+                    node->timeLine()->current().clearCaches(); node->timeLine()->current().clearMasterCache();
+                    node->timeLine()->working().clearCaches(); node->timeLine()->working().clearMasterCache();
+                    for (const auto bone: node->timeLine()->map(TimeKeyType_Bone)) {
+                        auto* boneKey = dynamic_cast<BoneKey*>(node->timeLine()->timeKey(TimeKeyType_Bone, bone->frame()));
+                        boneKey->resetCaches(*mProjects.back(), *node);
+                    }
+                    for (const auto mesh: node->timeLine()->map(TimeKeyType_Mesh)) {
+                        auto* meshKey = dynamic_cast<MeshKey*>(node->timeLine()->timeKey(TimeKeyType_Mesh, mesh->frame()));
+                        meshKey->updateVtxIndices();
+                        meshKey->updateGLAttribute();
+                    }
+                }
+            }
             // Get settings
             QSettings settings;
             QStringList recentfiles = settings.value("projectloader/recents").toStringList();
@@ -103,7 +125,7 @@ System::openProject(const QString& aFileName, Project::Hook* aHookGrabbed, util:
                 recentfiles.append(aFileName);
             }
             // If length eight remove first
-            else if (recentfiles.length() == 8) {
+            else if (recentfiles.length() >= 8) {
                 recentfiles.pop_front();
             }
             // Save

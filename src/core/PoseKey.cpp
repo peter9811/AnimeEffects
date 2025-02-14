@@ -60,7 +60,7 @@ bool PoseKey::serialize(Serializer& aOut) const {
     aOut.write(static_cast<int>(mData.topBones().count()));
 
     // serialize all bones
-    for (auto topBone : mData.topBones()) {
+    for (const auto topBone : mData.topBones()) {
         XC_PTR_ASSERT(topBone);
         if (!serializeBone(aOut, topBone)) {
             return false;

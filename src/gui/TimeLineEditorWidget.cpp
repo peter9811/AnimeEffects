@@ -753,6 +753,7 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
     auto frameSpacing = new QSpinBox(diag);
     frameSpacing->setMaximum(mProject->attribute().maxFrame());
     frameSpacing->setMinimum(1);
+    frameSpacing->setValue(1);
     frameSpacing->setObjectName("frameSpacing");
     verticalLayout->addWidget(frameSpacing);
 
@@ -814,7 +815,7 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
             for (const auto& [key, frame] : outsideRange) {
                 errorLog.append(
                     tr("Destination for key type ") + keyToString(key.pos.type()) + tr(" in node ") + key.node->name() +
-                    tr(" is outside maximum frame for project, ignored attempt to move key to frame") + QString::number(frame));
+                    tr(" is outside maximum frame for project, ignored attempt to move key to frame ") + QString::number(frame));
             }
             msg.setWindowTitle(tr("Move error"));
             msg.setText(tr("Unable to move ") + QString::number(conflicts.size() + outsideRange.size()) + tr(" key(s), due to the following reasons: "));

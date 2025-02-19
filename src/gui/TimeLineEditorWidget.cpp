@@ -798,7 +798,7 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
                     int frame = key.pos.key()->frame();
                     int dest = initialFrame + frameAccumulation;
                     const core::TimeKeyType keyType = key.pos.type();
-                    if(mProject->attribute().maxFrame() > dest){ outsideRange.emplace_back(key, dest); }
+                    if(mProject->attribute().maxFrame() < dest){ outsideRange.emplace_back(key, dest); }
                     else if(!key.pos.line()->move(keyType, frame, dest)){ conflicts.emplace_back(key, dest); }
                     tSize -= 1;
                 }

@@ -98,22 +98,25 @@ System::openProject(const QString& aFileName, Project::Hook* aHookGrabbed, util:
         if (loader.load(aFileName, *projectScope, gl::DeviceInfo::instance(), aReporter)) {
             mProjects.push_back(projectScope.take());
             {
-                // Due to the transition to Qt6 every cache on load is just fucked, TODO: Fix cache loading
+                // Due to the transition to Qt6 every cache on load is just f*cked, TODO: Fix cache loading
                 const auto aOwner = mProjects.back()->objectTree().topNode();
                 for (ObjectNode::Iterator itr(aOwner); itr.hasNext();) {
                     ObjectNode* node = itr.next();
                     XC_PTR_ASSERT(node);
-                    node->timeLine()->current().clearCaches(); node->timeLine()->current().clearMasterCache();
-                    node->timeLine()->working().clearCaches(); node->timeLine()->working().clearMasterCache();
+                    // Clear deserialized bone cache
                     for (const auto bone: node->timeLine()->map(TimeKeyType_Bone)) {
                         auto* boneKey = dynamic_cast<BoneKey*>(node->timeLine()->timeKey(TimeKeyType_Bone, bone->frame()));
                         boneKey->resetCaches(*mProjects.back(), *node);
                     }
-                    for (const auto mesh: node->timeLine()->map(TimeKeyType_Mesh)) {
-                        auto* meshKey = dynamic_cast<MeshKey*>(node->timeLine()->timeKey(TimeKeyType_Mesh, mesh->frame()));
-                        meshKey->updateVtxIndices();
-                        meshKey->updateGLAttribute();
-                    }
+                    // Clear cache, master cache and pose palette
+                    auto& curr = node->timeLine()->current();
+                    curr.clearCaches();
+                    curr.clearMasterCache();
+                    curr.posePalette().clear();
+                    auto& work = node->timeLine()->working();
+                    work.clearCaches();
+                    work.clearMasterCache();
+                    work.posePalette().clear();
                 }
             }
             // Get settings

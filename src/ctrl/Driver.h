@@ -33,8 +33,8 @@ public:
     void updateResource(core::ResourceEvent& aEvent, bool aUndo);
     void updateProjectAttribute();
 
-    void renderGL(const core::RenderInfo& aRenderInfo, core::ObjectNode* aGridTarget);
-    void renderQt(const core::RenderInfo& aRenderInfo, QPainter& aPainter);
+    void renderGL(const core::RenderInfo& aRenderInfo, core::ObjectNode* aGridTarget) const;
+    void renderQt(const core::RenderInfo& aRenderInfo, QPainter& aPainter) const;
 
     void updateParam(const SRTParam& aParam);
     void updateParam(const FFDParam& aParam);
@@ -43,7 +43,7 @@ public:
     void updateParam(const MeshParam& aParam);
 
 private:
-    static void drawOutline(const core::RenderInfo& aRenderInfo, QPainter& aPainter);
+    static void drawOutline(const core::RenderInfo& aRenderInfo, QPainter& aPainter) ;
     static void drawBanMark(const core::RenderInfo& aRenderInfo, QPainter& aPainter);
 
     core::Project& mProject;

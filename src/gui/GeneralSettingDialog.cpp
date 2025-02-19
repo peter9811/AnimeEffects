@@ -251,28 +251,31 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         }
 
         auto donationAllowed = settings.value("generalsettings/ui/donationAllowed");
-        bDonationAllowed = !donationAllowed.isValid() || donationAllowed.toBool();
+        bDonationAllowed = donationAllowed.isValid()? donationAllowed.toBool() : true;
 
         auto ignoreWarnings = settings.value("export_ignore_warnings");
         bIgnoreWarnings = ignoreWarnings.isValid()? false : ignoreWarnings.toBool();
 
         auto isAutoSave = settings.value("generalsettings/projects/autosaveEnabled");
-        bAutoSave = isAutoSave.isValid() && isAutoSave.toBool();
+        bAutoSave = isAutoSave.isValid()? isAutoSave.toBool() : false;
 
         auto isAutoSaveDelay = settings.value("generalsettings/projects/autosaveDelay");
         mAutoSaveDelay = isAutoSaveDelay.isValid() ? isAutoSaveDelay.toInt() : 5;
 
         auto isAutoCbCopy = settings.value("generalsettings/keys/autocb");
-        bAutoCbCopy = !isAutoCbCopy.isValid() || isAutoCbCopy.toBool();
+        bAutoCbCopy = !isAutoCbCopy.isValid()? isAutoCbCopy.toBool() : false;
 
         auto isAutoFFmpegCheck = settings.value("ffmpeg_check");
-        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid() || isAutoFFmpegCheck.toBool();
+        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid()? isAutoFFmpegCheck.toBool() : true;
+
+        auto isResIDCheck = settings.value("res_id_check");
+        bResIDCheck = isResIDCheck.isValid()?  isResIDCheck.toBool() : true;
 
         auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
         mKeyDelay = isKeyDelay.isValid() ? isKeyDelay.toInt() : 125;
 
         auto isAutoShowMesh = settings.value("generalsettings/tools/autoshowmesh");
-        bAutoShowMesh = isAutoShowMesh.isValid() && isAutoShowMesh.toBool();
+        bAutoShowMesh = isAutoShowMesh.isValid()? isAutoShowMesh.toBool() : false;
     }
 
     auto form = new QFormLayout();
@@ -342,6 +345,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mAutoFFmpegBox = new QCheckBox();
         mAutoFFmpegBox->setChecked(mAutoFFmpegCheck);
         projectSaving->addRow(tr("Always check for FFmpeg on export : "), mAutoFFmpegBox);
+
+        bResIDBox = new QCheckBox();
+        bResIDBox->setChecked(bResIDCheck);
+        projectSaving->addRow(tr("Enforce ID check on asset download : "), bResIDBox);
 
         mIgnoreWarnings = new QCheckBox();
         mIgnoreWarnings->setChecked(bIgnoreWarnings);
@@ -650,15 +657,15 @@ QFormLayout* GeneralSettingDialog::createTab(const QString& aTitle, QFormLayout*
     return form;
 }
 
-bool GeneralSettingDialog::languageHasChanged() { return (mInitialLanguageIndex != mLanguageBox->currentIndex()); }
+bool GeneralSettingDialog::languageHasChanged() { return mInitialLanguageIndex != mLanguageBox->currentIndex(); }
 
-bool GeneralSettingDialog::easingHasChanged() { return (mInitialEasingIndex != mEasingBox->currentIndex()); }
+bool GeneralSettingDialog::easingHasChanged() { return mInitialEasingIndex != mEasingBox->currentIndex(); }
 
-bool GeneralSettingDialog::rangeHasChanged() { return (mInitialRangeIndex != mRangeBox->currentIndex()); }
+bool GeneralSettingDialog::rangeHasChanged() { return mInitialRangeIndex != mRangeBox->currentIndex(); }
 
-bool GeneralSettingDialog::timeFormatHasChanged() { return (mInitialTimeFormatIndex != mTimeFormatBox->currentIndex()); }
+bool GeneralSettingDialog::timeFormatHasChanged() { return mInitialTimeFormatIndex != mTimeFormatBox->currentIndex(); }
 
-bool GeneralSettingDialog::themeHasChanged() { return (mInitialThemeKey != mThemeBox->currentData()); }
+bool GeneralSettingDialog::themeHasChanged() { return mInitialThemeKey != mThemeBox->currentData(); }
 
 bool GeneralSettingDialog::donationHasChanged() {return bDonationAllowed != mDonationAllowed->isChecked(); }
 
@@ -666,15 +673,17 @@ bool GeneralSettingDialog::ignoreWarningsHasChanged() {return bIgnoreWarnings !=
 
 bool GeneralSettingDialog::autoSaveHasChanged() { return bAutoSave != mAutoSave->isChecked(); }
 
-bool GeneralSettingDialog::autoSaveDelayHasChanged() { return (mAutoSaveDelay != mAutoSaveDelayBox->value()); }
+bool GeneralSettingDialog::autoSaveDelayHasChanged() { return mAutoSaveDelay != mAutoSaveDelayBox->value(); }
 
-bool GeneralSettingDialog::autoFFmpegHasChanged() { return (mAutoFFmpegCheck != mAutoFFmpegBox->isChecked()); }
+bool GeneralSettingDialog::autoFFmpegHasChanged() { return mAutoFFmpegCheck != mAutoFFmpegBox->isChecked(); }
 
-bool GeneralSettingDialog::cbCopyHasChanged() { return (bAutoCbCopy != mAutoCbCopy->isChecked()); }
+bool GeneralSettingDialog::resIDCheckHasChanged() { return bResIDCheck != bResIDBox->isChecked(); }
+
+bool GeneralSettingDialog::cbCopyHasChanged() { return bAutoCbCopy != mAutoCbCopy->isChecked(); }
 
 QString GeneralSettingDialog::theme() { return mThemeBox->currentData().toString(); }
 
-bool GeneralSettingDialog::keyDelayHasChanged() { return (mKeyDelay != mKeyDelayBox->value()); }
+bool GeneralSettingDialog::keyDelayHasChanged() { return mKeyDelay != mKeyDelayBox->value(); }
 
 void GeneralSettingDialog::saveSettings() {
     QSettings settings;
@@ -707,6 +716,9 @@ void GeneralSettingDialog::saveSettings() {
     }
     if (autoFFmpegHasChanged()){
         settings.setValue("ffmpeg_check", mAutoFFmpegBox->isChecked());
+    }
+    if (resIDCheckHasChanged()) {
+        settings.setValue("res_id_check", bResIDBox->isChecked());
     }
     if (cbCopyHasChanged()) {
         settings.setValue("generalsettings/keys/autocb", mAutoCbCopy->isChecked());

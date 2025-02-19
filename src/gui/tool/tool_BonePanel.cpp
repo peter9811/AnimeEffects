@@ -18,7 +18,7 @@ namespace tool {
         mPIPressure(),
         mEIRadius(),
         mEIPressure() {
-        this->setTitle(tr("Bone Building"));
+        this->setTitle(tr("Bone editor"));
         createMode();
         updateTypeParam(mParam.mode);
     }

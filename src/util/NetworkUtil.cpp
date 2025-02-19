@@ -22,7 +22,7 @@ QByteArray NetworkUtil::getByteArray(QString aURL) {
     if (arguments[1] == "failed") {
         return QByteArray::fromStdString("NetworkUtil Error");
     }
-    QString program = arguments[0];
+    const QString program = arguments[0];
     arguments.pop_front();
     mProcess.start(program, arguments);
     // Waits for a second, todo: make this only apply to start check
@@ -109,15 +109,18 @@ QList<QString> NetworkUtil::libArgs(QList<QString> aArgument, QString aType) {
 // Function written in consideration of the "releases/{version}" api, e.g.
 // https://api.github.com/repos/author/project/releases/latest
 QFileInfo NetworkUtil::downloadGithubFile(const QString& aURL, const QString& aFile, int aID, QWidget* aParent) {
-    QJsonObject jsonResponse = util::NetworkUtil::getJsonFrom(aURL).object();
+    const QJsonObject jsonResponse = getJsonFrom(aURL).object();
     QString downloadURL = "null";
 
     // Get name of assets and then check against file and ID.
     for (auto assets : jsonResponse.value("assets").toArray()) {
         qDebug() << assets.toObject().value("name").toString();
         if (assets.toObject().value("name").toString() == aFile) {
+            QSettings settings;
+            auto checkResID = settings.value("res_id_check");
+            const bool checkID = checkResID.isValid()? checkResID.toBool(): true;
             // If ID field, check it.
-            if (aID != 0) {
+            if (aID != 0 && checkID) {
                 const int urlID = assets.toObject().value("id").toInt();
                 if (aID == urlID) {
                     downloadURL = assets.toObject().value("browser_download_url").toString();
@@ -138,22 +141,27 @@ QFileInfo NetworkUtil::downloadGithubFile(const QString& aURL, const QString& aF
         }
     }
     if (downloadURL == "null") {
+        QMessageBox msgbox;
+        msgbox.setIcon(QMessageBox::Warning);
+        msgbox.setWindowTitle("Download error");
+        msgbox.setText("The asset requested from \"" + aURL + "\" returned null, please check your internet connection and try again.");
+        msgbox.exec();
         return {};
     }
     QString downloadPath = QDir::tempPath() + "/" + aFile;
-    QList<QString> args = util::NetworkUtil::libArgs({downloadURL, downloadPath}, "download");
+    QList<QString> args = libArgs({downloadURL, downloadPath}, "download");
     // qDebug() << args;
     QScopedPointer<QProcess> mProcess;
     mProcess.reset(new QProcess(nullptr));
     mProcess->setProcessChannelMode(QProcess::MergedChannels);
-    auto processData = mProcess.data();
-    QString program = args[0];
+    const auto processData = mProcess.data();
+    const QString program = args[0];
     gui::menu::ProgressReporter progress(true, aParent);
     gui::menu::ProgressReporter* progressptr = &progress;
     progress.setProgress(0);
     args.pop_front();
     mProcess->connect(processData, &QProcess::readyRead, [=]() mutable {
-        QString data = processData->readAll().data();
+        const QString data = processData->readAll().data();
         if (program == "curl") {
             qDebug() << "Download percentage : " << data.mid(1, 3);
             progressptr->setProgress(data.mid(1, 3).toInt());
@@ -174,7 +182,7 @@ QFileInfo NetworkUtil::downloadGithubFile(const QString& aURL, const QString& aF
         // Max time for this is five minutes.
         mProcess->waitForFinished(60000 * 5);
     }
-    if (NetworkUtil::os() != "win"){
+    if (os() != "win"){
         // Make executable
         QScopedPointer<QProcess> chmodProc;
         chmodProc.reset(new QProcess(nullptr));
@@ -184,23 +192,28 @@ QFileInfo NetworkUtil::downloadGithubFile(const QString& aURL, const QString& aF
     if (QFile(downloadPath).exists()) {
         return QFileInfo(QFile(downloadPath));
     }
+    QMessageBox msgbox;
+    msgbox.setIcon(QMessageBox::Warning);
+    msgbox.setWindowTitle("Download error");
+    msgbox.setText("The download for the asset at \"" + downloadURL + "\" was aborted as it either timed out or the HTTP utility requested (curl/wget) could not be launched, please download the asset manually.");
+    msgbox.exec();
     return {};
 }
 
-void NetworkUtil::checkForUpdate(const QString& url, NetworkUtil networking, QWidget* aParent, bool showWithoutUpdate) {
+void NetworkUtil::checkForUpdate(const QString& url, NetworkUtil networking, QWidget* aParent, const bool showWithoutUpdate) {
     qDebug("--------");
     qInfo() << "Checking for updates on : " << url;
 
-    QFuture<QJsonDocument> jsonPromise = QtConcurrent::run(util::NetworkUtil::getJsonFrom, url);
-    QString currentVersion = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." +
+    const QFuture<QJsonDocument> jsonPromise = QtConcurrent::run(getJsonFrom, url);
+    const QString currentVersion = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." +
         QString::number(AE_MICRO_VERSION);
     /*
         qDebug()<< "Response : " << jsonResponse.toJson().data();
         qDebug()<< "Current version: " << currentVersion << "\n" << "Latest stable: " <<
        jsonResponse[0]["name"].toString().replace("v", "");;
     */
-    QJsonDocument jsonResponse = jsonPromise.result();
-    QString latestVersion = !jsonResponse.isEmpty() ? jsonResponse[0]["name"].toString().replace("v", "") : "null";
+    const QJsonDocument jsonResponse = jsonPromise.result();
+    const QString latestVersion = !jsonResponse.isEmpty() ? jsonResponse[0]["name"].toString().replace("v", "") : "null";
 
     if (latestVersion != "") {
         auto* updateBox = new QMessageBox(aParent);
@@ -280,8 +293,8 @@ void NetworkUtil::checkForUpdate(const QString& url, NetworkUtil networking, QWi
             if (updateBox->clickedButton() == gotoButton) {
                 QDesktopServices::openUrl(QUrl("https://github.com/AnimeEffectsDevs/AnimeEffects/releases/latest"));
             } else if (updateBox->clickedButton() == downloadButton) {
-                QString os = util::NetworkUtil::os();
-                QString arch = util::NetworkUtil::arch();
+                const QString os = NetworkUtil::os();
+                const QString arch = NetworkUtil::arch();
                 QString file;
                 if (os == "win") {
                     if (arch == "x86") {
@@ -294,7 +307,7 @@ void NetworkUtil::checkForUpdate(const QString& url, NetworkUtil networking, QWi
                 } else if (os == "mac") {
                     file = "AnimeEffects-MacOS.zip";
                 }
-                QFileInfo aeUpdate = networking.downloadGithubFile(
+                const QFileInfo aeUpdate = downloadGithubFile(
                     "https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/releases/latest", file, 0, aParent
                 );
                 QDesktopServices::openUrl(QUrl::fromLocalFile(aeUpdate.absoluteFilePath()));
@@ -306,8 +319,7 @@ void NetworkUtil::checkForUpdate(const QString& url, NetworkUtil networking, QWi
             updateBox->exec();
         }
         qDebug("--------");
-        return;
-    };
+    }
 }
 
 } // namespace util

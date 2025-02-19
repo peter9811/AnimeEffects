@@ -38,19 +38,19 @@ namespace tool {
             this->onParamUpdated(true);
         });
 
-        mAddMove.reset(new CheckBoxItem(tr("Force move key"), this));
+        mAddMove.reset(new CheckBoxItem(tr("Create move key"), this));
         mAddMove->setToolTip(tr("The transformation will create a move key regardless of its type."));
         mAddMove->connect([=](bool aChecked) {
             this->mParam.necessarilyMove = aChecked;
             this->onParamUpdated(false);
         });
-        mAddRotate.reset(new CheckBoxItem(tr("Force rotate key"), this));
+        mAddRotate.reset(new CheckBoxItem(tr("Create rotate key"), this));
         mAddRotate->setToolTip(tr("The transformation will create a rotate key regardless of its type."));
         mAddRotate->connect([=](bool aChecked) {
             this->mParam.necessarilyRotate = aChecked;
             this->onParamUpdated(false);
         });
-        mAddScale.reset(new CheckBoxItem(tr("Force scale key"), this));
+        mAddScale.reset(new CheckBoxItem(tr("Create scale key"), this));
         mAddScale->setToolTip(tr("The transformation will create a scale key regardless of its type."));
         mAddScale->connect([=](bool aChecked) {
             this->mParam.necessarilyScale = aChecked;

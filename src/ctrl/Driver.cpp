@@ -149,7 +149,7 @@ void Driver::updateProjectAttribute() {
     }
 }
 
-void Driver::renderGL(const core::RenderInfo& aRenderInfo, core::ObjectNode* aGridTarget) {
+void Driver::renderGL(const core::RenderInfo& aRenderInfo, core::ObjectNode* aGridTarget) const {
     auto& tree = mProject.objectTree();
     auto info = aRenderInfo;
     if (mToolType == ToolType_Bone) {
@@ -167,7 +167,7 @@ void Driver::renderGL(const core::RenderInfo& aRenderInfo, core::ObjectNode* aGr
     }
 }
 
-void Driver::renderQt(const core::RenderInfo& aRenderInfo, QPainter& aPainter) {
+void Driver::renderQt(const core::RenderInfo& aRenderInfo, QPainter& aPainter) const {
     auto info = aRenderInfo;
     if (mToolType == ToolType_Bone) {
         info.nonPosed = true;

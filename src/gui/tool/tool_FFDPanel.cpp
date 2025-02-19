@@ -21,7 +21,7 @@ namespace tool {
         mEraseHardnessGroup(),
         mEraseRadius(),
         mErasePressure() {
-        this->setTitle(tr("Free Form Deform"));
+        this->setTitle(tr("FFD"));
         createBrush();
         updateTypeParam(mParam.type);
     }

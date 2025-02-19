@@ -19,7 +19,7 @@ namespace srt {
 
         FocusData findFocus(const QVector2D& aWorldPos);
 
-        void draw(const core::RenderInfo& aInfo, QPainter& aPainter, FocusType aFocus);
+        void draw(const core::RenderInfo& aInfo, QPainter& aPainter, FocusType aFocus, bool grayOut) const;
 
     private:
         QPointF c;

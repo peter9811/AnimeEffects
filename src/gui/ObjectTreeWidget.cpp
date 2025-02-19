@@ -16,6 +16,8 @@
 #include "ctrl/TimeLineRow.h"
 #include "ctrl/CmndName.h"
 #include "gui/ObjectTreeWidget.h"
+#include "core/ObjectNodeUtil.h"
+#include "ctrl/ImageFileLoader.h"
 #include "gui/ResourceDialog.h"
 #include "gui/ProjectHook.h"
 #include "gui/obj/obj_MoveItem.h"
@@ -87,6 +89,9 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
     {
         mSlimAction = new QAction(tr("Contract"), this);
         mSlimAction->connect(mSlimAction, &QAction::triggered, this, &ObjectTreeWidget::onSlimActionTriggered);
+
+        mReconstructAction = new QAction(tr("Add missing resources"), this);
+        mReconstructAction->connect(mReconstructAction, &QAction::triggered, this, &ObjectTreeWidget::onObjectReconstructionTriggered);
 
         mRenameAction = new QAction(tr("Rename"), this);
         mRenameAction->connect(mRenameAction, &QAction::triggered, this, &ObjectTreeWidget::onRenameActionTriggered);
@@ -402,25 +407,25 @@ void ObjectTreeWidget::onContextMenuRequested(const QPoint& aPos) {
     if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
         QMenu menu(this);
-
         if (objItem && !objItem->isTopNode()) {
             mSlimAction->setText(objItem->node().isSlimmedDown() ? tr("Enlarge") : tr("Contract"));
             menu.addAction(mSlimAction);
             menu.addSeparator();
         }
+        if (objItem && objItem->isTopNode()) {
+            menu.addAction(mReconstructAction);
+            menu.addSeparator();
+        }
+
         menu.addAction(mRenameAction);
-        menu.addSeparator();
         menu.addAction(mObjectAction);
-        menu.addAction(mObjectMirror);
         menu.addAction(mFolderAction);
 
-        {
-            if (objItem && objItem->node().parent()) {
-                menu.addSeparator();
-                menu.addAction(mPasteAction);
-                menu.addSeparator();
-                menu.addAction(mDeleteAction);
-            }
+        if (objItem && objItem->node().parent()) {
+            menu.addAction(mPasteAction);
+            menu.addAction(mObjectMirror);
+            menu.addSeparator();
+            menu.addAction(mDeleteAction);
         }
 
         menu.exec(this->mapToGlobal(aPos));
@@ -432,9 +437,82 @@ void ObjectTreeWidget::onSlimActionTriggered(bool) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
         if (objItem && !objItem->isTopNode()) {
             objItem->node().setSlimDown(!objItem->node().isSlimmedDown());
-
             if (updateItemHeights(this->topLevelItem(0))) {
                 notifyViewUpdated();
+            }
+        }
+    }
+}
+
+struct resource {
+    QString name{};
+    img::ResourceNode* node{};
+    bool isFolder = false;
+    int childCount = 0;
+    QVector<img::ResourceNode*> children;
+};
+
+void getResChild(img::ResourceNode* curNode, QVector<resource>* resources) {
+    if (curNode) {
+        resources->emplace_back();
+        resources->last().name = curNode->data().identifier();
+        resources->last().node = curNode;
+        resources->last().isFolder = !curNode->data().isLayer();
+        if (!curNode->data().isLayer()) {
+            resources->last().childCount = static_cast<int>(curNode->children().size());
+            for (const auto child : curNode->children()) {
+                resources->last().children.append(child);
+            }
+            for (const auto child: resources->last().children) {
+                getResChild(child, resources);
+            }
+        }
+    }
+}
+
+void getTargetChild(core::ObjectNode* curNode, QVector<QString>* resources) {
+    if (curNode) {
+        resources->append(curNode->name());
+        for (const auto child : curNode->children()) {
+            getTargetChild(child, resources);
+        }
+    }
+}
+
+void ObjectTreeWidget::onObjectReconstructionTriggered(bool) const {
+    if (mActionItem) {
+        obj::Item* objItem = obj::Item::cast(mActionItem);
+        img::ResourceNode* topNode;
+        // get children for current nodes and the resource and then add the missing resources
+        QVector <resource> resources;
+        QVector <QString> currentResources;
+        QVector<QString> parsedResources;
+        if (objItem && objItem->isTopNode()) {
+            for (const auto& tree: mProject->resourceHolder().imageTrees()) {
+                if(QFileInfo(tree.filePath).baseName() == objItem->node().name()) {
+                    // This is what sleep deprivation does to someone
+                    qDebug() << "Filetree " << QFileInfo(tree.filePath).baseName() << " found for the selected node.";
+                    topNode = tree.topNode;
+                    for (const auto child: topNode->children()) {
+                        getResChild(child, &resources);
+                    }
+                    for (const auto child: objItem->node().children()) {
+                        getTargetChild(child, &currentResources);
+                    }
+                    for (const auto& target: resources) {
+                        qDebug() << "Target: " << target.name;
+                        const bool containsTarget = currentResources.contains(target.name);
+                        qDebug() << "Object tree contains target: " << containsTarget;
+                        // TODO add targets
+                    }
+                }
+                else {
+                    qDebug() << "File tree for selected node was not found, probably renamed." ;
+                }
+                qDebug("\nTree Identifier");
+                qDebug() << QFileInfo(tree.filePath).baseName();
+                qDebug("\nObjItem Identifier");
+                qDebug() << objItem->node().name();
             }
         }
     }
@@ -453,7 +531,7 @@ int extractIntFromStr(QString str) {
     return QRegularExpression(R"(-?\b\d+(?:\.\d+)?\b)").match(str).captured(0).toInt();
 }
 
-void ObjectTreeWidget::onPasteActionTriggered(bool) {
+void ObjectTreeWidget::onPasteActionTriggered(bool) const {
     if (!mActionItem) {
         return;
     }
@@ -617,7 +695,13 @@ void ObjectTreeWidget::onObjectActionTriggered(bool) {
 }
 
 template <typename tlKey>
-void addKeyToTimeLine(core::TimeLine* tl, cmnd::Stack& stack, tlKey keys) {
+void addKeyToTimeLine(core::TimeLine* tl, cmnd::Stack& stack, const tlKey& keys) {
+    QHash<const core::TimeKey*, core::TimeKey*> parentMap;
+    struct ChildInfo {
+        core::TimeKey* key;
+        core::TimeKey* parent;
+    };
+    QList<ChildInfo> childList;
     for(auto key: keys) {
         XC_PTR_ASSERT(tl);
         auto copiedKey = key;
@@ -626,12 +710,28 @@ void addKeyToTimeLine(core::TimeLine* tl, cmnd::Stack& stack, tlKey keys) {
         core::TimeKey* newKey = copiedKey->createClone();
         auto newFrame = key->frame();
         newKey->setFrame(newFrame);
-        stack.push(new cmnd::GrabNewObject<core::TimeKey>(newKey));
+        stack.push(new cmnd::GrabNewObject(newKey));
         stack.push(tl->createPusher(key->type(), newFrame, newKey));
+        if (newKey->canHoldChild()) {
+            parentMap[copiedKey] = newKey;
+        }
+        if (parentKey) {
+            ChildInfo info = {newKey, parentKey};
+            childList.push_back(info);
+        }
+    }
+    // connect to parents
+    for (auto child : childList) {
+        auto parent = child.parent;
+        // if the parent was also copied, connect to a new parent key.
+        auto it = parentMap.find(parent);
+        if (it != parentMap.end())
+            parent = it.value();
+        stack.push(new cmnd::PushBackTree<core::TimeKey>(&parent->children(), child.key));
     }
 }
-
-void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode){ // NOLINT(*-no-recursion)
+void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode, bool moveToFolder = false, // NOLINT(*-no-recursion)
+    const int folderIndex = -1){
     obj::Item* objItem = obj::Item::cast(curActionItem);
     core::ObjectNode* parent;
     int index;
@@ -647,10 +747,10 @@ void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNod
         itemIndex = parentItem->childCount();
     }
     else {
-        auto prevNode = &objItem->node();
-        parent = prevNode->parent();
+        const auto node = &objItem->node();
+        parent = node->parent();
         if (!parent) { return; }
-        index = parent->children().indexOf(prevNode);
+        index = parent->children().indexOf(node);
         if (index < 0) { return; }
         parentItem = curActionItem->parent();
         if (!parentItem) { return; }
@@ -659,38 +759,67 @@ void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNod
     }
 
     auto* ptr = new core::FolderNode(itemNode->name() + " (Copy)");
-    ptr->setDefaultPosture(QVector2D());
-    ptr->setDefaultDepth(objItem->node().initialDepth() + 1.0f);
+    ptr->setClipped(itemNode->renderer()->isClipped());
+    ptr->setVisibility(itemNode->isVisible());
+    ptr->setDefaultDepth(itemNode->initialDepth());
+    ptr->setBlendMode(itemNode->renderer()->blendMode());
+    ptr->setInitialRect(itemNode->initialRect());
     ptr->setDefaultOpacity(1.0f);
-    auto itemPtr = createFolderItem(*ptr);
+    // We get all keys now
+    core::TimeLine* ptrTl = ptr->timeLine();
+    ptrTl->current() = objItem->node().timeLine()->current();
+    for (int tIndex = 0; tIndex != core::TimeKeyType_TERM; tIndex++) {
+        addKeyToTimeLine(ptrTl, mProject->commandStack(), objItem->node().timeLine()->map(static_cast<core::TimeKeyType>(tIndex)));
+    }
+
+    for (auto bone: ptrTl->map(core::TimeKeyType_Bone)) {
+        dynamic_cast<core::BoneKey*>(bone)->resetCaches(*mProject, objItem->node());
+    }
+    ptr->timeLine()->current().clearCaches();
+    ptr->timeLine()->current().clearMasterCache();
+
+    const auto itemPtr = createFolderItem(*ptr);
     {
         cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Duplicate base folder"));
         // notifier
         {
-            auto coreNotifier = new core::ObjectTreeNotifier(*mProject);
+            const auto coreNotifier = new core::ObjectTreeNotifier(*mProject);
             coreNotifier->event().setType(core::ObjectTreeEvent::Type_Add);
             coreNotifier->event().pushTarget(parent, *ptr);
             macro.grabListener(coreNotifier);
         }
         macro.grabListener(new obj::RestructureNotifier(*this));
         // push commands
-        mProject->commandStack().push(new cmnd::GrabNewObject<core::FolderNode>(ptr));
-        mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&(parent->children()), index, ptr));
+        const bool validMove = moveToFolder && folderIndex != -1;
+        mProject->commandStack().push(new cmnd::GrabNewObject(ptr));
+        if (validMove) {
+            mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&objItem->node().children(),
+                static_cast<int>(objItem->node().children().size()), ptr));
+        }
+        else {
+            mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&parent->children(), index, ptr));
+        }
         // push gui item commands
-        mProject->commandStack().push(new cmnd::GrabNewObject<obj::Item>(itemPtr));
-        mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
+        mProject->commandStack().push(new cmnd::GrabNewObject(itemPtr));
+        if (validMove) {
+            mProject->commandStack().push(new obj::InsertItem(*curActionItem, folderIndex, *itemPtr));
+        }
+        else {
+            mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
+        }
     }
 
-    for(core::ObjectNode* node: ptr->children()){
-        if(node->type() == core::ObjectType_Layer){
-            addLayer(itemPtr, node);
+    for(core::ObjectNode* node: itemNode->children()){
+        if(node->type() == core::ObjectType_Layer) {
+            addLayer(itemPtr, node, true, static_cast<int>(itemPtr->node().children().size()));
         }
         else if(node->type() == core::ObjectType_Folder){
-            addFolder(itemPtr, node);
+            addFolder(itemPtr, node, true, static_cast<int>(itemPtr->node().children().size()));
         }
     }
 }
-void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode){
+void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode,
+    const bool moveToFolder = false, const int folderIndex = -1){
     obj::Item* objItem = obj::Item::cast(curActionItem);
     core::ObjectNode* parent;
     QTreeWidgetItem* parentItem;
@@ -706,10 +835,10 @@ void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode
         itemIndex = parentItem->childCount();
     }
     else {
-        auto prevNode = &objItem->node();
-        parent = prevNode->parent();
+        const auto node = &objItem->node();
+        parent = node->parent();
         if (!parent) { return; }
-        index = parent->children().indexOf(prevNode);
+        index = parent->children().indexOf(node);
         if (index < 0) { return; }
         parentItem = curActionItem->parent();
         if (!parentItem) { return; }
@@ -718,26 +847,31 @@ void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode
     }
 
     auto* itemTL = itemNode->timeLine();
-    QString nodeName = itemNode->name() + " (Copy)";
+    const QString nodeName = itemNode->name() + " (Copy)";
     // create node
     auto* ptr = new core::LayerNode(nodeName, mProject->objectTree().shaderHolder());
     ptr->setVisibility(itemNode->isVisible());
-    img::ResourceHandle resHandle = itemTL->current().areaImageKey()->data().resource();
-    auto posKey = (core::MoveKey*)itemTL->defaultKey(core::TimeKeyType_Move);
-    if (!posKey) {
-        posKey = new core::MoveKey();
-        itemTL->grabDefaultKey(core::TimeKeyType_Move, posKey);
-    }
+    const img::ResourceHandle resHandle = itemTL->current().areaImageKey()->data().resource();
     ptr->setDefaultImage(resHandle);
-    ptr->setDefaultPosture(posKey->data().pos());
+    ptr->setDefaultPosture(resHandle->center());
+    ptr->timeLine()->current().setImageOffset(itemTL->current().imageOffset());
     ptr->setDefaultDepth(itemNode->initialDepth());
     ptr->setDefaultOpacity(itemTL->current().opa().opacity());
+    ptr->setBlendMode(resHandle->blendMode());
+    ptr->setClipped(objItem->node().renderer()->isClipped());
+    ptr->setInitialRect(objItem->node().initialRect());
     // We get all keys now
     core::TimeLine* ptrTl = ptr->timeLine();
     ptrTl->current() = itemTL->current();
     for (int tIndex = 0; tIndex != core::TimeKeyType_TERM; tIndex++) {
         addKeyToTimeLine(ptrTl, mProject->commandStack(), itemTL->map(static_cast<core::TimeKeyType>(tIndex)));
     }
+    for (auto bone: ptrTl->map(core::TimeKeyType_Bone)) {
+        dynamic_cast<core::BoneKey*>(bone)->resetCaches(*mProject, objItem->node());
+    }
+    ptr->timeLine()->current().clearCaches();
+    ptr->timeLine()->current().clearMasterCache();
+
     {
         cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Duplicate layer"));
         // notifier
@@ -749,124 +883,37 @@ void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode
         }
         macro.grabListener(new obj::RestructureNotifier(*this));
         // create commands
-        mProject->commandStack().push(new cmnd::GrabNewObject<core::LayerNode>(ptr));
-        mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&parent->children(), index, ptr));
-
+        const bool validMove = moveToFolder && folderIndex != -1;
+        mProject->commandStack().push(new cmnd::GrabNewObject(ptr));
+        if (validMove) {
+            mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&objItem->node().children(),
+                static_cast<int>(objItem->node().children().size()), ptr));
+        }
+        else {
+            mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&parent->children(), index, ptr));
+        }
         // create gui commands
         obj::Item* itemPtr = createFileItem(*ptr);
-        mProject->commandStack().push(new cmnd::GrabNewObject<obj::Item>(itemPtr));
-        mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
+        mProject->commandStack().push(new cmnd::GrabNewObject(itemPtr));
+
+        if (validMove) {
+            mProject->commandStack().push(new obj::InsertItem(*curActionItem, folderIndex, *itemPtr));
+        }
+        else {
+            mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
+        }
+
     }
 }
-void ObjectTreeWidget::onObjectMirrorTriggered() { if(mActionItem) {
-    obj::Item* objItem = obj::Item::cast(mActionItem);
-    core::ObjectNode* parent;
-    int index;
-    QTreeWidgetItem* parentItem;
-    int itemIndex;
-
-    // top node
-    if (objItem->isTopNode()) {
-        parent = mProject->objectTree().topNode();
-        XC_PTR_ASSERT(parent);
-        index = static_cast<int>(parent->children().size());
-        parentItem = mActionItem;
-        itemIndex = parentItem->childCount();
-    }
-    else {
-        auto prevNode = &objItem->node();
-        parent = prevNode->parent();
-        if (!parent) { return; }
-        index = parent->children().indexOf(prevNode);
-        if (index < 0) { return; }
-        parentItem = mActionItem->parent();
-        if (!parentItem) { return; }
-        itemIndex = parentItem->indexOfChild(objItem);
-        if (itemIndex < 0) { return; }
-    }
-
-    auto& itemNode = objItem->node();
-    auto* itemTL = itemNode.timeLine();
-    QString nodeName = itemNode.name() + " (Copy)";
-    // create node
-    if (objItem->node().type() == core::ObjectType_Layer) {
-        auto* ptr = new core::LayerNode(nodeName, mProject->objectTree().shaderHolder());
-        ptr->setVisibility(itemNode.isVisible());
-        img::ResourceHandle resHandle = itemTL->current().areaImageKey()->data().resource();
-        auto posKey = (core::MoveKey*)itemTL->defaultKey(core::TimeKeyType_Move);
-        if (!posKey) {
-            posKey = new core::MoveKey();
-            itemTL->grabDefaultKey(core::TimeKeyType_Move, posKey);
-        }
-        ptr->setDefaultImage(resHandle);
-        ptr->setDefaultPosture(posKey->data().pos());
-        ptr->setDefaultDepth(itemNode.initialDepth());
-        ptr->setDefaultOpacity(itemTL->current().opa().opacity());
-        // We get all keys now
-        core::TimeLine* ptrTl = ptr->timeLine();
-        ptrTl->current() = itemTL->current();
-        for (int tIndex = 0; tIndex != core::TimeKeyType_TERM; tIndex++) {
-            addKeyToTimeLine(ptrTl, mProject->commandStack(), itemTL->map(static_cast<core::TimeKeyType>(tIndex)));
-        }
-        {
-            cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Duplicate layer"));
-            // notifier
-            {
-                auto coreNotifier = new core::ObjectTreeNotifier(*mProject);
-                coreNotifier->event().setType(core::ObjectTreeEvent::Type_Add);
-                coreNotifier->event().pushTarget(parent, *ptr);
-                macro.grabListener(coreNotifier);
-            }
-            macro.grabListener(new obj::RestructureNotifier(*this));
-            // create commands
-            mProject->commandStack().push(new cmnd::GrabNewObject<core::LayerNode>(ptr));
-            mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&parent->children(), index, ptr));
-
-            // create gui commands
-            obj::Item* itemPtr = createFileItem(*ptr);
-            mProject->commandStack().push(new cmnd::GrabNewObject<obj::Item>(itemPtr));
-            mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
+void ObjectTreeWidget::onObjectMirrorTriggered() {
+    if(mActionItem) {
+        obj::Item* objItem = obj::Item::cast(mActionItem);
+        if (objItem->node().type() == core::ObjectType_Layer) { addLayer(mActionItem, &objItem->node()); }
+        else if (objItem->node().type() == core::ObjectType_Folder) {
+            addFolder(mActionItem, &objItem->node());
         }
     }
-    else if (objItem->node().type() == core::ObjectType_Folder) {
-        auto* ptr = new core::FolderNode(itemNode.name() + " (Copy)");
-        ptr->setDefaultPosture(QVector2D());
-        ptr->setDefaultDepth(objItem->node().initialDepth() + 1.0f);
-        ptr->setDefaultOpacity(1.0f);
-        auto itemPtr = createFolderItem(*ptr);
-        {
-            cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Duplicate base folder"));
-            // notifier
-            {
-                auto coreNotifier = new core::ObjectTreeNotifier(*mProject);
-                coreNotifier->event().setType(core::ObjectTreeEvent::Type_Add);
-                coreNotifier->event().pushTarget(parent, *ptr);
-                macro.grabListener(coreNotifier);
-            }
-            macro.grabListener(new obj::RestructureNotifier(*this));
-            // push commands
-            mProject->commandStack().push(new cmnd::GrabNewObject<core::FolderNode>(ptr));
-            mProject->commandStack().push(new cmnd::InsertTree<core::ObjectNode>(&(parent->children()), index, ptr));
-            // push gui item commands
-            mProject->commandStack().push(new cmnd::GrabNewObject<obj::Item>(itemPtr));
-            mProject->commandStack().push(new obj::InsertItem(*parentItem, itemIndex, *itemPtr));
-        }
-
-        // Future: Insert layers into corresponding folders
-        for(core::ObjectNode* node: itemNode.children()){
-            if(node->type() == core::ObjectType_Layer){
-                addLayer(itemPtr, node);
-            }
-            else if(node->type() == core::ObjectType_Folder){
-                addFolder(itemPtr, node);
-            }
-        }
-
-    }
-    else {
-        return;
-    }
-}}
+}
 
 void ObjectTreeWidget::onFolderActionTriggered(bool) {
     if (mActionItem) {
@@ -918,7 +965,7 @@ void ObjectTreeWidget::onFolderActionTriggered(bool) {
             cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("create a folder object"));
 
             // create node
-            core::FolderNode* ptr = new core::FolderNode("folder0");
+            auto* ptr = new core::FolderNode("folder0");
             ptr->setDefaultPosture(QVector2D());
             ptr->setDefaultDepth(depth);
             ptr->setDefaultOpacity(1.0f); // @todo support default opacity

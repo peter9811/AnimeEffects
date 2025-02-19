@@ -83,11 +83,12 @@ private:
     void onContextMenuRequested(const QPoint& aPos);
     void onSlimActionTriggered(bool aIsTriggered);
     void onRenameActionTriggered(bool aIsTriggered);
-    void onPasteActionTriggered(bool aIsTriggered);
+    void onPasteActionTriggered(bool aIsTriggered) const;
     void onObjectActionTriggered(bool aIsTriggered);
     void onObjectMirrorTriggered();
     void onFolderActionTriggered(bool aIsTriggered);
     void onDeleteActionTriggered(bool aIsTriggered);
+    void onObjectReconstructionTriggered(bool aIsTriggered) const;
     void onThemeUpdated(theme::Theme&);
 
     ViaPoint& mViaPoint;
@@ -106,14 +107,15 @@ private:
 
     QTreeWidgetItem* mActionItem;
     QAction* mSlimAction;
+    QAction* mReconstructAction;
     QAction* mRenameAction;
     QAction* mPasteAction;
     QAction* mObjectAction;
     QAction* mObjectMirror;
     QAction* mFolderAction;
     QAction* mDeleteAction;
-    void addLayer(QTreeWidgetItem* mActionItem, core::ObjectNode* itemNode);
-    void addFolder(QTreeWidgetItem* mActionItem, core::ObjectNode* itemNode);
+    void addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode, bool moveToFolder, int folderIndex);
+    void addFolder(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode, bool moveToFolder, int folderIndex);
 };
 
 } // namespace gui

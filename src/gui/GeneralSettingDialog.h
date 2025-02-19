@@ -27,6 +27,7 @@ public:
     bool autoSaveHasChanged();
     bool autoSaveDelayHasChanged();
     bool autoFFmpegHasChanged();
+    bool resIDCheckHasChanged();
     bool themeHasChanged();
     bool donationHasChanged();
     bool ignoreWarningsHasChanged();
@@ -68,6 +69,9 @@ private:
 
     bool mAutoFFmpegCheck;
     QCheckBox* mAutoFFmpegBox;
+
+    bool bResIDCheck;
+    QCheckBox* bResIDBox;
 
     bool bAutoCbCopy;
     QCheckBox* mAutoCbCopy;

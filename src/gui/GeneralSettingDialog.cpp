@@ -508,8 +508,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             if (QFileInfo::exists(dir.absolutePath() + file)) {
                 QFile(dir.absolutePath() + file).moveToTrash();
             }
-            QString os = util::NetworkUtil::os();
-            QString arch = util::NetworkUtil::arch();
+            const QString os = util::NetworkUtil::os();
             QString gitFile;
             // ID checking is probably overkill, but security is important!
             int id;
@@ -524,7 +523,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                 id = 222521413;
             }
 
-            QFileInfo ffmpeg = util::NetworkUtil::downloadGithubFile(
+            const QFileInfo ffmpeg = util::NetworkUtil::downloadGithubFile(
                 "https://api.github.com/repos/AnimeEffectsDevs/ffmpeg-bin/releases/latest", gitFile, id, this
                 );
             qDebug() << "Download name : " << ffmpeg.fileName() << "\n" << "Download is executable : " << ffmpeg.isExecutable();
@@ -533,7 +532,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             if (ffmpeg.isExecutable()) {
                 if(!dir.exists() || !dir.isReadable() || !QFileInfo(dir.absolutePath()).isWritable()){
                     // We'll attempt a global installation as a fallback in cases where the folder is write protected
-                    QDir appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+                    auto appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
                     auto anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
                     if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isWritable()) {
                         if (!appdata.mkdir("AnimeEffects")) {

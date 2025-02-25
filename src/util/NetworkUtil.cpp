@@ -294,14 +294,9 @@ void NetworkUtil::checkForUpdate(const QString& url, NetworkUtil networking, QWi
                 QDesktopServices::openUrl(QUrl("https://github.com/AnimeEffectsDevs/AnimeEffects/releases/latest"));
             } else if (updateBox->clickedButton() == downloadButton) {
                 const QString os = NetworkUtil::os();
-                const QString arch = NetworkUtil::arch();
                 QString file;
                 if (os == "win") {
-                    if (arch == "x86") {
-                        file = "AnimeEffects-Windows-x86.zip";
-                    } else {
-                        file = "AnimeEffects-Windows-x64.zip";
-                    }
+                    file = "AnimeEffects-Windows.zip";
                 } else if (os == "linux") {
                     file = "AnimeEffects-Linux.zip";
                 } else if (os == "mac") {

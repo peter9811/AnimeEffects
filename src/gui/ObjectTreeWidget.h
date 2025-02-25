@@ -34,7 +34,6 @@ public:
     void setProject(core::Project* aProject);
     core::ObjectNode* findSelectingRepresentNode();
 
-public:
     // signals
     util::Signaler<void()> onVisibilityUpdated;
     util::Signaler<void(QTreeWidgetItem*)> onTreeViewUpdated;
@@ -44,6 +43,15 @@ public:
     // for Notifiers
     void notifyViewUpdated();
     void notifyRestructure();
+
+    struct resource {
+        QString name{};
+        img::ResourceNode* node{};
+        bool isFolder = false;
+        int childCount = 0;
+        QVector<img::ResourceNode*> children;
+    };
+
 
 private:
     struct ItemInfo {
@@ -88,7 +96,7 @@ private:
     void onObjectMirrorTriggered();
     void onFolderActionTriggered(bool aIsTriggered);
     void onDeleteActionTriggered(bool aIsTriggered);
-    void onObjectReconstructionTriggered(bool aIsTriggered) const;
+    void onObjectReconstructionTriggered(bool aIsTriggered);
     void onThemeUpdated(theme::Theme&);
 
     ViaPoint& mViaPoint;
@@ -114,8 +122,25 @@ private:
     QAction* mObjectMirror;
     QAction* mFolderAction;
     QAction* mDeleteAction;
-    void addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode, bool moveToFolder, int folderIndex);
-    void addFolder(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode, bool moveToFolder, int folderIndex);
+
+    void addLayer(
+        QTreeWidgetItem* curActionItem,
+        core::ObjectNode* itemNode,
+        bool moveToFolder = false,
+        int folderIndex = -1,
+        img::ResourceNode* resNode = nullptr,
+        QVector<QString>* parsedRes = nullptr,
+        const QVector<resource>* res = nullptr
+    );
+    void addFolder(
+        QTreeWidgetItem* curActionItem,
+        core::ObjectNode* itemNode,
+        bool moveToFolder = false,
+        int folderIndex = -1,
+        img::ResourceNode* resNode = nullptr,
+        QVector<QString>* parsedRes = nullptr,
+        QVector<resource>* res = nullptr
+    );
 };
 
 } // namespace gui

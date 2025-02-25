@@ -444,15 +444,7 @@ void ObjectTreeWidget::onSlimActionTriggered(bool) {
     }
 }
 
-struct resource {
-    QString name{};
-    img::ResourceNode* node{};
-    bool isFolder = false;
-    int childCount = 0;
-    QVector<img::ResourceNode*> children;
-};
-
-void getResChild(img::ResourceNode* curNode, QVector<resource>* resources) {
+void getResChild(img::ResourceNode* curNode, QVector<ObjectTreeWidget::resource>* resources) {
     if (curNode) {
         resources->emplace_back();
         resources->last().name = curNode->data().identifier();
@@ -479,34 +471,59 @@ void getTargetChild(core::ObjectNode* curNode, QVector<QString>* resources) {
     }
 }
 
-void ObjectTreeWidget::onObjectReconstructionTriggered(bool) const {
+void ObjectTreeWidget::onObjectReconstructionTriggered(bool) {
     if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
-        img::ResourceNode* topNode;
         // get children for current nodes and the resource and then add the missing resources
-        QVector <resource> resources;
-        QVector <QString> currentResources;
+        QVector<resource> resources;
+        QVector<QString> currentResources;
         QVector<QString> parsedResources;
         if (objItem && objItem->isTopNode()) {
             for (const auto& tree: mProject->resourceHolder().imageTrees()) {
                 if(QFileInfo(tree.filePath).baseName() == objItem->node().name()) {
                     // This is what sleep deprivation does to someone
                     qDebug() << "Filetree " << QFileInfo(tree.filePath).baseName() << " found for the selected node.";
-                    topNode = tree.topNode;
+                    img::ResourceNode* topNode = tree.topNode;
                     for (const auto child: topNode->children()) {
                         getResChild(child, &resources);
                     }
                     for (const auto child: objItem->node().children()) {
                         getTargetChild(child, &currentResources);
                     }
+                    // We do this to get a mostly accurate image depth on load
+                    std::reverse(resources.begin(), resources.end());
                     for (const auto& target: resources) {
                         qDebug() << "Target: " << target.name;
                         const bool containsTarget = currentResources.contains(target.name);
                         qDebug() << "Object tree contains target: " << containsTarget;
-                        // TODO add targets
+                        if (!containsTarget) {
+                            if (target.isFolder && !parsedResources.contains(target.name)) {
+                                addFolder(
+                                    mActionItem->treeWidget()->topLevelItem(0),
+                                    mProject->objectTree().topNode(),
+                                    false,
+                                    -1,
+                                    target.node,
+                                    &parsedResources,
+                                    &resources
+                                );
+                            }
+                            else if (!parsedResources.contains(target.name)) {
+                                addLayer(
+                                    mActionItem->treeWidget()->topLevelItem(0),
+                                    mProject->objectTree().topNode(),
+                                    false,
+                                    -1,
+                                    target.node,
+                                    &parsedResources,
+                                    &resources
+                                    );
+                            }
+                        }
                     }
                 }
                 else {
+                    // TODO: Add error handler and capacity to add other object trees.
                     qDebug() << "File tree for selected node was not found, probably renamed." ;
                 }
                 qDebug("\nTree Identifier");
@@ -527,7 +544,7 @@ void ObjectTreeWidget::onRenameActionTriggered(bool) {
     }
 }
 
-int extractIntFromStr(QString str) {
+int extractIntFromStr(const QString& str) {
     return QRegularExpression(R"(-?\b\d+(?:\.\d+)?\b)").match(str).captured(0).toInt();
 }
 
@@ -730,8 +747,8 @@ void addKeyToTimeLine(core::TimeLine* tl, cmnd::Stack& stack, const tlKey& keys)
         stack.push(new cmnd::PushBackTree<core::TimeKey>(&parent->children(), child.key));
     }
 }
-void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode, bool moveToFolder = false, // NOLINT(*-no-recursion)
-    const int folderIndex = -1){
+void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode, const bool moveToFolder, // NOLINT(*-no-recursion)
+    const int folderIndex, img::ResourceNode* resNode, QVector<QString>* parsedRes, QVector<resource>* res){
     obj::Item* objItem = obj::Item::cast(curActionItem);
     core::ObjectNode* parent;
     int index;
@@ -758,12 +775,27 @@ void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNod
         if (itemIndex < 0) { return; }
     }
 
-    auto* ptr = new core::FolderNode(itemNode->name() + " (Copy)");
-    ptr->setClipped(itemNode->renderer()->isClipped());
-    ptr->setVisibility(itemNode->isVisible());
-    ptr->setDefaultDepth(itemNode->initialDepth());
-    ptr->setBlendMode(itemNode->renderer()->blendMode());
-    ptr->setInitialRect(itemNode->initialRect());
+    const auto isResNode = resNode && parsedRes && res;
+    int resIdx = 0;
+    if (isResNode) { for (auto x = 0; x < res->size(); x++) { if (res->at(x).node == resNode) { resIdx = x; } } }
+    core::FolderNode* ptr = nullptr;
+
+    if (isResNode) {
+        ptr = new core::FolderNode(resNode->data().identifier());
+        ptr->setClipped(false);
+        ptr->setVisibility(true);
+        ptr->setDefaultDepth(std::max(1.0f, static_cast<float>(resIdx)));
+        ptr->setBlendMode(resNode->data().blendMode());
+        ptr->setInitialRect(resNode->data().rect());
+    }
+    else {
+        ptr = new core::FolderNode(itemNode->name() + " (Copy)");
+        ptr->setClipped(itemNode->renderer()->isClipped());
+        ptr->setVisibility(itemNode->isVisible());
+        ptr->setDefaultDepth(itemNode->initialDepth());
+        ptr->setBlendMode(itemNode->renderer()->blendMode());
+        ptr->setInitialRect(itemNode->initialRect());
+    }
     ptr->setDefaultOpacity(1.0f);
     // We get all keys now
     core::TimeLine* ptrTl = ptr->timeLine();
@@ -771,8 +803,7 @@ void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNod
     for (int tIndex = 0; tIndex != core::TimeKeyType_TERM; tIndex++) {
         addKeyToTimeLine(ptrTl, mProject->commandStack(), objItem->node().timeLine()->map(static_cast<core::TimeKeyType>(tIndex)));
     }
-
-    for (auto bone: ptrTl->map(core::TimeKeyType_Bone)) {
+    for (const auto bone: ptrTl->map(core::TimeKeyType_Bone)) {
         dynamic_cast<core::BoneKey*>(bone)->resetCaches(*mProject, objItem->node());
     }
     ptr->timeLine()->current().clearCaches();
@@ -809,17 +840,33 @@ void ObjectTreeWidget::addFolder(QTreeWidgetItem* curActionItem, core::ObjectNod
         }
     }
 
-    for(core::ObjectNode* node: itemNode->children()){
-        if(node->type() == core::ObjectType_Layer) {
-            addLayer(itemPtr, node, true, static_cast<int>(itemPtr->node().children().size()));
-        }
-        else if(node->type() == core::ObjectType_Folder){
-            addFolder(itemPtr, node, true, static_cast<int>(itemPtr->node().children().size()));
+    if (isResNode) {
+        for (const auto child: res->at(resIdx).children){
+            if(child->data().isLayer()) {
+                addLayer(itemPtr, itemNode, true, static_cast<int>(itemPtr->node().children().size()), child, parsedRes, res);
+            }
+            else{
+                addFolder(itemPtr, itemNode, true, static_cast<int>(itemPtr->node().children().size()), child, parsedRes, res);
+            }
         }
     }
+
+    else {
+        for(core::ObjectNode* node: itemNode->children()){
+            if(node->type() == core::ObjectType_Layer) {
+                addLayer(itemPtr, node, true, static_cast<int>(itemPtr->node().children().size()));
+            }
+            else if(node->type() == core::ObjectType_Folder){
+                addFolder(itemPtr, node, true, static_cast<int>(itemPtr->node().children().size()));
+            }
+        }
+    }
+
+    if (isResNode) { parsedRes->append(resNode->data().identifier()); }
 }
 void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode* itemNode,
-    const bool moveToFolder = false, const int folderIndex = -1){
+    const bool moveToFolder, const int folderIndex, img::ResourceNode* resNode, QVector<QString>* parsedRes,
+    const QVector<resource>* res){
     obj::Item* objItem = obj::Item::cast(curActionItem);
     core::ObjectNode* parent;
     QTreeWidgetItem* parentItem;
@@ -846,31 +893,56 @@ void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode
         if (itemIndex < 0) { return; }
     }
 
+    const auto isResNode = resNode && parsedRes && res;
+
     auto* itemTL = itemNode->timeLine();
-    const QString nodeName = itemNode->name() + " (Copy)";
+
+    QString nodeName;
+    if (isResNode) {
+        nodeName = resNode->data().identifier();
+    } else {
+        nodeName = itemNode->name() + " (Copy)";
+    }
+    img::ResourceHandle resHandle;
+    if (isResNode) {
+        resHandle = resNode->handle();
+    } else {
+        resHandle = itemTL->current().areaImageKey()->data().resource();
+    }
     // create node
     auto* ptr = new core::LayerNode(nodeName, mProject->objectTree().shaderHolder());
-    ptr->setVisibility(itemNode->isVisible());
-    const img::ResourceHandle resHandle = itemTL->current().areaImageKey()->data().resource();
+
+    int resIdx = 0;
+    if (isResNode) { for (auto x = 0; x < res->size(); x++) { if (res->at(x).node == resNode) { resIdx = x; } } }
+
     ptr->setDefaultImage(resHandle);
     ptr->setDefaultPosture(resHandle->center());
-    ptr->timeLine()->current().setImageOffset(itemTL->current().imageOffset());
-    ptr->setDefaultDepth(itemNode->initialDepth());
-    ptr->setDefaultOpacity(itemTL->current().opa().opacity());
     ptr->setBlendMode(resHandle->blendMode());
-    ptr->setClipped(objItem->node().renderer()->isClipped());
-    ptr->setInitialRect(objItem->node().initialRect());
-    // We get all keys now
-    core::TimeLine* ptrTl = ptr->timeLine();
-    ptrTl->current() = itemTL->current();
-    for (int tIndex = 0; tIndex != core::TimeKeyType_TERM; tIndex++) {
-        addKeyToTimeLine(ptrTl, mProject->commandStack(), itemTL->map(static_cast<core::TimeKeyType>(tIndex)));
+    ptr->setInitialRect(resHandle->rect());
+    if (isResNode) {
+        ptr->setVisibility(true);
+        ptr->setDefaultDepth(std::max(1.0f, static_cast<float>(resIdx)));
+        ptr->setDefaultOpacity(1.0f);
+        ptr->setClipped(false);
     }
-    for (auto bone: ptrTl->map(core::TimeKeyType_Bone)) {
-        dynamic_cast<core::BoneKey*>(bone)->resetCaches(*mProject, objItem->node());
+    else{
+        ptr->setVisibility(itemNode->isVisible());
+        ptr->timeLine()->current().setImageOffset(itemTL->current().imageOffset());
+        ptr->setDefaultDepth(itemNode->initialDepth());
+        ptr->setDefaultOpacity(itemTL->current().opa().opacity());
+        ptr->setClipped(objItem->node().renderer()->isClipped());
+        // We get all keys now
+        core::TimeLine* ptrTl = ptr->timeLine();
+        ptrTl->current() = itemTL->current();
+        for (int tIndex = 0; tIndex != core::TimeKeyType_TERM; tIndex++) {
+            addKeyToTimeLine(ptrTl, mProject->commandStack(), itemTL->map(static_cast<core::TimeKeyType>(tIndex)));
+        }
+        for (const auto bone: ptrTl->map(core::TimeKeyType_Bone)) {
+            dynamic_cast<core::BoneKey*>(bone)->resetCaches(*mProject, objItem->node());
+        }
+        ptr->timeLine()->current().clearCaches();
+        ptr->timeLine()->current().clearMasterCache();
     }
-    ptr->timeLine()->current().clearCaches();
-    ptr->timeLine()->current().clearMasterCache();
 
     {
         cmnd::ScopedMacro macro(mProject->commandStack(), CmndName::tr("Duplicate layer"));
@@ -904,6 +976,8 @@ void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode
         }
 
     }
+
+    if (isResNode) { parsedRes->append(resNode->data().identifier()); }
 }
 void ObjectTreeWidget::onObjectMirrorTriggered() {
     if(mActionItem) {

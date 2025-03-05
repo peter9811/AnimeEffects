@@ -10,7 +10,7 @@ jobs:
     - name: checkout sources
       uses: actions/checkout@v4
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
         aqtversion: '==3.1.*'
         version: '6.6.2'
@@ -27,7 +27,7 @@ jobs:
       with:
          vulkan-query-version: 1.3.204.0
          vulkan-components: Vulkan-Headers, Vulkan-Loader
-         vulkan-use-cache: true
+         vulkan-use-cache: false
     - name: Setup MSVC env
       uses: ilammy/msvc-dev-cmd@v1
     - name: Setup PATH

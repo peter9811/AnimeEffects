@@ -37,8 +37,6 @@
 QT_BEGIN_NAMESPACE
 
 class ExportWidgetUI {
-    // For lupdate, ignore this in all other cases
-    Q_OBJECT;
 public:
     QVBoxLayout *verticalLayout_2;
     QVBoxLayout *tabVBox;

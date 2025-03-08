@@ -16,8 +16,6 @@
 namespace ctrl {
 
 class ImageFileLoader {
-    // For lupdate, ignore this in all other cases
-    Q_OBJECT;
 public:
     explicit ImageFileLoader(gl::DeviceInfo  aDeviceInfo);
 

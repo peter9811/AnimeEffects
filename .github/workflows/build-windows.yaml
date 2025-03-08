@@ -24,7 +24,7 @@ jobs:
       with:
          vulkan-query-version: 1.3.204.0
          vulkan-components: Vulkan-Headers, Vulkan-Loader
-         vulkan-use-cache: false
+         vulkan-use-cache: true
     - uses: TheMrMilchmann/setup-msvc-dev@v3
       with:
          arch: x64

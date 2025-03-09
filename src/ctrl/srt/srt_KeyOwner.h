@@ -43,6 +43,7 @@ namespace srt {
         QMatrix4x4 locSRMtx;
         QMatrix4x4 locSRTMtx;
         QMatrix4x4 locCSRTMtx;
+        bool isBound;
         bool hasInv;
     };
 

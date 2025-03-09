@@ -11,8 +11,8 @@ GUIResources::GUIResources(const QString& aResourceDir):
     QSettings settings;
     auto theme = settings.value("generalsettings/ui/theme");
     if (!theme.isValid()) {
-        settings.setValue("generalsettings/ui/theme", "classic");
-        theme = "classic";
+        settings.setValue("generalsettings/ui/theme", "breeze_dark");
+        theme = "breeze_dark";
     }
     settings.sync();
     setTheme(theme.toString());
@@ -32,10 +32,9 @@ QIcon GUIResources::icon(const QString& aName) const {
     if (icon) {
         return *icon;
     } else {
-        // I don't see a benefit to asserting zero
-        // just because an Icon is missing...
+        // I don't see a benefit to asserting zero just because an icon is missing...
         // XC_ASSERT(0);
-        return QIcon();
+        return {};
     }
 }
 

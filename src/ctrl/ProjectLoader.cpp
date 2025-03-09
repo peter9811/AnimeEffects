@@ -138,7 +138,9 @@ bool ProjectLoader::readHeader(util::LEStreamReader& aIn) {
         )) {
         mLog.push_back("The file version is too old to read properly.");
         return false;
-    } else if (majorVersion > AE_PROJECT_FORMAT_MAJOR_VERSION || (majorVersion == AE_PROJECT_FORMAT_MAJOR_VERSION && minorVersion > AE_PROJECT_FORMAT_MINOR_VERSION)) {
+    }
+    if (majorVersion > AE_PROJECT_FORMAT_MAJOR_VERSION ||
+        (majorVersion == AE_PROJECT_FORMAT_MAJOR_VERSION && minorVersion > AE_PROJECT_FORMAT_MINOR_VERSION)) {
         mLog.push_back("This file has been made with a new version of AnimeEffects, unable to read.");
         return false;
     }

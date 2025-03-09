@@ -973,6 +973,8 @@ void TimeKeyBlender::setBinderBones(ObjectNode& aRootNode) {
     }
 }
 
+// Very good var names hidefuku, I can totally understand what the fuck is going on at first glance
+
 void TimeKeyBlender::setBindingMatrices(
     ObjectNode& aNode, bool aAffectedByBinding, bool aUnderOfBinding, QMatrix4x4 aBindingMtx
 ) {

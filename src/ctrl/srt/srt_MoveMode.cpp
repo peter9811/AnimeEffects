@@ -120,7 +120,14 @@ namespace ctrl::srt {
 
     void MoveMode::renderQt(const core::RenderInfo& aInfo, QPainter& aPainter) {
         mSymbol.build(mKeyOwner.getLocalSRTMatrixFromKeys(), mKeyOwner.parentMtx, aInfo.camera);
-        mSymbol.draw(aInfo, aPainter, mFocus.first);
+        bool grayOut = false;
+        {
+            const auto& aLine = mTarget.timeLine();
+            if ( aLine->current().bone().isUnderOfBinding() || aLine->working().bone().isUnderOfBinding()) {
+                grayOut = true;
+            }
+        }
+        mSymbol.draw(aInfo, aPainter, mFocus.first, grayOut);
     }
 
     void MoveMode::clearState() {

@@ -1,6 +1,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QDomDocument>
+#include <QClipboard>
 #include <qstandardpaths.h>
 #include "qprocess.h"
 #include "util/TextUtil.h"
@@ -48,7 +49,6 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
     mViaPoint(aViaPoint),
     mProject(),
     mProjectActions(),
-    mShowResourceWindow(),
     mVideoFormats(),
     mGUIResources(aGUIResources) {
     // load the list of video formats from a setting file.
@@ -58,9 +58,9 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
     auto fileMenu = new QMenu(tr("File"), this);
     {
-        auto newProject = new QAction(tr("New Project..."), this);
-        auto openProject = new QAction(tr("Open Project..."), this);
-        auto openRecent = new QMenu(tr("Open Recent..."), this);
+        auto newProject = new QAction(tr("New project"), this);
+        auto openProject = new QAction(tr("Open project"), this);
+        auto openRecent = new QMenu(tr("Open recent"), this);
         {
             // Get settings
             QSettings settings;
@@ -154,9 +154,9 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             gifFormat.label = "GIF";
             gifFormat.icodec = "ppm";
 
-            auto jpgs = new QAction(tr("JPEG Sequence..."), this);
-            auto pngs = new QAction(tr("PNG Sequence..."), this);
-            auto gif = new QAction(tr("GIF Animation..."), this);
+            auto jpgs = new QAction(tr("JPEG Sequence"), this);
+            auto pngs = new QAction(tr("PNG Sequence"), this);
+            auto gif = new QAction(tr("GIF Animation"), this);
             connect(jpgs, &QAction::triggered, [=]() { mainWindow->onExportImageSeqTriggered("jpg"); });
             connect(pngs, &QAction::triggered, [=]() { mainWindow->onExportImageSeqTriggered("png"); });
             connect(gif, &QAction::triggered, [=]() { mainWindow->onExportVideoTriggered(gifFormat); });
@@ -165,7 +165,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             exportAs->addAction(gif);
 
             for (const auto& format : mVideoFormats) {
-                auto video = new QAction(format.label + " " + tr("Video") + "...", this);
+                auto video = new QAction(format.label + " " + tr("Video"), this);
                 connect(video, &QAction::triggered, [=]() { mainWindow->onExportVideoTriggered(format); });
                 exportAs->addAction(video);
             }
@@ -211,49 +211,38 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         editMenu->addAction(redo);
     }
 
-    auto projMenu = new QMenu(tr("Project"), this);
+    auto projMenu = new QMenu(tr("Project attributes"), this);
     {
-        auto canvSize = new QAction(tr("Set canvas size..."), this);
-        auto maxFrame = new QAction(tr("Set maximum frame count..."), this);
-        auto loopAnim = new QAction(tr("Set animation loop..."), this);
-        auto setFPS = new QAction(tr("Set frames per second..."), this);
+        auto canvSize = new QAction(tr("Canvas size"), this);
+        auto maxFrame = new QAction(tr("Maximum frame count"), this);
+        auto loopAnim = new QAction(tr("Loop animation"), this);
+        auto setFPS = new QAction(tr("Frames per second"), this);
+        auto resource = new QAction(tr("Resources"), this);
 
         mProjectActions.push_back(canvSize);
         mProjectActions.push_back(maxFrame);
         mProjectActions.push_back(loopAnim);
         mProjectActions.push_back(setFPS);
+        mProjectActions.push_back(resource);
 
         connect(canvSize, &QAction::triggered, this, &MainMenuBar::onCanvasSizeTriggered);
         connect(maxFrame, &QAction::triggered, this, &MainMenuBar::onMaxFrameTriggered);
         connect(loopAnim, &QAction::triggered, this, &MainMenuBar::onLoopTriggered);
         connect(setFPS, &QAction::triggered, this, &MainMenuBar::onFPSTriggered);
+        connect(resource, &QAction::triggered, [&] { if (aViaPoint.resourceDialog()) { aViaPoint.resourceDialog()->setVisible(!aViaPoint.resourceDialog()->isVisible()); } });
 
+        projMenu->addAction(resource);
         projMenu->addAction(canvSize);
         projMenu->addAction(maxFrame);
         projMenu->addAction(loopAnim);
         projMenu->addAction(setFPS);
     }
 
-    auto windowMenu = new QMenu(tr("Window"), this);
+    auto optionMenu = new QMenu(tr("Options"), this);
     {
-        auto resource = new QAction(tr("Resource Window"), this);
-        resource->setCheckable(true);
-        mShowResourceWindow = resource;
-
-        connect(resource, &QAction::triggered, [&](bool aChecked) {
-            if (aViaPoint.resourceDialog()) {
-                aViaPoint.resourceDialog()->setVisible(aChecked);
-            }
-        });
-
-        windowMenu->addAction(resource);
-    }
-
-    auto optionMenu = new QMenu(tr("Option"), this);
-    {
-        auto general = new QAction(tr("General Settings..."), this);
-        auto mouse = new QAction(tr("Mouse Settings..."), this);
-        auto keyBind = new QAction(tr("Key Bindings..."), this);
+        auto general = new QAction(tr("General settings"), this);
+        auto mouse = new QAction(tr("Mouse settings"), this);
+        auto keyBind = new QAction(tr("Keybindings"), this);
 
         connect(general, &QAction::triggered, [&](bool) {
             auto generalSettingsDialog = new GeneralSettingDialog(mGUIResources, this);
@@ -284,8 +273,57 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
     auto helpMenu = new QMenu(tr("Help"), this);
     {
-        auto aboutMe = new QAction(tr("About AnimeEffects..."), this);
+        auto aboutMe = new QAction(tr("About AnimeEffects"), this);
         connect(aboutMe, &QAction::triggered, [=]() {
+            QMessageBox msgBox;
+            msgBox.setWindowIcon(QIcon("../src/AnimeEffects.ico"));
+            auto versionString = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." +
+                QString::number(AE_MICRO_VERSION);
+            auto platform = QSysInfo::productType();
+            platform[0] = platform[0].toUpper();
+            QString msgStr =
+                tr("### AnimeEffects for ") + platform + tr(" version ") + versionString + "<br />" +
+                tr("An easy to use 2D animation software maintained by the [AnimeEffectsDevs](https://github.com/AnimeEffectsDevs)."
+                   "<br />Licensed under the GPL v3.0 and powered by various open source libraries.");
+            msgStr.append(
+                tr("<br /><br />Contributors:<br />"
+                "[Hidefuku](https://github.com/hidefuku), "
+                "[Yukusai](https://github.com/p-yukusai), "
+                "[Gambot](https://github.com/GbotHQ), "
+                "[Arrangemonk](https://github.com/Arrangemonk), "
+                "[OneByStudio](https://onebystudio.com), "
+                "[Larpon](https://github.com/larpon), "
+                "[Herace](https://github.com/herace), "
+                "[Aodaruma](https://github.com/Aodaruma), "
+                "[Azagaya](https://github.com/azagaya), "
+                "[FoxyHawk](https://github.com/FoxyHawk), "
+                "[Nanashia](https://github.com/Nanashia), "
+                "[Henrich](https://github.com/henrich), "
+                "[mcddx330](https://github.com/mcddx330), "
+                "[Freddii](https://github.com/freddii), "
+                "[aki017](https://github.com/aki017), "
+                "[picoHz](https://github.com/picoHz)."
+                ));
+            msgBox.setTextFormat(Qt::TextFormat::MarkdownText);
+            msgBox.setText(msgStr);
+            QFont font = msgBox.font();
+            font.setPointSize(10);
+            msgBox.setFont(font);
+            msgBox.setWindowTitle(tr("About us"));
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.exec();
+        });
+
+        auto checkForUpdates = new QAction(tr("Check for updates"), this);
+        connect(checkForUpdates, &QAction::triggered, [=]() {
+            util::NetworkUtil networking;
+            QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
+            util::NetworkUtil::checkForUpdate(url, networking, this);
+        });
+
+        auto diagnostics = new QAction(tr("System telemetry"), this);
+        connect(diagnostics, &QAction::triggered, [=]() {
             QMessageBox msgBox;
             msgBox.setWindowIcon(QIcon("../src/AnimeEffects.ico"));
             auto versionString = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." +
@@ -295,12 +333,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             auto platform = QSysInfo::productType();
             auto qtVersion = QString::number(QT_VERSION_MAJOR) + "." + QString::number(QT_VERSION_MINOR) + "." +
                 QString::number(QT_VERSION_PATCH);
-            platform[0] = platform[0].toUpper(); // First letter capitalization :D
-            QString msgStr = tr("### AnimeEffects for ") + platform + tr(" version ") + versionString + "<br />" +
-                tr("Original code and artwork by [Hidefuku](https://github.com/hidefuku).<br />Current development "
-                   "handled by the [AnimeEffectsDevs](https://github.com/AnimeEffectsDevs).");
-            msgBox.setText(msgStr);
-            msgBox.setTextFormat(Qt::TextFormat::MarkdownText);
+            platform[0] = platform[0].toUpper();
             QString detail;
             detail += tr("Version: ") + versionString + "\n";
             detail += tr("Platform: ") + platform + " " + QSysInfo::productVersion() + "\n";
@@ -324,7 +357,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             } else {
                 file.close();
             }
-            QString isFolderWritable = isWritable ? "True" : "False";
+            const QString isFolderWritable = isWritable ? "True" : "False";
             detail += tr("Location Is Writable: ") + isFolderWritable + "\n";
             // FFmpeg Check
             QFileInfo ffmpeg_file;
@@ -344,21 +377,19 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             QString ffmpegReach = fExists ? "True" : "False";
             detail += tr("FFmpeg Reach Type: ") + ffmpegType + "\n";
             detail += tr(QString("FFmpeg Reachable: " + ffmpegReach).toStdString().c_str());
+            msgBox.setText(tr("System specs successfully copied to the clipboard"));
+            QClipboard *clipboard = QGuiApplication::clipboard();
+            clipboard->setText(detail);
             msgBox.setDetailedText(detail);
+            msgBox.setWindowTitle(tr("System telemetry"));
             msgBox.setStandardButtons(QMessageBox::Ok);
             msgBox.setDefaultButton(QMessageBox::Ok);
             msgBox.exec();
         });
 
-        auto checkForUpdates = new QAction(tr("Check for Updates..."), this);
-        connect(checkForUpdates, &QAction::triggered, [=]() {
-            util::NetworkUtil networking;
-            QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
-            util::NetworkUtil::checkForUpdate(url, networking, this);
-        });
-
         helpMenu->addAction(aboutMe);
         helpMenu->addAction(checkForUpdates);
+        helpMenu->addAction(diagnostics);
     }
 
     auto donateMenu = new QAction(tr("Donate"), this);
@@ -371,7 +402,6 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
     this->addAction(fileMenu->menuAction());
     this->addAction(editMenu->menuAction());
     this->addAction(projMenu->menuAction());
-    this->addAction(windowMenu->menuAction());
     this->addAction(optionMenu->menuAction());
     this->addAction(helpMenu->menuAction());
     QSettings settings;
@@ -396,8 +426,6 @@ void MainMenuBar::setProject(core::Project* aProject) {
         }
     }
 }
-
-void MainMenuBar::setShowResourceWindow(bool aShow) const { mShowResourceWindow->setChecked(aShow); }
 
 void MainMenuBar::loadVideoFormats() {
     using util::TextUtil;
@@ -748,7 +776,7 @@ ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidge
 
     this->setOkCancel([=](int aIndex) -> bool {
         if (aIndex == 0) {
-            return gui::ProjectFPSSettingDialog::confirmFPSUpdating(this->mFPSBox->value());
+            return confirmFPSUpdating(this->mFPSBox->value());
         }
         return true;
     });
@@ -757,9 +785,7 @@ ProjectFPSSettingDialog::ProjectFPSSettingDialog(core::Project& aProject, QWidge
 
 bool ProjectFPSSettingDialog::confirmFPSUpdating(int aNewFPS) {
     XC_ASSERT(aNewFPS > 0);
-    if (aNewFPS != 0)
-        return true;
-    return false;
+    return true;
 }
 
 void MainMenuBar::onFPSTriggered() {

@@ -24,6 +24,14 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage) {
 
     // moveKey
     mKeyOwner.ownsMoveKey = !moveMap.contains(frame);
+    mKeyOwner.isBound = aLine.current().bone().isUnderOfBinding() || aLine.working().bone().isUnderOfBinding();
+    if (mKeyOwner.isBound) {
+        if (aMessage) {
+            *aMessage = UILog::tr("The transformed object has one or more bones bound to it, SRT keys may not work as expected.");
+            mUILogger.pushLog(UILog::tr("SRT Editor : ") + *aMessage, UILogType_Warn);
+        }
+    }
+
     if (mKeyOwner.ownsMoveKey) {
         mKeyOwner.moveKey = new MoveKey();
         util::Easing::Param aParam;
@@ -33,7 +41,7 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage) {
         mKeyOwner.moveKey->setPos(current.srt().pos());
         mKeyOwner.moveKey->setCentroid(current.srt().centroid());
     } else {
-        mKeyOwner.moveKey = static_cast<MoveKey*>(moveMap.value(frame));
+        mKeyOwner.moveKey = dynamic_cast<MoveKey*>(moveMap.value(frame));
     }
 
     // rotateKey
@@ -46,7 +54,7 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage) {
         mKeyOwner.rotateKey->data().easing() = aParam;
         mKeyOwner.rotateKey->setRotate(current.srt().rotate());
     } else {
-        mKeyOwner.rotateKey = static_cast<RotateKey*>(rotateMap.value(frame));
+        mKeyOwner.rotateKey = dynamic_cast<RotateKey*>(rotateMap.value(frame));
     }
 
     // scaleKey
@@ -59,7 +67,7 @@ bool SRTEditor::initializeKey(TimeLine& aLine, QString* aMessage) {
         mKeyOwner.scaleKey->data().easing() = aParam;
         mKeyOwner.scaleKey->setScale(current.srt().scale());
     } else {
-        mKeyOwner.scaleKey = static_cast<ScaleKey*>(scaleMap.value(frame));
+        mKeyOwner.scaleKey = dynamic_cast<ScaleKey*>(scaleMap.value(frame));
     }
 
     // check validity
@@ -95,7 +103,6 @@ void SRTEditor::createMode() {
     case 1:
         mCurrent.reset(new srt::CentroidMode(mProject, *mTarget, mKeyOwner));
         break;
-
     default:
         break;
     }

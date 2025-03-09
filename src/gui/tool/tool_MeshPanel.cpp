@@ -11,7 +11,7 @@ namespace tool {
 
     MeshPanel::MeshPanel(QWidget* aParent, GUIResources& aResources):
         QGroupBox(aParent), mResources(aResources), mParam(), mTypeGroup() {
-        this->setTitle(tr("Mesh Editing"));
+        this->setTitle(tr("Mesh editor"));
         createMode();
     }
 
@@ -23,7 +23,7 @@ namespace tool {
         // type
         mTypeGroup.reset(new SingleOutItem(3, QSize(kButtonSpace, kButtonSpace), this));
         mTypeGroup->setChoice(mParam.mode);
-        mTypeGroup->setToolTips(QStringList() << tr("Add a vertex") << tr("Delete a vertex") << tr("Split a polygon"));
+        mTypeGroup->setToolTips(QStringList() << tr("Add vertex") << tr("Delete vertex") << tr("Split polygon"));
         mTypeGroup->setIcons(
             QVector<QIcon>() << mResources.icon("plus") << mResources.icon("minus") << mResources.icon("pencil")
         );

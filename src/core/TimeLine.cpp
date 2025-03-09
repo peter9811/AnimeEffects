@@ -233,10 +233,10 @@ bool TimeLine::serialize(Serializer& aOut) const {
         auto mapPos = aOut.beginBlock(kMapSignature);
 
         // type name
-        aOut.write(getTimeKeyName((TimeKeyType)i));
+        aOut.write(getTimeKeyName(static_cast<TimeKeyType>(i)));
 
         // default key is exists
-        aOut.write((bool)defaultKey);
+        aOut.write(static_cast<bool>(defaultKey));
 
         // defautltKey
         if (defaultKey) {

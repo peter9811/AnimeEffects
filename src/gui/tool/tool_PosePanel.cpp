@@ -11,7 +11,7 @@ namespace tool {
 
     PosePanel::PosePanel(QWidget* aParent, GUIResources& aResources):
         QGroupBox(aParent), mResources(aResources), mParam(), mTypeGroup(), mDIWeight(), mEIRadius(), mEIPressure() {
-        this->setTitle(tr("Manipulate Bones"));
+        this->setTitle(tr("Pose editor"));
         createMode();
         updateTypeParam(mParam.mode);
     }
@@ -24,7 +24,7 @@ namespace tool {
         // type
         mTypeGroup.reset(new SingleOutItem(ctrl::PoseEditMode_TERM, QSize(kButtonSpace, kButtonSpace), this));
         mTypeGroup->setChoice(mParam.mode);
-        mTypeGroup->setToolTips(QStringList() << tr("Move Bones") << tr("Pull Bones") << tr("Erase Poses"));
+        mTypeGroup->setToolTips(QStringList() << tr("Move bone") << tr("Pull bones") << tr("Erase bone pose"));
         mTypeGroup->setIcons(
             QVector<QIcon>() << mResources.icon("move") << mResources.icon("pencil") << mResources.icon("eraser")
         );

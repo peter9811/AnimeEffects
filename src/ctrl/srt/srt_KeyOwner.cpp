@@ -100,8 +100,8 @@ namespace srt {
     }
 
     QMatrix4x4 KeyOwner::getLocalSRTMatrixFromKeys() const {
-        if (!(bool)(*this))
-            return QMatrix4x4();
+        if (!static_cast<bool>(*this))
+            return {};
 
         SRTExpans expans;
         expans.setPos(moveKey->pos());
@@ -111,8 +111,8 @@ namespace srt {
     }
 
     QMatrix4x4 KeyOwner::getLocalSRMatrixFromKeys() const {
-        if (!(bool)(*this))
-            return QMatrix4x4();
+        if (!static_cast<bool>(*this))
+            return {};
 
         SRTExpans expans;
         expans.setRotate(rotateKey->rotate());

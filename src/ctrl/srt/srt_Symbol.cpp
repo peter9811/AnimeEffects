@@ -125,11 +125,16 @@ namespace srt {
         return FocusData(FocusType_TERM, QVector2D());
     }
 
-    void Symbol::draw(const RenderInfo& aInfo, QPainter& aPainter, FocusType aFocus) {
+    void Symbol::draw(const RenderInfo& aInfo, QPainter& aPainter, FocusType aFocus, bool grayOut = false) const {
         (void)aInfo;
 
-        const QColor idleColor(100, 100, 255, 255);
-        const QColor focusColor(255, 255, 255, 255);
+        QColor idleColor(100, 100, 255, 255);
+        QColor focusColor(255, 255, 255, 255);
+
+        if (grayOut) {
+            idleColor = Qt::darkGray;
+            focusColor = Qt::white;
+        }
 
         const QBrush centerBrush(aFocus == FocusType_Trans ? focusColor : idleColor);
         const QBrush edgeXBrush((aFocus == FocusType_Scale || aFocus == FocusType_ScaleX) ? focusColor : idleColor);

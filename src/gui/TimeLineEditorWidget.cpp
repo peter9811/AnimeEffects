@@ -161,7 +161,6 @@ TimeLineEditorWidget::TimeLineEditorWidget(ViaPoint& aViaPoint, QWidget* aParent
             key->invoker = [=]() {
                 if (!mCopyTargets.targets().isEmpty()) {
                     mPastePos = this->mapFromGlobal(QCursor::pos());
-                    ;
                     mPasteKey->trigger();
                 }
             };
@@ -752,7 +751,9 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
     verticalLayout->addWidget(label);
 
     auto frameSpacing = new QSpinBox(diag);
-    frameSpacing->setMaximum(INT32_MAX);
+    frameSpacing->setMaximum(mProject->attribute().maxFrame());
+    frameSpacing->setMinimum(1);
+    frameSpacing->setValue(1);
     frameSpacing->setObjectName("frameSpacing");
     verticalLayout->addWidget(frameSpacing);
 
@@ -768,8 +769,7 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
         R"(<html><head/><body><p align="center">)" + tr("Number of frames the selected keys should be spaced by:") +
         "</p></body></html>"
     );
-    bool connected;
-    connected = connect(buttonBox, &QDialogButtonBox::accepted, this, [diag](){ diag->accept();});
+    bool connected= connect(buttonBox, &QDialogButtonBox::accepted, this, [diag](){ diag->accept();});
     connected = connected && connect(buttonBox, &QDialogButtonBox::rejected, this, [diag](){ diag->reject();});
     if(!connected){
         diag->deleteLater();
@@ -798,7 +798,7 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
                     int frame = key.pos.key()->frame();
                     int dest = initialFrame + frameAccumulation;
                     const core::TimeKeyType keyType = key.pos.type();
-                    if(mProject->attribute().maxFrame() > dest){ outsideRange.emplace_back(key, dest); }
+                    if(mProject->attribute().maxFrame() < dest){ outsideRange.emplace_back(key, dest); }
                     else if(!key.pos.line()->move(keyType, frame, dest)){ conflicts.emplace_back(key, dest); }
                     tSize -= 1;
                 }
@@ -815,7 +815,7 @@ void TimeLineEditorWidget::onSelectSpacingTriggered() {
             for (const auto& [key, frame] : outsideRange) {
                 errorLog.append(
                     tr("Destination for key type ") + keyToString(key.pos.type()) + tr(" in node ") + key.node->name() +
-                    tr(" is outside maximum frame for project, ignored attempt to move key to frame") + QString::number(frame));
+                    tr(" is outside maximum frame for project, ignored attempt to move key to frame ") + QString::number(frame));
             }
             msg.setWindowTitle(tr("Move error"));
             msg.setText(tr("Unable to move ") + QString::number(conflicts.size() + outsideRange.size()) + tr(" key(s), due to the following reasons: "));

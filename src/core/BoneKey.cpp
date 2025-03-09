@@ -102,7 +102,7 @@ void BoneKey::updateCaches(Project& aProject, const QList<Cache*>& aTargets) {
 
             // influence map matrix
             auto mapMtx = cache->innerMatrix();
-            mapMtx.translate(originOffset.toVector3D());
+            mapMtx.translate(originOffset.x(), originOffset.y());
 
             BoneInfluenceMap& map = cache->influence();
             // allocate if necessary
@@ -303,7 +303,7 @@ bool BoneKey::serialize(Serializer& aOut) const {
     aOut.write(static_cast<int>(mData.topBones().count()));
 
     // serialize all bones
-    for (auto topBone : mData.topBones()) {
+    for (const auto topBone : mData.topBones()) {
         XC_PTR_ASSERT(topBone);
         if (!serializeBone(aOut, topBone)) {
             return false;
@@ -317,7 +317,7 @@ bool BoneKey::serialize(Serializer& aOut) const {
     aOut.write(static_cast<int>(mCaches.count()));
 
     // each caches
-    for (auto cache : mCaches) {
+    for (const auto cache : mCaches) {
         aOut.writeID(cache->node());
         aOut.write(cache->innerMatrix());
         aOut.write(QVector2D()); // obsolete: origin offset

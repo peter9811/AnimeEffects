@@ -111,12 +111,12 @@ Easing::Range Easing::rangeToEnum(QString range) {
     }
     if (aRange == "In")
         return Range_In;
-    else if (aRange == "Out")
+    if (aRange == "Out")
         return Range_Out;
-    else if (aRange == "All")
+    if (aRange == "All")
         return Range_InOut;
-    else
-        return Range_InOut; // Default range is InOut, defined as "All" by Hidefuku
+    return Range_InOut;
+    // Default range is InOut, defined as "All" by Hidefuku
 }
 
 

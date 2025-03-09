@@ -12,16 +12,16 @@ namespace tool {
         mButtons(),
         mLayout(this, 0, 2, 2),
         mOnPushed(aOnPushed) {
-        this->setTitle(tr("ToolBox"));
+        this->setTitle(tr("Toolbox"));
         mGroup->setExclusive(true);
         this->setLayout(&mLayout);
 
-        addButton(ctrl::ToolType_Cursor, "cursor", tr("Pan Tool"));
+        addButton(ctrl::ToolType_Cursor, "cursor", tr("Pan tool"));
         addButton(ctrl::ToolType_SRT, "srt", tr("Transform"));
-        addButton(ctrl::ToolType_Bone, "bone", tr("Add Bones"));
-        addButton(ctrl::ToolType_Pose, "pose", tr("Manipulate Bones"));
-        addButton(ctrl::ToolType_Mesh, "mesh", tr("Create Meshes"));
-        addButton(ctrl::ToolType_FFD, "ffd", tr("Free-form Deform"));
+        addButton(ctrl::ToolType_Bone, "bone", tr("Bone editor"));
+        addButton(ctrl::ToolType_Pose, "pose", tr("Pose editor"));
+        addButton(ctrl::ToolType_Mesh, "mesh", tr("Mesh editor"));
+        addButton(ctrl::ToolType_FFD, "ffd", tr("Free-form deformation"));
 
         mGUIResources.onThemeChanged.connect(this, &ModePanel::onThemeUpdated);
     }

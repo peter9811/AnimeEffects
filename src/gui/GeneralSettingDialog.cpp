@@ -222,7 +222,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
     mLanguageBox(),
     mInitialTimeFormatIndex(),
     mTimeFormatBox(),
-    mInitialThemeKey("default"),
+    mInitialThemeKey("breeze_dark"),
     mThemeBox(),
     mGUIResources(aGUIResources) {
     // read current settings
@@ -251,28 +251,31 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         }
 
         auto donationAllowed = settings.value("generalsettings/ui/donationAllowed");
-        bDonationAllowed = !donationAllowed.isValid() || donationAllowed.toBool();
+        bDonationAllowed = donationAllowed.isValid()? donationAllowed.toBool() : true;
 
         auto ignoreWarnings = settings.value("export_ignore_warnings");
         bIgnoreWarnings = ignoreWarnings.isValid()? false : ignoreWarnings.toBool();
 
         auto isAutoSave = settings.value("generalsettings/projects/autosaveEnabled");
-        bAutoSave = isAutoSave.isValid() && isAutoSave.toBool();
+        bAutoSave = isAutoSave.isValid()? isAutoSave.toBool() : false;
 
         auto isAutoSaveDelay = settings.value("generalsettings/projects/autosaveDelay");
         mAutoSaveDelay = isAutoSaveDelay.isValid() ? isAutoSaveDelay.toInt() : 5;
 
         auto isAutoCbCopy = settings.value("generalsettings/keys/autocb");
-        bAutoCbCopy = !isAutoCbCopy.isValid() || isAutoCbCopy.toBool();
+        bAutoCbCopy = !isAutoCbCopy.isValid()? isAutoCbCopy.toBool() : false;
 
         auto isAutoFFmpegCheck = settings.value("ffmpeg_check");
-        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid() || isAutoFFmpegCheck.toBool();
+        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid()? isAutoFFmpegCheck.toBool() : true;
+
+        auto isResIDCheck = settings.value("res_id_check");
+        bResIDCheck = isResIDCheck.isValid()?  isResIDCheck.toBool() : true;
 
         auto isKeyDelay = settings.value("generalsettings/keybindings/keyDelay");
         mKeyDelay = isKeyDelay.isValid() ? isKeyDelay.toInt() : 125;
 
         auto isAutoShowMesh = settings.value("generalsettings/tools/autoshowmesh");
-        bAutoShowMesh = isAutoShowMesh.isValid() && isAutoShowMesh.toBool();
+        bAutoShowMesh = isAutoShowMesh.isValid()? isAutoShowMesh.toBool() : false;
     }
 
     auto form = new QFormLayout();
@@ -315,14 +318,6 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         }
         mThemeBox->setCurrentIndex(mThemeBox->findData(mInitialThemeKey));
         form->addRow(tr("Theme :"), mThemeBox);
-
-        mDonationAllowed = new QCheckBox();
-        mDonationAllowed->setChecked(bDonationAllowed);
-        form->addRow(tr("Allow donation menu : "), mDonationAllowed);
-
-        mIgnoreWarnings = new QCheckBox();
-        mIgnoreWarnings->setChecked(bIgnoreWarnings);
-        form->addRow(tr("Ignore export warnings :"), mIgnoreWarnings);
     }
 
     auto projectSaving = new QFormLayout();
@@ -333,7 +328,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
         mAutoSaveDelayBox = new QSpinBox();
         mAutoSaveDelayBox->setValue(mAutoSaveDelay);
-        projectSaving->addRow(tr("Time in minutes between autosaves : "), mAutoSaveDelayBox);
+        projectSaving->addRow(tr("Time (in minutes) between autosaves : "), mAutoSaveDelayBox);
 
         mAutoShowMesh = new QCheckBox();
         mAutoShowMesh->setChecked(bAutoShowMesh);
@@ -341,11 +336,27 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             QSettings settings;
             settings.setValue("generalsettings/tools/autoshowmesh", mAutoShowMesh->isChecked());
         });
-        projectSaving->addRow(tr("Automatically show mesh when selecting FFD : "), mAutoShowMesh);
+        projectSaving->addRow(tr("Show mesh when selecting FFD : "), mAutoShowMesh);
+
+        mAutoCbCopy = new QCheckBox();
+        mAutoCbCopy->setChecked(bAutoCbCopy);
+        projectSaving->addRow(tr("On copy send keys to the clipboard : "), mAutoCbCopy);
 
         mAutoFFmpegBox = new QCheckBox();
         mAutoFFmpegBox->setChecked(mAutoFFmpegCheck);
-        projectSaving->addRow(tr("Check for FFmpeg on export : "), mAutoFFmpegBox);
+        projectSaving->addRow(tr("Always check for FFmpeg on export : "), mAutoFFmpegBox);
+
+        bResIDBox = new QCheckBox();
+        bResIDBox->setChecked(bResIDCheck);
+        projectSaving->addRow(tr("Enforce ID check on asset download : "), bResIDBox);
+
+        mIgnoreWarnings = new QCheckBox();
+        mIgnoreWarnings->setChecked(bIgnoreWarnings);
+        projectSaving->addRow(tr("Ignore export warnings :"), mIgnoreWarnings);
+
+        mDonationAllowed = new QCheckBox();
+        mDonationAllowed->setChecked(bDonationAllowed);
+        projectSaving->addRow(tr("Allow donation menu : "), mDonationAllowed);
 
         mResetButton = new QPushButton(tr("Reset recent files list"));
         mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
@@ -355,13 +366,6 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             MainWindow::showInfoPopup(tr("Success"), tr("All entries have been successfully removed"), "Info");
         });
         projectSaving->addRow(mResetButton);
-    }
-
-    auto keysettings = new QFormLayout();
-    {
-        mAutoCbCopy = new QCheckBox();
-        mAutoCbCopy->setChecked(bAutoCbCopy);
-        keysettings->addRow(tr("Automatically copy keys to the clipboard"), mAutoCbCopy);
     }
 
     auto keybindingSettings = new QFormLayout();
@@ -504,8 +508,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             if (QFileInfo::exists(dir.absolutePath() + file)) {
                 QFile(dir.absolutePath() + file).moveToTrash();
             }
-            QString os = util::NetworkUtil::os();
-            QString arch = util::NetworkUtil::arch();
+            const QString os = util::NetworkUtil::os();
             QString gitFile;
             // ID checking is probably overkill, but security is important!
             int id;
@@ -520,47 +523,70 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                 id = 222521413;
             }
 
-            QFileInfo ffmpeg = util::NetworkUtil::downloadGithubFile(
+            const QFileInfo ffmpeg = util::NetworkUtil::downloadGithubFile(
                 "https://api.github.com/repos/AnimeEffectsDevs/ffmpeg-bin/releases/latest", gitFile, id, this
-            );
-            qDebug() << "Download name : " << ffmpeg.fileName() << "\n"
-                     << "Download is executable : " << ffmpeg.isExecutable();
+                );
+            qDebug() << "Download name : " << ffmpeg.fileName() << "\n" << "Download is executable : " << ffmpeg.isExecutable();
+            bool pathSetAttempted = false;
+            bool ffmpegMoveAttempted = false;
             if (ffmpeg.isExecutable()) {
                 if(!dir.exists() || !dir.isReadable() || !QFileInfo(dir.absolutePath()).isWritable()){
-                    // We'll attempt a global installation as a fallback in cases where the folder might be write protected
-                    QDir appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-                    if(appdata.exists() && appdata.isReadable()){
-                        appdata.mkdir("AnimeEffects");
-                        appdata = QDir(appdata.absolutePath() + "/AnimeEffects");
-                        QString fileInAppDataLoc = appdata.absolutePath() + file;
-                        QFile(ffmpeg.absoluteFilePath()).rename(fileInAppDataLoc);
-                        qDebug() << "FFmpeg moved : " << QFile(appdata.absolutePath() + file).exists();
-                        if (QFile(dir.absolutePath() + file).exists()) {
-                            QProcess pathSet;
-                            QString console;
-                            QStringList instruct;
-                            if(os == "linux" || os == "mac"){
-                                console = "sh";
-                                instruct.append("export");
-                                instruct.append("PATH=$PATH:" + fileInAppDataLoc);
+                    // We'll attempt a global installation as a fallback in cases where the folder is write protected
+                    auto appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+                    auto anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
+                    if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isWritable()) {
+                        if (!appdata.mkdir("AnimeEffects")) {
+                            qDebug(
+                                "AnimeEffects folder creation failed in AppData, attempting to locate in Documents..."
+                            );
+                            appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+                            anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
+                            if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isWritable()) {
+                                if (!appdata.mkdir("AnimeEffects")) {
+                                    qDebug("AnimeEffects folder creation failed, skipping...");
+                                }
+                            } else {
+                                appdata = anieFolder;
                             }
-                            else{
-                                console = "cmd";
-                                instruct.append("set");
-                                instruct.append("PATH=%PATH%;" + fileInAppDataLoc);
-                            }
-                            pathSet.start(console, instruct);
-                            pathSet.waitForFinished();
-                            if(pathSet.exitCode() == 0){
-                                QMessageBox success;
-                                success.setWindowTitle(tr("Success"));
-                                success.setText(tr("FFmpeg was successfully setup. Please restart AnimeEffects"));
-                                success.exec();
-                                return;
-                            }
-                            else{ qDebug("FFmpeg path setup errored, continuing..."); }
+                        } else {
+                            appdata = anieFolder;
                         }
-                        else{ qDebug("FFmpeg move errored, continuing..."); }
+                    }
+                    else {
+                        appdata = anieFolder;
+                    }
+                    const QString fileInAppDataLoc = appdata.absolutePath() + file;
+                    QFile(ffmpeg.absoluteFilePath()).rename(fileInAppDataLoc);
+                    qDebug() << "FFmpeg moved : " << QFile(fileInAppDataLoc).exists();
+                    if (QFile(fileInAppDataLoc).exists()) {
+                        QProcess pathSet;
+                        QString console;
+                        QStringList instruct;
+                        if(os == "linux" || os == "mac"){
+                            console = "sh";
+                            instruct.append("export");
+                            instruct.append("PATH=$PATH:" + fileInAppDataLoc);
+                        }
+                        else{
+                            console = "cmd";
+                            instruct.append("set");
+                            instruct.append("PATH=%PATH%;" + fileInAppDataLoc);
+                        }
+                        pathSet.start(console, instruct);
+                        pathSet.waitForFinished();
+                        if (pathSet.exitCode() == 0) {
+                            QMessageBox success;
+                            success.setWindowTitle(tr("Success"));
+                            success.setText(tr("FFmpeg was successfully setup. Please restart AnimeEffects"));
+                            success.exec();
+                            return;
+                        }
+                        pathSetAttempted = true;
+                        qDebug("FFmpeg path setup errored, continuing...");
+                    }
+                    else {
+                        ffmpegMoveAttempted = true;
+                        qDebug("FFmpeg move errored, continuing...");
                     }
                 }
                 QFile(ffmpeg.absoluteFilePath()).rename(dir.absolutePath() + file);
@@ -585,7 +611,9 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                 "\nFile is executable: " + (ffmpeg.isExecutable()? "True" : "False") +
                 "\nFile is readable: " + (ffmpeg.isReadable()? "True": "False") +
                 "\nFile is writable: " + (ffmpeg.isWritable()? "True": "False") +
-                "\nRequested base folders : " + dir.absolutePath() + " | " + QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+                "\nRequested base folders : " + dir.absolutePath() + " | " + QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + " | " + QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +
+                "\nFallback path set errored: " + (pathSetAttempted? "True" : "False") +
+                "\nFallback FFmpeg move errored: " + (ffmpegMoveAttempted? "True" : "False")
             );
             error.exec();
         });
@@ -593,12 +621,11 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         ffmpegSettings->addRow(ffmpegTroubleshoot);
         ffmpegSettings->addRow(selectFromExe);
         ffmpegSettings->addRow(autoSetup);
-    };
+    }
 
     createTab(tr("General"), form);
-    createTab(tr("Project and Tools"), projectSaving);
+    createTab(tr("QoL"), projectSaving);
     createTab(tr("FFmpeg"), ffmpegSettings);
-    createTab(tr("Animation keys"), keysettings);
     createTab(tr("Keybindings"), keybindingSettings);
 
 
@@ -629,15 +656,15 @@ QFormLayout* GeneralSettingDialog::createTab(const QString& aTitle, QFormLayout*
     return form;
 }
 
-bool GeneralSettingDialog::languageHasChanged() { return (mInitialLanguageIndex != mLanguageBox->currentIndex()); }
+bool GeneralSettingDialog::languageHasChanged() { return mInitialLanguageIndex != mLanguageBox->currentIndex(); }
 
-bool GeneralSettingDialog::easingHasChanged() { return (mInitialEasingIndex != mEasingBox->currentIndex()); }
+bool GeneralSettingDialog::easingHasChanged() { return mInitialEasingIndex != mEasingBox->currentIndex(); }
 
-bool GeneralSettingDialog::rangeHasChanged() { return (mInitialRangeIndex != mRangeBox->currentIndex()); }
+bool GeneralSettingDialog::rangeHasChanged() { return mInitialRangeIndex != mRangeBox->currentIndex(); }
 
-bool GeneralSettingDialog::timeFormatHasChanged() { return (mInitialTimeFormatIndex != mTimeFormatBox->currentIndex()); }
+bool GeneralSettingDialog::timeFormatHasChanged() { return mInitialTimeFormatIndex != mTimeFormatBox->currentIndex(); }
 
-bool GeneralSettingDialog::themeHasChanged() { return (mInitialThemeKey != mThemeBox->currentData()); }
+bool GeneralSettingDialog::themeHasChanged() { return mInitialThemeKey != mThemeBox->currentData(); }
 
 bool GeneralSettingDialog::donationHasChanged() {return bDonationAllowed != mDonationAllowed->isChecked(); }
 
@@ -645,15 +672,17 @@ bool GeneralSettingDialog::ignoreWarningsHasChanged() {return bIgnoreWarnings !=
 
 bool GeneralSettingDialog::autoSaveHasChanged() { return bAutoSave != mAutoSave->isChecked(); }
 
-bool GeneralSettingDialog::autoSaveDelayHasChanged() { return (mAutoSaveDelay != mAutoSaveDelayBox->value()); }
+bool GeneralSettingDialog::autoSaveDelayHasChanged() { return mAutoSaveDelay != mAutoSaveDelayBox->value(); }
 
-bool GeneralSettingDialog::autoFFmpegHasChanged() { return (mAutoFFmpegCheck != mAutoFFmpegBox->isChecked()); }
+bool GeneralSettingDialog::autoFFmpegHasChanged() { return mAutoFFmpegCheck != mAutoFFmpegBox->isChecked(); }
 
-bool GeneralSettingDialog::cbCopyHasChanged() { return (bAutoCbCopy != mAutoCbCopy->isChecked()); }
+bool GeneralSettingDialog::resIDCheckHasChanged() { return bResIDCheck != bResIDBox->isChecked(); }
+
+bool GeneralSettingDialog::cbCopyHasChanged() { return bAutoCbCopy != mAutoCbCopy->isChecked(); }
 
 QString GeneralSettingDialog::theme() { return mThemeBox->currentData().toString(); }
 
-bool GeneralSettingDialog::keyDelayHasChanged() { return (mKeyDelay != mKeyDelayBox->value()); }
+bool GeneralSettingDialog::keyDelayHasChanged() { return mKeyDelay != mKeyDelayBox->value(); }
 
 void GeneralSettingDialog::saveSettings() {
     QSettings settings;
@@ -686,6 +715,9 @@ void GeneralSettingDialog::saveSettings() {
     }
     if (autoFFmpegHasChanged()){
         settings.setValue("ffmpeg_check", mAutoFFmpegBox->isChecked());
+    }
+    if (resIDCheckHasChanged()) {
+        settings.setValue("res_id_check", bResIDBox->isChecked());
     }
     if (cbCopyHasChanged()) {
         settings.setValue("generalsettings/keys/autocb", mAutoCbCopy->isChecked());

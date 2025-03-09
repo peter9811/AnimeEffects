@@ -13,7 +13,7 @@
 namespace gui {
 
 ResourceDialog::ResourceDialog(ViaPoint& aViaPoint, bool aModal, QWidget* aParent):
-    EasyDialog(tr("Resource Window"), aParent, aModal), mViaPoint(aViaPoint), mProject(), mTree() {
+    EasyDialog(tr("Project resources"), aParent, aModal), mViaPoint(aViaPoint), mProject(), mTree() {
     // menu bar
     if (!aModal) {
         // Remove redundant menu
@@ -27,12 +27,6 @@ ResourceDialog::ResourceDialog(ViaPoint& aViaPoint, bool aModal, QWidget* aParen
         // menuBar->addMenu(fileMenu);
         menuBar->show();
         this->setMenuBar(menuBar);
-
-        connect(this, &QDialog::finished, [&](int) {
-            if (aViaPoint.mainMenuBar()) {
-                aViaPoint.mainMenuBar()->setShowResourceWindow(false);
-            }
-        });
     }
 
     // resource tree

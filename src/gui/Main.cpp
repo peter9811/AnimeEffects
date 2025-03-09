@@ -177,7 +177,7 @@ int entryPoint(int argc, char* argv[]) {
 
 
 #if !defined(QT_NO_DEBUG)
-        qDebug() << "test new project";
+        qDebug() << "Launching debug project";
         const QString testPath = resourceDir + "/sample.psd";
         mainWindow->testNewProject(testPath);
 #endif

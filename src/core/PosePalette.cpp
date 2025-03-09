@@ -73,15 +73,15 @@ void PosePalette::build(const KeyPairs& aKeyPairs) {
         auto orgn = bonePairs[i].origin;
         auto pose = bonePairs[i].pose;
 
-        static const QVector3D kRotateAxis(0.0f, 0.0f, 1.0f);
+        static constexpr QVector3D kRotateAxis(0.0f, 0.0f, 1.0f);
         const float rotate = util::MathUtil::getDegreeFromRadian(pose->worldAngle() - orgn->worldAngle());
 
         // srt matrix
         {
             QMatrix4x4 mtx;
-            mtx.translate(pose->worldPos().toVector3D());
+            mtx.translate(pose->worldPos().x(), pose->worldPos().y());
             mtx.rotate(rotate, kRotateAxis);
-            mtx.translate(-orgn->worldPos().toVector3D());
+            mtx.translate(-orgn->worldPos().x(), -orgn->worldPos().y());
             mData[i] = mtx;
         }
 
@@ -89,7 +89,7 @@ void PosePalette::build(const KeyPairs& aKeyPairs) {
         {
             QMatrix4x4 rotMtx;
             rotMtx.rotate(rotate, kRotateAxis);
-            const QVector2D originPos = (rotMtx * QVector3D(orgn->worldPos())).toVector2D();
+            const QVector2D originPos = rotMtx.map(orgn->worldPos().toVector3D()).toVector2D();
 
             const QVector3D trans = (pose->worldPos() - originPos).toVector3D();
             auto quat = QQuaternion::fromAxisAndAngle(kRotateAxis, rotate);

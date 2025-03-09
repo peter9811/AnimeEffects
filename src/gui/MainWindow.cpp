@@ -671,7 +671,7 @@ void MainWindow::onPlayPauseTriggered() {
 }
 
 void MainWindow::onMovementTriggered(const QString& frameMovement) {
-    if (frameMovement == "Init") {
+    if (frameMovement == "Last") {
         mTarget->timeLineWidget().setFrame(core::Frame(mCurrent->attribute().maxFrame()));
     } else {
         mTarget->timeLineWidget().setFrame(core::Frame(0));
@@ -813,6 +813,9 @@ void MainWindow::onOpenProjectTriggered() {
         mProjectTabBar->pushProject(*result.project);
 
         mMainDisplay->resetCamera();
+        mDriverHolder->driver()->updateFrame();
+        mDriverHolder->driver()->updateProjectAttribute();
+
     } else {
         QMessageBox::warning(nullptr, tr("Loading Error"), result.messages());
 

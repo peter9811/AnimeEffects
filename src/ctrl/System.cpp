@@ -4,6 +4,9 @@
 #include "gl/Global.h"
 #include "gl/DeviceInfo.h"
 #include "ctrl/System.h"
+
+#include "core/BoneKey.h"
+#include "core/TimeKeyBlender.h"
 #include "ctrl/ProjectSaver.h"
 #include "ctrl/ProjectLoader.h"
 #include "ctrl/ImageFileLoader.h"
@@ -94,6 +97,28 @@ System::openProject(const QString& aFileName, Project::Hook* aHookGrabbed, util:
         ctrl::ProjectLoader loader;
         if (loader.load(aFileName, *projectScope, gl::DeviceInfo::instance(), aReporter)) {
             mProjects.push_back(projectScope.take());
+            {
+                // Due to the transition to Qt6 every cache on load is just f*cked, TODO: Fix cache loading
+                const auto aOwner = mProjects.back()->objectTree().topNode();
+                for (ObjectNode::Iterator itr(aOwner); itr.hasNext();) {
+                    ObjectNode* node = itr.next();
+                    XC_PTR_ASSERT(node);
+                    // Clear deserialized bone cache
+                    for (const auto bone: node->timeLine()->map(TimeKeyType_Bone)) {
+                        auto* boneKey = dynamic_cast<BoneKey*>(node->timeLine()->timeKey(TimeKeyType_Bone, bone->frame()));
+                        boneKey->resetCaches(*mProjects.back(), *node);
+                    }
+                    // Clear cache, master cache and pose palette
+                    auto& curr = node->timeLine()->current();
+                    curr.clearCaches();
+                    curr.clearMasterCache();
+                    curr.posePalette().clear();
+                    auto& work = node->timeLine()->working();
+                    work.clearCaches();
+                    work.clearMasterCache();
+                    work.posePalette().clear();
+                }
+            }
             // Get settings
             QSettings settings;
             QStringList recentfiles = settings.value("projectloader/recents").toStringList();
@@ -103,7 +128,7 @@ System::openProject(const QString& aFileName, Project::Hook* aHookGrabbed, util:
                 recentfiles.append(aFileName);
             }
             // If length eight remove first
-            else if (recentfiles.length() == 8) {
+            else if (recentfiles.length() >= 8) {
                 recentfiles.pop_front();
             }
             // Save

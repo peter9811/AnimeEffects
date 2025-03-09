@@ -115,7 +115,7 @@ void PoseEditor::resetCurrentTarget(QString* aMessage) {
             }
         } else {
             if (aMessage) {
-                *aMessage = UILog::tr("There is no parent bone key.");
+                *aMessage = UILog::tr("There are no bones in the selected layer that can be posed.");
             }
         }
     }
@@ -133,7 +133,8 @@ bool PoseEditor::initializeKey(TimeLine& aLine) {
         mKeyOwner.ownsKey = false;
         mKeyOwner.parent = mKeyOwner.key->parent();
         return true;
-    } else if (current.bone().areaKey()) {
+    }
+    if (current.bone().areaKey()) {
         // create new key
         mKeyOwner.key = new PoseKey();
         mKeyOwner.ownsKey = true;

@@ -587,7 +587,7 @@
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="107"/>
         <source>Anie audio configuration file (*.aemus)</source>
-        <translation type="unfinished"></translation>
+        <translation>Anie音频配置文件(*.aemus)</translation>
     </message>
 </context>
 <context>
@@ -595,7 +595,7 @@
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="129"/>
         <source>Loading this file will overwrite your current audio configuration, continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>加载此文件将覆盖您当前的音频配置，是否继续？</translation>
     </message>
 </context>
 <context>
@@ -669,7 +669,7 @@
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="95"/>
         <source>Anie audio configuration file (*.aemus)</source>
-        <translation type="unfinished"></translation>
+        <translation>Anie音频配置文件 (*.aemus)</translation>
     </message>
 </context>
 <context>
@@ -677,12 +677,12 @@
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="313"/>
         <source>Open audio file</source>
-        <translation type="unfinished"></translation>
+        <translation>打开音频文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="315"/>
         <source>Audio Files (*.mp3 *.mp4 *.wav *.ogg *.flac)</source>
-        <translation type="unfinished"></translation>
+        <translation>音频文件 (*.mp3 *.mp4 *.wav *.ogg *.flac)</translation>
     </message>
 </context>
 <context>
@@ -690,76 +690,76 @@
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="258"/>
         <source>Enable playback</source>
-        <translation type="unfinished"></translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="259"/>
         <source>Add new audio track</source>
-        <translation type="unfinished"></translation>
+        <translation>新增音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="260"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Playback start frame&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;播放起始帧&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="261"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Playback end frame&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;播放结束帧&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="262"/>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="360"/>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="365"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Duration (in frames): &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;持续时间（帧）&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="264"/>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="374"/>
         <source>Media volume</source>
-        <translation type="unfinished"></translation>
+        <translation>媒体音量</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="280"/>
         <source>Select audio file...</source>
-        <translation type="unfinished"></translation>
+        <translation>选择音频文件...</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="298"/>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="338"/>
         <source>Remove next audio track</source>
-        <translation type="unfinished"></translation>
+        <translation>移除下个音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="302"/>
         <source>Remove current audio track</source>
-        <translation type="unfinished"></translation>
+        <translation>移除当前音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.h" line="141"/>
         <source>Audio Player</source>
-        <translation type="unfinished"></translation>
+        <translation>音频播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.h" line="142"/>
         <source>Audio player</source>
-        <translation type="unfinished"></translation>
+        <translation>音频播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.h" line="143"/>
         <source>Save current audio configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>保存当前音频配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.h" line="144"/>
         <source>Load audio configuration from file</source>
-        <translation type="unfinished"></translation>
+        <translation>从文件加载音频配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/AudioPlaybackWidget.h" line="145"/>
         <source>Save/Load audio config</source>
-        <translation type="unfinished"></translation>
+        <translation>保存/加载音频配置</translation>
     </message>
 </context>
 <context>
@@ -767,27 +767,27 @@
     <message>
         <location filename="../../src/ctrl/ImageFileLoader.cpp" line="394"/>
         <source>Select oraFile type</source>
-        <translation type="unfinished"></translation>
+        <translation>选择ora文件类型</translation>
     </message>
     <message>
         <location filename="../../src/ctrl/ImageFileLoader.cpp" line="395"/>
         <source>How do you wish to load this oraFile file?</source>
-        <translation type="unfinished"></translation>
+        <translation>您希望如何加载这个ora文件？</translation>
     </message>
     <message>
         <location filename="../../src/ctrl/ImageFileLoader.cpp" line="396"/>
         <source>Load layered</source>
-        <translation type="unfinished"></translation>
+        <translation>分层加载</translation>
     </message>
     <message>
         <location filename="../../src/ctrl/ImageFileLoader.cpp" line="397"/>
         <source>Load merged</source>
-        <translation type="unfinished"></translation>
+        <translation>合并加载</translation>
     </message>
     <message>
         <location filename="../../src/ctrl/ImageFileLoader.cpp" line="398"/>
         <source>Cancel file load</source>
-        <translation type="unfinished"></translation>
+        <translation>取消加载</translation>
     </message>
 </context>
 <context>
@@ -837,7 +837,7 @@
     <message>
         <location filename="../../src/ctrl/PoseEditor.cpp" line="118"/>
         <source>There are no bones in the selected layer that can be posed.</source>
-        <translation type="unfinished"></translation>
+        <translation>所选图层中无可用于摆姿势的骨骼。</translation>
     </message>
     <message>
         <source>There is no parent bone key.</source>
@@ -846,7 +846,7 @@
     <message>
         <location filename="../../src/ctrl/SRTEditor.cpp" line="30"/>
         <source>The transformed object has one or more bones bound to it, SRT keys may not work as expected.</source>
-        <translation type="unfinished"></translation>
+        <translation>已变形对象已绑定一根或多根骨骼，SRT（缩放、旋转、平移）关键帧可能无法按预期工作。</translation>
     </message>
     <message>
         <location filename="../../src/ctrl/SRTEditor.cpp" line="31"/>
@@ -860,7 +860,7 @@
     <message>
         <location filename="../../src/gui/Main.cpp" line="130"/>
         <source>Unable to locate data folder, please select it</source>
-        <translation type="unfinished"></translation>
+        <translation>无法找到数据文件夹，请选择文件。</translation>
     </message>
 </context>
 <context>
@@ -1025,12 +1025,12 @@
     <message>
         <location filename="../../src/gui/exportdiag.h" line="909"/>
         <source>Loop animation (GIF only)</source>
-        <translation type="unfinished"></translation>
+        <translation>循环动画（仅限GIF）</translation>
     </message>
     <message>
         <location filename="../../src/gui/exportdiag.h" line="910"/>
         <source>Export with audio</source>
-        <translation type="unfinished"></translation>
+        <translation>带音频导出</translation>
     </message>
     <message>
         <location filename="../../src/gui/exportdiag.h" line="911"/>
@@ -1481,37 +1481,37 @@
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="331"/>
         <source>Time (in minutes) between autosaves : </source>
-        <translation type="unfinished"></translation>
+        <translation>自动保存之间的时间间隔（以分钟为单位）：</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="339"/>
         <source>Show mesh when selecting FFD : </source>
-        <translation type="unfinished"></translation>
+        <translation>选择FFD时显示网格：</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="343"/>
         <source>On copy send keys to the clipboard : </source>
-        <translation type="unfinished"></translation>
+        <translation>复制时将按键发送到剪贴板：</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="347"/>
         <source>Always check for FFmpeg on export : </source>
-        <translation type="unfinished"></translation>
+        <translation>在导出时始终检查FFmpeg：</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="351"/>
         <source>Enforce ID check on asset download : </source>
-        <translation type="unfinished"></translation>
+        <translation>在下载素材时强制进行ID检查：</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="355"/>
         <source>Ignore export warnings :</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略导出警告：</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="359"/>
         <source>Allow donation menu : </source>
-        <translation type="unfinished"></translation>
+        <translation>展示捐赠菜单：</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="376"/>
@@ -1612,12 +1612,12 @@ Check FFmpeg palette generation ... 🗸</source>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="604"/>
         <source>While setting up FFmpeg an unexpected error has occurred, please send the below information to our devs.</source>
-        <translation type="unfinished"></translation>
+        <translation>在设置FFmpeg时出现了一个意外错误，请将以下信息发送给我们的开发人员。</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="627"/>
         <source>QoL</source>
-        <translation type="unfinished"></translation>
+        <translation>QoL</translation>
     </message>
     <message>
         <source>An error has occurred, please send the below info to the developers.</source>
@@ -1640,7 +1640,7 @@ Check FFmpeg palette generation ... 🗸</source>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="580"/>
         <source>FFmpeg was successfully setup. Please restart AnimeEffects</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg已成功设置。请重新启动AnimeEffects。</translation>
     </message>
     <message>
         <location filename="../../src/gui/GeneralSettingDialog.cpp" line="597"/>
@@ -1870,7 +1870,7 @@ Check FFmpeg palette generation ... 🗸</source>
     <message>
         <location filename="../../src/gui/KeyCommandMap.cpp" line="90"/>
         <source>Move one frame to the left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左移动一帧</translation>
     </message>
 </context>
 <context>
@@ -2032,113 +2032,113 @@ Check FFmpeg palette generation ... 🗸</source>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="61"/>
         <source>New project</source>
-        <translation type="unfinished"></translation>
+        <translation>新建项目</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="62"/>
         <source>Open project</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="63"/>
         <source>Open recent</source>
-        <translation type="unfinished"></translation>
+        <translation>打开最近</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="157"/>
         <source>JPEG Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>JPEG序列</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="158"/>
         <source>PNG Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG 序列</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="159"/>
         <source>GIF Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF 动画</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="214"/>
         <source>Project attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>项目属性</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="216"/>
         <source>Canvas size</source>
-        <translation type="unfinished"></translation>
+        <translation>画布尺寸</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="217"/>
         <source>Maximum frame count</source>
-        <translation type="unfinished"></translation>
+        <translation>最大帧数</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="218"/>
         <source>Loop animation</source>
-        <translation type="unfinished"></translation>
+        <translation>循环动画</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="219"/>
         <source>Frames per second</source>
-        <translation type="unfinished"></translation>
+        <translation>每秒帧数</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="220"/>
         <source>Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>资源</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="241"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>选项</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="243"/>
         <source>General settings</source>
-        <translation type="unfinished"></translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="244"/>
         <source>Mouse settings</source>
-        <translation type="unfinished"></translation>
+        <translation>鼠标设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="245"/>
         <source>Keybindings</source>
-        <translation type="unfinished">快捷键</translation>
+        <translation>快捷键</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="276"/>
         <source>About AnimeEffects</source>
-        <translation type="unfinished"></translation>
+        <translation>关于AnimeEffects</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="286"/>
         <source>An easy to use 2D animation software maintained by the [AnimeEffectsDevs](https://github.com/AnimeEffectsDevs).&lt;br /&gt;Licensed under the GPL v3.0 and powered by various open source libraries.</source>
-        <translation type="unfinished"></translation>
+        <translation>一款由 [AnimeEffectsDevs] 维护的易于使用的2D动画软件。(https://github.com/AnimeEffectsDevs).&lt;br /&gt;根据GPL v3.0许可证授权，并由多种开源库提供支持。</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="289"/>
         <source>&lt;br /&gt;&lt;br /&gt;Contributors:&lt;br /&gt;[Hidefuku](https://github.com/hidefuku), [Yukusai](https://github.com/p-yukusai), [Gambot](https://github.com/GbotHQ), [Arrangemonk](https://github.com/Arrangemonk), [OneByStudio](https://onebystudio.com), [Larpon](https://github.com/larpon), [Herace](https://github.com/herace), [Aodaruma](https://github.com/Aodaruma), [Azagaya](https://github.com/azagaya), [FoxyHawk](https://github.com/FoxyHawk), [Nanashia](https://github.com/Nanashia), [Henrich](https://github.com/henrich), [mcddx330](https://github.com/mcddx330), [Freddii](https://github.com/freddii), [aki017](https://github.com/aki017), [picoHz](https://github.com/picoHz).</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;br /&gt;&lt;br /&gt;贡献者：&lt;br /&gt;[Hidefuku](https://github.com/hidefuku), [Yukusai](https://github.com/p-yukusai), [Gambot](https://github.com/GbotHQ), [Arrangemonk](https://github.com/Arrangemonk), [OneByStudio](https://onebystudio.com), [Larpon](https://github.com/larpon), [Herace](https://github.com/herace), [Aodaruma](https://github.com/Aodaruma), [Azagaya](https://github.com/azagaya), [FoxyHawk](https://github.com/FoxyHawk), [Nanashia](https://github.com/Nanashia), [Henrich](https://github.com/henrich), [mcddx330](https://github.com/mcddx330), [Freddii](https://github.com/freddii), [aki017](https://github.com/aki017), [picoHz](https://github.com/picoHz).</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="312"/>
         <source>About us</source>
-        <translation type="unfinished"></translation>
+        <translation>关于我们</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="318"/>
         <source>Check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>检查更新</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="325"/>
         <location filename="../../src/gui/MainMenuBar.cpp" line="384"/>
         <source>System telemetry</source>
-        <translation type="unfinished"></translation>
+        <translation>系统遥测</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="338"/>
@@ -2193,7 +2193,7 @@ Check FFmpeg palette generation ... 🗸</source>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="351"/>
         <source>Location Has Unicode: </source>
-        <translation>位置有 Unicode：</translation>
+        <translation>位置包含 Unicode 字符：</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="361"/>
@@ -2208,12 +2208,12 @@ Check FFmpeg palette generation ... 🗸</source>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="380"/>
         <source>System specs successfully copied to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>系统规格已成功复制到剪贴板。</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainMenuBar.cpp" line="395"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>捐赠</translation>
     </message>
     <message>
         <source>Check for Updates...</source>
@@ -2347,25 +2347,25 @@ Check FFmpeg palette generation ... 🗸</source>
         <location filename="../../src/gui/MainWindow.cpp" line="1020"/>
         <location filename="../../src/gui/MainWindow.cpp" line="1563"/>
         <source>FFmpeg doesn&apos;t export</source>
-        <translation type="unfinished">FFmpeg不能导出</translation>
+        <translation>FFmpeg 无法导出</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainWindow.cpp" line="1021"/>
         <location filename="../../src/gui/MainWindow.cpp" line="1564"/>
         <source>FFmpeg was unable to export, please troubleshoot.</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg无法导出，请进行故障排查。</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainWindow.cpp" line="1036"/>
         <location filename="../../src/gui/MainWindow.cpp" line="1579"/>
         <source>FFmpeg doesn&apos;t generate palettes</source>
-        <translation type="unfinished">FFmpeg生成调色板异常</translation>
+        <translation>FFmpeg生成调色板异常</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainWindow.cpp" line="1037"/>
         <location filename="../../src/gui/MainWindow.cpp" line="1581"/>
         <source>FFmpeg was unable to generate palettes, please troubleshoot.</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg 无法生成调色板，请进行故障排查。</translation>
     </message>
     <message>
         <location filename="../../src/gui/MainWindow.cpp" line="1234"/>
@@ -2618,7 +2618,7 @@ In the following screen you can instruct AnimeEffects to download and install it
     <message>
         <location filename="../../src/gui/ObjectTreeWidget.cpp" line="93"/>
         <source>Add missing resources</source>
-        <translation type="unfinished"></translation>
+        <translation>添加缺失的资源</translation>
     </message>
     <message>
         <location filename="../../src/gui/ObjectTreeWidget.cpp" line="96"/>
@@ -2638,7 +2638,7 @@ In the following screen you can instruct AnimeEffects to download and install it
     <message>
         <location filename="../../src/gui/ObjectTreeWidget.cpp" line="105"/>
         <source>Duplicate node</source>
-        <translation type="unfinished"></translation>
+        <translation>复制节点</translation>
     </message>
     <message>
         <location filename="../../src/gui/ObjectTreeWidget.cpp" line="108"/>
@@ -2733,7 +2733,7 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/PlayBackWidget.cpp" line="27"/>
         <source>Audio track</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/PlayBackWidget.cpp" line="40"/>
@@ -2838,7 +2838,7 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/ResourceDialog.cpp" line="16"/>
         <source>Project resources</source>
-        <translation type="unfinished"></translation>
+        <translation>项目资源</translation>
     </message>
     <message>
         <location filename="../../src/gui/ResourceDialog.cpp" line="22"/>
@@ -3049,7 +3049,7 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="145"/>
         <source>Select spacing between keys</source>
-        <translation type="unfinished"></translation>
+        <translation>选择关键帧之间的间隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="570"/>
@@ -3064,63 +3064,63 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="733"/>
         <source>A minimum of two keys in different frames are needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>至少需要两个位于不同帧的关键帧。</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="734"/>
         <source>Not enough targets</source>
-        <translation type="unfinished"></translation>
+        <translation>目标不足</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="767"/>
         <source>Key spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>关键帧间隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="769"/>
         <source>Number of frames the selected keys should be spaced by:</source>
-        <translation type="unfinished"></translation>
+        <translation>选定关键帧之间应间隔的帧数：</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="812"/>
         <source>Key conflict detected for key type </source>
-        <translation type="unfinished"></translation>
+        <translation>检测到关键帧类型冲突。</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="813"/>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="817"/>
         <source> in node </source>
-        <translation type="unfinished"></translation>
+        <translation>节点中</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="813"/>
         <source> at frame </source>
-        <translation type="unfinished"></translation>
+        <translation>帧中</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="817"/>
         <source>Destination for key type </source>
-        <translation type="unfinished"></translation>
+        <translation>关键帧类型的目标位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="818"/>
         <source> is outside maximum frame for project, ignored attempt to move key to frame </source>
-        <translation type="unfinished"></translation>
+        <translation>超出了项目的最大帧范围，忽略将关键帧移动到该帧的尝试。</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="820"/>
         <source>Move error</source>
-        <translation type="unfinished"></translation>
+        <translation>移动错误</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="821"/>
         <source>Unable to move </source>
-        <translation type="unfinished"></translation>
+        <translation>无法移动</translation>
     </message>
     <message>
         <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="821"/>
         <source> key(s), due to the following reasons: </source>
-        <translation type="unfinished"></translation>
+        <translation>由于以下原因，无法移动关键帧：</translation>
     </message>
 </context>
 <context>
@@ -3525,47 +3525,47 @@ The log is available below.</source>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="334"/>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="340"/>
         <source>ORA parse error</source>
-        <translation type="unfinished"></translation>
+        <translation>ORA解析错误</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="329"/>
         <source>Unable to find the mimetype of the solicited file.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法找到所请求文件的MIME类型。</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="334"/>
         <source>The mimetype is not valid.</source>
-        <translation type="unfinished"></translation>
+        <translation>MIME类型无效。</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="340"/>
         <source>The file could not be read.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法读取该文件。</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="346"/>
         <source>Select ora type</source>
-        <translation type="unfinished"></translation>
+        <translation>选择ora类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="347"/>
         <source>How do you wish to load this ora file?</source>
-        <translation type="unfinished"></translation>
+        <translation>您希望如何加载这个ora文件？</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="348"/>
         <source>Load layered</source>
-        <translation type="unfinished"></translation>
+        <translation>分层加载</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="349"/>
         <source>Load merged</source>
-        <translation type="unfinished"></translation>
+        <translation>合并加载</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="350"/>
         <source>Cancel file load</source>
-        <translation type="unfinished"></translation>
+        <translation>取消加载</translation>
     </message>
     <message>
         <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="468"/>
@@ -3613,7 +3613,7 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/tool/tool_BonePanel.cpp" line="21"/>
         <source>Bone editor</source>
-        <translation type="unfinished"></translation>
+        <translation>骨骼编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_BonePanel.cpp" line="36"/>
@@ -3676,7 +3676,7 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/tool/tool_FFDPanel.cpp" line="24"/>
         <source>FFD</source>
-        <translation type="unfinished">自由変形</translation>
+        <translation>自由変形</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_FFDPanel.cpp" line="37"/>
@@ -3754,22 +3754,22 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/tool/tool_MeshPanel.cpp" line="14"/>
         <source>Mesh editor</source>
-        <translation type="unfinished"></translation>
+        <translation>网格编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_MeshPanel.cpp" line="26"/>
         <source>Add vertex</source>
-        <translation type="unfinished"></translation>
+        <translation>添加顶点</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_MeshPanel.cpp" line="26"/>
         <source>Delete vertex</source>
-        <translation type="unfinished"></translation>
+        <translation>删除顶点</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_MeshPanel.cpp" line="26"/>
         <source>Split polygon</source>
-        <translation type="unfinished"></translation>
+        <translation>拆分多边形</translation>
     </message>
 </context>
 <context>
@@ -3785,12 +3785,12 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/tool/tool_ModePanel.cpp" line="15"/>
         <source>Toolbox</source>
-        <translation type="unfinished"></translation>
+        <translation>工具箱</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_ModePanel.cpp" line="19"/>
         <source>Pan tool</source>
-        <translation type="unfinished"></translation>
+        <translation>平移工具</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_ModePanel.cpp" line="20"/>
@@ -3800,22 +3800,22 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/tool/tool_ModePanel.cpp" line="21"/>
         <source>Bone editor</source>
-        <translation type="unfinished"></translation>
+        <translation>骨骼编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_ModePanel.cpp" line="22"/>
         <source>Pose editor</source>
-        <translation type="unfinished"></translation>
+        <translation>姿势编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_ModePanel.cpp" line="23"/>
         <source>Mesh editor</source>
-        <translation type="unfinished"></translation>
+        <translation>网格编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_ModePanel.cpp" line="24"/>
         <source>Free-form deformation</source>
-        <translation type="unfinished"></translation>
+        <translation>自由变形（FFD）</translation>
     </message>
     <message>
         <source>Add Bones</source>
@@ -3847,22 +3847,22 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/tool/tool_PosePanel.cpp" line="14"/>
         <source>Pose editor</source>
-        <translation type="unfinished"></translation>
+        <translation>姿势编辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_PosePanel.cpp" line="27"/>
         <source>Move bone</source>
-        <translation type="unfinished">移动骨骼</translation>
+        <translation>移动骨骼</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_PosePanel.cpp" line="27"/>
         <source>Pull bones</source>
-        <translation type="unfinished"></translation>
+        <translation>拉动骨骼</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_PosePanel.cpp" line="27"/>
         <source>Erase bone pose</source>
-        <translation type="unfinished"></translation>
+        <translation>擦除姿势</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_PosePanel.cpp" line="41"/>
@@ -3918,17 +3918,17 @@ The log is available below.</source>
     <message>
         <location filename="../../src/gui/tool/tool_SRTPanel.cpp" line="41"/>
         <source>Create move key</source>
-        <translation type="unfinished"></translation>
+        <translation>创建移动关键帧</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_SRTPanel.cpp" line="47"/>
         <source>Create rotate key</source>
-        <translation type="unfinished"></translation>
+        <translation>创建旋转关键帧</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_SRTPanel.cpp" line="53"/>
         <source>Create scale key</source>
-        <translation type="unfinished"></translation>
+        <translation>创建缩放关键帧</translation>
     </message>
     <message>
         <location filename="../../src/gui/tool/tool_SRTPanel.cpp" line="54"/>
@@ -4124,12 +4124,14 @@ The log is available below.</source>
         <location filename="../../src/ctrl/System.cpp" line="194"/>
         <source>Non ascii characters detected, this may cause issues.
 Save anyway?</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>当文件或文本中包含非ASCII字符（如中文、日文等）时，系统可能会提示此警告</translatorcomment>
+        <translation>检测到非ASCII字符，这可能会导致问题。仍然保存吗？</translation>
     </message>
     <message>
         <location filename="../../src/ctrl/System.cpp" line="200"/>
         <source>Unicode on filename detected</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>当文件名中包含Unicode字符（如中文、日文等）时，系统可能会提示此信息</translatorcomment>
+        <translation>检测到文件名中包含Unicode字符</translation>
     </message>
 </context>
 <context>

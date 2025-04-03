@@ -32,8 +32,11 @@ Originally developed by hidefuku, it is now being developed and maintained by it
 Note: For the present there may be incompatible changes made, these will be made known in the release affected should they occur.<br>
 ***If you have any issues or wish to suggest new features, feel reach out to us on our socials!***
 
-## Downloads
-* The latest AnimeEffects release is available [here](https://github.com/AnimeEffectsDevs/AnimeEffects/releases), to use it just extract its contents to a folder of your choosing, and then simply run the executable.<br>
+## Releases
+AnimeEffects will notify you of available stable releases as soon as they come out.
+* Our stable builds available [here](https://github.com/AnimeEffectsDevs/AnimeEffects/releases).<br>
+* Our unstable builds are available [here](https://github.com/p-yukusai/AnimeEffects/releases).<br>
+* Our nightly builds are available [here](https://github.com/AnimeEffectsDevs/AnimeEffects/actions).
 
 ## Requirements
 * Windows/Linux/Mac

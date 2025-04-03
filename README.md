@@ -1,7 +1,19 @@
 # AnimeEffects
 
-🇯🇵 (Outdated) [日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-jp.md)
+## Download
 
+| Stable (v1.6) | Nightly | Source code |
+| :----------: | :-------------: | :---------: |
+| [Windows](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-Installer-Windows.exe) - [MacOS](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-MacOS.zip) - [Linux](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-Linux.zip) | [Windows](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build-windows.yaml/master/AnimeEffects-Windows-x64.zip) - [MacOS](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build_mac_intel.yaml/master/AnimeEffects-MacOS.zip) - [Linux](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build_linux.yaml/master/AnimeEffects-Linux.zip) | [Download ZIP](https://github.com/AnimeEffectsDevs/AnimeEffects/archive/refs/heads/master.zip) |
+
+## 🌐 README 🌐
+[English](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README.md) - Up-to-date <br>
+[日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-jp.md) - 時代遅れ <br>
+[简体中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh.md) - 尚未提供 <br>
+[正體中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh-t.md) - 尚未提供 <br>
+[Español](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-es.md) - Aún no disponible <br>
+
+## Description
 A 2D animation tool which doesn't require a carefully thought-out plan, it simplifies animation by providing various functions based on the deformation of polygon meshes.<br>
 Originally developed by hidefuku, it is now being developed and maintained by its community.
 

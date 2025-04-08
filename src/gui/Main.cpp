@@ -176,12 +176,12 @@ int entryPoint(int argc, char* argv[]) {
         util::NetworkUtil::checkForUpdate(url, networking, mainWindow->window(), false);
 
 
-#if !defined(QT_NO_DEBUG)
+#ifndef QT_NO_DEBUG
         qDebug() << "Launching debug project";
         const QString testPath = resourceDir + "/sample.psd";
         mainWindow->testNewProject(testPath);
 #endif
-#if Q_OS_DARWIN
+#ifdef Q_OS_MAC
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
 #endif
         // assoc handle

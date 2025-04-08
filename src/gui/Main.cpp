@@ -181,6 +181,9 @@ int entryPoint(int argc, char* argv[]) {
         const QString testPath = resourceDir + "/sample.psd";
         mainWindow->testNewProject(testPath);
 #endif
+#if Q_OS_DARWIN
+        QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
+#endif
         // assoc handle
         auto arguments = QCoreApplication::arguments();
         if (arguments.last().contains(".anie")) {

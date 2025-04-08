@@ -27,7 +27,7 @@ extern MemoryRegister gMemoryRegister;
 extern BackTracer gBackTracer;
 #endif // USE_MSVC_BACKTRACE
 
-class AEAssertHandler: public XCAssertHandler {
+class AEAssertHandler final: public XCAssertHandler {
 public:
     void failure() const override {
 #if defined(USE_MSVC_BACKTRACE)
@@ -35,6 +35,10 @@ public:
 #endif // USE_MSVC_BACKTRACE
     }
 };
+
+#ifndef QT_DEBUG
+    #define DISABLE_DEBUG_OUTPUT true
+#endif
 
 class AEErrorHandler: public XCErrorHandler {
 public:
@@ -77,7 +81,7 @@ static AEAssertHandler AEAssertHandler;
 
 int entryPoint(int argc, char* argv[]);
 
-int main(int argc, char* argv[]) {
+int main(const int argc, char* argv[]) {
     // Define XC Assert
     gXCAssertHandler = &AEAssertHandler;
     #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
@@ -102,9 +106,15 @@ int entryPoint(int argc, char* argv[]) {
     int result = 0;
     // create qt application
     QApplication app(argc, argv);
+    #ifdef DISABLE_DEBUG_OUTPUT
+    QLoggingCategory::defaultCategory()->setEnabled(QtInfoMsg, false);
+    QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, false);
+    QLoggingCategory::defaultCategory()->setEnabled(QtWarningMsg, false);
+    #else
     QLoggingCategory::defaultCategory()->setEnabled(QtInfoMsg, true);
     QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, true);
-    // app.setAttribute(Qt::AA_DontUseNativeDialogs);
+    QLoggingCategory::defaultCategory()->setEnabled(QtWarningMsg, true);
+    #endif
     XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
 
     // application path
@@ -176,7 +186,7 @@ int entryPoint(int argc, char* argv[]) {
         util::NetworkUtil::checkForUpdate(url, networking, mainWindow->window(), false);
 
 
-#ifndef QT_NO_DEBUG
+#ifdef QT_DEBUG
         qDebug() << "Launching debug project";
         const QString testPath = resourceDir + "/sample.psd";
         mainWindow->testNewProject(testPath);

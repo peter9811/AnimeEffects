@@ -757,14 +757,14 @@ QPoint TimeLineEditor::currentTimeCursorPos() const { return mTimeCurrent.handle
 
 void TimeLineEditor::render(
     QPainter& aPainter, const CameraInfo& aCamera, theme::TimeLine& aTheme, const QRect& aCullRect
-) {
+) const {
     if (aCamera.screenWidth() < 2 * kTimeLineMargin)
         return;
 
     const QRect camRect(-aCamera.leftTopPos().toPoint(), aCamera.screenSize());
     const QRect cullRect(aCullRect.marginsAdded(QMargins(2, 2, 2, 2))); // use culling
 
-    const int margin = kTimeLineMargin;
+    constexpr int margin = kTimeLineMargin;
     const int bgn = mTimeScale.frame(cullRect.left() - margin - 5);
     const int end = mTimeScale.frame(cullRect.right() - margin + 5);
 

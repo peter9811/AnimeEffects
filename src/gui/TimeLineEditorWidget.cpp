@@ -366,7 +366,7 @@ void addVecToJson(QJsonObject* json, QString title, QVector2D vec) {
 
 // Tf means Type & Frame in case you're wondering.
 void addTfToObj(QJsonObject* json, int keyType, core::TimeKey* timeKey) {
-    json->insert("Type", core::TimeLine::getTimeKeyName((core::TimeKeyType)keyType));
+    json->insert("Type", core::TimeLine::getTimeKeyName(static_cast<core::TimeKeyType>(keyType)));
     json->insert("Frame", timeKey->frame());
 }
 template<typename keyData>
@@ -381,7 +381,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
     switch (keyType) {
     // General data for all keys: Type, Frame and Easing {type, range & weight}
     case core::TimeKeyType_Move: {
-        core::MoveKey::Data data = ((const core::MoveKey*)timeKey)->data();
+        core::MoveKey::Data data = static_cast<const core::MoveKey*>(timeKey)->data();
         // Data types: pos(Vec2D), centroid(Vec2D), spline(int) //
         QJsonObject move;
         addStandardToObj(&move, data, keyType, timeKey);
@@ -391,7 +391,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return move;
     }
     case core::TimeKeyType_Rotate: {
-        auto data = ((const core::RotateKey*)timeKey)->data();
+        auto data = static_cast<const core::RotateKey*>(timeKey)->data();
         // Data types: Rotate (float) //
         QJsonObject rotate;
         addStandardToObj(&rotate, data, keyType, timeKey);
@@ -399,7 +399,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return rotate;
     } break;
     case core::TimeKeyType_Scale: {
-        auto data = ((const core::ScaleKey*)timeKey)->data();
+        auto data = static_cast<const core::ScaleKey*>(timeKey)->data();
         // Data types: Scale (vec2d) //
         QJsonObject scale;
         addStandardToObj(&scale, data, keyType, timeKey);
@@ -407,7 +407,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return scale;
     }
     case core::TimeKeyType_Depth: {
-        auto data = ((const core::DepthKey*)timeKey)->data();
+        auto data = static_cast<const core::DepthKey*>(timeKey)->data();
         // Data types: Depth (float) //
         QJsonObject depth;
         addStandardToObj(&depth, data, keyType, timeKey);
@@ -415,7 +415,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return depth;
     }
     case core::TimeKeyType_Opa: {
-        auto data = ((const core::OpaKey*)timeKey)->data();
+        auto data = static_cast<const core::OpaKey*>(timeKey)->data();
         // Data types: Opacity (float) //
         QJsonObject opa;
         addStandardToObj(&opa, data, keyType, timeKey);
@@ -423,7 +423,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return opa;
     }
     case core::TimeKeyType_Bone: {
-        auto data = ((const core::BoneKey*)timeKey)->data();
+        auto data = static_cast<const core::BoneKey*>(timeKey)->data();
         /* Data types:
         LocalPos(vec2d), LocalAngle(float), Range(vec2d * 2),
         ---
@@ -446,7 +446,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return bones;
     }
     case core::TimeKeyType_Pose: {
-        auto data = ((const core::PoseKey*)timeKey)->data();
+        auto data = static_cast<const core::PoseKey*>(timeKey)->data();
         // Data types: Same as the bone key.
         QJsonObject pose;
         addTfToObj(&pose, keyType, timeKey);
@@ -460,7 +460,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return pose;
     }
     case core::TimeKeyType_Mesh: {
-        auto data = ((const core::MeshKey*)timeKey)->data();
+        auto data = static_cast<const core::MeshKey*>(timeKey)->data();
         // Data for MeshKey: Origin Offset (vec2d), Vertex count (int), Vertices (vec2d), Edge count (int),
         // Edges (ints), Face count (int), Faces (ints)
         QJsonObject mesh;
@@ -469,11 +469,11 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return mesh;
     } break;
     case core::TimeKeyType_FFD: {
-        auto data = ((const core::FFDKey*)timeKey)->data();
+        auto data = static_cast<const core::FFDKey*>(timeKey)->data();
         // Data for FFDKey: Vertex count (int), Vertex positions (vec3)
         QJsonObject ffd;
         addStandardToObj(&ffd, data, keyType, timeKey);
-        ffd["FFD"] = ((const core::FFDKey*)timeKey)->serializeToJson();
+        ffd["FFD"] = static_cast<const core::FFDKey*>(timeKey)->serializeToJson();
         // ⚠ IF THE IMAGE'S GRIDMESH DOESN'T MATCH THE TARGET'S THE DEFORMATION WON'T OCCUR ⚠ //
         /* We need the cell size to keep consistency with the vertex data, as the same image will
         always generate the same mesh for any given cell size, we also need to check if there is an
@@ -489,8 +489,9 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
                 index++;
             }
             ffd["cellSize"] =
-                ((const core::ImageKey*)node->timeLine()->timeKey(core::TimeKeyType_Image, closest))?
-                ((const core::ImageKey*)node->timeLine()->timeKey(core::TimeKeyType_Image, closest))
+                static_cast<const core::ImageKey*>(node->timeLine()->timeKey(core::TimeKeyType_Image, closest))
+                ?
+                static_cast<const core::ImageKey*>(node->timeLine()->timeKey(core::TimeKeyType_Image, closest))
                       ->data()
                       .gridMesh()
                       .cellSize() : 0;
@@ -500,7 +501,7 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         return ffd;
     }
     case core::TimeKeyType_Image: {
-        auto data = ((const core::ImageKey*)timeKey)->data();
+        auto data = static_cast<const core::ImageKey*>(timeKey)->data();
         /* Data for ImageKey: Identifier(QString), BlendMode(QString), Offset(vec2d), GridMesh[Size(qsize),
         OriginOffset(vec2d), CellPx(int), IndexCount(int), Indices(uint32 * indexcount),
         VertexCount(int), Positions(vec3d), Offsets(vec3d), TexCoords(vec2d), Normals (vec3d),
@@ -512,12 +513,12 @@ QJsonObject getKeyTypeSerialized(int keyType, core::TimeKey* timeKey, core::Obje
         */
         QJsonObject img;
         addStandardToObj(&img, data, keyType, timeKey);
-        img["Image"] = ((const core::ImageKey*)timeKey)->serializeToJson();
+        img["Image"] = static_cast<const core::ImageKey*>(timeKey)->serializeToJson();
         // qDebug() << QJsonDocument(img).toJson(QJsonDocument::Indented).toStdString().c_str();
         return img;
     }
     case core::TimeKeyType_HSV: {
-        auto data = ((const core::HSVKey*)timeKey)->data();
+        auto data = static_cast<const core::HSVKey*>(timeKey)->data();
         // Data types: HSV (List<int>) //
         QJsonObject hsv;
         addStandardToObj(&hsv, data, keyType, timeKey);

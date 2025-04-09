@@ -43,9 +43,6 @@ QWidget* NewProjectDialog::createOption() {
 
         const auto button = new QPushButton(this);
         this->connect(button, &QPushButton::clicked, [=] {
-            #ifdef Q_OS_MAC
-                QMessageBox::information(this, tr("ATTEMPTING TO LOAD FILE DIALOG!!!"), tr("The button works and anie is currently attempting to load a file"));
-            #endif
             this->mFileName = QFileDialog::getOpenFileName(
                 this, tr("Open File"), "", "ImageFile (*.psd *.ora *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
             );

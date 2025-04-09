@@ -266,7 +266,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         bAutoCbCopy = !isAutoCbCopy.isValid()? isAutoCbCopy.toBool() : false;
 
         auto isAutoFFmpegCheck = settings.value("ffmpeg_check");
-        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid()? isAutoFFmpegCheck.toBool() : true;
+
+        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid()? isAutoFFmpegCheck.toBool() : util::NetworkUtil::os() != "linux";
 
         auto isResIDCheck = settings.value("res_id_check");
         bResIDCheck = isResIDCheck.isValid()?  isResIDCheck.toBool() : true;
@@ -502,7 +503,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
         autoSetup = new QPushButton(tr("Download and automatically setup"));
         connect(autoSetup, &QPushButton::clicked, [=]() {
-            QDir dir = QDir("./tools");
+            const QDir dir = QDir("./tools");
             if (!dir.exists()) { dir.mkpath(dir.absolutePath()); }
             QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
             if (QFileInfo::exists(dir.absolutePath() + file)) {

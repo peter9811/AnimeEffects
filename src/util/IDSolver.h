@@ -20,8 +20,9 @@ public:
 
     void pushReferencer(IdType aId, const Solver& aSolver) { mReferencers.push_back(Referencer(aId, aSolver)); }
 
-    // we guarantee to call each solvers by pushing order.
-    #define FORCE_SOLVER_LOAD false
+    // we guarantee to call each solver by pushing order.
+    QSettings settings;
+    bool FORCE_SOLVER_LOAD = settings.value("forceSolverLoad", false).toBool();
     bool solve() {
         for (auto refer : mReferencers) {
             if (!mDataMap.contains(refer.first)) {

@@ -253,11 +253,14 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         auto donationAllowed = settings.value("generalsettings/ui/donationAllowed");
         bDonationAllowed = donationAllowed.isValid()? donationAllowed.toBool() : true;
 
+        auto forceSolverLoad = settings.value("forceSolverLoad", false);
+        bForceSolverLoad = forceSolverLoad.toBool();
+
         auto ignoreWarnings = settings.value("export_ignore_warnings");
         bIgnoreWarnings = ignoreWarnings.isValid()? false : ignoreWarnings.toBool();
 
-        auto isAutoSave = settings.value("generalsettings/projects/autosaveEnabled");
-        bAutoSave = isAutoSave.isValid()? isAutoSave.toBool() : false;
+        auto isAutoSave = settings.value("generalsettings/projects/enableAutosave");
+        bAutoSave = isAutoSave.isValid()? isAutoSave.toBool() : true;
 
         auto isAutoSaveDelay = settings.value("generalsettings/projects/autosaveDelay");
         mAutoSaveDelay = isAutoSaveDelay.isValid() ? isAutoSaveDelay.toInt() : 5;
@@ -358,6 +361,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         mDonationAllowed = new QCheckBox();
         mDonationAllowed->setChecked(bDonationAllowed);
         projectSaving->addRow(tr("Allow donation menu : "), mDonationAllowed);
+
+        mForceSolverLoad = new QCheckBox();
+        mForceSolverLoad->setChecked(bForceSolverLoad);
+        projectSaving->addRow(tr("Force project to load (USE AS A LAST RESORT) : "), mForceSolverLoad);
 
         mResetButton = new QPushButton(tr("Reset recent files list"));
         mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
@@ -669,6 +676,8 @@ bool GeneralSettingDialog::themeHasChanged() { return mInitialThemeKey != mTheme
 
 bool GeneralSettingDialog::donationHasChanged() {return bDonationAllowed != mDonationAllowed->isChecked(); }
 
+bool GeneralSettingDialog::forceSolverLoadHasChanged() {return bForceSolverLoad != mForceSolverLoad->isChecked(); }
+
 bool GeneralSettingDialog::ignoreWarningsHasChanged() {return bIgnoreWarnings != mIgnoreWarnings->isChecked(); }
 
 bool GeneralSettingDialog::autoSaveHasChanged() { return bAutoSave != mAutoSave->isChecked(); }
@@ -705,11 +714,14 @@ void GeneralSettingDialog::saveSettings() {
     if (donationHasChanged()){
         settings.setValue("generalsettings/ui/donationAllowed", mDonationAllowed->isChecked());
     }
+    if (forceSolverLoadHasChanged()) {
+        settings.setValue("forceSolverLoad", mForceSolverLoad->isChecked());
+    }
     if (ignoreWarningsHasChanged()) {
         settings.setValue("export_ignore_warnings", mIgnoreWarnings->isChecked());
     }
     if (autoSaveHasChanged()) {
-        settings.setValue("generalsettings/projects/autosaveEnabled", mAutoSave->isChecked());
+        settings.setValue("generalsettings/projects/enableAutosave", mAutoSave->isChecked());
     }
     if (autoSaveDelayHasChanged()) {
         settings.setValue("generalsettings/projects/autosaveDelay", mAutoSaveDelayBox->value());

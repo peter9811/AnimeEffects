@@ -63,6 +63,7 @@ const gl::DeviceInfo& ViaPoint::glDeviceInfo() const {
     return mGLDeviceInfo;
 }
 int ViaPoint::getVRAM() const {
+    #ifndef Q_OS_MAC
     XC_ASSERT(mGLDeviceInfo.isValid());
     GLint vram = 0;
     gl::Global::functions().glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &vram);
@@ -73,6 +74,8 @@ int ViaPoint::getVRAM() const {
     }
     vram = vram * 0.001;
     return vram;
+    #endif
+    return -1;
 }
 
 void ViaPoint::setKeyCommandMap(KeyCommandMap* aMap) { mKeyCommandMap = aMap; }

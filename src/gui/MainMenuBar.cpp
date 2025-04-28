@@ -18,6 +18,9 @@
 #include "gui/MouseSettingDialog.h"
 #include "util/NetworkUtil.h"
 
+
+#define VENDOR_ID_LEN 13
+
 namespace gui {
 //-------------------------------------------------------------------------------------------------
 QDomDocument getVideoExportDocument() {
@@ -41,7 +44,54 @@ QDomDocument getVideoExportDocument() {
 
     return prop;
 }
+#ifdef Q_PROCESSOR_X86_64
+    // This is gonna be rough
+    #ifdef _WIN32
+    #include <intrin.h> // __cpuid()
+    #endif
 
+    typedef unsigned int cpuid_t[4];
+
+    #define EAX 0
+    #define EBX 1
+    #define ECX 2
+    #define EDX 3
+
+    // https://elixir.bootlin.com/linux/latest/source/arch/x86/include/asm/processor.h#L216
+    // https://stackoverflow.com/questions/6491566/getting-the-machine-serial-number-and-cpu-id-using-c-c-in-linux
+    // https://stackoverflow.com/questions/1666093/cpuid-implementations-in-c
+    static void native_cpuid(unsigned int function_id, cpuid_t r) {
+        #ifdef _WIN32
+        __cpuid((int *) r, (int) function_id);
+        #else
+        r[EAX] = function_id;
+        r[ECX] = 0;
+
+        /* ecx is often an input as well as an output. */
+        asm volatile("cpuid"
+            : "=a" (r[EAX]),
+              "=b" (r[EBX]),
+              "=c" (r[ECX]),
+              "=d" (r[EDX])
+            : "0" (r[EAX]), "2" (r[ECX])
+            : "memory");
+        #endif
+    }
+
+// XXX: you have to make sure the vendor argument is at least lengthed VENDOR_ID_LEN
+static void cpuid_vendor_id(char vendor[VENDOR_ID_LEN]) {
+    // Always initialize the result in case of buggy CPU (like ES/QS CPUs)
+    cpuid_t v = {};
+    native_cpuid(0, v);
+
+    // https://learn.microsoft.com/en-us/cpp/intrinsics/cpuid-cpuidex?view=msvc-170#example
+    ((unsigned int *) vendor)[0] = v[EBX];
+    ((unsigned int *) vendor)[1] = v[EDX];
+    ((unsigned int *) vendor)[2] = v[ECX];
+    vendor[VENDOR_ID_LEN - 1] = '\0';
+}
+
+#endif
 //-------------------------------------------------------------------------------------------------
 MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResources& aGUIResources, QWidget* aParent):
     QMenuBar(aParent),
@@ -317,13 +367,38 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
         auto checkForUpdates = new QAction(tr("Check for updates"), this);
         connect(checkForUpdates, &QAction::triggered, [=]() {
-            util::NetworkUtil networking;
-            QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
+            const util::NetworkUtil networking;
+            const QString url("https://api.github.com/repos/AnimeEffectsDevs/AnimeEffects/tags");
             util::NetworkUtil::checkForUpdate(url, networking, this);
         });
-
         auto diagnostics = new QAction(tr("System telemetry"), this);
-        connect(diagnostics, &QAction::triggered, [=]() {
+        connect(diagnostics, &QAction::triggered, [=] {
+            #ifdef Q_OS_WIN
+            MEMORYSTATUSEX memory_status;
+            ZeroMemory(&memory_status, sizeof(MEMORYSTATUSEX));
+            memory_status.dwLength = sizeof(MEMORYSTATUSEX);
+            if (GlobalMemoryStatusEx(&memory_status)) {
+                system_info = QString("RAM: %1MB").arg(memory_status.ullTotalPhys / (1024 * 1024));
+            } else {
+                system_info = "Unable to fetch RAM amount";
+            }
+
+            #elif defined(Q_OS_MACOS)
+            QProcess p;
+            p.start("sysctl", QStringList() << "kern.version" << "hw.physmem");
+            p.waitForFinished();
+            QString system_info = p.readAllStandardOutput();
+            p.close();
+
+            #elif defined(Q_OS_LINUX)
+            QProcess p;
+            p.start("awk", QStringList() << "/MemTotal/ { print $2 }" << "/proc/meminfo");
+            p.waitForFinished();
+            QString memory = p.readAllStandardOutput();
+            system_info = (QString("; RAM: %1 MB").arg(memory.toLong() / 1024));
+            p.close();
+            #endif
+            std::string cpuVendor;
             QMessageBox msgBox;
             msgBox.setWindowIcon(QIcon("../src/AnimeEffects.ico"));
             auto versionString = QString::number(AE_MAJOR_VERSION) + "." + QString::number(AE_MINOR_VERSION) + "." +
@@ -336,15 +411,67 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             platform[0] = platform[0].toUpper();
             QString detail;
             detail += tr("Version: ") + versionString + "\n";
+            detail += tr("Format version: ") + formatVersionString + "\n";
             detail += tr("Platform: ") + platform + " " + QSysInfo::productVersion() + "\n";
             detail += tr("Build ABI: ") + QSysInfo::buildAbi() + "\n";
-            detail += tr("Build CPU: ") + QSysInfo::buildCpuArchitecture() + "\n";
-            detail += tr("Current CPU: ") + QSysInfo::currentCpuArchitecture() + "\n";
+            #ifdef Q_OS_MACOS
+            cpuVendor = "Apple";
+            #endif
+
+            #ifdef Q_PROCESSOR_X86_64
+            char s[VENDOR_ID_LEN];
+            cpuid_vendor_id(s);
+            cpuVendor = s;
+
+            #else
+            cpuVendor = "Unknown";
+            #endif
+
+            QString vendor = "Unknown";
+            if (cpuVendor == "GenuineIntel"){
+                vendor = "Intel";
+            }
+            else if (cpuVendor == "AuthenticAMD"){
+                vendor = "AMD";
+            }
+            else if (cpuVendor == "Apple") {
+                vendor = "Apple";
+            }
+            // ---------------------- //
+            detail += tr("CPU vendor: ") + vendor + "\n";
+            detail += tr("CPU architecture: ") + QSysInfo::currentCpuArchitecture() + "\n";
+            detail += tr("CPU cores: ") + QString::number(QThread::idealThreadCount() / 2) + "\n";
+            detail += tr("CPU threads: ") + QString::number(QThread::idealThreadCount()) + "\n";
+            detail += tr("System ") + system_info + "\n"; //RAM
             detail += tr("Current GPU: ") + QString(this->mViaPoint.glDeviceInfo().renderer.c_str()) + "\n";
+            QString vramString;
+            int vram = this->mViaPoint.getVRAM();
+            if (vram == -1) {
+                vramString = "Unknown VRAM";
+            } else {
+                int digits = 1 + log10(vram);
+                QString format = "MB";
+                if (digits >= 4) {
+                    format = "GB";
+                }
+                int threes = digits / 3;
+                bool numNotOdd = digits % 2;
+                for (threes; threes > 0; --threes) {
+                    int padding = numNotOdd ? 0 : 1;
+                    if (digits > 3 && threes * 3 + 1 == digits && padding == 1) {
+                        vramString = QString::number(vram).insert(digits - (digits - 1), ',');
+                    } else {
+                        vramString = QString::number(vram).insert(threes * 3 + padding, ',');
+                    }
+                }
+                vramString.append(format);
+            }
             detail += tr("GPU Vendor: ") + QString(this->mViaPoint.glDeviceInfo().vender.c_str()) + "\n";
-            detail += tr("OpenGL Version: ") + QString(this->mViaPoint.glDeviceInfo().version.c_str()) + "\n";
+            detail += tr("Available VRAM: ") + vramString + "\n";
+            detail += tr("OpenGL version: ") + QString(this->mViaPoint.glDeviceInfo().version.c_str()) + "\n";
             detail += tr("Qt Version: ") + qtVersion + "\n";
-            detail += tr("Format Version: ") + formatVersionString + "\n";
+            detail += tr("System locale: ") + QLocale::system().name() + "\n";
+
             // Unicode Check
             auto nonAscii = QRegularExpression("[^\\x00-\\x7F]+");
             QString hasUnicode = QApplication::applicationFilePath().contains(nonAscii) ? "True" : "False";

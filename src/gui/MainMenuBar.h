@@ -31,6 +31,7 @@ public:
     util::Signaler<void()> onVisualUpdated;
     util::Signaler<void()> onProjectAttributeUpdated;
     util::Signaler<void()> onTimeFormatChanged;
+    QString system_info = "Unknown";
 
 private:
     QScopedPointer<QProcess> mProcess;

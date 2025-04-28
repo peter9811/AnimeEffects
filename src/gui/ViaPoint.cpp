@@ -1,6 +1,9 @@
 #include "gui/ViaPoint.h"
+
+#include "gl/Global.h"
 #include "gui/ResourceDialog.h"
 #include "gui/KeyCommandInvoker.h"
+#include <QOpenGLFunctions>
 
 namespace gui {
 
@@ -58,6 +61,18 @@ void ViaPoint::setGLDeviceInfo(const gl::DeviceInfo& aInfo) { mGLDeviceInfo = aI
 const gl::DeviceInfo& ViaPoint::glDeviceInfo() const {
     XC_ASSERT(mGLDeviceInfo.isValid());
     return mGLDeviceInfo;
+}
+int ViaPoint::getVRAM() const {
+    XC_ASSERT(mGLDeviceInfo.isValid());
+    GLint vram = 0;
+    gl::Global::functions().glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &vram);
+    gl::Global::functions().glGetIntegerv(GL_ATI_meminfo, &vram);
+    gl::Global::functions().glGetError();
+    if (vram == 0) {
+        return -1;
+    }
+    vram = vram * 0.001;
+    return vram;
 }
 
 void ViaPoint::setKeyCommandMap(KeyCommandMap* aMap) { mKeyCommandMap = aMap; }

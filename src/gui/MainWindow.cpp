@@ -899,14 +899,15 @@ void MainWindow::onSaveProjectAsTriggered() {
 void MainWindow::onCloseProjectTriggered() {
     if (mCurrent) {
         // Sneaky potential crash
-        QFileSystemWatcher* watcher = getWatcher();
-        for (int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1) {
-            if (watcher->files().contains(
-                    mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode)
-                )) {
-                watcher->removePath(
-                    mCurrent->resourceHolder().findAbsoluteFilePath(*mCurrent->resourceHolder().imageTree(x).topNode)
-                );
+        if (QFileSystemWatcher* watcher = getWatcher()) {
+            for (int x = 0; x < mCurrent->resourceHolder().imageTrees().size(); x += 1) {
+                if (watcher->files().contains(mCurrent->resourceHolder().findAbsoluteFilePath(
+                        *mCurrent->resourceHolder().imageTree(x).topNode
+                    ))) {
+                    watcher->removePath(mCurrent->resourceHolder().findAbsoluteFilePath(
+                        *mCurrent->resourceHolder().imageTree(x).topNode
+                    ));
+                    }
             }
         }
 
@@ -917,12 +918,17 @@ void MainWindow::onCloseProjectTriggered() {
             }
         }
 
+        auto playerBackup = *mCurrent->mediaPlayer;
+        auto configBackup = *mCurrent->pConf;
+
         auto closeProject = mCurrent;
         mProjectTabBar->removeProject(*closeProject);
         resetProjectRefs(nullptr); ///@note update mCurrent
         mSystem.closeProject(*closeProject);
 
         if (mProjectTabBar->currentProject()) {
+            mProjectTabBar->currentProject()->mediaPlayer = new mediaState(playerBackup);
+            mProjectTabBar->currentProject()->pConf = new std::vector(configBackup);
             resetProjectRefs(mProjectTabBar->currentProject());
         }
     }

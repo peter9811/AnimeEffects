@@ -364,7 +364,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
         mForceSolverLoad = new QCheckBox();
         mForceSolverLoad->setChecked(bForceSolverLoad);
-        projectSaving->addRow(tr("Force project to load (USE AS A LAST RESORT) : "), mForceSolverLoad);
+        projectSaving->addRow(tr("Force project to load"), mForceSolverLoad);
 
         mResetButton = new QPushButton(tr("Reset recent files list"));
         mResetButton->setToolTip(tr("Deletes all project entries from your recents"));
@@ -714,6 +714,7 @@ void GeneralSettingDialog::saveSettings() {
     if (donationHasChanged()){
         settings.setValue("generalsettings/ui/donationAllowed", mDonationAllowed->isChecked());
     }
+    // TODO: Bandaid fix, needs solving
     if (forceSolverLoadHasChanged()) {
         settings.setValue("forceSolverLoad", mForceSolverLoad->isChecked());
     }

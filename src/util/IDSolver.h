@@ -22,7 +22,9 @@ public:
 
     // we guarantee to call each solver by pushing order.
     QSettings settings;
-    bool FORCE_SOLVER_LOAD = settings.value("forceSolverLoad", false).toBool();
+    //bool FORCE_SOLVER_LOAD = settings.value("forceSolverLoad", false).toBool();
+    // TODO: FIX THIS, this shit happens because we erase every cache
+    bool FORCE_SOLVER_LOAD = true;
     bool solve() {
         for (auto refer : mReferencers) {
             if (!mDataMap.contains(refer.first)) {

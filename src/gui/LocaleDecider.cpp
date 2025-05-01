@@ -19,13 +19,20 @@ LocaleDecider::LocaleDecider(): mLocaleParam(), mTranslator(), mHasTranslator() 
             locAbb = "ja";
         } else if (language == "Chinese") {
             locAbb = "zh";
-        } else {
+        }
+        else if (language == "Spanish") {
+            locAbb = "es";
+        }
+        else {
             auto language = QLocale::system().language();
             if (language == QLocale::Japanese) {
                 locAbb = "ja";
             }
             if (language == QLocale::Chinese) {
                 locAbb = "zh";
+            }
+            if (language == QLocale::Spanish) {
+                locAbb = "es";
             }
         }
     }

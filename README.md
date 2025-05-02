@@ -12,7 +12,7 @@
 [日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-jp.md) - 時代遅れ <br>
 [简体中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh.md) - 尚未提供 <br>
 [正體中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh-t.md) - 尚未提供 <br>
-[Español](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-es.md) - Aún no disponible <br>
+[Español](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-es.md) - Actualizado <br>
 
 ## Description
 

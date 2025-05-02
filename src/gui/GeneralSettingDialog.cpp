@@ -556,7 +556,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                             qDebug(
                                 "AnimeEffects folder creation failed in AppData, attempting to locate in Documents..."
                             );
-                            appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+                            appdata = QDir(QStandardPaths::LocateDirectory(QStandardPaths::DocumentsLocation));
                             anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
                             if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isWritable()) {
                                 if (!QDir::mkdir(appdata.absolutePath() + "/AnimeEffects")) {

@@ -1,6 +1,6 @@
 id: org.anie.AnimeEffects
 runtime: org.kde.Platform
-runtime-version: '6.6'
+runtime-version: "6.6"
 sdk: org.kde.Sdk
 command: AnimeEffects
 finish-args:
@@ -17,10 +17,7 @@ modules:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     sources:
       - type: dir
-        path: "../../AnimeEffects"	
-        
+        path: "../../AnimeEffects"
+
     post-install:
       - "cp -r data ${FLATPAK_DEST}/bin"
-        
-
-        

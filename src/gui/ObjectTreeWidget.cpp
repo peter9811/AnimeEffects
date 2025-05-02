@@ -60,15 +60,15 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
     this->setObjectName("objectTree");
     this->setFocusPolicy(Qt::NoFocus);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
-    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    this->setSelectionMode(ExtendedSelection);
     this->setHeaderHidden(true);
     this->setAnimated(true);
     this->setUniformRowHeights(false);
-    this->setDragDropMode(DragDropMode::InternalMove);
+    this->setDragDropMode(InternalMove);
     this->setDefaultDropAction(Qt::TargetMoveAction);
     // this->setAlternatingRowColors(true);
-    this->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
-    this->setHorizontalScrollMode(QAbstractItemView::ScrollPerItem);
+    this->setVerticalScrollMode(ScrollPerItem);
+    this->setHorizontalScrollMode(ScrollPerItem);
     // this->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     // this->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -113,8 +113,8 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
     }
 
     // enable pixel scrolling
-    QTreeWidget::setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    QTreeWidget::verticalScrollBar()->setSingleStep(24);
+    setVerticalScrollMode(ScrollPerPixel);
+    verticalScrollBar()->setSingleStep(24);
 }
 
 void ObjectTreeWidget::setProject(core::Project* aProject) {
@@ -1121,13 +1121,13 @@ void ObjectTreeWidget::paintEvent(QPaintEvent* aEvent) {
         painter.setPen(QPen(kPenBrush, 1));
 
         QPoint pos;
-        if (mDropIndicatorPos == QAbstractItemView::AboveItem) {
+        if (mDropIndicatorPos == AboveItem) {
             pos = itemRect.topLeft();
             painter.drawLine(pos, pos + QPoint(itemRect.width(), 0));
-        } else if (mDropIndicatorPos == QAbstractItemView::OnItem) {
+        } else if (mDropIndicatorPos == OnItem) {
             pos = QPoint(itemRect.left(), itemRect.center().y());
             painter.drawRect(itemRect);
-        } else if (mDropIndicatorPos == QAbstractItemView::BelowItem) {
+        } else if (mDropIndicatorPos == BelowItem) {
             pos = QPoint(itemRect.left(), itemRect.bottom() + 1);
             painter.drawLine(pos, pos + QPoint(itemRect.width(), 0));
         }
@@ -1165,7 +1165,7 @@ void ObjectTreeWidget::dragMoveEvent(QDragMoveEvent* aEvent) {
 
     if (!dummyEvent.isAccepted()) {
         mDragIndex = QModelIndex();
-        mDropIndicatorPos = QTreeWidget::DropIndicatorPosition();
+        mDropIndicatorPos = DropIndicatorPosition();
         aEvent->ignore();
     } else {
         aEvent->accept();
@@ -1269,7 +1269,7 @@ void ObjectTreeWidget::resizeEvent(QResizeEvent* aEvent) {
 
 void ObjectTreeWidget::scrollTo(const QModelIndex& aIndex, ScrollHint aHint) {
     // Avoided qt bug that QTreeView scroll incorrectly (in scrollTo, EnsureVisible).
-    if (aHint == ScrollHint::EnsureVisible) {
+    if (aHint == EnsureVisible) {
         auto view = this->viewport()->rect();
         auto rect = this->visualRect(aIndex);
         if (view.top() <= rect.top() && rect.bottom() <= view.bottom()) {

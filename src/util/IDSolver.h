@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <QMap>
+#include <QDebug>
 
 namespace util {
 
@@ -19,11 +20,18 @@ public:
 
     void pushReferencer(IdType aId, const Solver& aSolver) { mReferencers.push_back(Referencer(aId, aSolver)); }
 
-    // we guarantee to call each solvers by pushing order.
+    // we guarantee to call each solver by pushing order.
+    QSettings settings;
+    //bool FORCE_SOLVER_LOAD = settings.value("forceSolverLoad", false).toBool();
+    // TODO: FIX THIS, this shit happens because we erase every cache
+    bool FORCE_SOLVER_LOAD = true;
     bool solve() {
         for (auto refer : mReferencers) {
             if (!mDataMap.contains(refer.first)) {
-                return false;
+                qDebug() << "Failed to solve id reference at "  << std::to_string(refer.first);
+                if (!FORCE_SOLVER_LOAD) {
+                    return false;
+                }
             }
             refer.second(mDataMap[refer.first]);
         }

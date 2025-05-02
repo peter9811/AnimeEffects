@@ -30,6 +30,7 @@ public:
     bool resIDCheckHasChanged();
     bool themeHasChanged();
     bool donationHasChanged();
+    bool forceSolverLoadHasChanged();
     bool ignoreWarningsHasChanged();
     bool cbCopyHasChanged();
     bool keyDelayHasChanged();
@@ -57,6 +58,9 @@ private:
 
     bool bDonationAllowed;
     QCheckBox* mDonationAllowed;
+
+    bool bForceSolverLoad;
+    QCheckBox* mForceSolverLoad;
 
     bool bIgnoreWarnings;
     QCheckBox* mIgnoreWarnings;

@@ -53,6 +53,7 @@ public:
 
     void setGLDeviceInfo(const gl::DeviceInfo&);
     const gl::DeviceInfo& glDeviceInfo() const;
+    int getVRAM() const;
 
     void setKeyCommandMap(KeyCommandMap* aMap);
     KeyCommandMap* keyCommandMap() const { return mKeyCommandMap; }

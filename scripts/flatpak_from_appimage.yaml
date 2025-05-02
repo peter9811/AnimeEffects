@@ -1,6 +1,6 @@
 id: org.anie.AnimeEffects
 runtime: org.kde.Platform
-runtime-version: '5.15-22.08'
+runtime-version: "5.15-22.08"
 sdk: org.kde.Sdk
 finish-args:
   - "--share=ipc"
@@ -11,8 +11,8 @@ modules:
   - name: ae
     buildsystem: simple
     build-commands:
-      - chmod +x ./AnimeEffects 		
-      - install -D AnimeEffects /app/bin/AnimeEffects	
+      - chmod +x ./AnimeEffects
+      - install -D AnimeEffects /app/bin/AnimeEffects
       - mkdir data
       - mv encode data
       - mv locale data
@@ -20,7 +20,7 @@ modules:
       - mv shader data
       - mv themes data
       - mv data /app/bin/
-      - chmod -R 777 /app/bin/data 
+      - chmod -R 777 /app/bin/data
     sources:
       - type: file
         path: ./AnimeEffects

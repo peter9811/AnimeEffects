@@ -41,7 +41,7 @@ public:
     void clearRows();
     void pushRow(core::ObjectNode* aNode, util::Range aWorldTB, bool aClosedFolder);
     void updateRowSelection(const core::ObjectNode* aRepresent);
-    void render(QPainter& aPainter, const core::CameraInfo& aCamera, theme::TimeLine& aTheme, const QRect& aCullRect);
+    void render(QPainter& aPainter, const core::CameraInfo& aCamera, theme::TimeLine& aTheme, const QRect& aCullRect) const;
 
     core::Frame currentFrame() const;
     int maxFrame() const { return mTimeMax; }

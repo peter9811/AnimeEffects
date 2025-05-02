@@ -8,6 +8,8 @@
 #include <QCheckBox>
 #include "gui/NewProjectDialog.h"
 
+#include <QMessageBox>
+
 namespace gui {
 
 NewProjectDialog::NewProjectDialog(QWidget* aParent):
@@ -39,8 +41,8 @@ QWidget* NewProjectDialog::createOption() {
         line->setFocusPolicy(Qt::NoFocus);
         layout->addWidget(line);
 
-        auto button = new QPushButton(this);
-        this->connect(button, &QPushButton::clicked, [=]() {
+        const auto button = new QPushButton(this);
+        this->connect(button, &QPushButton::clicked, [=] {
             this->mFileName = QFileDialog::getOpenFileName(
                 this, tr("Open File"), "", "ImageFile (*.psd *.ora *.jpg *.jpeg *.png *.gif *.tiff *.tif *.webp)"
             );

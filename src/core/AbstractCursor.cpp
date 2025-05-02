@@ -144,13 +144,29 @@ bool AbstractCursor::setMouseDoubleClick(QMouseEvent* aEvent, const CameraInfo& 
     return mSuspendedCount == 0;
 }
 
-#ifdef Q_OS_MAC
-bool AbstractCursor::setTabledEvent(QTabletEvent* aEvent, const CameraInfo& aCameraInfo) {
+bool AbstractCursor::setTabletEvent(QTabletEvent* aEvent, const CameraInfo& aCameraInfo) {
     auto type = aEvent->type();
     auto pressure = aEvent->pressure();
-
     bool shouldUpdate = false;
+
+    if (!initializedTimer){
+        doubleClickTimer = new QTimer();
+        doubleClickTimer->connect(doubleClickTimer, &QTimer::timeout, [=] {
+            shouldDoubleClick = false;
+            shouldResetCanvas = false;
+        });
+        doubleClickTimer->setSingleShot(true);
+        initializedTimer = true;
+    }
+
     if (type == QEvent::TabletPress) {
+        doubleClickTimer->start(250);
+        if (shouldDoubleClick) {
+            shouldResetCanvas = true;
+        }
+        else{
+            shouldDoubleClick = true;
+        }
         shouldUpdate = setMousePressImpl(aEvent->button(), aEvent->pos(), aCameraInfo);
         mIsPressedTablet = true;
         mPressure = pressure;
@@ -167,7 +183,6 @@ bool AbstractCursor::setTabledEvent(QTabletEvent* aEvent, const CameraInfo& aCam
 
     return shouldUpdate;
 }
-#else
 void AbstractCursor::setTabletPressure(QTabletEvent* aEvent) {
     auto type = aEvent->type();
     auto pressure = aEvent->pressure();
@@ -184,7 +199,6 @@ void AbstractCursor::setTabletPressure(QTabletEvent* aEvent) {
         mPressure = 1.0f;
     }
 }
-#endif
 
 void AbstractCursor::suspendEvent(const std::function<void()>& aEventReflector) {
     XC_ASSERT(mSuspendedCount >= 0);

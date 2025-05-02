@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QPoint>
 #include "core/CameraInfo.h"
+#include <QTimer>
 
 namespace core {
 
@@ -28,11 +29,8 @@ public:
     /// tablet event
     /// Tablet behavior is difference between mac and windows. It's Qt's bug?
     /// In windows, Duplicate mouse events occur while operating a tablet.
-#ifdef Q_OS_MAC
-    bool setTabledEvent(QTabletEvent* aEvent, const CameraInfo& aCameraInfo);
-#else
+    bool setTabletEvent(QTabletEvent* aEvent, const CameraInfo& aCameraInfo);
     void setTabletPressure(QTabletEvent* aEvent);
-#endif
 
     void suspendEvent(const std::function<void()>& aEventReflector);
     void resumeEvent();
@@ -60,6 +58,11 @@ public:
     bool emitsRightReleasedEvent() const;
     bool emitsPressedEvent() const;
 
+    bool shouldDoubleClick = false;
+    bool shouldResetCanvas = false;
+    bool initializedTimer = false;
+    QTimer *doubleClickTimer = nullptr;
+
 private:
     bool setMousePressImpl(Qt::MouseButton aButton, QPoint aPos, const CameraInfo& aCameraInfo);
     bool setMouseMoveImpl(Qt::MouseButton aButton, QPoint aPos, const CameraInfo& aCameraInfo);
@@ -76,11 +79,9 @@ private:
     QVector2D mWorldVel;
     float mPressure;
     bool mIsPressedTablet;
-
     int mSuspendedCount;
     std::array<bool, Button_TERM> mBlankAfterSuspending;
 };
 
 } // namespace core
-
 #endif // CORE_ABSTRACTCURSOR_H

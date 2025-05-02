@@ -1,73 +1,68 @@
 #include <QApplication>
-#include <QSettings>
-#include <QGroupBox>
-#include <QFormLayout>
-#include <QComboBox>
 #include <qstandardpaths.h>
-#include <QFileDialog>
-#include <QMessageBox>
 #include "MainWindow.h"
 #include "gui/GeneralSettingDialog.h"
 #include "util/NetworkUtil.h"
 
 namespace {
 
-static const int kLanguageTypeCount = 4;
-static const int kTimeFormatTypeCount = 6;
-static const int kEasingTypeCount = 12;
-static const int kRangeTypeCount = 3;
+constexpr int kLanguageTypeCount = 5;
+const int kTimeFormatTypeCount = 6;
+const int kEasingTypeCount = 12;
+const int kRangeTypeCount = 3;
 
 int languageToIndex(const QString& aLanguage) {
     if (aLanguage == "Auto")
         return 0;
-    else if (aLanguage == "English")
+    if (aLanguage == "English")
         return 1;
-    else if (aLanguage == "Japanese")
+    if (aLanguage == "Japanese")
         return 2;
-    else if (aLanguage == "Chinese")
+    if (aLanguage == "Chinese")
         return 3;
-    else
-        return 0;
+    if (aLanguage == "Spanish")
+        return 4;
+    return 0;
 }
 
 int easingToIndex(const QString& aEasing) {
     if (aEasing == "None")
         return 0;
-    else if (aEasing == "Linear")
+    if (aEasing == "Linear")
         return 1;
-    else if (aEasing == "Sine")
+    if (aEasing == "Sine")
         return 2;
-    else if (aEasing == "Quad")
+    if (aEasing == "Quad")
         return 3;
-    else if (aEasing == "Cubic")
+    if (aEasing == "Cubic")
         return 4;
-    else if (aEasing == "Quart")
+    if (aEasing == "Quart")
         return 5;
-    else if (aEasing == "Quint")
+    if (aEasing == "Quint")
         return 6;
-    else if (aEasing == "Expo")
+    if (aEasing == "Expo")
         return 7;
-    else if (aEasing == "Circ")
+    if (aEasing == "Circ")
         return 8;
-    else if (aEasing == "Back")
+    if (aEasing == "Back")
         return 9;
-    else if (aEasing == "Elastic")
+    if (aEasing == "Elastic")
         return 10;
-    else if (aEasing == "Bounce")
+    if (aEasing == "Bounce")
         return 11;
-    else
-        return 1; // Default easing is Linear
+    return 1;
+    // Default easing is Linear
 }
 
 int rangeToIndex(const QString& aRange) {
     if (aRange == "In")
         return 0;
-    else if (aRange == "Out")
+    if (aRange == "Out")
         return 1;
-    else if (aRange == "All")
+    if (aRange == "All")
         return 2;
-    else
-        return 2; // Default range is InOut, it is referenced as "All" by Hidefuku
+    return 2;
+    // Default range is InOut, it is referenced as "All" by Hidefuku
 }
 
 QString indexToEasing(int aIndex, bool translated = true) {
@@ -100,35 +95,34 @@ QString indexToEasing(int aIndex, bool translated = true) {
         default:
             return QCoreApplication::translate("GeneralSettingsDialog", "Linear");
         }
-    } else {
-        switch (aIndex) {
-        case 0:
-            return QString("None");
-        case 1:
-            return QString("Linear");
-        case 2:
-            return QString("Sine");
-        case 3:
-            return QString("Quad");
-        case 4:
-            return QString("Cubic");
-        case 5:
-            return QString("Quart");
-        case 6:
-            return QString("Quint");
-        case 7:
-            return QString("Expo");
-        case 8:
-            return QString("Circ");
-        case 9:
-            return QString("Back");
-        case 10:
-            return QString("Elastic");
-        case 11:
-            return QString("Bounce");
-        default:
-            return QString("Linear");
-        }
+    }
+    switch (aIndex) {
+    case 0:
+        return QString("None");
+    case 1:
+        return QString("Linear");
+    case 2:
+        return QString("Sine");
+    case 3:
+        return QString("Quad");
+    case 4:
+        return QString("Cubic");
+    case 5:
+        return QString("Quart");
+    case 6:
+        return QString("Quint");
+    case 7:
+        return QString("Expo");
+    case 8:
+        return QString("Circ");
+    case 9:
+        return QString("Back");
+    case 10:
+        return QString("Elastic");
+    case 11:
+        return QString("Bounce");
+    default:
+        return QString("Linear");
     }
 }
 
@@ -144,17 +138,16 @@ QString indexToRange(int aRange, bool translated = true) {
         default:
             return QCoreApplication::translate("GeneralSettingsDialog", "All");
         }
-    } else {
-        switch (aRange) {
-        case 0:
-            return QString("In");
-        case 1:
-            return QString("Out");
-        case 3:
-            return QString("All");
-        default:
-            return QString("All");
-        }
+    }
+    switch (aRange) {
+    case 0:
+        return QString("In");
+    case 1:
+        return QString("Out");
+    case 3:
+        return QString("All");
+    default:
+        return QString("All");
     }
 }
 
@@ -165,30 +158,27 @@ QString indexToLanguage(int aIndex, bool translated = true) {
             return QCoreApplication::translate("GeneralSettingsDialog", "Auto");
         case 1:
             return QCoreApplication::translate("GeneralSettingsDialog", "English");
-            ;
         case 2:
             return QCoreApplication::translate("GeneralSettingsDialog", "Japanese");
-            ;
         case 3:
             return QCoreApplication::translate("GeneralSettingsDialog", "Chinese");
-            ;
+        case 4:
+            return QCoreApplication::translate("GeneralSettingsDialog", "Spanish");
         default:
             return QCoreApplication::translate("GeneralSettingsDialog", "Auto");
-            ;
         }
-    } else {
-        switch (aIndex) {
-        case 0:
-            return QString("Auto");
-        case 1:
-            return QString("Enslish");
-        case 2:
-            return QString("Japanese");
-        case 3:
-            return QString("Chinese");
-        default:
-            return QString("Auto");
-        }
+    }
+    switch (aIndex) {
+    case 0:
+        return {"Auto"};
+    case 1:
+        return {"English"};
+    case 2:
+        return {"Japanese"};
+    case 3:
+        return {"Chinese"};
+    default:
+        return {"Auto"};
     }
 }
 } // namespace
@@ -478,7 +468,6 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             );
             ffmpegNotif.addButton(QMessageBox::Ok);
             ffmpegNotif.exec();
-            return;
         });
 
         selectFromExe = new QPushButton(tr("Select from executable and automatically setup"));
@@ -489,7 +478,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         connect(selectFromExe, &QPushButton::clicked, [=]() {
             util::NetworkUtil net;
             QDir dir = QDir("./tools");
-            if (!dir.exists()) {dir.mkpath(dir.absolutePath());}
+            if (!dir.exists()) {}
             QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
 
             if (QFileInfo::exists(dir.absolutePath() + file)) {
@@ -510,9 +499,24 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
         autoSetup = new QPushButton(tr("Download and automatically setup"));
         connect(autoSetup, &QPushButton::clicked, [=]() {
-            const QDir dir = QDir("./tools");
-            if (!dir.exists()) { dir.mkpath(dir.absolutePath()); }
-            QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
+            const auto dir = QDir("./tools");
+            if (!dir.exists()) {
+                if (dir.mkpath(dir.absolutePath())) {
+                    qDebug() << "Directory created : " << dir.absolutePath();
+                } else {
+                    qDebug() << "Directory creation failed, assumed protected : " << dir.absolutePath();
+                    QMessageBox error;
+                    error.setWindowTitle(tr("Unable to create directory"));
+                    error.setText(
+                        tr("An error has occurred while creating the tools directory,") +
+                        tr("the application will use a fallback but if this doesn't work please run the app as "
+                           "administrator or use a folder that isn't write protected.")
+                    );
+                    error.addButton(QMessageBox::Ok);
+                    error.exec();
+                }
+            }
+            const QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
             if (QFileInfo::exists(dir.absolutePath() + file)) {
                 QFile(dir.absolutePath() + file).moveToTrash();
             }
@@ -547,7 +551,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                             qDebug(
                                 "AnimeEffects folder creation failed in AppData, attempting to locate in Documents..."
                             );
-                            appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+                            appdata = QDir(QStandardPaths::LocateDirectory(QStandardPaths::DocumentsLocation));
                             anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
                             if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isWritable()) {
                                 if (!appdata.mkdir("AnimeEffects")) {
@@ -581,7 +585,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                             instruct.append("PATH=%PATH%;" + fileInAppDataLoc);
                         }
                         pathSet.start(console, instruct);
-                        pathSet.waitForFinished();
+                        pathSet.waitForFinished(2*1000);
                         if (pathSet.exitCode() == 0) {
                             QMessageBox success;
                             success.setWindowTitle(tr("Success"));

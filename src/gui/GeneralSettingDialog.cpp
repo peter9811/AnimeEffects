@@ -468,8 +468,10 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             ffmpegNotif.setWindowTitle(tr("FFmpeg test success"));
             ffmpegNotif.setText(tr("All tests have passed, FFmpeg is working correctly."));
             ffmpegNotif.setDetailedText(
-                tr("Tests:\nCheck FFmpeg version ... 🗸\nCheck FFmpeg exporting ... 🗸\n"
-                   "Check FFmpeg palette generation ... 🗸")
+                tr("FFmpeg at: ") + ffmpeg + "\n" +
+                tr("Check FFmpeg response 🗸\n"
+                "Check FFmpeg exporting 🗸\n"
+                "Check FFmpeg palette generation 🗸")
             );
             ffmpegNotif.addButton(QMessageBox::Ok);
             ffmpegNotif.exec();

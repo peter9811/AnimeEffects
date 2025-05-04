@@ -23,9 +23,9 @@ Originally developed by hidefuku, it is now being developed and maintained by it
   - <https://animeeffectsdevs.github.io/>
 - Official socials:<br>
 
-  - Discord : <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (courtesy of [José Moreno](https://github.com/Jose-Moreno))<br>
-  - Twitter : <a href='https://twitter.com/anime_effects'>@anime_effects</a> (courtesy of [p_yukusai](https://github.com/p-yukusai))<br>
-  - Reddit : <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (courtesy of [visterical](https://www.tumblr.com/visterical))<br>
+  - Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (courtesy of [José Moreno](https://github.com/Jose-Moreno))<br>
+  - Twitter: <a href='https://twitter.com/anime_effects'>@anime_effects</a> (courtesy of [p_yukusai](https://github.com/p-yukusai))<br>
+  - Reddit: <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (courtesy of [visterical](https://www.tumblr.com/visterical))<br>
 
 - You can support us through:<br><br>
   [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp;
@@ -47,7 +47,7 @@ AnimeEffects will notify you of available stable releases as soon as they come o
 - Windows/Linux/Mac
   - See compatible versions below.
 - Processor: A 64 bit CPU
-- RAM: 4GB
+- RAM: 4 GB
 - Graphics card: GPU/iGPU with support for OpenGL 4.0 or higher
 - [FFmpeg](https://ffmpeg.org/download.html) (Necessary for video exporting, you can place it on your path or copy it to the "/tools" folder, if this folder doesn't exist just create it alongside the executable.)
 

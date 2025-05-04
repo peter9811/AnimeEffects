@@ -25,9 +25,9 @@
 
 - 公式社会：<br>
 
-  - Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> ([José Moreno](https://github.com/Jose-Moreno))<br>
+  - Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (礼儀 [José Moreno](https://github.com/Jose-Moreno))<br>
   - X (Twitter): <a href='https://x.com/anime_effects'>@anime_Effects</a> (礼儀 [p_yukusai](https://github.com/p-yukusai))<br>
-  - Reddit: <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> ([Thyof visterical](https://www.tumblr.com/visterical))<br>
+  - Reddit: <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (礼儀 [Thyof visterical](https://www.tumblr.com/visterical))<br>
 
 - You can support us through:<br><br>
   [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp; <a href="https://yukusai.itch.io/animeeffects" target="_blank"> <img src="https://static.itch.io/images/badge-color.svg" alt="itch.io" style="width:100px" /> </a>

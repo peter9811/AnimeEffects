@@ -9,7 +9,7 @@
 ## 🌐 LÉEME 🌐
 
 [English](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README.md) - Actualizado <br>
-[日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-jp.md) - Desactualizado <br>
+[日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-ja.md) - Desactualizado <br>
 [简体中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh.md) - No disponible <br>
 [正體中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh-t.md) - No disponible <br>
 [Español](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-es.md) - Versión actual <br>

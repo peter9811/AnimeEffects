@@ -26,45 +26,45 @@ Desarrollado originalmente por hidefuku, actualmente mantenido y mejorado por la
 - Redes sociales oficiales:<br>
 
   - Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (cortesía de [José Moreno](https://github.com/Jose-Moreno))<br>
-  - Twitter: <a href='https://twitter.com/anime_effects'>@anime_effects</a> (cortesía de [p_yukusai](https://github.com/p-yukusai))<br>
+  - X (Twitter): <a href='https://x.com/anime_effects'>@anime_effects</a> (cortesía de [p_yukusai](https://github.com/p-yukusai))<br>
   - Reddit: <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (cortesía de [visterical](https://www.tumblr.com/visterical))<br>
 
 - Puedes apoyar el proyecto mediante:<br><br>
   [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp; <a href="https://yukusai.itch.io/animeeffects" target="_blank"> <img src="https://static.itch.io/images/badge-color.svg" alt="itch.io" style="width:100px" /> </a>
 
 Nota: Actualmente pueden realizarse cambios incompatibles entre versiones, los cuales se comunicarán en los lanzamientos correspondientes.<br>
-**_¡Si encuentras algún problema o tienes sugerencias de nuevas funciones, contáctanos a través de nuestras redes sociales!_**
+**_Si tienes algún problema o deseas sugerir nuevas funciones, ¡no dudes en comunicarte con nosotros en nuestras redes sociales!_**
 
 ## Lanzamientos
 
 AnimeEffects te notificará automáticamente cuando haya nuevas versiones estables disponibles.
 
-- Versiones estables disponibles [aquí](https://github.com/AnimeEffectsDevs/AnimeEffects/releases).<br>
+- Nuestras versiones estables están disponibles [aquí](https://github.com/AnimeEffectsDevs/AnimeEffects/releases).<br>
 - Versiones inestables disponibles [aquí](https://github.com/p-yukusai/AnimeEffects/releases).<br>
 - Versiones nocturnas disponibles [aquí](https://github.com/AnimeEffectsDevs/AnimeEffects/actions).
 
 ## Requisitos
 
 - Windows/Linux/Mac
-  - Ver versiones compatibles más abajo.
+  - Ver versiones compatibles más abajo
 - Procesador: CPU de 64 bits
 - RAM: 4 GB
 - Tarjeta gráfica: GPU/iGPU compatible con OpenGL 4.0 o superior
-- [FFmpeg](https://ffmpeg.org/download.html) (Necesario para exportar videos, colócalo en tu PATH o copia a la carpeta "/tools". Si la carpeta no existe, créala junto al ejecutable.)
+- [FFmpeg](https://ffmpeg.org/download.html) (Necesario para la exportación de vídeo. Puede colocarlo en su PATH o copiarlo en la carpeta "/tools" - cree esta carpeta junto al ejecutable si no existe)
 
 ## Sistemas Operativos objetivos
 
 #### Versiones donde probamos y compilamos el software. Puede funcionar en versiones anteriores pero no es recomendable
 
-- Windows 10 o superior.
-- Ubuntu LTS o distribuciones equivalentes.
-- MacOS Big Sur o superior.
+- Windows 10 o superior
+- Ubuntu LTS o distribuciones equivalentes
+- MacOS Big Sur o más reciente
 
 ## Requisitos para el desarrollo
 
 - Qt 6.6.X
 - Encabezados de Vulkan
-- CMake 3.16 o posterior.
+- CMake 3.16 o posterior
 - MSVC/GCC/CLang (64-bit)
 
 ## Linux (Debian)

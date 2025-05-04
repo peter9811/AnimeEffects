@@ -30,7 +30,7 @@
   - 红： <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (礼遇 [visterical](https://www.tumblr.com/visterical))<br>
 
 - 您可以通过以下方式支持我们：<br><br>
-  [！[ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp; <a href="https://yukusai.itch.io/animeeffects" target="_blank"> <img src="https://static.itch.io/images/badge-color.svg" alt="itch.io" style="width:100px" /> </a>
+  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp; <a href="https://yukusai.itch.io/animeeffects" target="_blank"> <img src="https://static.itch.io/images/badge-color.svg" alt="itch.io" style="width:100px" /> </a>
 
 注意：目前可能有不兼容的更改，如果发生这些更改，将会在受影响的版本中公布。<br>
 **_如果你有任何问题或希望建议新的功能，请随时联系我们我们的社会！_**

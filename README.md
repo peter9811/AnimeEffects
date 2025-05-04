@@ -57,7 +57,7 @@ AnimeEffects will notify you of available stable releases as soon as they come o
 
 - Windows 10 or newer
 - Ubuntu LTS or comparable distro
-- macOS Big Sur or newer
+- MacOS Big Sur or newer
 
 ## Development requirements
 

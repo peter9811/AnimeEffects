@@ -8,11 +8,11 @@
 
 ## 🌐 README 🌐
 
-[English](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README.md) - Up-to-date <br>
-[日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-ja.md) - 時代遅れ <br>
-[简体中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh.md) - 尚未提供 <br>
-[正體中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh-t.md) - 尚未提供 <br>
-[Español](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-es.md) - Actualizado <br>
+[English](./README.md) - Up-to-date <br>
+[日本語](./README-ja.md) - 時代遅れ <br>
+[简体中文](./README-zh.md) - 最新 <br>
+[正體中文](./README-zh-t.md) - 尚未提供 <br>
+[Español](./README-es.md) - Actualizado <br>
 
 ## 説明
 
@@ -26,7 +26,7 @@
 - 公式社会：<br>
 
   - Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (礼儀 [José Moreno](https://github.com/Jose-Moreno))<br>
-  - X (Twitter): <a href='https://x.com/anime_effects'>@anime_Effects</a> (礼儀 [p_yukusai](https://github.com/p-yukusai))<br>
+  - X (Twitter): <a href='https://x.com/anime_effects'>@anime_effects</a> (礼儀 [p_yukusai](https://github.com/p-yukusai))<br>
   - Reddit: <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (礼儀 [visterical](https://www.tumblr.com/visterical))<br>
 
 - You can support us through:<br><br>

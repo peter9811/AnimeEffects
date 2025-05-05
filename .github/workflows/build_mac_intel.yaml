@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
+permissions:
+  contents: read
 jobs:
   buildMacOS:
     runs-on: macos-13
@@ -36,7 +38,7 @@ jobs:
           echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
           cmake -S . -B build -G "Ninja Multi-Config"
           cmake --build build --config Release
-          cd build/src/gui/Release 
+          cd build/src/gui/Release
           mkdir -p appdir/usr/lib
           cp -R AnimeEffects.app appdir/AnimeEffects.app
           cp -R ../data appdir/data

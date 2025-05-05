@@ -1,8 +1,8 @@
 # AnimeEffects
 
-## Download
+## ダウンロード
 
-|                                                                                                                                                               Stable (v1.6)                                                                                                                                                               |                                                                                                                                                                                     Nightly                                                                                                                                                                                      |                                          Source code                                           |
+|                                                                                                                                                               安定版(v1.6)                                                                                                                                                                |                                                                                                                                                                                    ナイトリー                                                                                                                                                                                    |                                         ソース コード                                          |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------: |
 | [Windows](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-Installer-Windows.exe) - [MacOS](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-MacOS.zip) - [Linux](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-Linux.zip) | [Windows](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build-windows.yaml/master/AnimeEffects-Windows-x64.zip) - [MacOS](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build_mac_intel.yaml/master/AnimeEffects-MacOS.zip) - [Linux](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build_linux.yaml/master/AnimeEffects-Linux.zip) | [Download ZIP](https://github.com/AnimeEffectsDevs/AnimeEffects/archive/refs/heads/master.zip) |
 
@@ -10,67 +10,68 @@
 
 [English](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README.md) - Up-to-date <br>
 [日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-ja.md) - 時代遅れ <br>
-[简体中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh.md) - 最新 <br>
+[简体中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh.md) - 尚未提供 <br>
 [正體中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh-t.md) - 尚未提供 <br>
 [Español](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-es.md) - Actualizado <br>
 
-## Description
+## 説明
 
-A 2D animation tool which doesn't require a carefully thought-out plan, it simplifies animation by providing various functions based on the deformation of polygon meshes.<br>
-Originally developed by hidefuku, it is now being developed and maintained by its community.
+慎重な思考計画を必要としない 2D アニメーションツールであり、ポリゴンメッシュの変形に基づくさまざまな機能を提供することでアニメーションを簡素化します。<br>
+もともとは秀福によって開発され、コミュニティによって開発され、維持されています。
 
-- Official Website:<br>
+- 公式サイト:<br>
+
   - <https://animeeffectsdevs.github.io/>
-- Official socials:<br>
 
-  - Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (courtesy of [José Moreno](https://github.com/Jose-Moreno))<br>
-  - X (Twitter): <a href='https://x.com/anime_effects'>@anime_effects</a> (courtesy of [p_yukusai](https://github.com/p-yukusai))<br>
-  - Reddit: <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (courtesy of [visterical](https://www.tumblr.com/visterical))<br>
+- 公式社会：<br>
+
+  - Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (礼儀 [José Moreno](https://github.com/Jose-Moreno))<br>
+  - X (Twitter): <a href='https://x.com/anime_effects'>@anime_Effects</a> (礼儀 [p_yukusai](https://github.com/p-yukusai))<br>
+  - Reddit: <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (礼儀 [visterical](https://www.tumblr.com/visterical))<br>
 
 - You can support us through:<br><br>
-  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp;
-  <a href="https://yukusai.itch.io/animeeffects" target="_blank"> <img src="https://static.itch.io/images/badge-color.svg" alt="itch.io" style="width:100px" /> </a>
+  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp; <a href="https://yukusai.itch.io/animeeffects" target="_blank"> <img src="https://static.itch.io/images/badge-color.svg" alt="itch.io" style="width:100px" /> </a>
 
-Note: For the present there may be incompatible changes made, these will be made known in the release affected should they occur.<br>
-**_If you have any issues or wish to suggest new features, feel free to reach out to us on our socials!_**
+注意：現時点では互換性のない変更がなされている可能性があります。これらは発生した場合、影響を受けるリリースで既知になります。<br>
+**_何か問題があったり、新しい機能を提案したい場合は、お気軽に私たちの社会に連絡してください!_**
 
-## Releases
+## リリース
 
-AnimeEffects will notify you of available stable releases as soon as they come out.
+AnimeEffects は、安定版リリースが出てきたらすぐに通知します。
 
-- Our stable builds are available [here](https://github.com/AnimeEffectsDevs/AnimeEffects/releases).<br>
-- Our unstable builds are available [here](https://github.com/p-yukusai/AnimeEffects/releases).<br>
-- Our nightly builds are available [here](https://github.com/AnimeEffectsDevs/AnimeEffects/actions).
+- 私たちの安定したビルドは [here](https://github.com/AnimeEffectsDevs/AnimeEffects/releases) 利用可能です。<br>
+- 私たちの不安定なビルドは [here](https://github.com/p-yukusai/AnimeEffects/releases) 利用可能です。<br>
+- 私たちのナイトリービルドは [here](https://github.com/AnimeEffectsDevs/AnimeEffects/actions) 利用できます。
 
-## Requirements
+## 開発要件
 
 - Windows/Linux/Mac
-  - See compatible versions below
-- Processor: 64-bit CPU
+  - 以下の互換性のあるバージョンを参照してください
+- プロセッサ: 64 ビット CPU
 - RAM: 4 GB
-- Graphics card: GPU/iGPU with support for OpenGL 4.0 or higher
-- [FFmpeg](https://ffmpeg.org/download.html) (Necessary for video exporting. You can place it on your path or copy it to the "/tools" folder - create this folder alongside the executable if it doesn't exist)
+- グラフィックカード：OpenGL 4.0 以降をサポートする GPU/iGPU
+- [FFmpeg](https://ffmpeg.org/download.html) (ビデオエクスポートの場合は必要ありません。 パス上に配置するか、「/tools」フォルダにコピーすることができます。実行ファイルが存在しない場合は、このフォルダを作成します。
 
-## OS Targets
+## OS ターゲット
 
-#### This is what we are compiling and testing the software on, it may work on older versions but this is discouraged
+#### これは私たちがソフトウェアをコンパイルしてテストしているものです。古いバージョンでは動作するかもしれませんが、これは推奨されません
 
-- Windows 10 or newer
-- Ubuntu LTS or comparable distro
-- MacOS Big Sur or newer
+- Windows 10 以降。
+- Ubuntu LTS 以降。
+- MacOS Big Sur 以降
 
-## Development requirements
+## 開発要件
 
 - Qt 6.6.X
 - Vulkan Headers
-- CMake 3.16 or later
-- MSVC/GCC/CLang (64-bit)
+- CMake 3.16 以降
+- MSVC/GCC/CLang (64 ビット)
 
 ## Linux (Debian)
 
-### Compilation and AppImage creation
+### コンパイルと AppImage の作成
 
-- Most of these dependencies are unnecessary as they come with your distro so check against your own packages:
+- これらの依存関係のほとんどは、あなたの気晴らしに来るので不要ですので、独自のパッケージをチェックしてください。
 
 ```
 sudo apt update && sudo apt upgrade -y
@@ -99,9 +100,9 @@ chmod a+x AnimeEffects-x86_64.AppImage
 
 ## Windows
 
-### Compilation and folder creation
+### コンパイルとフォルダの作成
 
-- The installation steps assume you have installed all the requirements through their installers and you have them in your path
+- インストール手順は、インストーラーを通じてすべての要件をインストールし、パスにそれらを持っていることを前提とします
 
 ```powershell
 git clone https://github.com/AnimeEffectsDevs/AnimeEffects
@@ -115,11 +116,11 @@ Copy-Item -Path "..\data" -Destination ".\AnimeEffects-Windows-x64\" -recurse -F
 Copy-Item ".\AnimeEffects.exe" ".\AnimeEffects-Windows-x64\"
 ```
 
-## MacOS
+## Linux
 
-### Compilation and .app creation
+### コンパイルと .app の作成
 
-- These steps assume xcode, brew, wget, python 3 and pip are installed on your system
+- これらのステップは、xcode、brew、wget、python 3、pip がシステムにインストールされていると仮定します
 
 ```bash
 brew install cmake ninja vulkan-headers

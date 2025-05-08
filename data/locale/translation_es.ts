@@ -48,37 +48,37 @@
     <message>
       <location filename="../../src/ctrl/ffd/ffd_DragMode.cpp" line="185"/>
       <source>Move FFD key vertex</source>
-      <translation>Mover vértice de tecla FFD</translation>
+      <translation>Mover vértice de la clave FFD</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/mesh/mesh_CreateMode.cpp" line="92"/>
       <source>Add mesh key triangle</source>
-      <translation>Agrega el triángulo de tecla malla</translation>
+      <translation>Añadir triángulo a la clave de malla</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/mesh/mesh_CreateMode.cpp" line="124"/>
       <source>Move mesh key vertex</source>
-      <translation>Mover vértice de tecla de malla</translation>
+      <translation>Mover vértice de la clave de malla</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/mesh/mesh_DeleteMode.cpp" line="68"/>
       <source>Remove mesh key vertex</source>
-      <translation>Remueve el vértice de tecla de malla</translation>
+      <translation>Eliminar vértice de la clave de malla</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/mesh/mesh_DeleteMode.cpp" line="81"/>
       <source>Remove mesh key face</source>
-      <translation>Remueve la cara de la malla</translation>
+      <translation>Eliminar cara de la clave de malla</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/mesh/mesh_SplitMode.cpp" line="148"/>
       <source>Split mesh key triangle</source>
-      <translation>Dividir triángulo de clave malla</translation>
+      <translation>Dividir triángulo de la clave de malla</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/pose/pose_DrawBoneMode.cpp" line="138"/>
       <source>Pull bones of a pose key</source>
-      <translation>Tirar huesos de una tecla pose</translation>
+      <translation>Halar huesos de una clave de pose</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/pose/pose_ErasePoseMode.cpp" line="84"/>
@@ -88,12 +88,12 @@
     <message>
       <location filename="../../src/ctrl/pose/pose_TransBoneMode.cpp" line="101"/>
       <source>rotate a bone of a posing key</source>
-      <translation>rotar un hueso de una tecla de posado</translation>
+      <translation>girar un hueso de una clave de posado</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/srt/srt_CentroidMode.cpp" line="117"/>
       <source>update centroid of a moving key</source>
-      <translation>actualizar centroid de una clave en movimiento</translation>
+      <translation>actualizar centroide de una clave en movimiento</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/srt/srt_MoveMode.cpp" line="175"/>
@@ -113,17 +113,17 @@
     <message>
       <location filename="../../src/ctrl/TimeLineEditor.cpp" line="212"/>
       <source>Move key</source>
-      <translation>Mover tecla</translation>
+      <translation>Mover clave</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineEditor.cpp" line="232"/>
       <source>Move keys</source>
-      <translation>Mover teclas</translation>
+      <translation>Mover claves</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineEditor.cpp" line="505"/>
       <source>Paste clipboard key</source>
-      <translation>Pegar tecla del portapapeles</translation>
+      <translation>Pegar clave del portapapeles</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineEditor.cpp" line="651"/>
@@ -133,12 +133,12 @@
     <message>
       <location filename="../../src/ctrl/TimeLineEditor.cpp" line="715"/>
       <source>Delete keys</source>
-      <translation>Borrar claves</translation>
+      <translation>Eliminar claves</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="257"/>
       <source>Update default movement key</source>
-      <translation>Actualizar la tecla de movimiento por defecto</translation>
+      <translation>Actualizar clave de movimiento por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="258"/>
@@ -148,7 +148,7 @@
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="268"/>
       <source>Update default rotation key</source>
-      <translation>Actualizar la clave de rotación predeterminada</translation>
+      <translation>Actualizar clave de rotación por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="269"/>
@@ -158,7 +158,7 @@
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="279"/>
       <source>Update default scaling key</source>
-      <translation>Actualizar la clave de escalado por defecto</translation>
+      <translation>Actualizar clave de escalado por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="280"/>
@@ -168,7 +168,7 @@
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="290"/>
       <source>Update default depth key</source>
-      <translation>Actualizar la tecla de profundidad por defecto</translation>
+      <translation>Actualizar clave de profundidad por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="291"/>
@@ -178,7 +178,7 @@
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="301"/>
       <source>Update default opacity key</source>
-      <translation>Actualizar la clave de opacidad por defecto</translation>
+      <translation>Actualizar clave de opacidad por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="302"/>
@@ -188,67 +188,67 @@
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="312"/>
       <source>Update default HSV key</source>
-      <translation>Actualizar clave HSV por defecto</translation>
+      <translation>Actualizar clave de HSV por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="313"/>
       <source>Update HSV key</source>
-      <translation>Actualizar clave HSV</translation>
+      <translation>Actualizar clave de HSV</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="323"/>
       <source>Update default pose key</source>
-      <translation>Actualizar la tecla pose predeterminada</translation>
+      <translation>Actualizar clave de pose por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="324"/>
       <source>Update pose key</source>
-      <translation>Actualizar tecla pose</translation>
+      <translation>Actualizar clave de pose</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="334"/>
       <source>Update default FFD key</source>
-      <translation>Actualizar tecla FFD por defecto</translation>
+      <translation>Actualizar clave FFD por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="335"/>
       <source>Update FFD key</source>
-      <translation>Actualizar tecla FFD</translation>
+      <translation>Actualizar clave FFD</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="347"/>
       <source>Update default image resource key</source>
-      <translation>Actualizar la clave de recurso de imagen por defecto</translation>
+      <translation>Actualizar clave de recurso de imagen por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="348"/>
       <source>update image resource key</source>
-      <translation>actualizar clave de recurso de imagen</translation>
+      <translation>actualizar la clave de recurso de imagen</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="368"/>
       <source>Update the image&apos;s default offset key</source>
-      <translation>Actualizar la imagen de la tecla de desplazamiento predeterminada&apos;s</translation>
+      <translation>Actualizar la clave de desfase por defecto de la imagen</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="369"/>
       <source>Update the image&apos;s offset key</source>
-      <translation>Actualizar la tecla de desplazamiento&apos;s</translation>
+      <translation>Actualizar la clave de desfase de la imagen</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="388"/>
       <source>Update the default mesh size key</source>
-      <translation>Actualizar la tecla de tamaño de malla por defecto</translation>
+      <translation>Actualizar la clave del tamaño de malla por defecto</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="389"/>
       <source>Update mesh size key</source>
-      <translation>Actualizar clave de tamaño de malla</translation>
+      <translation>Actualizar la clave del tamaño de malla</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="438"/>
       <source>Add new movement key</source>
-      <translation>Añadir nueva tecla de movimiento</translation>
+      <translation>Añadir nueva clave de movimiento</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="442"/>
@@ -273,17 +273,17 @@
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="459"/>
       <source>Add new HSV key</source>
-      <translation>Añadir nueva clave HSV</translation>
+      <translation>Añadir nueva clave de HSV</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="465"/>
       <source>Add new pose key</source>
-      <translation>Añadir nueva tecla pose</translation>
+      <translation>Añadir nueva clave de pose</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="472"/>
       <source>Add new FFD key</source>
-      <translation>Añadir nueva tecla FFD</translation>
+      <translation>Añadir nueva clave FFD</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/TimeLineUtil.cpp" line="477"/>
@@ -368,7 +368,7 @@
     <message>
       <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="696"/>
       <source>Delete images</source>
-      <translation>Borrar imágenes</translation>
+      <translation>Eliminar imágenes</translation>
     </message>
     <message>
       <location filename="../../src/gui/ResourceTreeWidget.cpp" line="225"/>
@@ -430,7 +430,7 @@
     <message>
       <location filename="../../src/ctrl/ExportParams.h" line="619"/>
       <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Frame rendered x/y | Frame encoded x/y&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Frame renderizado x/y | Frame codificado x/y&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Fotograma renderizado x/y | Fotograma codificado x/y&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/ExportParams.h" line="624"/>
@@ -592,7 +592,7 @@
     <message>
       <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="107"/>
       <source>Anie audio configuration file (*.aemus)</source>
-      <translation>Archivo de configuración de audio Anie (*.aemus)</translation>
+      <translation>Archivo de configuración de audio AniE (*.aemus)</translation>
     </message>
   </context>
   <context>
@@ -674,7 +674,7 @@
     <message>
       <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="95"/>
       <source>Anie audio configuration file (*.aemus)</source>
-      <translation>Archivo de configuración de audio Anie (*.aemus)</translation>
+      <translation>Archivo de configuración de audio AniE (*.aemus)</translation>
     </message>
   </context>
   <context>
@@ -705,7 +705,7 @@
     <message>
       <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="260"/>
       <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Playback start frame&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Iniciar frame&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Fotograma de inicio de la reproducción&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
       <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="261"/>
@@ -734,12 +734,12 @@
       <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="298"/>
       <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="338"/>
       <source>Remove next audio track</source>
-      <translation>Eliminar siguiente pista de audio</translation>
+      <translation>Eliminar la siguiente pista de audio</translation>
     </message>
     <message>
       <location filename="../../src/gui/AudioPlaybackWidget.cpp" line="302"/>
       <source>Remove current audio track</source>
-      <translation>Eliminar pista de audio actual</translation>
+      <translation>Eliminar la pista de audio actual</translation>
     </message>
     <message>
       <location filename="../../src/gui/AudioPlaybackWidget.h" line="141"/>
@@ -800,7 +800,7 @@
     <message>
       <location filename="../../src/ctrl/BoneEditor.cpp" line="32"/>
       <source>Bone Editor : </source>
-      <translation>Editor de huesos: </translation>
+      <translation>Editor de huesos : </translation>
     </message>
     <message>
       <location filename="../../src/ctrl/BoneEditor.cpp" line="118"/>
@@ -811,7 +811,7 @@
     <message>
       <location filename="../../src/ctrl/FFDEditor.cpp" line="187"/>
       <source>FFD Editor : </source>
-      <translation>FFD Editor : </translation>
+      <translation>Editor de FFD: </translation>
     </message>
     <message>
       <location filename="../../src/ctrl/FFDEditor.cpp" line="265"/>
@@ -821,17 +821,17 @@
     <message>
       <location filename="../../src/ctrl/MeshEditor.cpp" line="25"/>
       <source>Mesh Editor : </source>
-      <translation>Editor de Mesh : </translation>
+      <translation>Editor de malla: </translation>
     </message>
     <message>
       <location filename="../../src/ctrl/MeshEditor.cpp" line="29"/>
       <source>The object can&apos;t own a mesh key.</source>
-      <translation>El objeto puede&apos;t poseer una clave de malla.</translation>
+      <translation>El objeto no puede tener una clave de malla.</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/PoseEditor.cpp" line="29"/>
       <source>Pose Editor : </source>
-      <translation>Editor de pose : </translation>
+      <translation>Editor de postura: </translation>
     </message>
     <message>
       <location filename="../../src/ctrl/PoseEditor.cpp" line="90"/>
@@ -847,13 +847,13 @@
     <message>
       <location filename="../../src/ctrl/SRTEditor.cpp" line="30"/>
       <source>The transformed object has one or more bones bound to it, SRT keys may not work as expected.</source>
-      <translation>El objeto transformado tiene uno o más huesos vinculados a él, es posible que las teclas SRT no funcionen como se esperaba.</translation>
+      <translation>El objeto transformado tiene uno o más huesos vinculados a él, es posible que las claves SRT no funcionen como se espera.</translation>
     </message>
     <message>
       <location filename="../../src/ctrl/SRTEditor.cpp" line="31"/>
       <location filename="../../src/ctrl/SRTEditor.cpp" line="128"/>
       <source>SRT Editor : </source>
-      <translation>Editor SRT : </translation>
+      <translation>Editor de SRT: </translation>
     </message>
   </context>
   <context>
@@ -884,7 +884,7 @@
     <message>
       <location filename="../../src/gui/exportdiag.h" line="880"/>
       <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;- Last frame -&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;- Last frame -&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;- Último fotograma -&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
       <location filename="../../src/gui/exportdiag.h" line="881"/>
@@ -904,12 +904,12 @@
     <message>
       <location filename="../../src/gui/exportdiag.h" line="884"/>
       <source>Insert range</source>
-      <translation>Insert range</translation>
+      <translation>Inserte el rango</translation>
     </message>
     <message>
       <location filename="../../src/gui/exportdiag.h" line="885"/>
       <source>Remove range</source>
-      <translation>Remove range</translation>
+      <translation>Eliminar el rango</translation>
     </message>
     <message>
       <location filename="../../src/gui/exportdiag.h" line="886"/>
@@ -1082,7 +1082,7 @@
     <message>
       <location filename="../../src/gui/exportdiag.h" line="937"/>
       <source>Pixel Format availability depends on the selected format, we recommend you stick to yuv420p</source>
-      <translation>La disponibilidad del formato de píxeles depende del formato seleccionado, le recomendamos que se mantenga en yuv420p</translation>
+      <translation>La disponibilidad del Formato Pixel depende del formato seleccionado, le recomendamos que se mantenga en yuv420p</translation>
     </message>
     <message>
       <location filename="../../src/gui/exportdiag.h" line="945"/>
@@ -1117,12 +1117,12 @@
     <message>
       <location filename="../../src/gui/exportdiag.h" line="970"/>
       <source>Add to Intermediate pass</source>
-      <translation>Añadir al pase intermedio</translation>
+      <translation>Añadir al pase Intermedio</translation>
     </message>
     <message>
       <location filename="../../src/gui/exportdiag.h" line="971"/>
       <source>Add to Post</source>
-      <translation>Añadir al mensaje</translation>
+      <translation>Añadir al Postprocesado</translation>
     </message>
     <message>
       <location filename="../../src/gui/exportdiag.h" line="972"/>
@@ -1132,7 +1132,7 @@
     <message>
       <location filename="../../src/gui/exportdiag.h" line="974"/>
       <source>Remove preset</source>
-      <translation>Remove preset</translation>
+      <translation>Eliminar preajuste</translation>
     </message>
     <message>
       <location filename="../../src/gui/exportdiag.h" line="975"/>
@@ -1183,22 +1183,22 @@
     <message>
       <location filename="../../src/gui/ExportDialog.cpp" line="67"/>
       <source>The width or height of the image ends with an odd number. Please change these parameters to an even number as they may cause the export to fail.</source>
-      <translation>La anchura o altura de la imagen termina con un número impar. Por favor, cambie estos parámetros a un número par ya que pueden causar que la exportación falle.</translation>
+      <translation>La anchura o la altura de la imagen terminan con un número impar. Cambie estos parámetros a un número par, ya que pueden hacer que falle la exportación.</translation>
     </message>
     <message>
       <location filename="../../src/gui/ExportDialog.cpp" line="85"/>
       <source>A width or height ending in an odd number may make the exporting process fail, please try another value.</source>
-      <translation>Un ancho o altura que termine en un número impar puede hacer que el proceso de exportación falle, por favor intente otro valor.</translation>
+      <translation>Una anchura o altura que termine en un número impar puede hacer que el proceso de exportación falle, por favor pruebe con otro valor.</translation>
     </message>
     <message>
       <location filename="../../src/gui/ExportDialog.cpp" line="109"/>
       <source>A height or width ending in an odd number may make the exporting process fail, please try another value.</source>
-      <translation>Una altura o anchura que termina en un número impar puede hacer que el proceso de exportación falle, por favor intente otro valor.</translation>
+      <translation>Una altura o anchura que termine en un número impar puede hacer que el proceso de exportación falle, por favor pruebe con otro valor.</translation>
     </message>
     <message>
       <location filename="../../src/gui/ExportDialog.cpp" line="129"/>
       <source>Image width :</source>
-      <translation>Image width :</translation>
+      <translation>Anchura de la imagen:</translation>
     </message>
     <message>
       <location filename="../../src/gui/ExportDialog.cpp" line="130"/>
@@ -1241,12 +1241,12 @@
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="297"/>
       <source>Default keyframe easing :</source>
-      <translation>Facilitación por defecto del fotograma clave :</translation>
+      <translation>Aceleración de fotogramas clave por defecto :</translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="304"/>
       <source>Default keyframe range :</source>
-      <translation>Default keyframe range :</translation>
+      <translation>Rango de fotogramas clave por defecto :</translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="311"/>
@@ -1276,7 +1276,7 @@
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="343"/>
       <source>On copy send keys to the clipboard : </source>
-      <translation>Al copiar las claves enviadas al portapapeles: </translation>
+      <translation>Al copiar envía las claves al portapapeles : </translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="347"/>
@@ -1311,7 +1311,7 @@
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="366"/>
       <source>Deletes all project entries from your recents</source>
-      <translation>Elimina todas las entradas del proyecto de sus recientes</translation>
+      <translation>Elimina todas las entradas de proyecto de tus Recientes</translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="370"/>
@@ -1329,32 +1329,32 @@
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="380"/>
       <source>Global keybind delay (ms) : </source>
-      <translation>Retraso global del keybind (ms) : </translation>
+      <translation>Retraso global de combinación de teclas (ms) : </translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="382"/>
       <source>Reset keybinds</source>
-      <translation>Restablecer lazos de teclado</translation>
+      <translation>Restablecer combinaciones de teclas</translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="383"/>
       <source>Reset all keybinds, a restart is required.</source>
-      <translation>Restablecer todos los keybinds, es necesario reiniciar.</translation>
+      <translation>Para restablecer todas las combinaciones de teclas, es necesario reiniciar.</translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="390"/>
       <source>Keybinds reset status</source>
-      <translation>Estado de restablecimiento de claves</translation>
+      <translation>Estado de restablecimiento de las combinaciones de teclas</translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="391"/>
       <source>The keybinds will be reset when you restart.</source>
-      <translation>Los enlaces de teclado se restablecerán cuando reinicie.</translation>
+      <translation>Las combinaciones de teclas se restablecerán al reiniciar.</translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="392"/>
       <source>The keybinds will not be reset when you restart.</source>
-      <translation>Los enlaces de teclado no se restablecerán cuando reinicie.</translation>
+      <translation>Las combinaciones de teclas no se restablecerán al reiniciar.</translation>
     </message>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="402"/>
@@ -1470,7 +1470,7 @@ Comprobar generación de paletas FFFmpeg ...</translation>
     <message>
       <location filename="../../src/gui/GeneralSettingDialog.cpp" line="632"/>
       <source>Keybindings</source>
-      <translation>Enlaces de teclado</translation>
+      <translation>Combinaciones de teclas</translation>
     </message>
   </context>
   <context>
@@ -1514,7 +1514,7 @@ Comprobar generación de paletas FFFmpeg ...</translation>
     <message>
       <location filename="../../src/gui/KeyBindingDialog.cpp" line="71"/>
       <source>Key Bindings</source>
-      <translation>Enlaces de tecla</translation>
+      <translation>Combinaciones de teclas</translation>
     </message>
   </context>
   <context>
@@ -1552,17 +1552,17 @@ Comprobar generación de paletas FFFmpeg ...</translation>
     <message>
       <location filename="../../src/gui/KeyCommandMap.cpp" line="29"/>
       <source>Copy selected key(s)</source>
-      <translation>Copiar tecla(s) seleccionadas</translation>
+      <translation>Copiar la(s) clave(s) seleccionada(s)</translation>
     </message>
     <message>
       <location filename="../../src/gui/KeyCommandMap.cpp" line="31"/>
       <source>Paste selected key(s)</source>
-      <translation>Pegar clave(s) seleccionada(s)</translation>
+      <translation>Pegar la(s) clave(s) seleccionada(s)</translation>
     </message>
     <message>
       <location filename="../../src/gui/KeyCommandMap.cpp" line="33"/>
       <source>Delete selected key(s)</source>
-      <translation>Eliminar clave(s) seleccionada(s)</translation>
+      <translation>Eliminar la(s) clave(s) seleccionada(s)</translation>
     </message>
     <message>
       <location filename="../../src/gui/KeyCommandMap.cpp" line="35"/>
@@ -1801,7 +1801,7 @@ Comprobar generación de paletas FFFmpeg ...</translation>
     <message>
       <location filename="../../src/gui/MainMenuBar.cpp" line="295"/>
       <source>Keybindings</source>
-      <translation>Enlaces de teclado</translation>
+      <translation>Combinaciones de teclas</translation>
     </message>
     <message>
       <location filename="../../src/gui/MainMenuBar.cpp" line="324"/>
@@ -2237,7 +2237,7 @@ En la siguiente pantalla puedes indicarle a AnimeEffects que lo descargue e inst
     <message>
       <location filename="../../src/gui/MouseSettingDialog.cpp" line="34"/>
       <source>Middle mouse moves canvas :</source>
-      <translation>Lona de movimiento central del ratón:</translation>
+      <translation>El botón central del ratón mueve el lienzo:</translation>
     </message>
     <message>
       <location filename="../../src/gui/MouseSettingDialog.cpp" line="37"/>
@@ -2265,27 +2265,27 @@ En la siguiente pantalla puedes indicarle a AnimeEffects que lo descargue e inst
     <message>
       <location filename="../../src/gui/NewProjectDialog.cpp" line="67"/>
       <source>Maximum frame count :</source>
-      <translation>Número máximo de fotogramas :</translation>
+      <translation>Número máximo de fotogramas:</translation>
     </message>
     <message>
       <location filename="../../src/gui/NewProjectDialog.cpp" line="77"/>
       <source>Frames per second :</source>
-      <translation>Fotogramas por segundo :</translation>
+      <translation>Fotogramas por segundo:</translation>
     </message>
     <message>
       <location filename="../../src/gui/NewProjectDialog.cpp" line="109"/>
       <source>Specify canvas size :</source>
-      <translation>Especificar tamaño del lienzo :</translation>
+      <translation>Especifique el tamaño del lienzo:</translation>
     </message>
     <message>
       <location filename="../../src/gui/NewProjectDialog.cpp" line="110"/>
       <source>Canvas width :</source>
-      <translation>Canvas width :</translation>
+      <translation>Ancho del lienzo:</translation>
     </message>
     <message>
       <location filename="../../src/gui/NewProjectDialog.cpp" line="111"/>
       <source>Canvas height :</source>
-      <translation>Altura del lienzo :</translation>
+      <translation>Altura del lienzo:</translation>
     </message>
     <message>
       <location filename="../../src/gui/NewProjectDialog.cpp" line="114"/>
@@ -2356,7 +2356,7 @@ En la siguiente pantalla puedes indicarle a AnimeEffects que lo descargue e inst
       <location filename="../../src/gui/ObjectTreeWidget.cpp" line="576"/>
       <source> keys.
 </source>
-      <translation> llaves.
+      <translation> claves.
 </translation>
     </message>
     <message>
@@ -2370,7 +2370,7 @@ El registro está disponible a continuación.</translation>
       <location filename="../../src/gui/ObjectTreeWidget.cpp" line="582"/>
       <location filename="../../src/gui/ObjectTreeWidget.cpp" line="612"/>
       <source>Failed to paste key(s)</source>
-      <translation>Fallo al pegar clave(s)</translation>
+      <translation>Error al pegar clave(s)</translation>
     </message>
     <message>
       <location filename="../../src/gui/ObjectTreeWidget.cpp" line="585"/>
@@ -2439,7 +2439,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/MainMenuBar.cpp" line="654"/>
       <source>Size :</source>
-      <translation>Size :</translation>
+      <translation>Tamaño:</translation>
     </message>
     <message>
       <location filename="../../src/gui/MainMenuBar.cpp" line="656"/>
@@ -2508,7 +2508,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/MainMenuBar.cpp" line="755"/>
       <source>One or more keys exceed the specified frame value.</source>
-      <translation>Una o más claves exceden el valor especificado del fotograma.</translation>
+      <translation>Una o más claves superan el valor del fotograma especificado.</translation>
     </message>
     <message>
       <location filename="../../src/gui/MainMenuBar.cpp" line="756"/>
@@ -2526,7 +2526,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/ResourceDialog.cpp" line="22"/>
       <source>Add Resources</source>
-      <translation>Añadir recursos</translation>
+      <translation>Añadir Recursos</translation>
     </message>
     <message>
       <location filename="../../src/gui/ResourceDialog.cpp" line="80"/>
@@ -2633,7 +2633,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="91"/>
       <source>Delete key</source>
-      <translation>Borrar clave</translation>
+      <translation>Eliminar clave</translation>
     </message>
     <message>
       <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="94"/>
@@ -2643,7 +2643,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="101"/>
       <source>Change key(s) easing to...</source>
-      <translation>Cambiar clave(s) suavizando...</translation>
+      <translation>Cambiar la aceleración de la(s) clave(s) a...</translation>
     </message>
     <message>
       <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="103"/>
@@ -2708,7 +2708,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="128"/>
       <source>Change key(s) range to...</source>
-      <translation>Cambiar rango de tecla(s) a...</translation>
+      <translation>Cambiar rango de clave(s) a...</translation>
     </message>
     <message>
       <location filename="../../src/gui/TimeLineEditorWidget.cpp" line="130"/>
@@ -2883,7 +2883,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_ConstantPanel.cpp" line="36"/>
       <source>MaxTextWidth :</source>
-      <translation>MaxTextWidth :</translation>
+      <translation>Anchura máxima del texto:</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_ConstantPanel.cpp" line="46"/>
@@ -2911,7 +2911,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="563"/>
       <source>Max text width :</source>
-      <translation>Max text width :</translation>
+      <translation>Anchura máxima del texto:</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="574"/>
@@ -2929,7 +2929,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_DefaultKeyPanel.cpp" line="24"/>
       <source>Position :</source>
-      <translation>Posición :</translation>
+      <translation>Posición:</translation>
     </message>
   </context>
   <context>
@@ -2947,12 +2947,12 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_DefaultKeyPanel.cpp" line="89"/>
       <source>Center :</source>
-      <translation>Centro :</translation>
+      <translation>Centro:</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_DefaultKeyPanel.cpp" line="95"/>
       <source>Cell size :</source>
-      <translation>Tamaño de celda :</translation>
+      <translation>Tamaño de celda:</translation>
     </message>
   </context>
   <context>
@@ -2960,7 +2960,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_DefaultKeyPanel.cpp" line="126"/>
       <source>Max text width :</source>
-      <translation>Max text width :</translation>
+      <translation>Anchura máxima del texto:</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_DefaultKeyPanel.cpp" line="137"/>
@@ -2978,7 +2978,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_DefaultKeyPanel.cpp" line="48"/>
       <source>Rate :</source>
-      <translation>Tasa :</translation>
+      <translation>Tasa:</translation>
     </message>
   </context>
   <context>
@@ -2992,7 +2992,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="210"/>
       <source>Easing :</source>
-      <translation>Facilitando:</translation>
+      <translation>Aceleración :</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="219"/>
@@ -3011,7 +3011,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="440"/>
       <source>Easing :</source>
-      <translation>Facilitando:</translation>
+      <translation>Aceleración :</translation>
     </message>
   </context>
   <context>
@@ -3025,7 +3025,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="323"/>
       <source>Easing :</source>
-      <translation>Facilitando:</translation>
+      <translation>Aceleración :</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="350"/>
@@ -3083,7 +3083,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="36"/>
       <source>Easing :</source>
-      <translation>Facilitando:</translation>
+      <translation>Aceleración :</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="49"/>
@@ -3093,7 +3093,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="55"/>
       <source>Position :</source>
-      <translation>Posición :</translation>
+      <translation>Posición:</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="61"/>
@@ -3112,7 +3112,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="265"/>
       <source>Easing :</source>
-      <translation>Facilitando:</translation>
+      <translation>Aceleración :</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="275"/>
@@ -3126,12 +3126,12 @@ El registro está disponible a continuación.</translation>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="384"/>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="385"/>
       <source>Pose</source>
-      <translation>Pose</translation>
+      <translation>Postura</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="397"/>
       <source>Easing :</source>
-      <translation>Facilitando:</translation>
+      <translation>Aceleración :</translation>
     </message>
   </context>
   <context>
@@ -3145,7 +3145,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="105"/>
       <source>Easing :</source>
-      <translation>Facilitando:</translation>
+      <translation>Aceleración :</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="119"/>
@@ -3164,7 +3164,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="160"/>
       <source>Easing :</source>
-      <translation>Facilitando:</translation>
+      <translation>Aceleración :</translation>
     </message>
     <message>
       <location filename="../../src/gui/prop/prop_CurrentKeyPanel.cpp" line="169"/>
@@ -3249,7 +3249,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="468"/>
       <source>Expected layer not found, if you wish to remove a layer or change its name, please do so from within AnimeEffects.</source>
-      <translation>Capa esperada no encontrada, si desea eliminar una capa o cambiar su nombre, por favor hágalo desde dentro de AnimeEffects.</translation>
+      <translation>Capa esperada no encontrada, si desea eliminar una capa o cambiar su nombre, por favor hágalo desde AnimeEffects.</translation>
     </message>
     <message>
       <location filename="../../src/gui/res/res_ResourceUpdater.cpp" line="471"/>
@@ -3407,7 +3407,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/tool/tool_MeshPanel.cpp" line="26"/>
       <source>Delete vertex</source>
-      <translation>Eliminar vértices</translation>
+      <translation>Eliminar vértice</translation>
     </message>
     <message>
       <location filename="../../src/gui/tool/tool_MeshPanel.cpp" line="26"/>
@@ -3517,7 +3517,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/tool/tool_SRTPanel.cpp" line="47"/>
       <source>Create rotate key</source>
-      <translation>Crear tecla de rotación</translation>
+      <translation>Crear clave de rotación</translation>
     </message>
     <message>
       <location filename="../../src/gui/tool/tool_SRTPanel.cpp" line="48"/>
@@ -3527,7 +3527,7 @@ El registro está disponible a continuación.</translation>
     <message>
       <location filename="../../src/gui/tool/tool_SRTPanel.cpp" line="53"/>
       <source>Create scale key</source>
-      <translation>Crear clave de escala</translation>
+      <translation>Crear la clave de escala</translation>
     </message>
     <message>
       <location filename="../../src/gui/tool/tool_SRTPanel.cpp" line="54"/>

@@ -9,7 +9,7 @@
 ## 🌐 README 🌐
 
 [English](./README.md) - Up-to-date <br>
-[日本語](./README-ja.md) - 時代遅れ <br>
+[日本語](./README-ja.md) - 更新 <br>
 [简体中文](./README-zh.md) - 最新 <br>
 [正體中文](./README-zh-t.md) - 尚未提供 <br>
 [Español](./README-es.md) - Actualizado <br>

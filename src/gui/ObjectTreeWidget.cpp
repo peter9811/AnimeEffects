@@ -786,7 +786,7 @@ void ObjectTreeWidget::onObjectActionTriggered(bool) {
                     new core::LayerNode(resNode->data().identifier(), mProject->objectTree().shaderHolder());
                 ptr->setVisibility(true);
                 ptr->setDefaultImage(resNode->handle());
-                ptr->setDefaultPosture(QVector2D());
+                ptr->setDefaultPosture(QVector2D(mProject->objectTree().topNode()->initialRect().center()));
                 ptr->setDefaultDepth(depth);
                 ptr->setDefaultOpacity(1.0f); // @todo support default opacity
 

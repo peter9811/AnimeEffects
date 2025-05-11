@@ -6,13 +6,13 @@
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------: |
 | [Windows](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-Installer-Windows.exe) - [MacOS](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-MacOS.zip) - [Linux](https://github.com/AnimeEffectsDevs/AnimeEffects/releases/download/v1.6/AnimeEffects-Linux.zip) | [Windows](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build-windows.yaml/master/AnimeEffects-Windows-x64.zip) - [MacOS](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build_mac_intel.yaml/master/AnimeEffects-MacOS.zip) - [Linux](https://nightly.link/AnimeEffectsDevs/AnimeEffects/workflows/build_linux.yaml/master/AnimeEffects-Linux.zip) | [Descargar ZIP](https://github.com/AnimeEffectsDevs/AnimeEffects/archive/refs/heads/master.zip) |
 
-## 🌐 LEEME 🌐
+## 🌐 LÉEME 🌐
 
-[English](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README.md) - Actualizado <br>
-[日本語](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-jp.md) - Desactualizado <br>
-[简体中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh.md) - No disponible <br>
-[正體中文](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-zh-t.md) - No disponible <br>
-[Español](https://github.com/AnimeEffectsDevs/AnimeEffects/blob/master/README-es.md) - Versión actual <br>
+[English](./README.md) - Up-to-date <br>
+[日本語](./README-ja.md) - 時代遅れ <br>
+[简体中文](./README-zh.md) - 最新 <br>
+[正體中文](./README-zh-t.md) - 尚未提供 <br>
+[Español](./README-es.md) - Actualizado <br>
 
 ## Descripción
 
@@ -20,46 +20,47 @@ Herramienta de animación 2D que no requiere planificación detallada, simplific
 Desarrollado originalmente por hidefuku, actualmente mantenido y mejorado por la comunidad.
 
 - Sitio web oficial:<br>
+
   - <https://animeeffectsdevs.github.io/>
+
 - Redes sociales oficiales:<br>
 
-  - Discord : <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (cortesía de [José Moreno](https://github.com/Jose-Moreno))<br>
-  - Twitter : <a href='https://twitter.com/anime_effects'>@anime_effects</a> (cortesía de [p_yukusai](https://github.com/p-yukusai))<br>
-  - Reddit : <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (cortesía de [visterical](https://www.tumblr.com/visterical))<br>
+  - Discord: <a href='https://discord.gg/sKp8Srm'>AnimeEffects</a> (cortesía de [José Moreno](https://github.com/Jose-Moreno))<br>
+  - X (Twitter): <a href='https://x.com/anime_effects'>@anime_effects</a> (cortesía de [p_yukusai](https://github.com/p-yukusai))<br>
+  - Reddit: <a href='https://www.reddit.com/r/AnimeEffects/'>r/AnimeEffects</a> (cortesía de [visterical](https://www.tumblr.com/visterical))<br>
 
 - Puedes apoyar el proyecto mediante:<br><br>
-  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp;
-  <a href="https://yukusai.itch.io/animeeffects" target="_blank"> <img src="https://static.itch.io/images/badge-color.svg" alt="itch.io" style="width:100px" /> </a>
+  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V04YLC3) &nbsp;&nbsp; <a href="https://yukusai.itch.io/animeeffects" target="_blank"> <img src="https://static.itch.io/images/badge-color.svg" alt="itch.io" style="width:100px" /> </a>
 
 Nota: Actualmente pueden realizarse cambios incompatibles entre versiones, los cuales se comunicarán en los lanzamientos correspondientes.<br>
-**_¡Si encuentras algún problema o tienes sugerencias de nuevas funciones, contáctanos a través de nuestras redes sociales!_**
+**_Si tienes algún problema o deseas sugerir nuevas funciones, ¡no dudes en comunicarte con nosotros en nuestras redes sociales!_**
 
 ## Lanzamientos
 
 AnimeEffects te notificará automáticamente cuando haya nuevas versiones estables disponibles.
 
-- Versiones estables disponibles [aquí](https://github.com/AnimeEffectsDevs/AnimeEffects/releases).<br>
+- Nuestras versiones estables están disponibles [aquí](https://github.com/AnimeEffectsDevs/AnimeEffects/releases).<br>
 - Versiones inestables disponibles [aquí](https://github.com/p-yukusai/AnimeEffects/releases).<br>
-- Versiones nocturnas disponibles [aquí](https://github.com/AnimeEffectsDevs/AnimeEffects/actions).<br>
+- Versiones nocturnas disponibles [aquí](https://github.com/AnimeEffectsDevs/AnimeEffects/actions).
 
 ## Requisitos
 
 - Windows/Linux/Mac
   - Ver versiones compatibles más abajo
 - Procesador: CPU de 64 bits
-- RAM: 4GB
+- RAM: 4 GB
 - Tarjeta gráfica: GPU/iGPU compatible con OpenGL 4.0 o superior
-- [FFmpeg](https://ffmpeg.org/download.html) (Necesario para exportar videos, colócalo en tu PATH o copia a la carpeta "/tools". Si la carpeta no existe, créala junto al ejecutable.)
+- [FFmpeg](https://ffmpeg.org/download.html) (Necesario para la exportación de vídeo. Puede colocarlo en su PATH o copiarlo en la carpeta "/tools" - cree esta carpeta junto al ejecutable si no existe)
 
-## Sistemas Operativos Objetivo
+## Sistemas Operativos objetivos
 
 #### Versiones donde probamos y compilamos el software. Puede funcionar en versiones anteriores pero no es recomendable
 
 - Windows 10 o superior
 - Ubuntu LTS o distribuciones equivalentes
-- MacOS Big Sur o superior
+- MacOS Big Sur o más reciente
 
-## Requisitos de Desarrollo
+## Requisitos para el desarrollo
 
 - Qt 6.6.X
 - Encabezados de Vulkan
@@ -70,7 +71,7 @@ AnimeEffects te notificará automáticamente cuando haya nuevas versiones establ
 
 ### Compilación y creación de AppImage
 
-- La mayoría de estas dependencias ya están incluidas en tu distribución - verifica tus paquetes actuales:
+- La mayoría de estas dependencias son innecesarias, ya que vienen con su distribución, así que compruebe sus propios paquetes:
 
 ```
 sudo apt update && sudo apt upgrade -y
@@ -99,7 +100,7 @@ chmod a+x AnimeEffects-x86_64.AppImage
 
 ## Windows
 
-### Compilación y creación de carpeta
+### Compilación y creación de carpetas
 
 - Los pasos de instalación asumen que has instalado todos los requisitos mediante sus instaladores y los tienes en tu PATH
 

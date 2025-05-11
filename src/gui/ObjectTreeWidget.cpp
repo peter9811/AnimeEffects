@@ -26,6 +26,7 @@
 #include "gui/obj/obj_Notifiers.h"
 #include "gui/obj/obj_Util.h"
 #include "ctrl/ffd/ffd_Target.h"
+#include <QFormLayout>
 #include <iostream>
 #include <sstream>
 
@@ -92,6 +93,9 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
 
         mReconstructAction = new QAction(tr("Add missing resources"), this);
         mReconstructAction->connect(mReconstructAction, &QAction::triggered, this, &ObjectTreeWidget::onObjectReconstructionTriggered);
+
+        mAddTreeAction = new QAction(tr("Add new tree"), this);
+        mAddTreeAction->connect(mAddTreeAction, &QAction::triggered, this, &ObjectTreeWidget::onAddTreeTriggered);
 
         mRenameAction = new QAction(tr("Rename"), this);
         mRenameAction->connect(mRenameAction, &QAction::triggered, this, &ObjectTreeWidget::onRenameActionTriggered);
@@ -413,6 +417,7 @@ void ObjectTreeWidget::onContextMenuRequested(const QPoint& aPos) {
             menu.addSeparator();
         }
         if (objItem && objItem->isTopNode()) {
+            menu.addAction(mAddTreeAction);
             menu.addAction(mReconstructAction);
             menu.addSeparator();
         }
@@ -471,7 +476,7 @@ void getTargetChild(core::ObjectNode* curNode, QVector<QString>* resources) {
     }
 }
 
-void ObjectTreeWidget::onObjectReconstructionTriggered(bool) {
+void ObjectTreeWidget::addItems(QStringList targets = QStringList()) {
     if (mActionItem) {
         obj::Item* objItem = obj::Item::cast(mActionItem);
         // get children for current nodes and the resource and then add the missing resources
@@ -480,7 +485,7 @@ void ObjectTreeWidget::onObjectReconstructionTriggered(bool) {
         QVector<QString> parsedResources;
         if (objItem && objItem->isTopNode()) {
             for (const auto& tree: mProject->resourceHolder().imageTrees()) {
-                if(QFileInfo(tree.filePath).baseName() == objItem->node().name()) {
+                if(QFileInfo(tree.filePath).baseName() == objItem->node().name() || targets.contains(QFileInfo(tree.filePath).baseName())) {
                     // This is what sleep deprivation does to someone
                     qDebug() << "Filetree " << QFileInfo(tree.filePath).baseName() << " found for the selected node.";
                     img::ResourceNode* topNode = tree.topNode;
@@ -523,8 +528,10 @@ void ObjectTreeWidget::onObjectReconstructionTriggered(bool) {
                     }
                 }
                 else {
-                    // TODO: Add error handler and capacity to add other object trees.
-                    qDebug() << "File tree for selected node was not found, probably renamed." ;
+                    QMessageBox errorMsg;
+                    errorMsg.setWindowTitle(tr("Filetree not found"));
+                    errorMsg.setText("Filetree for " + QFileInfo(tree.filePath).baseName() + " was not found, tree has probably been renamed.");
+                    errorMsg.exec();
                 }
                 qDebug("\nTree Identifier");
                 qDebug() << QFileInfo(tree.filePath).baseName();
@@ -534,6 +541,103 @@ void ObjectTreeWidget::onObjectReconstructionTriggered(bool) {
         }
     }
 }
+
+void ObjectTreeWidget::onAddTreeTriggered(bool) {
+    if (mActionItem) {
+        obj::Item* objItem = obj::Item::cast(mActionItem);
+        // get children for current nodes and the resource and then add the missing resources
+        QVector<resource> resources;
+        QVector<QString> currentResources;
+        QVector<QString> parsedResources;
+        if (objItem && objItem->isTopNode()) {
+            QStringList treeNames;
+            for (const auto& tree : mProject->resourceHolder().imageTrees()) {
+                treeNames.append(QFileInfo(tree.filePath).baseName());
+            }
+            QWidget* treeSelector = new QWidget();
+            QGridLayout* gridLayout_2;
+            QScrollArea* treeScroll;
+            QWidget* treeScrollWidget;
+            QPushButton* okButton;
+            QPushButton* no_button;
+            QFormLayout* formLayout;
+            QVector<QCheckBox*> treeCheckBoxes;
+            QVector<QLabel*> treeLabels;
+
+            if (treeSelector->objectName().isEmpty())
+                treeSelector->setObjectName("treeSelector");
+            treeSelector->setMinimumSize(300, 200);
+            gridLayout_2 = new QGridLayout(treeSelector);
+            gridLayout_2->setObjectName("gridLayout_2");
+            okButton = new QPushButton(treeSelector);
+            okButton->setObjectName("pushButton");
+            okButton->setText(tr("Add"));
+
+            gridLayout_2->addWidget(okButton, 1, 0, 1, 1);
+
+            no_button = new QPushButton(treeSelector);
+            no_button->setObjectName("pushButton_2");
+            no_button->setText(tr("Cancel"));
+
+            gridLayout_2->addWidget(no_button, 1, 1, 1, 1);
+
+            treeScroll = new QScrollArea(treeSelector);
+            treeScroll->setObjectName("treeScroll");
+            treeScroll->setWidgetResizable(true);
+            treeScrollWidget = new QWidget();
+            treeScrollWidget->setObjectName("treeScrollWidget");
+            treeScrollWidget->setGeometry(treeSelector->rect());
+            formLayout = new QFormLayout(treeScrollWidget);
+            formLayout->setObjectName("formLayout");
+
+            for (auto treeName : treeNames) {
+                treeCheckBoxes.append(new QCheckBox(treeScrollWidget));
+                QSizePolicy sizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding);
+                sizePolicy.setHeightForWidth(treeCheckBoxes.last()->sizePolicy().hasHeightForWidth());
+                treeCheckBoxes.last()->setChecked(false);
+                treeCheckBoxes.last()->setText(treeName);
+                treeCheckBoxes.last()->setSizePolicy(sizePolicy);
+                treeCheckBoxes.last()->setCursor(QCursor(Qt::PointingHandCursor));
+                formLayout->addWidget(treeCheckBoxes.last());
+            }
+            treeScroll->setWidget(treeScrollWidget);
+            gridLayout_2->addWidget(treeScroll, 0, 0, 1, 2);
+
+            okButton->connect(okButton,&QPushButton::clicked,
+            [=] {
+                QStringList selectedTrees;
+                for (auto treeCheckBox : treeCheckBoxes) {
+                    qDebug() << treeCheckBox->text();
+                    qDebug("Fuck");
+                    if (treeCheckBox->isChecked()) {
+                        selectedTrees.append(treeCheckBox->text());
+                    }
+                }
+                if (selectedTrees.empty()) {
+                    QMessageBox errorMsg;
+                    errorMsg.setWindowTitle(tr("No trees selected"));
+                    errorMsg.setText(tr("Please select at least one tree."));
+                    errorMsg.exec();
+                }
+                else {
+                    addItems(selectedTrees);
+                    QMessageBox::information(treeSelector, tr("Done"), tr("Tree addition was attempted, layers with duplicate names have been suppressed."));
+                    treeSelector->close();
+                    treeSelector->deleteLater();
+                }
+            });
+            no_button->connect(no_button, &QPushButton::clicked, [=] { treeSelector->close(); treeSelector->deleteLater();});
+
+            treeSelector->show();
+        }
+    }
+}
+
+void ObjectTreeWidget::onObjectReconstructionTriggered(bool) {
+    addItems();
+}
+
+
 
 void ObjectTreeWidget::onRenameActionTriggered(bool) {
     if (mActionItem) {
@@ -920,7 +1024,7 @@ void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode
     ptr->setBlendMode(resHandle->blendMode());
     ptr->setInitialRect(resHandle->rect());
     if (isResNode) {
-        ptr->setVisibility(true);
+        ptr->setVisibility(resHandle->isVisible());
         ptr->setDefaultDepth(std::max(1.0f, static_cast<float>(resIdx)));
         ptr->setDefaultOpacity(1.0f);
         ptr->setClipped(false);
@@ -940,8 +1044,6 @@ void ObjectTreeWidget::addLayer(QTreeWidgetItem* curActionItem, core::ObjectNode
         for (const auto bone: ptrTl->map(core::TimeKeyType_Bone)) {
             dynamic_cast<core::BoneKey*>(bone)->resetCaches(*mProject, objItem->node());
         }
-        ptr->timeLine()->current().clearCaches();
-        ptr->timeLine()->current().clearMasterCache();
     }
 
     {

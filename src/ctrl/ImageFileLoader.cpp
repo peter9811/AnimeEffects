@@ -29,6 +29,7 @@ img::ResourceNode* createLayerResource(
     resNode->data().setPos(aInOutRect.topLeft());
     resNode->data().setIsLayer(true);
     resNode->data().setBlendMode(img::getBlendModeFromPSD(aLayer.blendMode));
+    resNode->data().setIsVisible(aLayer.isVisible());
     return resNode;
 }
 
@@ -39,6 +40,7 @@ img::ResourceNode* createLayerResource(const layer& aLayer){
     resNode->data().setPos(imagePair.second.topLeft());
     resNode->data().setIsLayer(true);
     resNode->data().setBlendMode(ORAReader::oraBlendToPSDBlend(aLayer.composite_op.blend));
+    resNode->data().setIsVisible(aLayer.isVisible);
     return resNode;
 }
 

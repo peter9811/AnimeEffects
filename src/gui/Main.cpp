@@ -82,6 +82,16 @@ static AEAssertHandler AEAssertHandler;
 int entryPoint(int argc, char* argv[]);
 
 int main(const int argc, char* argv[]) {
+    #ifdef Q_OS_DARWIN
+    rlimit rl{};
+    if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
+        if (((int)rl.rlim_max) > ((int)rl.rlim_cur)) {
+            rl.rlim_cur = rl.rlim_max;
+            if (setrlimit(RLIMIT_NOFILE, &rl) != 0) perror("setrlimit");
+        }
+    }
+    else perror("getrlimit");
+    #endif
     // Define XC Assert
     gXCAssertHandler = &AEAssertHandler;
     #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
@@ -118,15 +128,28 @@ int entryPoint(int argc, char* argv[]) {
     XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
 
     // application path
-#if defined(Q_OS_MAC)
-    const QString appDir = QDir(app.applicationDirPath() + "/../../").absolutePath();
-    app.addLibraryPath(app.applicationDirPath() + "/../PlugIns/");
-#else
-    const QString appDir = app.applicationDirPath();
-#endif
+    #ifdef Q_OS_DARWIN && defined (Q_PROCESSOR_ARM)
+    QString cur = std::filesystem::current_path().c_str();
+    QFile::copy(cur + "/data", QDir::homePath() + "/data");
+    QDir::setCurrent(QDir::homePath());
+    //app.setAttribute(Qt::AA_DontUseNativeDialogs);
+    #endif
+
+    #if defined(Q_OS_MAC) && !defined(Q_PROCESSOR_ARM)
+    const QString appDir = QDir(QApplication::applicationDirPath() + "/../../").absolutePath();
+    QApplication::addLibraryPath(appDir);
+    QApplication::addLibraryPath(appDir + "/Contents/MacOS");
+    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/../PlugIns/");
+    #elif defined(Q_OS_DARWIN)
+    const QString appDir = std::filesystem::current_path().c_str();
+    QApplication::addLibraryPath(appDir + "/Contents/MacOS");
+    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/../PlugIns/");
+    #else
+    const QString appDir = QApplication::applicationDirPath();
+    #endif
     QString resourceDir(appDir + "/data");
     QDir dataDir = QDir(resourceDir);
-    if(!dataDir.exists() || dataDir.isEmpty()){
+    if(!dataDir.exists() || !dataDir.isReadable() || dataDir.absoluteFilePath("sample.psd").isEmpty()){
         QString newResDir;
         QSettings settings;
         QVariant customDataFolder = settings.value("customDataFolder");
@@ -136,7 +159,7 @@ int entryPoint(int argc, char* argv[]) {
                 newResDir = customDataFolder.toString();
             }
         }
-        if(newResDir.isEmpty()){
+        if(newResDir.isEmpty() || !QDir(newResDir).exists() || dataDir.absoluteFilePath("sample.psd").isEmpty()){
             newResDir = QFileDialog::getExistingDirectory(app.activeWindow(), QCoreApplication::translate("data_load", "Unable to locate data folder, please select it"),
                                                 appDir,
                                                 QFileDialog::ShowDirsOnly
@@ -190,9 +213,6 @@ int entryPoint(int argc, char* argv[]) {
         qDebug() << "Launching debug project";
         const QString testPath = resourceDir + "/sample.psd";
         mainWindow->testNewProject(testPath);
-#endif
-#ifdef Q_OS_MAC
-        QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
 #endif
         // assoc handle
         auto arguments = QCoreApplication::arguments();

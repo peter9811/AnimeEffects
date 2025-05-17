@@ -45,11 +45,8 @@ jobs:
           cp -R ../../../../dist appdir/dist
           find appdir/
           cd appdir
-          macdeployqt AnimeEffects.app
-          wget https://raw.githubusercontent.com/OpenZWave/ozw-admin/master/scripts/macdeployqtfix.py && chmod a+x macdeployqtfix.py
-          ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
-          cp -R ../../data AnimeEffects.app/data
-          zip -r AnimeEffects.zip AnimeEffects.app
+          macdeployqt AnimeEffects.app -dmg
+          zip -r AnimeEffects.zip AnimeEffects.dmg
           echo "artifactPath=$(realpath AnimeEffects.zip)`"
           echo "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
       - name: Github Artifacts

@@ -46,7 +46,7 @@ jobs:
           find appdir/
           cd appdir
           macdeployqt AnimeEffects.app
-          cp ../../../scripts/RemoveQuarantine.command runme.command
+          cp ../../../../../scripts/RemoveQuarantine.command runme.command
           chmod +x runme.command
           zip -r AnimeEffects.zip AnimeEffects.app runme.command 
           echo "artifactPath=$(realpath AnimeEffects.zip)`"

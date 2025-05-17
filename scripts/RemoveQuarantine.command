@@ -1,5 +1,5 @@
 #!/bin/sh
-echo Removing quarentine from AnimeEffects
+echo "Removing quarantine from AnimeEffects"
 xattr -d com.apple.quarantine AnimeEffects.app
-echo Done, attempting run...
+echo "Done, attempting run..."
 open -a AnimeEffects

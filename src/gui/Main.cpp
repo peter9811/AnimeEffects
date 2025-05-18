@@ -128,8 +128,9 @@ int entryPoint(int argc, char* argv[]) {
     XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
 
     // application path
-    #ifdef Q_OS_DARWIN && defined (Q_PROCESSOR_ARM)
-    QString cur = std::filesystem::current_path().c_str();
+    #ifdef Q_OS_DARWIN
+    QString cur = app.applicationDirPath();
+    qDebug() << cur;
     QFile::copy(cur + "/data", QDir::homePath() + "/data");
     QDir::setCurrent(QDir::homePath());
     //app.setAttribute(Qt::AA_DontUseNativeDialogs);

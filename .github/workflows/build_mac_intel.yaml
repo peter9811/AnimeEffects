@@ -50,7 +50,6 @@ jobs:
           chmod +x runme.command
           wget https://raw.githubusercontent.com/OpenZWave/ozw-admin/master/scripts/macdeployqtfix.py && chmod a+x macdeployqtfix.py
           ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
-          cp -R ../../data AnimeEffects.app/data
           zip -r AnimeEffects.zip AnimeEffects.app runme.command
           echo -n "artifactPath=$(realpath AnimeEffects.zip)`"
           echo -n "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV

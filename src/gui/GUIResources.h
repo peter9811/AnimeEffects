@@ -17,6 +17,10 @@
 #include "util/Signaler.h"
 #include "theme/Theme.h"
 
+#include <QApplication>
+#include <QStyle>
+#include <QStyleFactory>
+
 namespace gui {
 
 class GUIResources: private util::NonCopyable {
@@ -49,6 +53,17 @@ public:
     }
     void setPaletteDefault(){
         palette = QPalette();
+    }
+    static void setAppStyle() {
+        #ifdef Q_OS_LINUX
+            QApplication::setStyle(QStyleFactory::create("Fusion"));
+        #elifdef Q_OS_APPLE
+            QApplication::setStyle(QStyleFactory::create("Fusion"));
+        #else
+            QApplication::setStyle(QStyleFactory::create("Fusion"));
+        #endif
+
+
     }
 
     QString getThemeLocation() { return mTheme.path(); };

@@ -94,7 +94,7 @@ ObjectTreeWidget::ObjectTreeWidget(ViaPoint& aViaPoint, GUIResources& aResources
         mReconstructAction = new QAction(tr("Add missing resources"), this);
         mReconstructAction->connect(mReconstructAction, &QAction::triggered, this, &ObjectTreeWidget::onObjectReconstructionTriggered);
 
-        mAddTreeAction = new QAction(tr("Add new tree"), this);
+        mAddTreeAction = new QAction(tr("Add new PSD"), this);
         mAddTreeAction->connect(mAddTreeAction, &QAction::triggered, this, &ObjectTreeWidget::onAddTreeTriggered);
 
         mRenameAction = new QAction(tr("Rename"), this);

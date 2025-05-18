@@ -265,7 +265,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
         auto isAutoFFmpegCheck = settings.value("ffmpeg_check");
 
-        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid()? isAutoFFmpegCheck.toBool() : util::NetworkUtil::os() != "linux";
+        mAutoFFmpegCheck = isAutoFFmpegCheck.isValid()? isAutoFFmpegCheck.toBool() : true;
 
         auto isResIDCheck = settings.value("res_id_check");
         bResIDCheck = isResIDCheck.isValid()?  isResIDCheck.toBool() : true;
@@ -545,7 +545,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             const QFileInfo ffmpeg = util::NetworkUtil::downloadGithubFile(
                 "https://api.github.com/repos/AnimeEffectsDevs/ffmpeg-bin/releases/latest", gitFile, id, this
                 );
-            qDebug() << "Download name : " << ffmpeg.fileName() << "\n" << "Download is executable : " << ffmpeg.isExecutable();
+            qDebug() << "Download name : " << ffmpeg.fileName() << "\nDownload is executable : " << ffmpeg.isExecutable();
             bool pathSetAttempted = false;
             bool ffmpegMoveAttempted = false;
             if (ffmpeg.isExecutable()) {

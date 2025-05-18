@@ -385,7 +385,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
 
             #elif defined(Q_OS_MACOS)
             QProcess p;
-            p.start("sysctl", QStringList() << "kern.version" << "hw.physmem");
+            p.start("system_profiler", QStringList() << "SPHardwareDataType" << "| grep" << " Memory:");
             p.waitForFinished();
             QString system_info = p.readAllStandardOutput();
             p.close();
@@ -434,7 +434,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             else if (cpuVendor == "AuthenticAMD"){
                 vendor = "AMD";
             }
-            else if (cpuVendor == "Apple") {
+            else if (cpuVendor == "Unknown" || cpuVendor == "Apple") {
                 vendor = "Apple";
             }
             // ---------------------- //
@@ -442,18 +442,34 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
             detail += tr("CPU architecture: ") + QSysInfo::currentCpuArchitecture() + "\n";
             detail += tr("CPU cores: ") + QString::number(QThread::idealThreadCount() / 2) + "\n";
             detail += tr("CPU threads: ") + QString::number(QThread::idealThreadCount()) + "\n";
+            #ifdef Q_OS_APPLE
+            QRegularExpression regexp = QRegularExpression("(?<=Memory:)(.*?)(?=\r?\n)");
+            QString ram = regexp.match(system_info).captured(0);
+            detail += tr("System RAM:") + ram + "\n"; //RAM
+            #else
             detail += tr("System ") + system_info + "\n"; //RAM
+            #endif
             detail += tr("Current GPU: ") + QString(this->mViaPoint.glDeviceInfo().renderer.c_str()) + "\n";
             QString vramString;
             int vram = this->mViaPoint.getVRAM();
             if (vram == -1) {
                 vramString = "Unknown VRAM";
-            } else {
+            }
+            #ifdef Q_OS_APPLE
+            if (vram == -2) {
+                QRegularExpression captureNumber = QRegularExpression("\\d+");
+                vramString = "Roughly " + QString::number(captureNumber.match(ram).captured(0).toInt() * 75 / 100) + ".5 GB";
+            }
+            #endif
+            else {
                 int digits = 1 + log10(vram);
                 QString format = "MB";
                 if (digits >= 4) {
                     format = "GB";
                 }
+                #ifdef Q_OS_APPLE
+                    format = "GB";
+                #endif
                 int threes = digits / 3;
                 bool numNotOdd = digits % 2;
                 for (threes; threes > 0; --threes) {
@@ -467,7 +483,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
                 vramString.append(format);
             }
             detail += tr("GPU Vendor: ") + QString(this->mViaPoint.glDeviceInfo().vender.c_str()) + "\n";
-            detail += tr("Available VRAM: ") + vramString + "\n";
+            detail += tr("Max VRAM: ") + vramString + "\n";
             detail += tr("OpenGL version: ") + QString(this->mViaPoint.glDeviceInfo().version.c_str()) + "\n";
             detail += tr("Qt Version: ") + qtVersion + "\n";
             detail += tr("System locale: ") + QLocale::system().name() + "\n";

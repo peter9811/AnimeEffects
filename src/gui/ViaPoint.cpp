@@ -75,7 +75,11 @@ int ViaPoint::getVRAM() const {
     vram = vram * 0.001;
     return vram;
     #endif
+    #ifdef Q_PROCESSOR_ARM
+    return -2;
+    #else
     return -1;
+    #endif
 }
 
 void ViaPoint::setKeyCommandMap(KeyCommandMap* aMap) { mKeyCommandMap = aMap; }

@@ -41,15 +41,17 @@ jobs:
           cd build/src/gui/Release
           mkdir -p appdir/usr/lib
           cp -R AnimeEffects.app appdir/AnimeEffects.app
-          cp -R ../data appdir/data
+          cp -R ../../../../data appdir/data
           cp -R ../../../../dist appdir/dist
           find appdir/
           cd appdir
           macdeployqt AnimeEffects.app
+          cp ../../../../../scripts/RemoveQuarantine.command runme.command
+          chmod +x runme.command
           wget https://raw.githubusercontent.com/OpenZWave/ozw-admin/master/scripts/macdeployqtfix.py && chmod a+x macdeployqtfix.py
           ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
           cp -R ../../data AnimeEffects.app/data
-          zip -r AnimeEffects.zip AnimeEffects.app
+          zip -r AnimeEffects.zip AnimeEffects.app runme.command
           echo -n "artifactPath=$(realpath AnimeEffects.zip)`"
           echo -n "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
       - name: Github Artifacts

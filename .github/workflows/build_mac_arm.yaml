@@ -46,9 +46,9 @@ jobs:
           find appdir/
           cd appdir
           macdeployqt AnimeEffects.app
-          cp ../../../../../scripts/RemoveQuarantine.command runme.command
-          chmod +x runme.command
-          zip -r AnimeEffects.zip AnimeEffects.app runme.command 
+          cp ../../../../../scripts/RemoveQuarantine.command AnimeEffects.command
+          chmod +x AnimeEffects.command
+          zip -r AnimeEffects.zip AnimeEffects.app AnimeEffects.command 
           echo "artifactPath=$(realpath AnimeEffects.zip)`"
           echo "artifactPath=$(realpath AnimeEffects.zip)`" >> $GITHUB_ENV
       - name: Github Artifacts

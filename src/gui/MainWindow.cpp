@@ -1569,6 +1569,9 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
     if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
     else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
     bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
+    #ifdef Q_OS_LINUX
+    fExists = true;
+    #endif
     if (!fExists || (!ffCheck.isValid() || ffCheck.toBool())) {
         if (!fExists) {
             QMessageBox message;

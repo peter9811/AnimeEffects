@@ -397,9 +397,18 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
     auto ffmpegSettings = new QFormLayout();
     {
-
         ffmpegTroubleshoot = new QPushButton(tr("Troubleshoot FFmpeg"));
         connect(ffmpegTroubleshoot, &QPushButton::clicked, [=]() {
+
+            #ifdef Q_OS_LINUX
+            QMessageBox errordiag;
+            errordiag.setWindowTitle(tr("Warning"));
+            errordiag.setText("FFmpeg troubleshooting does not work on Linux, please check for correct FFmpeg functionality on your console.");
+            errordiag.addButton(QMessageBox::Ok);
+            errordiag.exec();
+            return;
+            #endif
+
             util::NetworkUtil networking;
             QFileInfo ffmpeg_file;
             QString ffmpeg;
@@ -519,6 +528,14 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                " and replace them with your custom executable, please make sure this is a valid FFmpeg executable.")
         );
         connect(selectFromExe, &QPushButton::clicked, [=]() {
+            #ifdef Q_OS_LINUX
+            QMessageBox errordiag;
+            errordiag.setWindowTitle(tr("Warning"));
+            errordiag.setText("FFmpeg setup does not work on Linux due to the way paths work with AppImages, please download FFmpeg from your package manager.");
+            errordiag.addButton(QMessageBox::Ok);
+            errordiag.exec();
+            return;
+            #endif
             util::NetworkUtil net;
             #ifdef Q_OS_LINUX
             auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
@@ -548,10 +565,14 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         autoSetup = new QPushButton(tr("Download and automatically setup"));
         connect(autoSetup, &QPushButton::clicked, [=]() {
             #ifdef Q_OS_LINUX
-            const auto dir = QDir("~/.AECache/tools");
-            #else
-            const auto dir = QDir("./tools");
+            QMessageBox errordiag;
+            errordiag.setWindowTitle(tr("Warning"));
+            errordiag.setText("FFmpeg setup does not work on Linux due to the way paths work with AppImages, please download FFmpeg from your package manager.");
+            errordiag.addButton(QMessageBox::Ok);
+            errordiag.exec();
+            return;
             #endif
+            const auto dir = QDir("./tools");
             if (!dir.exists()) {
                 if (dir.mkpath(dir.absolutePath())) {
                     qDebug() << "Directory created : " << dir.absolutePath();

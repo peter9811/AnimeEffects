@@ -140,12 +140,7 @@ int entryPoint(int argc, char* argv[]) {
     //app.setAttribute(Qt::AA_DontUseNativeDialogs);
     #endif
 
-    #if defined(Q_OS_MAC) && !defined(Q_PROCESSOR_ARM)
-    const QString appDir = QDir(QApplication::applicationDirPath() + "/../../").absolutePath();
-    QApplication::addLibraryPath(appDir);
-    QApplication::addLibraryPath(appDir + "/Contents/MacOS");
-    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/../PlugIns/");
-    #elif defined(Q_OS_DARWIN)
+    #if defined(Q_OS_DARWIN)
     const QString appDir = app.applicationDirPath();
     QApplication::addLibraryPath(appDir + "/Contents/MacOS");
     QApplication::addLibraryPath(appDir + "/../PlugIns/");

@@ -76,7 +76,7 @@ void AudioPlaybackWidget::aPlayer(std::vector<audioConfig>* pConf, bool play, me
         if(output->volume() != getVol(config.volume)){ output->setVolume(getVol(config.volume)); }
         correctTrackPos(player, curFrame, frameCount, fps, const_cast<audioConfig&>(config));
         qDebug("---");
-        qDebug() << "x = " << x << "; track = " << player->source() << "; playing = " << player->isPlaying() << "; play = " << play;
+        qDebug() << "x = " << x << "; track = " << player->source() << "; playing = " << player->playbackState() << "; play = " << play;
         qDebug("---");
         if(!play){ player->stop(); state->playing = false;}
         if(play && config.startFrame < curFrame && config.endFrame > curFrame && config.playbackEnable){
@@ -402,7 +402,7 @@ void AudioPlaybackWidget::modifyTrack(mediaState* state, std::vector<audioConfig
     }
     auto* currentPlayer = state->players.at(index);
     auto* currentOutput = state->outputs.at(index);
-    if(currentPlayer->isPlaying()) { currentPlayer->stop(); }
+    if(currentPlayer->playbackState() == QMediaPlayer::PlayingState) { currentPlayer->stop(); }
     if(currentPlayer->source().isEmpty() || currentPlayer->source().fileName() != modifiedConfig.audioPath.fileName()){
         currentPlayer->setSource(modifiedConfig.audioPath.absoluteFilePath());
     }

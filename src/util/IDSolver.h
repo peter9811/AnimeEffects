@@ -28,7 +28,7 @@ public:
     bool solve() {
         for (auto refer : mReferencers) {
             if (!mDataMap.contains(refer.first)) {
-                qDebug() << "Failed to solve id reference at "  << std::to_string(refer.first);
+                qDebug() << "Failed to solve id reference at "  << std::to_string(refer.first).c_str();
                 if (!FORCE_SOLVER_LOAD) {
                     return false;
                 }

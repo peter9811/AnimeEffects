@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QClipboard>
+#include <QDialogButtonBox>
 #include <QMimeData>
 
 namespace gui {

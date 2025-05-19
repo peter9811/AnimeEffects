@@ -57,7 +57,7 @@ public:
     static void setAppStyle() {
         #ifdef Q_OS_LINUX
             QApplication::setStyle(QStyleFactory::create("Fusion"));
-        #elifdef Q_OS_APPLE
+        #elif  defined(Q_OS_APPLE)
             QApplication::setStyle(QStyleFactory::create("Fusion"));
         #else
             QApplication::setStyle(QStyleFactory::create("Fusion"));

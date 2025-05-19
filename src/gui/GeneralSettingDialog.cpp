@@ -405,19 +405,44 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
             QString ffmpeg;
             QMessageBox ffmpegNotif;
 
-            if (util::NetworkUtil::os() == "win") {
-                ffmpeg_file = QFileInfo("./tools/ffmpeg.exe");
-            } else {
-                ffmpeg_file = QFileInfo("./tools/ffmpeg");
-            }
+            if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
+            else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
+            auto file = util::NetworkUtil::os() == "win" ? "ffmpeg.exe" : "ffmpeg";
+            auto appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+            auto anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
             if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) {
-                ffmpeg = "ffmpeg";
-            } else {
+                qDebug() << "FFmpeg not found, attempting backup...";
+                ffmpeg_file = QFileInfo(anieFolder.absolutePath() + "/" + file);
+                ffmpeg = ffmpeg_file.absoluteFilePath();
+                if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isReadable()) {
+                    qDebug() << "AnimeEffects not found in appdata, attempting backup...";
+                    appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+                    anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
+                    ffmpeg_file = QFileInfo(anieFolder.absolutePath() + "/" + file);
+                    ffmpeg = ffmpeg_file.absoluteFilePath();
+                    if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isReadable()) {
+                        qDebug() << "AnimeEffects not found in documents, attempting back up...";
+                        appdata = QApplication::applicationDirPath();
+                        ffmpeg_file = QFileInfo(appdata.absolutePath() + "/" + file);
+                        ffmpeg = ffmpeg_file.absoluteFilePath();
+                        if (!appdata.exists() || !ffmpeg_file.isReadable()) {
+                            qDebug() << "AnimeEffects not found in appdir, stopping...";
+                            ffmpeg = "ffmpeg";
+                        }
+                        else { qDebug("FFmpeg found in appdir, initializing..."); }
+                    }
+                    else{ qDebug("FFmpeg found in documents, initializing..."); }
+                } else { qDebug("FFmpeg found in appdata, initializing..."); }
+
+            }
+            else {
+                qDebug() << "FFmpeg found in tools, initializing...";
                 ffmpeg = ffmpeg_file.absoluteFilePath();
             }
 
             // Exists?
             bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
+            qDebug("FFmpeg call test done");
 
             if (!fExists) {
                 ffmpegNotif.setWindowTitle(tr("FFmpeg error"));
@@ -431,11 +456,17 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
             // Sample gif test
             QProcess gif;
+            #ifdef Q_OS_LINUX
+            gif.start(ffmpeg, {"-i", testFile, "~/.AECache/gif.gif"}, QProcess::ReadWrite);
+            gif.waitForFinished();
+            bool exportSuccess = gif.exitStatus() == 0 && QFileInfo::exists("~/.AECache/gif.gif");
+            #else
             gif.start(ffmpeg, {"-i", testFile, "gif.gif"}, QProcess::ReadWrite);
             gif.waitForFinished();
             bool exportSuccess = gif.exitStatus() == 0 && QFileInfo::exists("gif.gif");
-            qDebug() << "Gif exists: " << QFileInfo::exists("gif.gif")
-                     << "| Gif remove: " << QFile("gif.gif").remove();
+            #endif
+
+            qDebug("Gif test done");
             gif.deleteLater();
 
             if (!exportSuccess) {
@@ -448,9 +479,15 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
             // Palettegen test
             QProcess palettegen;
+            #ifdef Q_OS_LINUX
+            palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "~/.AECache/palette.png"}, QProcess::ReadWrite);
+            palettegen.waitForFinished();
+            bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo::exists("~/.AECache/palette.png");
+            #else
             palettegen.start(ffmpeg, {"-i", testFile, "-vf", "palettegen", "palette.png"}, QProcess::ReadWrite);
             palettegen.waitForFinished();
             bool pGenSuccess = palettegen.exitStatus() == 0 && QFileInfo::exists("palette.png");
+            #endif
             if (!pGenSuccess) {
                 ffmpegNotif.setWindowTitle(tr("FFmpeg doesn't generate palettes"));
                 ffmpegNotif.setText(
@@ -460,8 +497,7 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                 ffmpegNotif.exec();
                 return;
             }
-            qDebug() << "Palette exists: " << QFileInfo::exists("palette.png")
-                     << "| Palette remove: " << QFile("palette.png").remove();
+            qDebug("Palettegen test done");
             palettegen.deleteLater();
 
 
@@ -484,7 +520,11 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         );
         connect(selectFromExe, &QPushButton::clicked, [=]() {
             util::NetworkUtil net;
+            #ifdef Q_OS_LINUX
+            QDir dir = QDir("~/.AECache/tools");
+            #else
             QDir dir = QDir("./tools");
+            #endif
             if (!dir.exists()) {}
             QString file = util::NetworkUtil::os() == "win" ? "/ffmpeg.exe" : "/ffmpeg";
 
@@ -506,7 +546,11 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
 
         autoSetup = new QPushButton(tr("Download and automatically setup"));
         connect(autoSetup, &QPushButton::clicked, [=]() {
+            #ifdef Q_OS_LINUX
+            const auto dir = QDir("~/.AECache/tools");
+            #else
             const auto dir = QDir("./tools");
+            #endif
             if (!dir.exists()) {
                 if (dir.mkpath(dir.absolutePath())) {
                     qDebug() << "Directory created : " << dir.absolutePath();

@@ -521,7 +521,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
         connect(selectFromExe, &QPushButton::clicked, [=]() {
             util::NetworkUtil net;
             #ifdef Q_OS_LINUX
-            QDir dir = QDir("~/.AECache/tools");
+            auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+            dir = QDir(dir.absolutePath() + "/AnimeEffects");
             #else
             QDir dir = QDir("./tools");
             #endif
@@ -559,8 +560,8 @@ GeneralSettingDialog::GeneralSettingDialog(GUIResources& aGUIResources, QWidget*
                     QMessageBox error;
                     error.setWindowTitle(tr("Unable to create directory"));
                     error.setText(
-                        tr("An error has occurred while creating the tools directory,") +
-                        tr("the application will use a fallback but if this doesn't work please run the app as "
+                        tr("An error has occurred while creating the tools directory in ") + dir.absolutePath() +
+                        tr(" the application will use a fallback but if this doesn't work please run the app as "
                            "administrator or use a folder that isn't write protected.")
                     );
                     error.addButton(QMessageBox::Ok);

@@ -225,7 +225,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         mProjectActions.push_back(saveProjectAs);
         mProjectActions.push_back(closeProject);
         mProjectActions.push_back(exportWindow);
-        //mProjectActions.push_back(exportAs->menuAction());
+        mProjectActions.push_back(exportAs->menuAction());
 
         connect(newProject, &QAction::triggered, mainWindow, &MainWindow::onNewProjectTriggered);
         connect(openProject, &QAction::triggered, mainWindow, &MainWindow::onOpenProjectTriggered);
@@ -241,7 +241,7 @@ MainMenuBar::MainMenuBar(MainWindow& aMainWindow, ViaPoint& aViaPoint, GUIResour
         fileMenu->addAction(saveProject);
         fileMenu->addAction(saveProjectAs);
         fileMenu->addAction(exportWindow);
-        //fileMenu->addAction(exportAs->menuAction());
+        fileMenu->addAction(exportAs->menuAction());
         fileMenu->addSeparator();
         fileMenu->addAction(closeProject);
     }

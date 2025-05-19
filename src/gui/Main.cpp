@@ -130,9 +130,13 @@ int entryPoint(int argc, char* argv[]) {
     // application path
     #ifdef Q_OS_DARWIN
     QString cur = app.applicationDirPath();
-    qDebug() << cur;
-    QFile::copy(cur + "/data", QDir::homePath() + "/data");
-    QDir::setCurrent(QDir::homePath());
+    if (!QDir(cur + "/.AECache").exists() || !QDir(cur + "/.AECache/data").exists()) {
+        if (!QDir(cur + "/.AECache").exists()) {
+            void (QDir().mkdir(cur + "/.AECache"));
+        }
+        QFile::copy(cur + "/data", QDir::homePath() + "/.AECache/data");
+    }
+    QDir::setCurrent(QDir::homePath() + "./AECache");
     //app.setAttribute(Qt::AA_DontUseNativeDialogs);
     #endif
 
@@ -142,9 +146,10 @@ int entryPoint(int argc, char* argv[]) {
     QApplication::addLibraryPath(appDir + "/Contents/MacOS");
     QApplication::addLibraryPath(QApplication::applicationDirPath() + "/../PlugIns/");
     #elif defined(Q_OS_DARWIN)
-    const QString appDir = std::filesystem::current_path().c_str();
+    const QString appDir = app.applicationDirPath();
     QApplication::addLibraryPath(appDir + "/Contents/MacOS");
-    QApplication::addLibraryPath(QApplication::applicationDirPath() + "/../PlugIns/");
+    QApplication::addLibraryPath(appDir + "/../PlugIns/");
+    QApplication::addLibraryPath(appDir + "/Contents/MacOS/data");
     #else
     const QString appDir = QApplication::applicationDirPath();
     #endif
@@ -241,6 +246,13 @@ int entryPoint(int argc, char* argv[]) {
         qDebug() << "clearing resources";
         resources.reset();
         qDebug() << "core application end";
+        #if defined(Q_OS_APPLE) && defined(QT_DEBUG)
+        qDebug() << "removing application cache";
+        cur = QDir::homePath();
+        QDir data = cur + "/.AECache";
+        data.removeRecursively();
+        #endif
+
     }
 
     return result;

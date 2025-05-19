@@ -462,6 +462,8 @@
 		<dict>
 			<key>POSTINSTALL_PATH</key>
 			<dict>
+				<key>PATH</key>
+				<string>RemoveQuarantine.command</string>
 				<key>PATH_TYPE</key>
 				<integer>1</integer>
 			</dict>
@@ -471,7 +473,24 @@
 				<integer>0</integer>
 			</dict>
 			<key>RESOURCES</key>
-			<array/>
+			<array>
+				<dict>
+					<key>CHILDREN</key>
+					<array/>
+					<key>GID</key>
+					<integer>0</integer>
+					<key>PATH</key>
+					<string>/Users/yukusai/AnimeEffects/AnimeEffects.app</string>
+					<key>PATH_TYPE</key>
+					<integer>0</integer>
+					<key>PERMISSIONS</key>
+					<integer>493</integer>
+					<key>TYPE</key>
+					<integer>3</integer>
+					<key>UID</key>
+					<integer>0</integer>
+				</dict>
+			</array>
 		</dict>
 		<key>PACKAGE_SETTINGS</key>
 		<dict>

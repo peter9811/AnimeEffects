@@ -121,7 +121,7 @@ QStringList GUIResources::themeList() {
 bool GUIResources::hasTheme(const QString& aThemeId) { return mThemeMap.contains(aThemeId); }
 
 void GUIResources::setTheme(const QString& aThemeId) {
-    QApplication::setStyle(QStyleFactory::create("Fusion"));
+    setAppStyle();
     if (mTheme.id() != aThemeId && hasTheme(aThemeId)) {
         mTheme = mThemeMap.value(aThemeId);
         loadIcons();

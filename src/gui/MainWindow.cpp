@@ -984,12 +984,44 @@ void MainWindow::onExportTriggered() {
     auto ffCheck = settings.value("ffmpeg_check");
     QFileInfo ffmpeg_file;
     QString ffmpeg;
+
     if (util::NetworkUtil::os() == "win") { ffmpeg_file = QFileInfo("./tools/ffmpeg.exe"); }
     else { ffmpeg_file = QFileInfo("./tools/ffmpeg"); }
-    if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
-    else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
-    bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
-    if ((!fExists && util::NetworkUtil::os() != "linux") || (!ffCheck.isValid() || ffCheck.toBool())) {
+    auto file = util::NetworkUtil::os() == "win" ? "ffmpeg.exe" : "ffmpeg";
+    auto appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    auto anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
+    if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) {
+        qDebug() << "FFmpeg not found, attempting backup...";
+        ffmpeg_file = QFileInfo(anieFolder.absolutePath() + "/" + file);
+        ffmpeg = ffmpeg_file.absoluteFilePath();
+        if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isReadable()) {
+            qDebug() << "AnimeEffects not found in appdata, attempting backup...";
+            appdata = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+            anieFolder = QDir(appdata.absolutePath() + "/AnimeEffects");
+            ffmpeg_file = QFileInfo(anieFolder.absolutePath() + "/" + file);
+            ffmpeg = ffmpeg_file.absoluteFilePath();
+            if (!anieFolder.exists() || !QFileInfo(anieFolder.absolutePath()).isReadable()) {
+                qDebug() << "AnimeEffects not found in documents, attempting back up...";
+                appdata = QApplication::applicationDirPath();
+                ffmpeg_file = QFileInfo(appdata.absolutePath() + "/" + file);
+                ffmpeg = ffmpeg_file.absoluteFilePath();
+                if (!appdata.exists() || !ffmpeg_file.isReadable()) {
+                    qDebug() << "AnimeEffects not found in appdir, stopping...";
+                    ffmpeg = "ffmpeg";
+                }
+                else { qDebug("FFmpeg found in appdir, initializing..."); }
+            }
+            else{ qDebug("FFmpeg found in documents, initializing..."); }
+        } else { qDebug("FFmpeg found in appdata, initializing..."); }
+
+    }
+    else {
+        qDebug() << "FFmpeg found in tools, initializing...";
+        ffmpeg = ffmpeg_file.absoluteFilePath();
+    }
+
+    if (bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
+        !fExists || !ffCheck.isValid() || ffCheck.toBool()) {
         if (!fExists) {
             QMessageBox message;
             message.setIcon(QMessageBox::Warning);
@@ -1446,7 +1478,7 @@ void MainWindow::onExportTriggered() {
     qDebug() << "Exporting animation to format: " << sfx;
     if(QFileInfo(selectedFile).suffix() == ""){
         auto regex = QRegularExpression("(\\*.)\\w+", QRegularExpression::CaseInsensitiveOption);
-        QString suffix = regex.match(fileDiag.selectedNameFilter()).captured(0).removeAt(0);
+        QString suffix = regex.match(fileDiag.selectedNameFilter()).captured(0).remove(0, 1);
         qDebug() << suffix;
         selectedFile.append(suffix);
     }
@@ -1537,6 +1569,9 @@ void MainWindow::onExportVideoTriggered(const ctrl::VideoFormat& aFormat) {
     if (!ffmpeg_file.exists() || !ffmpeg_file.isExecutable()) { ffmpeg = "ffmpeg"; }
     else { ffmpeg = ffmpeg_file.absoluteFilePath(); }
     bool fExists = util::NetworkUtil::libExists(ffmpeg, "-version");
+    #ifdef Q_OS_LINUX
+    fExists = true;
+    #endif
     if (!fExists || (!ffCheck.isValid() || ffCheck.toBool())) {
         if (!fExists) {
             QMessageBox message;

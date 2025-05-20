@@ -126,7 +126,15 @@ install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-add_custom_target(copy_data
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR}/data
-)
+message("Copying data")
+if (APPLE)
+    add_custom_target(copy_data
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR}/AnimeEffects.app/Contents/MacOS/data
+    )
+else ()
+    add_custom_target(copy_data
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${CMAKE_CURRENT_BINARY_DIR}/data
+    )
+endif ()
+message("Data copied")
 add_dependencies(${PROJECT_NAME} copy_data)

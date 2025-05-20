@@ -15,6 +15,7 @@
 #include "img/BlendMode.h"
 #include <QImage>
 #include <QDebug>
+#include <QString>
 #include <QFile>
 #include <QPainter>
 #include <pugixml.hpp>
@@ -254,8 +255,8 @@ public:
         }
     }
     static void printLayer(const layer& lyr, const std::string& depth){
-        qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "<layer>";
-        qDebug() << depth.c_str() << "layer name: " << lyr.name;
+        qDebug() << QString::fromStdString(depth).remove(depth.length() -1, 1).toStdString().c_str() << depth.c_str() << "<layer>";
+        qDebug() << depth.c_str() << "layer name: " << lyr.name.c_str();
         qDebug() << depth.c_str() << "layer x: " << lyr.x;
         qDebug() << depth.c_str() << "layer y: " << lyr.y;
         qDebug() << depth.c_str() << "layer opacity: " << lyr.opacity;
@@ -263,14 +264,14 @@ public:
         printComposite(lyr.composite_op, depth);
         qDebug() << depth.c_str() << "layer image: " << lyr.image;
         qDebug() << depth.c_str() << "layer rect: " << lyr.rect;
-        qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "</layer>";
+        qDebug() << QString::fromStdString(depth).remove(depth.length() - 1, 1).toStdString().c_str() << depth.c_str() << "</layer>";
     }
     static void printStack(const stack& stk, int stackDepth){ // NOLINT(*-no-recursion)
         QString chara = "-";
         auto depth = chara.repeated(stackDepth * 4).append('|').toStdString();
-        qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "<stack>";
+        qDebug() << QString::fromStdString(depth).remove(depth.length() - 1, 1).toStdString().c_str() << depth.c_str() << "<stack>";
         if(!stk.isRoot){
-            qDebug() << depth.c_str() << "stack name: " << stk.name;
+            qDebug() << depth.c_str() << "stack name: " << stk.name.c_str();
             qDebug() << depth.c_str() << "stack opacity: " << stk.opacity;
             qDebug() << depth.c_str() << "stack is visible: " << stk.isVisible;
         }
@@ -282,14 +283,14 @@ public:
             stackDepth += 1;
             printStack(sStk, stackDepth);
         }
-        qDebug() << QString::fromStdString(depth).removeLast().toStdString().c_str() << depth.c_str() << "</stack>";
+        qDebug() << QString::fromStdString(depth).remove(depth.length() - 1, 1).toStdString().c_str() << depth.c_str() << "</stack>";
     }
     void printSelf() const{
         qDebug("<|IMAGE|>");
         qDebug() << "image height: " << image.h;
         qDebug() << "image width: " << image.w;
         qDebug() << "image rect: " << image.rect;
-        qDebug() << "openRaster spec version: " << (image.version.empty()? "Unknown": image.version);
+        qDebug() << "openRaster spec version: " << (image.version.empty()? "Unknown": image.version.c_str());
         int stackDepth = 1;
         printStack(image.mainStack, stackDepth);
         qDebug("<|IMAGE|>");

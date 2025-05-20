@@ -27,9 +27,11 @@ public:
     void setUserData(void* aData) { mUserData = aData; }
     void setIsLayer(bool aIsLayer) { mIsLayer = aIsLayer; }
     void setBlendMode(BlendMode aMode);
+    void setIsVisible(bool aIsVisible) { mIsVisible = aIsVisible; }
     void copyFrom(const ResourceData& aData);
 
     bool isLayer() const { return mIsLayer; }
+    bool isVisible() const {return mIsVisible; }
     bool hasImage() const { return mBuffer.data(); }
     const QString& identifier() const { return mIdentifier; }
     const img::Buffer& image() const { return mBuffer; }
@@ -53,6 +55,7 @@ private:
     bool mIsLayer;
     QString mIdentifier;
     BlendMode mBlendMode;
+    bool mIsVisible;
     ImageLoader mImageLoader;
     const ResourceNode* mSerialAddress;
 };

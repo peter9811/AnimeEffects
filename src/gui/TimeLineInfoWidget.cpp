@@ -38,7 +38,7 @@ void TimeLineInfoWidget::onUpdate() {
 
                 auto* player = mProject->mediaPlayer->players.at(currentPlayer);
 
-                if(player->isPlaying()){
+                if(player->playbackState() == QMediaPlayer::PlayingState){
                     if(currentFrame +- 1 != latestFrame && currentFrame != latestFrame +- 1 && currentFrame != latestFrame){
                         qDebug() << "Current = " << currentFrame << "; Latest = " << latestFrame;
                         AudioPlaybackWidget::correctTrackPos(player, currentFrame, frameMax, fps, const_cast<audioConfig&>(file));

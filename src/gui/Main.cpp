@@ -82,6 +82,16 @@ static AEAssertHandler AEAssertHandler;
 int entryPoint(int argc, char* argv[]);
 
 int main(const int argc, char* argv[]) {
+    #ifdef Q_OS_DARWIN
+    rlimit rl{};
+    if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
+        if (((int)rl.rlim_max) > ((int)rl.rlim_cur)) {
+            rl.rlim_cur = rl.rlim_max;
+            if (setrlimit(RLIMIT_NOFILE, &rl) != 0) perror("setrlimit");
+        }
+    }
+    else perror("getrlimit");
+    #endif
     // Define XC Assert
     gXCAssertHandler = &AEAssertHandler;
     #if defined(USE_MSVC_MEMORYLEAK_DEBUG)
@@ -118,15 +128,29 @@ int entryPoint(int argc, char* argv[]) {
     XC_DEBUG_REPORT() << "exe path =" << app.applicationFilePath();
 
     // application path
-#if defined(Q_OS_MAC)
-    const QString appDir = QDir(app.applicationDirPath() + "/../../").absolutePath();
-    app.addLibraryPath(app.applicationDirPath() + "/../PlugIns/");
-#else
+    #ifdef Q_OS_DARWIN
+    QString cur = app.applicationDirPath();
+    if (!QDir(cur + "/.AECache").exists() || !QDir(cur + "/.AECache/data").exists()) {
+        if (!QDir(cur + "/.AECache").exists()) {
+            void (QDir().mkdir(cur + "/.AECache"));
+        }
+        QFile::copy(cur + "/data", QDir::homePath() + "/.AECache/data");
+    }
+    QDir::setCurrent(QDir::homePath() + "./AECache");
+    //app.setAttribute(Qt::AA_DontUseNativeDialogs);
+    #endif
+
+    #if defined(Q_OS_DARWIN)
     const QString appDir = app.applicationDirPath();
-#endif
+    QApplication::addLibraryPath(appDir + "/Contents/MacOS");
+    QApplication::addLibraryPath(appDir + "/../PlugIns/");
+    QApplication::addLibraryPath(appDir + "/Contents/MacOS/data");
+    #else
+    const QString appDir = QApplication::applicationDirPath();
+    #endif
     QString resourceDir(appDir + "/data");
     QDir dataDir = QDir(resourceDir);
-    if(!dataDir.exists() || dataDir.isEmpty()){
+    if(!dataDir.exists() || !dataDir.isReadable() || dataDir.absoluteFilePath("sample.psd").isEmpty()){
         QString newResDir;
         QSettings settings;
         QVariant customDataFolder = settings.value("customDataFolder");
@@ -136,7 +160,7 @@ int entryPoint(int argc, char* argv[]) {
                 newResDir = customDataFolder.toString();
             }
         }
-        if(newResDir.isEmpty()){
+        if(newResDir.isEmpty() || !QDir(newResDir).exists() || dataDir.absoluteFilePath("sample.psd").isEmpty()){
             newResDir = QFileDialog::getExistingDirectory(app.activeWindow(), QCoreApplication::translate("data_load", "Unable to locate data folder, please select it"),
                                                 appDir,
                                                 QFileDialog::ShowDirsOnly
@@ -191,9 +215,6 @@ int entryPoint(int argc, char* argv[]) {
         const QString testPath = resourceDir + "/sample.psd";
         mainWindow->testNewProject(testPath);
 #endif
-#ifdef Q_OS_MAC
-        QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
-#endif
         // assoc handle
         auto arguments = QCoreApplication::arguments();
         if (arguments.last().contains(".anie")) {
@@ -220,6 +241,13 @@ int entryPoint(int argc, char* argv[]) {
         qDebug() << "clearing resources";
         resources.reset();
         qDebug() << "core application end";
+        #if defined(Q_OS_APPLE) && defined(QT_DEBUG)
+        qDebug() << "removing application cache";
+        cur = QDir::homePath();
+        QDir data = cur + "/.AECache";
+        data.removeRecursively();
+        #endif
+
     }
 
     return result;

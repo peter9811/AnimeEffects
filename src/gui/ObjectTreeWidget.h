@@ -2,7 +2,6 @@
 #define GUI_OBJECTTREEWIDGET_H
 
 #include <QTreeWidget>
-#include <QDropEvent>
 #include <QHeaderView>
 #include <QAction>
 #include "ctrl/TimeLineEditor.h"
@@ -96,6 +95,8 @@ private:
     void onObjectMirrorTriggered();
     void onFolderActionTriggered(bool aIsTriggered);
     void onDeleteActionTriggered(bool aIsTriggered);
+    void onAddTreeTriggered(bool);
+    void addItems(QStringList targets);
     void onObjectReconstructionTriggered(bool aIsTriggered);
     void onThemeUpdated(theme::Theme&);
 
@@ -116,6 +117,7 @@ private:
     QTreeWidgetItem* mActionItem;
     QAction* mSlimAction;
     QAction* mReconstructAction;
+    QAction* mAddTreeAction;
     QAction* mRenameAction;
     QAction* mPasteAction;
     QAction* mObjectAction;

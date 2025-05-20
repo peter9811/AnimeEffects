@@ -6,6 +6,7 @@
 #include "img/BlendMode.h"
 #include "img/Util.h"
 #include "deps/zip_file.h"
+#include "gui/res/res_ResourceUpdater.h"
 
 namespace img {
 
@@ -263,6 +264,7 @@ ResourceNode* Util::createResourceNodes(PSDFormat& aFormat, bool aLoadImage) {
             resNode->data().setUserData(&layer);
             resNode->data().setIsLayer(true);
             resNode->data().setBlendMode(getBlendModeFromPSD(layer.blendMode));
+            resNode->data().setIsVisible(layer.isVisible());
 
             if (aLoadImage) {
                 auto image = createTextureImage(aFormat.header(), layer);
@@ -317,20 +319,19 @@ ResourceNode* Util::createResourceNodes(bool merged, const std::string& aFilePat
 ResourceNode* Util::createResourceNode(const QImage& aImage, const QString& aName, bool aLoadImage) {
     // create resource
     auto resNode = new ResourceNode(aName);
-    resNode->data().setPos(QPoint(0, 0));
     resNode->data().setIsLayer(true);
     resNode->data().setBlendMode(img::BlendMode_Normal);
-
+    resNode->data().setIsVisible(true);
     if (aLoadImage) {
         auto image = aImage.convertToFormat(QImage::Format_RGBA8888);
         auto texImage = createTextureImage(image);
-        resNode->data().setPos(texImage.second.topLeft());
+        resNode->data().setPos(texImage.second.center());
         resNode->data().grabImage(texImage.first, texImage.second.size(), Format_RGBA8);
     } else {
         resNode->data().setImageLoader([=](ResourceData& aData) -> bool {
             auto image = aImage.convertToFormat(QImage::Format_RGBA8888);
             auto texImage = createTextureImage(image);
-            aData.setPos(texImage.second.topLeft());
+            aData.setPos(texImage.second.center());
             aData.grabImage(texImage.first, texImage.second.size(), Format_RGBA8);
             return true;
         });

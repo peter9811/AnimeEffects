@@ -47,7 +47,6 @@ jobs:
           cd appdir
           macdeployqt AnimeEffects.app
           cp -R ../../../../../data/ AnimeEffects.app/Contents/MacOS
-          chmod +x runme.command
           wget https://raw.githubusercontent.com/OpenZWave/ozw-admin/master/scripts/macdeployqtfix.py && chmod a+x macdeployqtfix.py
           ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
           zip -r AnimeEffects.zip AnimeEffects.app runme.command

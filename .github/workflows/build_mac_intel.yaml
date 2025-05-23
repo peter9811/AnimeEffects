@@ -46,8 +46,7 @@ jobs:
           find appdir/
           cd appdir
           macdeployqt AnimeEffects.app
-          cp ../../../../../scripts/RemoveQuarantine.command runme.command
-          chmod +x runme.command
+          cp -R ../../../../../data/ AnimeEffects.app/Contents/MacOS
           wget https://raw.githubusercontent.com/OpenZWave/ozw-admin/master/scripts/macdeployqtfix.py && chmod a+x macdeployqtfix.py
           ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
           zip -r AnimeEffects.zip AnimeEffects.app runme.command

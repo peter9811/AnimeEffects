@@ -40,13 +40,12 @@ jobs:
           cmake --build build --config Release
           cd build/src/gui/Release
           mkdir -p appdir/usr/lib
-          cp -R AnimeEffects.app appdir/AnimeEffects.app
-          cp -R ../../../../data appdir/data
-          cp -R ../../../../dist appdir/dist
+          cp -R AnimeEffects.app appdir
+          cp -R ../../../data appdir/AnimeEffects.app/Contents/MacOS/data
+          cp -R ../../../dist appdir/AnimeEffects.app/dist
           find appdir/
           cd appdir
           macdeployqt AnimeEffects.app
-          cp -R ../../../../../data/ AnimeEffects.app/Contents/MacOS
           wget https://raw.githubusercontent.com/OpenZWave/ozw-admin/master/scripts/macdeployqtfix.py && chmod a+x macdeployqtfix.py
           ./macdeployqtfix.py AnimeEffects.app /usr/local/Cellar/qt/*/
           zip -r AnimeEffects.zip AnimeEffects.app runme.command

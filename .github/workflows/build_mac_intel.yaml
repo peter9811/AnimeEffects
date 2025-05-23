@@ -41,8 +41,8 @@ jobs:
           cd build/src/gui/Release
           mkdir -p appdir/usr/lib
           cp -R AnimeEffects.app appdir
-          cp -R ../../../data appdir/AnimeEffects.app/Contents/MacOS/data
-          cp -R ../../../dist appdir/AnimeEffects.app/dist
+          cp -R ../../../../data appdir/AnimeEffects.app/Contents/MacOS/data
+          cp -R ../../../../dist appdir/AnimeEffects.app/dist
           find appdir/
           cd appdir
           macdeployqt AnimeEffects.app

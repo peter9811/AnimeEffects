@@ -137,7 +137,7 @@ int entryPoint(int argc, char* argv[]) {
         QFile::copy(cur + "/data", QDir::homePath() + "/.AECache/data");
     }
     QDir::setCurrent(QDir::homePath() + "./AECache");
-    //app.setAttribute(Qt::AA_DontUseNativeDialogs);
+    app.setAttribute(Qt::AA_DontUseNativeDialogs);
     #endif
 
     #if defined(Q_OS_DARWIN)

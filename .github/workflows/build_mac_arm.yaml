@@ -47,7 +47,7 @@ jobs:
           cd appdir
           macdeployqt AnimeEffects.app
           cp ../../../../../scripts/RemoveQuarantine.command AnimeEffects.command
-          cp -R ../../../../../data AnimeEffects.app/Contents/MacOS
+          cp -R ../../../../../data AnimeEffects.app/Contents/MacOS/data
           chmod +x AnimeEffects.command
           zip -r AnimeEffects.zip AnimeEffects.app AnimeEffects.command 
           echo "artifactPath=$(realpath AnimeEffects.zip)`"

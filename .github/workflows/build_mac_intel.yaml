@@ -39,8 +39,8 @@ jobs:
           cmake -S . -B build -G "Ninja Multi-Config"
           cmake --build build --config Release
           cd build/src/gui/Release
-          mkdir -p appdir/usr/lib
-          cp -R AnimeEffects.app appdir
+          mkdir appdir
+          cp AnimeEffects.app appdir
           cp -R ../../../../data appdir/AnimeEffects.app/Contents/MacOS/data
           cp -R ../../../../dist appdir/AnimeEffects.app/dist
           find appdir/

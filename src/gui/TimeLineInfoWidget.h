@@ -16,6 +16,26 @@
 
 namespace gui {
 
+class AudioWorker final: public QObject {
+    Q_OBJECT
+public:
+    AudioWorker();
+    ~AudioWorker();
+    core::Project* mProject;
+    PlayBackWidget* mPlayBack;
+    int currentFrame;
+    int latestFrame;
+    int frameMax;
+    int fps;
+
+public slots:
+    void onAudioUpdate();
+    void setVars(core::Project* proj, PlayBackWidget* play,int cur, int last, int max, int frames);
+    signals:
+    void onAudioUpdated();
+    void update();
+};
+
 class TimeLineInfoWidget: public QLabel {
 public:
     TimeLineInfoWidget(GUIResources& aResources, QWidget* aParent);
@@ -41,5 +61,6 @@ private:
 };
 
 } // namespace gui
+
 
 #endif // GUI_INFOLABELWIDGET_H

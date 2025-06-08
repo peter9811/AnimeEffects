@@ -1,29 +1,19 @@
 #include "gui/PlayBackWidget.h"
-#include "gui/PlayBackWidget.h"
 #include <QFile>
 #include <QTextStream>
 #include <functional>
 #include <QVBoxLayout>
 #include <QFontMetrics>
 
-// namespace {
-// int kButtonSize = 28; // No longer needed
-// const int kButtonCount = 7; // No longer needed
-// } // namespace
-
 namespace gui {
 
 PlayBackWidget::PlayBackWidget(GUIResources& aResources, QWidget* aParent, core::Project& mProject):
     QWidget(aParent), mGUIResources(aResources), mButtons() {
-    // if (mGUIResources.getTheme().contains("high_dpi")) {
-    //     kButtonSize = 32; // No longer needed
-    // }
-    // this->setGeometry(0, 0, kButtonSize, kButtonSize * kButtonCount); // Will be handled by layout
     aProject = &mProject;
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(2, 2, 2, 2); // Optional: add some small margins
-    mainLayout->setSpacing(2);                 // Optional: add some spacing between buttons
+    mainLayout->setSpacing(2); // Optional: add some spacing between buttons
 
     // Order matters for layout addition
     mButtons.push_back(createButton("rewind", false, tr("Return to initial frame")));
@@ -40,7 +30,6 @@ PlayBackWidget::PlayBackWidget(GUIResources& aResources, QWidget* aParent, core:
 
     this->setLayout(mainLayout);
     // Adjust size to content after layout is set and populated
-    // this->adjustSize(); // Often better to let parent layout handle this, or set a size policy
 
     audioWidget->setupUi(audioUI, &mediaPlayer, aConf);
     mGUIResources.onThemeChanged.connect(this, &PlayBackWidget::onThemeUpdated);
@@ -62,28 +51,34 @@ void PlayBackWidget::setPushDelegate(const PushDelegate& aDelegate) {
         owner->mPushDelegate(isChecked ? PushType_NoLoop : PushType_Loop);
     });
 
-    gui::PlayBackWidget::connect(mButtons.at(0), &QPushButton::pressed, [=]() { owner->mPushDelegate(PushType_Rewind); });
-    gui::PlayBackWidget::connect(mButtons.at(1), &QPushButton::pressed, [=]() { owner->mPushDelegate(PushType_StepBack); });
+    gui::PlayBackWidget::connect(mButtons.at(0), &QPushButton::pressed, [=]() {
+        owner->mPushDelegate(PushType_Rewind);
+    });
+    gui::PlayBackWidget::connect(mButtons.at(1), &QPushButton::pressed, [=]() {
+        owner->mPushDelegate(PushType_StepBack);
+    });
     gui::PlayBackWidget::connect(mButtons.at(3), &QPushButton::pressed, [=]() { owner->mPushDelegate(PushType_Step); });
     gui::PlayBackWidget::connect(mButtons.at(4), &QPushButton::pressed, [=]() { owner->mPushDelegate(PushType_Fast); });
-    gui::PlayBackWidget::connect(mButtons.at(6), &QPushButton::pressed, [=](){
-        if(audioUI == nullptr || audioWidget == nullptr){
-            audioWidget =  new AudioPlaybackWidget;
+    gui::PlayBackWidget::connect(mButtons.at(6), &QPushButton::pressed, [=]() {
+        if (audioUI == nullptr || audioWidget == nullptr) {
+            audioWidget = new AudioPlaybackWidget;
             audioUI = new QWidget(this, Qt::Window);
             audioWidget->setupUi(audioUI, &mediaPlayer, aConf);
         }
 
-        if(aProject && aProject->mediaRefresh){
+        if (aProject && aProject->mediaRefresh) {
             owner->aConf = aProject->pConf;
             owner->mediaPlayer = *aProject->mediaPlayer;
             aProject->mediaRefresh = false;
         }
-        if(!audioUI->isHidden()){
+        if (!audioUI->isHidden()) {
             return;
         }
-        for(auto player: mediaPlayer.players){ player->stop(); }
+        for (auto player : mediaPlayer.players) {
+            player->stop();
+        }
 
-        if(aProject && aProject->uiRefresh){
+        if (aProject && aProject->uiRefresh) {
             audioWidget->rectifyUI(aProject->pConf, aProject->mediaPlayer, true);
             aProject->uiRefresh = false;
         }
@@ -144,8 +139,7 @@ void PlayBackWidget::pushPauseButton() {
     }
 }
 
-QPushButton*
-PlayBackWidget::createButton(const QString& aName, bool aIsCheckable, const QString& aToolTip) {
+QPushButton* PlayBackWidget::createButton(const QString& aName, bool aIsCheckable, const QString& aToolTip) {
     auto* button = new QPushButton(/*this*/); // Parent will be set by layout
     XC_PTR_ASSERT(button);
     button->setObjectName(aName);
@@ -168,7 +162,6 @@ PlayBackWidget::createButton(const QString& aName, bool aIsCheckable, const QStr
     button->setCheckable(aIsCheckable);
     button->setToolTip(aToolTip);
     button->setFocusPolicy(Qt::NoFocus);
-    // button->setGeometry(0, 2 + kButtonSize * aColumn, kButtonSize, kButtonSize); // Removed
     button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred); // Allow expansion
     return button;
 }
@@ -199,6 +192,6 @@ void PlayBackWidget::onThemeUpdated(theme::Theme& aTheme) {
         }
     }
 }
-bool PlayBackWidget::isPlaying() {  return this->mButtons.at(2)->isChecked(); }
+bool PlayBackWidget::isPlaying() { return this->mButtons.at(2)->isChecked(); }
 
 } // namespace gui

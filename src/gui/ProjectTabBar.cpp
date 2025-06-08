@@ -8,7 +8,6 @@ namespace gui {
 //-------------------------------------------------------------------------------------------------
 ProjectTabBar::ProjectTabBar(QWidget* aParent, GUIResources& aResources):
     QTabBar(aParent), mProjects(), mSignal(true), mGUIResources(aResources) {
-    // static const int kHeight = 18; // Removed
     QFontMetrics fm(this->font());
     int dynamicHeight = fm.height() + 8; // fm.height() + padding
     this->setGeometry(0, 0, aParent->geometry().width(), dynamicHeight);
@@ -23,7 +22,6 @@ ProjectTabBar::ProjectTabBar(QWidget* aParent, GUIResources& aResources):
 }
 
 void ProjectTabBar::updateTabPosition(const QSize& aDisplaySize) {
-    // static const int kHeight = 18; // Removed
     QFontMetrics fm(this->font());
     int dynamicHeight = fm.height() + 8; // fm.height() + padding
     this->setGeometry(0, 0, aDisplaySize.width(), dynamicHeight);

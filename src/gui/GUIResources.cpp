@@ -22,8 +22,10 @@ GUIResources::GUIResources(const QString& aResourceDir):
     int savedFontSize = settings.value("generalsettings/ui/fontsize", QApplication::font().pointSize()).toInt(&ok);
     if (!ok || savedFontSize <= 0) { // Basic validation for font size
         mFontSize = QApplication::font().pointSize();
-        if (mFontSize <= 0) { // If system default is also invalid, use a hardcoded default
-            mFontSize = 12;
+        if (mFontSize <= 0) {
+            mFontSize = 12; // Default if system font is invalid or zero/negative
+        } else if (mFontSize < 8) { // Assuming 8 is a sensible minimum
+            mFontSize = 8;   // Clamp to a minimum sensible size if system font is too small but positive
         }
     } else {
         mFontSize = savedFontSize;
@@ -152,7 +154,9 @@ void GUIResources::triggerOnThemeChanged() { onThemeChanged(mTheme); }
 
 // Font size methods implementation
 void GUIResources::setFontSize(int size) {
-    if (size <= 0) return; // Basic validation
+    const int MIN_SANE_FONT_SIZE = 8;  // Consider defining these as constants elsewhere
+    const int MAX_SANE_FONT_SIZE = 72;
+    if (size < MIN_SANE_FONT_SIZE || size > MAX_SANE_FONT_SIZE) return;
     mFontSize = size;
     QSettings settings;
     settings.setValue("generalsettings/ui/fontsize", mFontSize);

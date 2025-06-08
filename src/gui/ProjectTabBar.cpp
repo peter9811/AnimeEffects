@@ -45,7 +45,7 @@ void ProjectTabBar::onThemeUpdated(theme::Theme& aTheme) {
         // Or use current width if parent interaction is complex here
         QFontMetrics fm(this->font());
         int dynamicHeight = fm.height() + 8;
-        this->setGeometry(this->x(), this->y(), this->width(), dynamicHeight);
+        this->setGeometry(this->x(), this->y(), parentWidget()->width(), dynamicHeight);
     } else {
         // Fallback if no parent or width is not easily determined
         QFontMetrics fm(this->font());

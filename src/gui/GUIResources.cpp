@@ -17,6 +17,21 @@ GUIResources::GUIResources(const QString& aResourceDir):
     settings.sync();
     setTheme(theme.toString());
 
+    // Initialize font size
+    bool ok;
+    int savedFontSize = settings.value("generalsettings/ui/fontsize", QApplication::font().pointSize()).toInt(&ok);
+    if (!ok || savedFontSize <= 0) { // Basic validation for font size
+        mFontSize = QApplication::font().pointSize();
+        if (mFontSize <= 0) {
+            mFontSize = 12; // Default if system font is invalid or zero/negative
+        } else if (mFontSize < 8) { // Assuming 8 is a sensible minimum
+            mFontSize = 8;   // Clamp to a minimum sensible size if system font is too small but positive
+        }
+    } else {
+        mFontSize = savedFontSize;
+    }
+    applyFontSize(); // Apply initial font size
+
     loadIcons();
 }
 
@@ -121,7 +136,7 @@ QStringList GUIResources::themeList() {
 bool GUIResources::hasTheme(const QString& aThemeId) { return mThemeMap.contains(aThemeId); }
 
 void GUIResources::setTheme(const QString& aThemeId) {
-    setAppStyle();
+    setAppStyle(); // Applies style first
     if (mTheme.id() != aThemeId && hasTheme(aThemeId)) {
         mTheme = mThemeMap.value(aThemeId);
         loadIcons();
@@ -132,8 +147,31 @@ void GUIResources::setTheme(const QString& aThemeId) {
         setPaletteDark();
     }
     QApplication::setPalette(palette);
+    applyFontSize(); // Apply font size after theme changes
 }
 
 void GUIResources::triggerOnThemeChanged() { onThemeChanged(mTheme); }
+
+// Font size methods implementation
+void GUIResources::setFontSize(int size) {
+    const int MIN_SANE_FONT_SIZE = 8;  // Consider defining these as constants elsewhere
+    const int MAX_SANE_FONT_SIZE = 72;
+    if (size < MIN_SANE_FONT_SIZE || size > MAX_SANE_FONT_SIZE) return;
+    mFontSize = size;
+    QSettings settings;
+    settings.setValue("generalsettings/ui/fontsize", mFontSize);
+    settings.sync();
+    applyFontSize();
+}
+
+int GUIResources::fontSize() const {
+    return mFontSize;
+}
+
+void GUIResources::applyFontSize() {
+    QFont currentFont = QApplication::font();
+    currentFont.setPointSize(mFontSize);
+    QApplication::setFont(currentFont);
+}
 
 } // namespace gui

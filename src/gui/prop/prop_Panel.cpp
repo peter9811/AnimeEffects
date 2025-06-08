@@ -1,10 +1,7 @@
 #include <QFile>
 #include <QTextStream>
+#include <QFontMetrics>
 #include "gui/prop/prop_Panel.h"
-
-namespace {
-static const int kCollapsedPanelHeight = 22;
-}
 
 namespace gui {
 namespace prop {
@@ -35,16 +32,20 @@ namespace prop {
     void Panel::onClicked(bool aChecked) {
         if (mChecked != aChecked) {
             mChecked = aChecked;
-            this->setFixedHeight(aChecked ? QWIDGETSIZE_MAX : kCollapsedPanelHeight);
+            int targetHeight;
+            if (aChecked) {
+                targetHeight = QWIDGETSIZE_MAX;
+            } else {
+                QFontMetrics fm(this->font());
+                targetHeight = fm.lineSpacing() + 4; // Add some padding
+            }
+            this->setFixedHeight(targetHeight);
             if (onCollapsed)
                 onCollapsed();
         }
     }
 
-    void Panel::onChildrenClicked(bool) {
-        this->updateGeometry();
-        // this->update();
-    }
+    void Panel::onChildrenClicked(bool) { this->updateGeometry(); }
 
 } // namespace prop
 } // namespace gui
